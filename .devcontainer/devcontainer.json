@@ -1,0 +1,16 @@
+{
+  "name": "agent-team-dev",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb"
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "joaompinto.vscode-graphviz"
+      ]
+    }
+  }
+}

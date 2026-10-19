@@ -76,25 +76,14 @@ Space calls; bursts stress the box)
 (available to ALL local agents except non-BYOK platforms e.g. GitHub Copilot;
 real ids only, VMs excluded)
 
-**** Owner gateway — ai.khalidrafi.tech (all API models; real ids only, VMs excluded)
+**** Owner gateway — ai.khalidrafi.tech (all API models)
 
-- namespaces with character (the AUTHORITATIVE list is live GET /v1/models —
-  names rotate; this section is character, not catalog):
-  - cloudflare/@cf/ — full Workers AI catalog (30+; llama, qwen, gemma,
-    mistral, deepseek-r1-distill, FLUX/SDXL image models)
-  - gemini/ — Google pool (flash family, image, live variants)
-  - groq/ — FAST FREE pool, latency-sensitive default (llama-3.3-70b-versatile,
-    openai/gpt-oss-120b, moonshotai/kimi-k2-instruct…)
-  - kilo/ — Kilo free pool (kimi-k2, llama, qwen3-32b…)
-  - opencode/ — UNSTABLE, roster rotates (glm-5.x, gpt-5.x, nemotron-3.x,
-    step-3.5-flash…)
-  - zai/ — GLM family (glm-4.5, glm-4.6v, glm-4.7-flash)
-  - tokenharbor/ — free deepseek-v4.1-flash
-  - ollama-cloud/ — gpt-oss:120b, nemotron-3-ultra, beam…
-  - openrouter/ — free roster (:free suffix; rotates)
+- API models are NOT listed in this manual — the roster rotates. The
+  AUTHORITY is live: GET /v1/models on the gateway (or on
+  http://127.0.0.1:8080 locally). Query it whenever you staff API work; real
+  ids only, VMs excluded (aa-* and alias names are not members)
 - gateway behavior: /v1/models can wedge on the Owner's loaded Celeron — trust
-  the roster diff, never block on enumeration; space calls, bursts stress the
-  box; latency-sensitive work → groq/
+  a roster diff over one slow call; space calls, bursts stress the box
 
 ** Decision layer (not an LLM, not chat-compatible): TypeSafe Jev — see JEV
 

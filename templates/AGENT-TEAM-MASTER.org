@@ -415,7 +415,7 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - Header: DISPATCH #n (counter in agent-team/AGENT-TEAM-TODOS.org header) —
     <project>/<task-id>: <title> · TO/FROM full role · model@platform ·
     PRIORITY · ORDER
-  - OBJECTIVES (one line) → CONTEXT (≤4 lines, reference never paste) → TASK (numbered)
+  - OBJECTIVES (list — one objective per line) → CONTEXT (≤4 lines, reference never paste) → TASK (numbered)
     → DEFINITION OF DONE (measurable) → SCOPE (allowed files · NOT yours) → ENV
     (caps, runner commands) → JEV USAGE block when applicable → FINAL INSTRUCTION
     (one closing line — context first, instructions last)

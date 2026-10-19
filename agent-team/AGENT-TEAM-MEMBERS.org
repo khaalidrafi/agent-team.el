@@ -5,9 +5,14 @@
 * Team Lead — groq/qwen3.8-27b@opencode/local
   - :last-dispatch: 1
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - fallbacks: 1. ollama-cloud/nemotron-3-super-120b@opencode/local (standing tier; verify in live roster)
-               2. groq/qwen3.8-8b@opencode/local (same standing tier as primary, smaller sibling)
-               3. ollama-cloud/kimi-k2-thinking@opencode/local (standing tier; verify in live roster)
+  - fallbacks: 1. groq/qwen3.8-8b@opencode/local (same standing pool, smaller)
+               2. groq/qwen3.8-4b@opencode/local (same standing pool, smallest)
+               3. DEGRADATION MODE: resident loop suspends; Lead duties pass
+                  ONE-SHOT to qwen3.8-max@qwen/web (Owner-summoned) until a
+                  standing local pool returns
+  - note: with the Owner's filters (no cf/llama/flash/promos/ollama-cloud),
+    groq is the ONLY standing local pool — same-family depth + named
+    degradation is the truthful rank-3, not pretend-diversity
   - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
                2. groq/llama-3.3-70b-versatile@opencode/local (rotation)
                3. deepseek-v4.1-flash@opencode/local

@@ -8,6 +8,9 @@
   - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
                2. groq/llama-3.3-70b-versatile@opencode/local (rotation)
                3. deepseek-v4.1-flash@opencode/local
+  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
+               2. groq/llama-3.3-70b-versatile@opencode/local (rotation)
+               3. deepseek-v4.1-flash@opencode/local
 
 * Director of Engineering — qwen3.7-plus@qwen/web
   - :last-dispatch: 1

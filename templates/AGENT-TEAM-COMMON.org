@@ -398,8 +398,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 - MSG-TYPE: DISPATCH | REPORT | HANDOFF | TEAM-UPDATE | STATUS
 - a message without a valid header line (FROM:/TO: present, model@platform on
   both sides) is INVALID — bounce it back unread, never answer it
-- the #n counter lives in agent-team/AGENT-TEAM-TODOS.org and increments on
-  every send
+- the #n counter is PER MEMBER: each member entry in AGENT-TEAM-MEMBERS.org
+  tracks :last-dispatch: N; the next dispatch to that member is N+1; a new
+  hire's INTRO: dispatch is always #1; the recorded number is how you know
+  exactly what each member has received — never assume beyond it
 - body sections follow the MESSAGE STANDARD below (OBJECTIVES → ... → FINAL
   INSTRUCTION)
 - MESSAGE CRAFT (both audiences): simple, clear, plain words; one idea per
@@ -502,6 +504,11 @@ TODOs.org → agent-team/AGENT-TEAM.md → agent-team/AGENT-TEAM-MEMBERS.org →
   implement, in that order
 - preamble: local agents "git pull first" · web/cloud "clone/pull with PAT first,
   then read AGENTS.md + agent-team/AGENT-TEAM.md + agent-team/AGENT-TEAM-TODOS.org"
+- INTRO: (mandatory on a new hire's first dispatch): who you are, the
+  team, the mission, what is expected of you, how you report (board marks),
+  and who your lead is — the human email a new colleague gets on day one,
+  adapted for an AI member. First dispatch without INTRO: is an invalid
+  briefing
 - NEW-HIRE CONTEXT PACK (mandatory on a member's FIRST dispatch, and on
   request): repo URL + branch · PAT for clone/push · gateway URL +
   GOMODEL_MASTER_KEY · team file paths (agent-team/…, STATE.org) · the local

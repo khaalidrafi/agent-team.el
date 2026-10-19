@@ -414,12 +414,25 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   — few-shot is standing, format consistently):
   - Header: DISPATCH #n (counter in agent-team/AGENT-TEAM-TODOS.org header) —
     <project>/<task-id>: <title> · TO/FROM full role · model@platform ·
-    PRIORITY · ORDER
+    PRIORITY · ORDER · RISK (reads|writes|both)
   - OBJECTIVES (list — one objective per line) → CONTEXT (≤4 lines, reference never paste) → TASK (numbered)
     → DEFINITION OF DONE (measurable) → SCOPE (allowed files · NOT yours) → ENV
     (caps, runner commands) → JEV USAGE block when applicable → FINAL INSTRUCTION
-    (one closing line — context first, instructions last)
+    (one closing line — context first, instructions last; name the reply
+    contract, e.g. "Reply: REPORT #n per MESSAGE STANDARD")
   - EM reflects: would a stranger act correctly from this alone?
+  - few-shot is IN the prompt, not just referenced — standing examples, keep
+    byte-identical format:
+      DISPATCH #12 — web/api-42: Add retry backoff · TO: Backend Engineer —
+      GLM-5.3 @ chat.z.ai · P1 · ORDER 3 · RISK writes
+      OBJECTIVES:
+      - Add exponential backoff to the gateway client.
+      - Cover 3 failure modes with ert tests.
+      DEFINITION OF DONE: tests green; branch ai/api-42 pushed.
+      FINAL INSTRUCTION: re-read the DOD before reporting; reply REPORT #12.
+      REPORT (member → EM): flip REVIEW; :RESULT:/:DELIVERED:/:NEEDS: filled;
+      :LOGBOOK: = OBJECTIVES line as a Note + checkbox evidence ([X] green,
+      [ ] UNVERIFIED); unrun checks stay unchecked
 - REPORT (status report; member → EM, lives in agent-team/AGENT-TEAM-TODOS.org — Org-native,
   no email): flip REVIEW; :PROPERTIES: (:RESULT: DONE | PARTIAL | BLOCKED ·
   :DELIVERED: ai/<branch>@<sha> · :NEEDS: merge | verify | decision); :LOGBOOK:

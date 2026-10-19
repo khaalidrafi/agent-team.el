@@ -4,9 +4,21 @@
 
 * Board
 
-** PROGRESS [2026-10-19] 001: elisp — Jev choice/score + tests :DISPATCH:
+** PROGRESS [2026-10-20] ci/01: stabilize CI — parse fix + webhook guard :DISPATCH:
+   TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
+   FROM: Team Lead — groq/qwen3.8-27b@opencode/local
+   OBJECTIVES:
+   - Fix agent-team--parse-members to parse the canonical "<model> @ <platform>" id form (tolerate both compact model@platform and spaced).
+   - Patch .github/workflows/ci.yml on ai/ci: skip Lark notify when LARK_WEBHOOK_URL unset; update stale TO: to Team Lead — groq/qwen3.8-27b@opencode/local.
+   DEFINITION OF DONE: full ert suite green locally; byte-compile-clean; branches ai/fix-parse-members + ai/ci pushed.
+   SCOPE: yours: agent-team.el parser, tests conform stays, ai/ci workflow · NOT yours: merges, secrets, anything else.
+
+** DEFERRED [2026-10-19] 001: elisp — Jev choice/score + tests :DISPATCH:
    TO: Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai · PRIORITY: P2 · ORDER: 1
    Branch ai/elisp-glm; tests-first; byte-compile-clean.
+   :LOGBOOK:
+   - State changed by Team Lead — groq/qwen3.8-27b@opencode/local on [2026-10-20]: investigate — no ai/elisp-glm branch exists on origin, no code artifact; v0.1 implements Jev noul only. PROGRESS without artifact = unverified claim; re-dispatch after CI green (critical path = CI first, handoff/01 ordering).
+   :END:
 
 * Org cheat sheet
 

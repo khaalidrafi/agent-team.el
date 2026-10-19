@@ -1,14 +1,51 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
-#+ROSTER: authoritative roster = GET https://ai.khalidrafi.tech/v1/models
+#+ROSTER: API roster authority = GET /v1/models on the gateway
+#+UPDATED: 2026-10-20 — final seats, handover day
 
-* Engineering Manager — Kimi-K2.6 @ kimi.ai
-  - owns: board, dispatches, review, integration; never writes elisp
-  - rank: PROVEN (system author)
-* Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai
-  - owns: elisp implementation; rank: top Lisp-proxy evidence (Roster Duty)
-* Reviewer — Qwen3.8-Max @ chat.qwen.ai
-  - owns: long-context review; rank: (Roster Duty)
-* Junior elisp / tests — DeepSeek V4.1-Flash
-  - owns: cheap iterations, ert coverage; rank: (Roster Duty)
-* Local runner — Qwen3.8-Flash @ Qoder
-  - owns: ert runs, byte-compile, pushes; rank: (Roster Duty)
+* Team Lead — groq/qwen3.8-27b@opencode/local
+  - :last-dispatch: 1
+  - duties: board owner · dispatches · verification · merge gates · Lark wake loop
+  - failover: cloudflare/@cf/deepseek-r1-distill-qwen-32b → groq/llama-3.3-70b-versatile (rotation)
+  - rank: PERMANENT-free + open-weights + local (owner values enforced)
+
+* Director of Engineering — qwen3.7-plus@qwen/web
+  - :last-dispatch: 1
+  - duties: templates/ master prompt · TEAM UPDATEs · staffing adjudication · FR drafts · reviewer of last resort
+  - note: one-shot physics; reviewed 1M-ctx/LM-Arena-#15 fit; hardest meta escalates to qwen3.8-max@qwen/web
+
+* Principal Engineer — kilo/nemotron-3-ultra-550b@opencode/local
+  - duties: P0s · hard problems · architecture (retry-wrapped; promo pool = visitor, not resident)
+
+* Software Engineer — groq/qwen3.8-27b@opencode/codespaces
+  - duties: features · iterations · intern-probation (with the local Lead when codespace parked)
+
+* QA Engineer — deepseek-v4.1-flash@opencode/local
+  - duties: test suites · ert coverage · green verification
+
+* Release Engineer — qwen3.8-flash@qoder/local
+  - duties: CI · pushes · packaging verification · smoke tests
+
+* Platform Engineer — qwen3.8-flash@qoder/local
+  - duties: box health · IM bridges (Telegram relay, lark-cli host) · gateway ops
+
+* Product Engineer — glm-5.3@zai/web
+  - duties: agent-team.el code dev (one-shot courier; API costs money — web paste until Z.ai answers)
+
+* Reviewer — qwen3.8-max@qwen/web
+  - duties: long-context diff review (one-shot courier)
+
+* Build Engineer — glm-5.3@zai/web
+  - duties: guix packages for ALL teams (common service; lark-cli + lightpanda/moli dispatched, silent)
+
+* Intern bench (no-data → intern, never rejected)
+  - codebuddy (has ds-flash built-in — first intern round)
+  - omp · cursor-agent · goose · pi (parked by Owner order, config not ready)
+
+* Sleeper shift (pending CI green) — open-weights free brains on Actions
+  - kimi-k2.5 / qwen3.8-27b / deepseek-v4.1-flash @ openrouter:free + groq (student 3000 min/mo)
+  - author: sleeper-shift@github-actions — never impersonates a human member
+
+* Values in force (Owner's law)
+  - open-weights + permanent-free only in accountable seats; closed models (gpt et al.) excluded
+  - credentials never written anywhere (env/dispatch only)
+  - IDs always PROVIDER/MODEL@AGENT/PLATFORM, both halves in every FROM:

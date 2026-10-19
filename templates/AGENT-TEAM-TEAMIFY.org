@@ -44,3 +44,60 @@ project into a team project — adopt, don't rebuild.
 
 Existing code and conventions outrank the master prompt; the team layer wraps
 the project, never rewrites it.
+
+* FILE TARGETS (byte-level — every teamify produces these EXACTLY)
+
+** agent-team/AGENT-TEAM-TODOS.org
+
+#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+#+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
+
+* Board
+
+* Org cheat sheet
+
+  - PROGRESS + CLOCK start; notes in :LOGBOOK:
+  - BLOCKED + reason; :OWN: = owner ruling
+  - REVIEW + completion note (invalid without)
+  - BLOCKED never terminal; only the EM flips DONE
+
+** agent-team/AGENT-TEAM-MEMBERS.org
+
+#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+#+ROSTER: API roster authority = GET /v1/models on the gateway
+
+* <ROLE> — <model@platform>
+  - :last-dispatch: 0
+  - owns: <area>
+  - rank: (ROSTER DUTY — evidence or intern)
+
+** agent-org/STATE.org
+
+#+TITLE: STATE.org — cross-session state (Owner pastes back at session start)
+
+* DONE
+* IN-FLIGHT
+* READY-FOR-HUMAN-REVIEW
+* DEFERRED
+* BLOCKED
+* TEAM-STAFFING
+* HIRING-LOG
+* AUTONOMY
+  AUTO
+
+** agent-team/AGENT-TEAM.md — the constitution; sections in this order:
+
+#+TITLE: AGENT-TEAM.md — <project> team constitution
+#+REPO: <repo>
+
+* PURPOSE
+  (one paragraph: what this project IS)
+* STANDING TEAM LAWS
+  (the rules specific to this team, as a list)
+* ROLE SCOPES
+  (who owns what, as a list)
+* CONVENTIONS
+  (commit style, branches, tooling, as a list)
+* MANUAL
+  - canonical manual: khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org
+  - NEVER embed the manual here (one canonical copy)

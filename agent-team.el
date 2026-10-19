@@ -31,9 +31,9 @@
   :type 'string)
 
 (defcustom agent-team-gateway-key
-  (or (getenv "GOMODEL_MASTER_KEY") "M4Vxni>Aw9NH{+-_VrBR.9*~")
-  "Gateway key.  Prefer the GOMODEL_MASTER_KEY env var; the fallback exists
-so the team works out of the box on the Owner's machines."
+  (getenv "GOMODEL_MASTER_KEY")
+  "Gateway key.  MUST come from the GOMODEL_MASTER_KEY env var — never
+store keys in files or in git.  Commands refuse to run when unset."
   :type 'string)
 
 (defcustom agent-team-dir "agent-team"

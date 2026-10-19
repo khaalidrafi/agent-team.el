@@ -40,8 +40,7 @@ Keybinding suggestions only — bind what fits your Meow setup.
 
 - Emacs 28.1+
 - curl (gateway calls; 90s timeout on Jev for slow failover legs)
-- =GOMODEL_MASTER_KEY= env var (a fallback default is baked in for the Owner's
-  machines — set the env var to override)
+- =GOMODEL_MASTER_KEY= env var — REQUIRED; never stored in files or git
 
 * Test
 

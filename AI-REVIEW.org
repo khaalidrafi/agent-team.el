@@ -2,8 +2,7 @@
 
 * TODO Review agent-team.el (AI-generated, needs human eyes)
   - [ ] agent-team--bump-counter regex: assumes "# DISPATCH counter: N" format
-  - [ ] key fallback baked into source — review whether that belongs in git
-    (fallback exists so the team works on Owner machines; env var overrides)
+  - [X] key fallback baked into source — RESOLVED: removed; env var required
   - [ ] flip-status has no role enforcement (EM-only DONE is by convention)
   - [ ] dispatch inserts under first "* Board" heading — odd files break it
   - [ ] jev-ask: single noul only; choice/score payloads not exposed yet

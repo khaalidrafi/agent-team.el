@@ -1,0 +1,14 @@
+#+TITLE: AI-REVIEW.org — human review queue (v0.1 bootstrap)
+
+* TODO Review agent-team.el (AI-generated, needs human eyes)
+  - [ ] agent-team--bump-counter regex: assumes "# DISPATCH counter: N" format
+  - [ ] key fallback baked into source — review whether that belongs in git
+    (fallback exists so the team works on Owner machines; env var overrides)
+  - [ ] flip-status has no role enforcement (EM-only DONE is by convention)
+  - [ ] dispatch inserts under first "* Board" heading — odd files break it
+  - [ ] jev-ask: single noul only; choice/score payloads not exposed yet
+  - [ ] org-element unused — parsing is regex-based on purpose (simple > clever)
+  - [ ] RUN TESTS: emacs -Q --batch ... (see README) — not yet run by a human
+
+* TODO Decide: comms-bridge integration points (next milestone)
+  - run konaito bridge from Emacs, pull replies into the board

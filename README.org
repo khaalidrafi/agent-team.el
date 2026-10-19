@@ -1,0 +1,54 @@
+#+TITLE: agent-team.el — run your AI agent team from Emacs
+
+* What
+
+Emacs interface for the multi-model agent team system:
+
+- =agent-team-init= — scaffold =agent-team/= (board, members, STATE.org) in a repo
+- =agent-team-insert-dispatch= — compose a DISPATCH per the MESSAGE FORMAT SPEC,
+  put it on the board, copy it to the kill-ring for the member's chat
+- =agent-team-flip-status= — cycle PROGRESS → BLOCKED → REVIEW → DONE with
+  CLOCK in/out
+- =agent-team-jev-ask= — one calibrated yes/no judgment from Jev
+  (=POST /v1/systemone=) over a region
+- =agent-team-gateway-ping= — gateway health check
+
+The board (=agent-team/AGENT-TEAM-TODOS.org=) stays the single source of truth.
+The full operating manual lives in =agent-team/AGENT-TEAM.md= of each repo
+(master prompt embedded).
+
+* Install
+
+Clone, then use-package with a local load path (or your preferred package
+manager):
+
+#+begin_src emacs-lisp
+(use-package agent-team
+  :load-path "~/code/agent-team.el"
+  :custom
+  (agent-team-em-id "EM — Kimi-K2.6 @ kimi.ai")
+  :bind (("C-c a d" . agent-team-insert-dispatch)
+         ("C-c a s" . agent-team-flip-status)
+         ("C-c a j" . agent-team-jev-ask)
+         ("C-c a p" . agent-team-gateway-ping)
+         ("C-c a i" . agent-team-init)))
+#+end_src
+
+Keybinding suggestions only — bind what fits your Meow setup.
+
+* Requirements
+
+- Emacs 28.1+
+- curl (gateway calls; 90s timeout on Jev for slow failover legs)
+- =GOMODEL_MASTER_KEY= env var (a fallback default is baked in for the Owner's
+  machines — set the env var to override)
+
+* Test
+
+#+begin_src sh
+emacs -Q --batch -L . -L tests   -l tests/agent-team-test.el   --eval '(ert-run-tests-batch-and-exit "agent-team")'
+#+end_src
+
+* License
+
+GPL-3.0-or-later.

@@ -391,6 +391,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone
+- FRs (feature requests against upstream repos) BELONG TO THE EM: the EM
+  triages the need, drafts the FR, and tracks it to closure; posting to the
+  upstream repo requires the Owner's explicit approval — drafts only until
+  then
 - SURVIVAL (no human review — the Owner's safety net):
   - AGENTS.md already owns code craft, commit discipline, AI-REVIEW.org, and live
     testing — hire-side duties stay there; this block adds only what AGENTS.md

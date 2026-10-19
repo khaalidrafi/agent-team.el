@@ -5,8 +5,9 @@
 * Team Lead — groq/qwen3.8-27b@opencode/local
   - :last-dispatch: 1
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - fallbacks: 1. groq/qwen3.8-8b@opencode/local (same standing pool, smaller)
-               2. groq/qwen3.8-4b@opencode/local (same standing pool, smallest)
+  - fallbacks: 1. glm-5.1@opencode/free-roster (open-weights, GLM-5.x reasoning;
+                  most-stable entries in the opencode roster; rate-limited tier)
+               2. groq/qwen3.8-8b@opencode/local (standing pool, smaller sibling)
                3. DEGRADATION MODE: resident loop suspends; Lead duties pass
                   ONE-SHOT to qwen3.8-max@qwen/web (Owner-summoned) until a
                   standing local pool returns

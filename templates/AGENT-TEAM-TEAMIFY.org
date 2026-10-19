@@ -34,7 +34,7 @@ project into a team project — adopt, don't rebuild.
    the manual (one canonical copy; per-repo copies drift). Plus TODOS,
    MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
    without the Owner.
-4. Then team mode: poll the board, ROSTER DUTY, first real dispatch.
+4. Then team mode: poll the board, STAFFING, first real dispatch.
 5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
 
 ** DEFINITION OF DONE
@@ -68,8 +68,9 @@ the project, never rewrites it.
 
 * <ROLE> — <model@platform>
   - :last-dispatch: 0
-  - owns: <area>
-  - rank: (ROSTER DUTY — evidence or intern)
+  - duties: <what this member OWNS and is accountable for — specific,
+    project-derived, not generic>
+  - rank: (STAFFING — evidence or intern, with citation)
 
 ** agent-org/STATE.org
 

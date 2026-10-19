@@ -238,7 +238,7 @@ real ids only, VMs excluded)
   you would actually dispatch, not the model in the abstract
 - task type change → re-check the BODY as well as the brain
 
-** ROSTER DUTY (standing order — automatic, never wait to be told)
+** STAFFING (standing order — automatic, never wait to be told)
 
 - a new or changed roster is a WORK ORDER: rank ALL models, none skipped — and
   rank the PAIR (model@agent, brain+body per BRAINS AND BODIES), never a bare
@@ -285,7 +285,7 @@ real ids only, VMs excluded)
   paid), ranked per task type
 - top capable free first; one in-flight task per model, ≤4 active; unscouted
   models enter the INTERN PROGRAM (5 per round, repeated real task rounds,
-  hired or rejected from the record — see ROSTER DUTY); two fails per task
+  hired or rejected from the record — see STAFFING); two fails per task
   type = benched; warn Owner before spend; log everything in HIRING-LOG
 - prompt-fix law: a task type failing across ≥2 capable models indicts the spec
   or task type, not the prompt — re-spec before re-hiring

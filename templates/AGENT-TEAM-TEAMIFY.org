@@ -23,9 +23,13 @@ project into a team project — adopt, don't rebuild.
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
 2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
-3. TEAMIFY: write agent-team/AGENT-TEAM.md (charter for THIS project +
-   AGENT-TEAM-COMMON.org embedded), TODOS, MEMBERS, STATE — commit on
-   ai/teamify, touching nothing else; no merge without the Owner.
+3. TEAMIFY: write agent-team/AGENT-TEAM.md — the team CONSTITUTION, the
+   AGENTS.md equivalent for this team: purpose, standing team laws, role
+   scopes, conventions, and one pointer line to the canonical manual
+   (khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org) — NEVER embed
+   the manual (one canonical copy; per-repo copies drift). Plus TODOS,
+   MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
+   without the Owner.
 4. Then team mode: poll the board, ROSTER DUTY, first real dispatch.
 5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
 

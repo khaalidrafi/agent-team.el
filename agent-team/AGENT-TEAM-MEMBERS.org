@@ -1,0 +1,14 @@
+#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+#+ROSTER: authoritative roster = GET https://ai.khalidrafi.tech/v1/models
+
+* Engineering Manager — Kimi-K2.6 @ kimi.ai
+  - owns: board, dispatches, review, integration; never writes elisp
+  - rank: PROVEN (system author)
+* Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai
+  - owns: elisp implementation; rank: top Lisp-proxy evidence (Roster Duty)
+* Reviewer — Qwen3.8-Max @ chat.qwen.ai
+  - owns: long-context review; rank: (Roster Duty)
+* Junior elisp / tests — DeepSeek V4.1-Flash
+  - owns: cheap iterations, ert coverage; rank: (Roster Duty)
+* Local runner — Qwen3.8-Flash @ Qoder
+  - owns: ert runs, byte-compile, pushes; rank: (Roster Duty)

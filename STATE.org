@@ -1,0 +1,14 @@
+#+TITLE: STATE.org — cross-session state
+
+* DONE
+  - v0.1 bootstrap (board, dispatches, Jev noul, gateway ping) + ert tests
+  - teamify: agent-team/ files + templates committed
+* IN-FLIGHT
+  - DISPATCH 001: GLM elisp — Jev choice/score (branch ai/elisp-glm)
+* READY-FOR-HUMAN-REVIEW
+* DEFERRED
+* BLOCKED
+* TEAM-STAFFING
+* HIRING-LOG
+* AUTONOMY
+  AUTO

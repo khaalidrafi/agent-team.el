@@ -17,16 +17,11 @@ jobs:
         run: |
           emacs -Q --batch -L . -L tests -l tests/agent-team-test.el \
             --eval '(ert-run-tests-batch-and-exit "agent-team")'
-      - name: Notify Lark (switchboard)
+      - name: Notify Lark (webhook)
         if: always()
-        env:
-          LARK_APP_ID: ${{ secrets.LARK_APP_ID }}
-          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
-          LARK_CHAT_ID: ${{ secrets.LARK_CHAT_ID }}
         run: |
-          T=$(curl -s -X POST https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal \
-              -H "Content-Type: application/json" \
-              -d "{\"app_id\":\"$LARK_APP_ID\",\"app_secret\":\"$LARK_APP_SECRET\"}" | jq -r .tenant_access_token)
-          curl -s -X POST "https://open.larksuite.com/open-apis/im/v1/messages?receive_id_type=chat_id" \
-            -H "Authorization: Bearer $T" -H "Content-Type: application/json" \
-            -d "{\"receive_id\":\"$LARK_CHAT_ID\",\"msg_type\":\"text\",\"content\":\"{\\\"text\\\":\\\"FROM: CI — agent-team.el TO: Engineering Manager — Kimi-K2.6 @ kimi.ai\\n${{ github.event_name }} ${{ github.sha }} : ${{ job.status }}\\\"}\"}"
+          MSG=$(printf 'FROM: CI — agent-team.el TO: Engineering Manager — Kimi-K2.6 @ kimi.ai\n%s %s : %s' \
+            "${{ github.event_name }}" "${{ github.sha }}" "${{ job.status }}")
+          curl -s -X POST "${{ secrets.LARK_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg t "$MSG" '{msg_type:"text", content:{text:$t}}')"

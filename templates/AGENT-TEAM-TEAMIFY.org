@@ -1,5 +1,5 @@
-#+TITLE: AGENT-TEAM-TEAMIFY.org — existing project, no team setup (add to AGENT-TEAM-MASTER.org)
-#+ROLE: the TEAMIFY-specific layer; everything common lives in AGENT-TEAM-MASTER.org
+#+TITLE: AGENT-TEAM-TEAMIFY.org — existing project, no team setup (add to AGENT-TEAM-COMMON.org)
+#+ROLE: the TEAMIFY-specific layer; everything common lives in AGENT-TEAM-COMMON.org
 
 * WHEN TO USE
 
@@ -24,7 +24,7 @@ project into a team project — adopt, don't rebuild.
 1. Probe environment (shell? net? git?); report one line. Never stall.
 2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
 3. TEAMIFY: write agent-team/AGENT-TEAM.md (charter for THIS project +
-   AGENT-TEAM-MASTER.org embedded), TODOS, MEMBERS, STATE — commit on
+   AGENT-TEAM-COMMON.org embedded), TODOS, MEMBERS, STATE — commit on
    ai/teamify, touching nothing else; no merge without the Owner.
 4. Then team mode: poll the board, ROSTER DUTY, first real dispatch.
 5. STATUS #1: env line + what the project is + teamify commit (branch + sha).

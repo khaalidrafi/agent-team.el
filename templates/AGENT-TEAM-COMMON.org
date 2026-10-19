@@ -76,112 +76,27 @@ Space calls; bursts stress the box)
 (available to ALL local agents except non-BYOK platforms e.g. GitHub Copilot;
 real ids only, VMs excluded)
 
-**** Owner gateway — ai.khalidrafi.tech
+**** Owner gateway — ai.khalidrafi.tech (all API models; real ids only, VMs excluded)
 
-(OpenAI-compatible; latency-sensitive work → groq/ pool; /v1/models can wedge —
-roster diff vs live GET /v1/models)
+- namespaces with character (the AUTHORITATIVE list is live GET /v1/models —
+  names rotate; this section is character, not catalog):
+  - cloudflare/@cf/ — full Workers AI catalog (30+; llama, qwen, gemma,
+    mistral, deepseek-r1-distill, FLUX/SDXL image models)
+  - gemini/ — Google pool (flash family, image, live variants)
+  - groq/ — FAST FREE pool, latency-sensitive default (llama-3.3-70b-versatile,
+    openai/gpt-oss-120b, moonshotai/kimi-k2-instruct…)
+  - kilo/ — Kilo free pool (kimi-k2, llama, qwen3-32b…)
+  - opencode/ — UNSTABLE, roster rotates (glm-5.x, gpt-5.x, nemotron-3.x,
+    step-3.5-flash…)
+  - zai/ — GLM family (glm-4.5, glm-4.6v, glm-4.7-flash)
+  - tokenharbor/ — free deepseek-v4.1-flash
+  - ollama-cloud/ — gpt-oss:120b, nemotron-3-ultra, beam…
+  - openrouter/ — free roster (:free suffix; rotates)
+- gateway behavior: /v1/models can wedge on the Owner's loaded Celeron — trust
+  the roster diff, never block on enumeration; space calls, bursts stress the
+  box; latency-sensitive work → groq/
 
-- cloudflare/:
-  - llama-3.3-70b-instruct-fp8-fast
-  - llama-4-scout-17b-16e-instruct
-  - mistral-small-3.1-24b-instruct
-  - llama-3.1-8b-instruct-fp8
-  - llama-3.2-3b-instruct
-  - llama-3.2-11b-vision-instruct
-  - qwen3.1-8b
-  - qwen3.3-32b
-  - gemma-4-7b
-  - gemma-4-12b
-  - gemma-4-27b
-- gemini/:
-  - gemini-3.8-flash
-  - gemini-3.5-flash
-  - gemini-3.5-flash-lite
-  - gemini-3.5-flash-image
-  - gemini-3.1-flash-image
-  - gemini-3.1-flash-lite-image
-  - flash-image
-  - flash-lite-003
-  - flash-lite-003-thinking
-  - flash-live-001
-  - flash-live-002
-  - flash-live-003
-  - flash-live-audio
-- groq/ (fast free pool — latency-sensitive default):
-  - grok-code-fast-1
-  - llama-3.3-70b-versatile
-  - llama-4-scout
-  - moonshotai/kimi-k2-instruct
-  - openai/gpt-oss-120b
-  - openai/gpt-oss-20b
-  - qwen/qwen3-32b
-  - llama-3.1-8b-instant
-- kilo/:
-  - auto
-  - kimi-k2-instruct
-  - kimi-k2-thinking
-  - llama-3.1-8b-instant
-  - llama-3.3-70b-versatile
-  - llama-4-scout-17b
-  - mistral-small-3.1-24b-instruct
-  - qwen3-32b
-- opencode/ (UNSTABLE — roster rotates):
-  - glm-5
-  - glm-5-flash
-  - glm-5.1
-  - glm-5.1-flash
-  - gpt-5.1
-  - gpt-5.1-codex
-  - gpt-5.1-codex-mini
-  - gpt-5.2
-  - gpt-5.2-codex
-  - gpt-oss-120b
-  - gpt-oss-20b
-  - minimax-m2
-  - nemotron-3-super
-  - nemotron-3.5-lightning
-  - nemotron-3.5-super-vl
-  - step-3.5-flash
-  - big-pickle
-  - big-pickle-free
-  - jev-1.13-free! (when listed)
-
-**** Cloudflare Workers AI (10,000 Neurons/day shared pool; roster rotates)
-
-- llama-3.3-70b-instruct-fp8-fast
-- llama-4-scout-17b-16e-instruct
-- mistral-small-3.1-24b-instruct
-- llama-3.1-8b-instruct-fp8
-- llama-3.2-3b-instruct
-- llama-3.2-11b-vision-instruct
-- GLM-4.7-Flash
-- DeepSeek V4.1 Flash
-- clef
-- clef-flash
-- clef-omni
-
-**** OpenRouter (20 RPM; 50/day free, 1,000 after $10 lifetime; roster rotates)
-
-- nvidia/nemotron-3-ultra-550b-a55b:free
-- nvidia/nemotron-3-super-120b-a12b:free
-- nvidia/nemotron-3.5-lightning:free
-- nvidia/nemotron-3.5-super-vl:free
-- nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
-- poolside/laguna-s-2.1:free
-- poolside/laguna-xs-2.1:free
-- cohere/north-mini-code:free
-- qwen/qwen3.8-27b:free
-- google/gemma-4-31b-it:free
-- google/gemma-4-26b-a4b-it:free
-- thinkingmachines/inkling:free
-- thinkingmachines/inkling-small:free
-- dots-studio/dots-3-note-preview:free
-- liquid/lfm-2.5-2.6b:free
-- inclusionai/ling-3.0-flash-sante:free
-- apodex/apodex-1.1-mini:free
-- openrouter/auto:free
-
-*** Decision layer (not an LLM, not chat-compatible): TypeSafe Jev — see JEV
+** Decision layer (not an LLM, not chat-compatible): TypeSafe Jev — see JEV
 
 
 ** GATEWAY AUTH (Owner gateway + Jev)
@@ -390,10 +305,12 @@ roster diff vs live GET /v1/models)
 
 Every inter-member and EM message uses this header, in this order, no omissions:
 
-  <MSG-TYPE> #<n> — <project>/<task-id>: <title>
+  <MSG-TYPE> #<n> — <scope>/<task-id>: <title>
   FROM: <full role> — <model@platform>
   TO: <full role> — <model@platform>
-  PRIORITY: P0 | P1 | P2 · ORDER: <k>
+  REPO: <where the work lands>
+  DEPS: <dependency> (<consumes|supplies|blocks>) — mandatory if touched
+  PRIORITY: P0 | P1 | P2 · RISK: reads | writes | both
 
 - MSG-TYPE: DISPATCH | REPORT | HANDOFF | TEAM-UPDATE | STATUS
 - a message without a valid header line (FROM:/TO: present, model@platform on
@@ -437,7 +354,7 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - few-shot is IN the prompt, not just referenced — standing examples, keep
     byte-identical format:
       DISPATCH #12 — web/api-42: Add retry backoff · TO: Backend Engineer —
-      GLM-5.3 @ chat.z.ai · P1 · ORDER 3 · RISK writes
+      GLM-5.3 @ chat.z.ai · P1 · RISK writes
       OBJECTIVES:
       - Add exponential backoff to the gateway client.
       - Cover 3 failure modes with ert tests.

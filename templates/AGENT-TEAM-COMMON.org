@@ -332,7 +332,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - INTRO: (new hires only) — role, team, mission, expectations, reporting,
     who your lead is
   - OBJECTIVES: list — one objective per line; fixed chains name their roles
-  - CONTEXT PACK: repo/branch · PAT · manual pointer · machine laws · env
+  - CONTEXT PACK: repo/branch · PAT · GOMODEL_MASTER_KEY · machine laws ·
+    env — PAT and GOMODEL_MASTER_KEY are MANDATORY in every team-making
+    prompt (BOOTSTRAP/TEAMIFY) and every INTRO: dispatch; use
+    immediately, never store in files/commits/board
   - TASK: numbered list of small steps
   - DEFINITION OF DONE: checklist — measurable, evidence named
   - SCOPE: yours: list · NOT yours: list

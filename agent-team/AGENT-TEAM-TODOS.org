@@ -4,6 +4,12 @@
 
 * Board
 
+** PROGRESS [2026-10-19] workflow-core/01: local-agent relay — workflow core :DISPATCH:
+   TO: Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai · PRIORITY: P1 · ORDER: 1
+   Branch ai/workflow-core; tests-first; dry-run zero network; conventional commits.
+   DEPS: (none)
+   DOWNSTREAM: khaalidrafi/agent-org (consumes this core once shipped)
+
 ** PROGRESS [2026-10-19] 001: elisp — Jev choice/score + tests :DISPATCH:
    TO: Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai · PRIORITY: P2 · ORDER: 1
    Branch ai/elisp-glm; tests-first; byte-compile-clean.

@@ -335,8 +335,9 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - FROM: <full role> — <model@platform>
   - TO: <full role> — <model@platform>
   - REPO: <where the work lands>
-  - DEPS: <dependency> (<relation: consumes|supplies|blocks>) — mandatory
-    whenever the work touches one
+  - DEPS: a repo the WORK CODE depends on (<consumes|supplies|blocks>) —
+    mandatory if touched. Tooling/template homes (e.g. agent-team.el) are
+    NOT deps — they go in CONTEXT PACK. No code dep = no DEPS line
   - PRIORITY: P0 | P1 | P2 · RISK: reads | writes | both
   - INTRO: (new hires only) — role, team, mission, expectations, reporting,
     who your lead is
@@ -351,6 +352,9 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - #n is PER MEMBER: :last-dispatch: N lives in AGENT-TEAM-MEMBERS.org; a new
     hire's INTRO: is always #1; never invent numbers
   - EM reflects: would a stranger act correctly from this alone?
+  - dispatches are SELF-CONTAINED: every instruction needed is in the
+    message — the receiver never needs another repo to execute; repo
+    files are for the receiver's ongoing operation, not prerequisites
   - few-shot is IN the prompt, not just referenced — standing examples, keep
     byte-identical format:
       DISPATCH #12 — web/api-42: Add retry backoff · TO: Backend Engineer —

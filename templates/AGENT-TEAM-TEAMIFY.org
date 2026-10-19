@@ -19,6 +19,10 @@ project into a team project — adopt, don't rebuild.
 - repo: <URL> (branch ai/main) · PAT: {{PAT}} (use immediately, never store)
 - the project's purpose, in one line: <filled by Director>
 
+- this prompt is SELF-CONTAINED: every instruction you need is here — do
+  not fetch any other repo to execute it. (The canonical manual lives in
+  khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org for reference and
+  versioning; it is not a prerequisite.)
 ** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.

@@ -324,9 +324,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   - FROM: <full role> — <model@platform>
   - TO: <full role> — <model@platform>
   - REPO: <where the work lands>
-  - DEPS: a repo the WORK CODE depends on (<consumes|supplies|blocks>) —
-    mandatory if touched. Tooling/template homes (e.g. agent-team.el) are
-    NOT deps — they go in CONTEXT PACK. No code dep = no DEPS line
+  - DEPS: the programs this dispatch depends on that the agent must HANDLE —
+    repos, binaries, services — named with the relation
+    (<consumes|supplies|blocks|uses>). Mandatory whenever the dispatch is not
+    self-contained w.r.t. programs. No dep = no DEPS line
   - PRIORITY: P0 | P1 | P2 · RISK: reads | writes | both
   - INTRO: (new hires only) — role, team, mission, expectations, reporting,
     who your lead is

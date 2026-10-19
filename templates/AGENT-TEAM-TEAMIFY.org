@@ -19,7 +19,7 @@ project into a team project — adopt, don't rebuild.
 - repo: <URL> (branch ai/main) · PAT: {{PAT}} (use immediately, never store)
 - the project's purpose, in one line: <filled by Director>
 
-** FIRST ACTIONS
+** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
 2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
@@ -32,6 +32,9 @@ project into a team project — adopt, don't rebuild.
    without the Owner.
 4. Then team mode: poll the board, ROSTER DUTY, first real dispatch.
 5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
+
+** DEFINITION OF DONE
+- as agreed per dispatch (see COMMON anatomy)
 
 ** FINAL INSTRUCTION (TEAMIFY)
 

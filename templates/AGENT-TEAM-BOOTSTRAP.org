@@ -20,13 +20,16 @@ The project does not exist yet — no repo, no commits. You create everything.
 - PAT: {{PAT}} (use immediately, never store in files/commits)
 - roster: <initial members with roles>
 
-** FIRST ACTIONS
+** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
 2. git init -b ai/main; write .gitignore; commit AGENTS.md conventions.
 3. Teamify-scaffold per this file + MASTER; commit (MODEL author + trailers).
 4. Push; ROSTER DUTY over the initial members; first dispatch.
 5. STATUS #1: env line + repo URL + what's starting.
+
+** DEFINITION OF DONE
+- as agreed per dispatch (see COMMON anatomy)
 
 ** FINAL INSTRUCTION (FRESH)
 

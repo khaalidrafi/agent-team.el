@@ -412,16 +412,27 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 
 ** MESSAGE STANDARD
 
-- DISPATCH (task brief; EM → member, chat; worked example lives in agent-team/AGENT-TEAM.md
-  — few-shot is standing, format consistently):
-  - Header: DISPATCH #n (counter in agent-team/AGENT-TEAM-TODOS.org header) —
-    <project>/<task-id>: <title> · TO/FROM full role · model@platform ·
-    PRIORITY · ORDER · RISK (reads|writes|both)
-  - OBJECTIVES (list — one objective per line) → CONTEXT (≤4 lines, reference never paste) → TASK (numbered)
-    → DEFINITION OF DONE (measurable) → SCOPE (allowed files · NOT yours) → ENV
-    (caps, runner commands) → JEV USAGE block when applicable → FINAL INSTRUCTION
-    (one closing line — context first, instructions last; name the reply
-    contract, e.g. "Reply: REPORT #n per MESSAGE STANDARD")
+- DISPATCH (task brief; EM → member; new hires get INTRO: first) —
+  anatomy below is canonical; lists everywhere, no semicolon chains:
+  - Header: <MSG-TYPE> #<n> — <scope>/<task-id>: <title>
+  - FROM: <full role> — <model@platform>
+  - TO: <full role> — <model@platform>
+  - REPO: <where the work lands>
+  - DEPS: <dependency> (<relation: consumes|supplies|blocks>) — mandatory
+    whenever the work touches one
+  - PRIORITY: P0 | P1 | P2 · RISK: reads | writes | both
+  - INTRO: (new hires only) — role, team, mission, expectations, reporting,
+    who your lead is
+  - OBJECTIVES: list — one objective per line; fixed chains name their roles
+  - CONTEXT PACK: repo/branch · PAT · manual pointer · machine laws · env
+  - TASK: numbered list of small steps
+  - DEFINITION OF DONE: checklist — measurable, evidence named
+  - SCOPE: yours: list · NOT yours: list
+  - ENV: caps, runner commands, machine constraints
+  - FINAL INSTRUCTION: list — re-read the DOD; reply contract (REPORT #n per
+    MESSAGE STANDARD, board entry linked); invalidation conditions
+  - #n is PER MEMBER: :last-dispatch: N lives in AGENT-TEAM-MEMBERS.org; a new
+    hire's INTRO: is always #1; never invent numbers
   - EM reflects: would a stranger act correctly from this alone?
   - few-shot is IN the prompt, not just referenced — standing examples, keep
     byte-identical format:

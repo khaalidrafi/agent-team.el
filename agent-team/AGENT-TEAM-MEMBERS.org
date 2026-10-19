@@ -1,51 +1,78 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
-#+UPDATED: 2026-10-20 — final seats, handover day
+#+UPDATED: 2026-10-20 — final seats + rank-3 fallbacks (handover day)
 
 * Team Lead — groq/qwen3.8-27b@opencode/local
   - :last-dispatch: 1
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - failover: cloudflare/@cf/deepseek-r1-distill-qwen-32b → groq/llama-3.3-70b-versatile (rotation)
-  - rank: PERMANENT-free + open-weights + local (owner values enforced)
+  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
+               2. groq/llama-3.3-70b-versatile@opencode/local (rotation)
+               3. deepseek-v4.1-flash@opencode/local
 
 * Director of Engineering — qwen3.7-plus@qwen/web
   - :last-dispatch: 1
   - duties: templates/ master prompt · TEAM UPDATEs · staffing adjudication · FR drafts · reviewer of last resort
-  - note: one-shot physics; reviewed 1M-ctx/LM-Arena-#15 fit; hardest meta escalates to qwen3.8-max@qwen/web
+  - fallbacks: 1. qwen3.8-max@qwen/web
+               2. kimi-k2.6@kimi/web
+               3. glm-5.3@zai/web
 
 * Principal Engineer — kilo/nemotron-3-ultra-550b@opencode/local
   - duties: P0s · hard problems · architecture (retry-wrapped; promo pool = visitor, not resident)
+  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
+               2. groq/qwen3.8-27b@opencode/local
+               3. groq/llama-3.3-70b-versatile@opencode/local
 
 * Software Engineer — groq/qwen3.8-27b@opencode/codespaces
-  - duties: features · iterations · intern-probation (with the local Lead when codespace parked)
+  - duties: features · iterations · intern-probation
+  - fallbacks: 1. deepseek-v4.1-flash@opencode/local
+               2. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
+               3. kimi-k2.5@opencode/local (openrouter :free, ephemeral)
 
 * QA Engineer — deepseek-v4.1-flash@opencode/local
   - duties: test suites · ert coverage · green verification
+  - fallbacks: 1. groq/qwen3.8-27b@opencode/local
+               2. mistral-small-3.1@cloudflare/@cf (via gateway)
+               3. kimi-k2.5@opencode/local (ephemeral)
 
 * Release Engineer — qwen3.8-flash@qoder/local
   - duties: CI · pushes · packaging verification · smoke tests
+  - fallbacks: 1. qwen3.8-flash@opencode/local
+               2. glm-4.7-flash@cloudflare/@cf (via gateway)
+               3. qwen3.7-plus@qoder/local
 
 * Platform Engineer — qwen3.8-flash@qoder/local
   - duties: box health · IM bridges (Telegram relay, lark-cli host) · gateway ops
+  - fallbacks: 1. qwen3.8-flash@opencode/local
+               2. goose (local body, brain via gateway)
+               3. qwen3.7-plus@qoder/local
 
 * Product Engineer — glm-5.3@zai/web
-  - duties: agent-team.el code dev (one-shot courier; API costs money — web paste until Z.ai answers)
+  - duties: agent-team.el code dev (one-shot courier; web paste until Z.ai answers)
+  - fallbacks: 1. kimi-k2.6@kimi/web
+               2. qwen3.8-max@qwen/web
+               3. qwen3.7-plus@qwen/web
 
 * Reviewer — qwen3.8-max@qwen/web
   - duties: long-context diff review (one-shot courier)
+  - fallbacks: 1. qwen3.7-plus@qwen/web
+               2. kimi-k2.6@kimi/web
+               3. glm-5.3@zai/web
 
 * Build Engineer — glm-5.3@zai/web
   - duties: guix packages for ALL teams (common service; lark-cli + lightpanda/moli dispatched, silent)
+  - fallbacks: 1. qwen3.7-plus@qwen/web
+               2. kimi-k2.6@kimi/web
+               3. qwen3.8-max@qwen/web
 
 * Intern bench (no-data → intern, never rejected)
-  - codebuddy (has ds-flash built-in — first intern round)
-  - omp · cursor-agent · goose · pi (parked by Owner order, config not ready)
+  - codebuddy (ds-flash built-in — first round) · omp · cursor-agent · goose · pi (parked)
 
 * Sleeper shift (pending CI green) — open-weights free brains on Actions
   - kimi-k2.5 / qwen3.8-27b / deepseek-v4.1-flash @ openrouter:free + groq (student 3000 min/mo)
   - author: sleeper-shift@github-actions — never impersonates a human member
 
 * Values in force (Owner's law)
-  - open-weights + permanent-free only in accountable seats; closed models (gpt et al.) excluded
+  - open-weights + permanent-free only in accountable seats; closed models excluded
   - credentials never written anywhere (env/dispatch only)
   - IDs always PROVIDER/MODEL@AGENT/PLATFORM, both halves in every FROM:
+  - EVERY seat carries ranked fallbacks, minimum 3 — a seat without a fallback chain is an incomplete entry

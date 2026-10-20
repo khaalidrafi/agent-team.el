@@ -20,6 +20,18 @@ gateway) is the sole authority; that endpoint can wedge on the Owner's
 loaded Celeron — trust diffs, never block on it. Space calls; bursts stress
 the box.
 
+** GATEWAY AUTH (Owner gateway + Jev)
+
+- base URL: https://ai.khalidrafi.tech
+- local URL: http://127.0.0.1:8080 (preferred for local agents — immune to
+  tunnel flakiness)
+- GOMODEL_MASTER_KEY: from the Owner's shell env — NEVER stored in files,
+  commits, boards, or repos; dispatches may carry it, files never do
+- header: Authorization: Bearer $GOMODEL_MASTER_KEY
+- tunnel alternative (Owner's choice): frp self-hosted — frps on the Tencent
+  Lighthouse trial VM, frpc on the box (Chinese, open-source, Apache-2.0, no
+  third-party MITM)
+
 ** ROLE ATTACHMENT (EM only)
 
 - why roles work (evidence): roles improve output through division of labor +
@@ -146,8 +158,8 @@ the box.
 - body ranking for the task's environment-fit: shell access + persistence >
   workspace-only > chat-only; factor the agent's measured performance (tool
   reliability, startup cost) and the box's current load
-- the member id carries both: <api-model> @ <agent-platform> (e.g.
-  llama-3.3-70b-versatile @ OpenCode)
+- the member id carries both: <provider/model@agent> (e.g.
+  groq/qwen3.8-27b@opencode-local)
 - a brain on an incapable body = BENCH — a pair whose body cannot do the task's
   environment-fit is never staffed
 - one body for every brain is LAZY STAFFING and is rejected: bodies are spread
@@ -157,7 +169,7 @@ the box.
 - BODY SHAPES OUTPUT: the same brain on different bodies produces different
   work — agent capability is a ranking dimension, not an afterthought: tools
   available, harness defaults, context handling, edit reliability, how much of
-  the system prompt the agent honors. model@Goose and model@OpenCode are
+  the system prompt the agent honors. model@goose and model@opencode-local are
   DIFFERENT members with DIFFERENT ranks for the same task type; rank the pair
   you would actually dispatch, not the model in the abstract
 - task type change → re-check the BODY as well as the brain

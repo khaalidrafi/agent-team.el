@@ -14,7 +14,7 @@
   - outage 2026-10-20 15:00 +06: groq · opencode-free · cloudflare/@cf down;
     Qoder's built-in brain is the last local light.
 
-* Director of Engineering — qwen3.7-plus@qwen/web (restored; Lead no longer dual-hatted)
+* Director of Engineering — glm-5.3-flash@zai (restored; Lead no longer dual-hatted)
   - :last-dispatch: 1
   - duties: templates/ master prompt · TEAM UPDATEs · staffing adjudication · FR drafts · reviewer of last resort
   - FIRST JOB: review the Lead selection above. A qwen-family brain excluded its

@@ -119,6 +119,7 @@ jobs:
             -e GOMODEL_MASTER_KEY -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
             -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY -e TYPESAFE_API_KEY \
             python:3.12-alpine python /probe.py > /tmp/llmfisher/report.md
+          cat /tmp/llmfisher/report.md
           { echo "## llmfisher --fresh — working-models census ($(date -u '+%Y-%m-%d %H:%M UTC'))"
             echo ""
             echo "Keys travel as env vars into a --rm container; values are never printed. Raw table:"

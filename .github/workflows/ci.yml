@@ -1,14 +1,19 @@
 name: CI
 
 # Cloud CI is the Owner's P0: it is what keeps the team alive when the local
-# box goes off.  Three rules follow from that.  (1) CI must verify the same
+# box goes off.  Four rules follow from that.  (1) CI must verify the same
 # things we verify locally -- ert suite AND byte-compile, not one without the
 # other.  (2) CI must never fail for a reason unrelated to the code: every
 # network-facing step is guarded, so a missing secret or a dead endpoint is
 # reported and skipped instead of failing the run.  (3) The team must RUN
-# continuously from CI (Owner order, 2026-10-20): a schedule trigger turns
-# every run into a heartbeat -- green suite first, then seat-liveness probes
-# against the provider keys already staged as repo secrets.
+# CONTINUOUSLY, IN TURNS (Owner order 2026-10-20): the scheduled `turn` job
+# rotates the real-agent seats (model@agent pairs from
+# agent-team/AGENT-TEAM-MEMBERS.org) through one work segment per run, until
+# the OBJECTIVE in agent-team/TEAM-CONTROL.org is marked COMPLETE or the
+# Owner flips #+KILL-SWITCH: ON.  (4) A real agent, not a bare key: each
+# seat's harness (OpenCode / Goose) is installed in the runner and reaches
+# the brain directly by its provider key from repo secrets -- there is no
+# @actions body any more (Owner order 2026-10-20).
 #
 # Probes hit providers DIRECTLY. The GoModel gateway (ai.khalidrafi.tech) is
 # this laptop wearing a public hat: it answered HTTP 530 / CF error 1033 with
@@ -21,14 +26,20 @@ on:
   pull_request:
     branches: [ai/main]
   schedule:
-    # Heartbeat: 01:17 / 07:17 / 13:17 / 19:17 UTC. Off the top-of-hour rush;
-    # ~4 runs/day keeps a private repo far inside the free minutes tier.
-    - cron: '17 1,7,13,19 * * *'
+    # Two scheduled turns/day (09:17 / 21:17 UTC) keep a private repo well
+    # inside the free minutes tier; workflow_dispatch lets the Owner pulse
+    # extra turns on demand. Publishing the repo later unlocks unlimited
+    # minutes and a faster cadence.
+    - cron: '17 9 * * *'
+    - cron: '17 21 * * *'
   workflow_dispatch: {}
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: false
+
+permissions:
+  contents: write
 
 defaults:
   run:
@@ -81,10 +92,10 @@ jobs:
                 -H 'Content-Type: application/json' \
                 --data-binary @-
 
-  # Seat-liveness heartbeat (hiring/01 re-hire: CI-shifted roster). One real
-  # completion per accountable API seat, direct to the provider. Results land
-  # in the run summary; NOTHING here can fail the workflow -- a dead seat is
-  # an operational fact to read in the summary, never a red run.
+  # Seat-liveness heartbeat. One real completion per accountable API seat,
+  # direct to the provider. Results land in the run summary; NOTHING here can
+  # fail the workflow -- a dead seat is an operational fact to read in the
+  # summary, never a red run.
   probe:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: test
@@ -126,26 +137,26 @@ jobs:
             sleep 2   # space calls: bursts stress shared free tiers
           }
 
-          # Software Engineer + Release Engineer — groq/qwen3.8-27b (Apache-2.0,
-          # published caps 30 RPM / 200K tok/day)
-          probe "groq/qwen3.8-27b" \
-            "https://api.groq.com/openai/v1/chat/completions" \
-            "qwen/qwen3.8-27b" "$GROQ_API_KEY"
-
-          # Principal Engineer — openrouter/poolside/laguna-s-2.1:free (OpenMDW-1.1)
+          # Principal Engineer brain — poolside/laguna-s-2.1 (OpenMDW-1.1)
           probe "openrouter/poolside/laguna-s-2.1:free" \
             "https://openrouter.ai/api/v1/chat/completions" \
             "poolside/laguna-s-2.1:free" "$OPENROUTER_API_KEY"
 
-          # QA fallback lane — openrouter/nvidia/nemotron-3.5-lightning:free
-          probe "openrouter/nvidia/nemotron-3.5-lightning:free" \
-            "https://openrouter.ai/api/v1/chat/completions" \
-            "nvidia/nemotron-3.5-lightning:free" "$OPENROUTER_API_KEY"
+          # Software Engineer + Release Engineer brain — qwen3.8-27b
+          # (Apache-2.0, published caps 30 RPM / 200K tok/day)
+          probe "groq/qwen3.8-27b" \
+            "https://api.groq.com/openai/v1/chat/completions" \
+            "qwen/qwen3.8-27b" "$GROQ_API_KEY"
 
-          # QA Engineer — zai/glm-4.7-flash (MIT, free API tier)
+          # Quality Assurance Engineer brain — glm-4.7-flash (MIT, free tier)
           probe "zai/glm-4.7-flash" \
             "https://api.z.ai/api/paas/v4/chat/completions" \
             "glm-4.7-flash" "$ZAI_API_KEY"
+
+          # QA fallback lane — nemotron-3.5-lightning:free
+          probe "openrouter/nvidia/nemotron-3.5-lightning:free" \
+            "https://openrouter.ai/api/v1/chat/completions" \
+            "nvidia/nemotron-3.5-lightning:free" "$OPENROUTER_API_KEY"
 
           # INFORMATIONAL ONLY: the Owner's gateway (tunnel). Expected down
           # (530) whenever the box is off. Never a seat dependency.
@@ -175,3 +186,207 @@ jobs:
             | curl -sS -f -X POST "$LARK_WEBHOOK_URL" \
                 -H 'Content-Type: application/json' \
                 --data-binary @-
+
+  # ONE TURN OF WORK (Owner order 2026-10-20). Reads agent-team/TEAM-CONTROL.org:
+  #   #+KILL-SWITCH: ON        -> stop everything, say so in Lark, exit green.
+  #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, say so in Lark, exit green.
+  #   #+OBJECTIVE: empty       -> no work defined; suite stays green, skip.
+  #   otherwise                -> install the on-turn member's REAL agent
+  #                               harness, work one segment toward the
+  #                               objective, advance the rotation, commit.
+  # The turn NEVER merges to ai/main application code (merge gate is the
+  # Lead's, on a green suite + verification pass) and NEVER fails the run on
+  # a seat problem: a dead seat logs BLOCKED and the rotation advances.
+  turn:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [test, probe]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      LARK_WEBHOOK_URL: ${{ secrets.LARK_WEBHOOK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read control file (kill switch / objective / turn)
+        id: control
+        run: |
+          CTL=agent-team/TEAM-CONTROL.org
+          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1)
+          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1)
+          TURN=$(grep -oP '^\#\+TURN:\s*\K.*' "$CTL" | head -1 | xargs)
+          echo "kill=${KILL:-OFF} objstate=${OBJSTATE:-OPEN} turn='${TURN}'"
+          if [ "${KILL:-OFF}" = "ON" ]; then
+            echo "mode=killed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "${OBJSTATE:-OPEN}" = "COMPLETE" ]; then
+            echo "mode=complete" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Placeholder objective = nothing specified by the Owner yet.
+          if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
+            echo "mode=no-objective" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "mode=work" >> "$GITHUB_OUTPUT"
+          echo "objective=$OBJECTIVE" >> "$GITHUB_OUTPUT"
+          # Turn pointer: NONE -> head of the rotation.
+          case "$TURN" in
+            openrouter/poolside/laguna-s-2.1:free@opencode*) NEXT_SEAT=principal-engineer ;;
+            groq/qwen3.8-27b@goose*Software*)                NEXT_SEAT=software-engineer ;;
+            zai/glm-4.7-flash@opencode*)                     NEXT_SEAT=quality-assurance-engineer ;;
+            groq/qwen3.8-27b@goose*Release*)                 NEXT_SEAT=release-engineer ;;
+            *)                                               NEXT_SEAT=principal-engineer ;;
+          esac
+          echo "seat=$NEXT_SEAT" >> "$GITHUB_OUTPUT"
+
+      - name: Stop notice (kill switch / complete / no objective)
+        if: steps.control.outputs.mode != 'work'
+        run: |
+          MODE="${{ steps.control.outputs.mode }}"
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          case "$MODE" in
+            killed)       MSG="TEAM STOPPED BY KILL SWITCH — no turns run until #+KILL-SWITCH: OFF" ;;
+            complete)     MSG="OBJECTIVE COMPLETE — team standing down (set #+OBJECTIVE-STATE: OPEN with a new objective to restart)" ;;
+            no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
+          esac
+          echo "$MSG" >> "$SUMMARY"
+          if [ -n "$LARK_WEBHOOK_URL" ]; then
+            jq -n --arg t "Agent Team: $MSG" '{msg_type:"text",content:{text:$t}}' \
+              | curl -sS -m 20 -f -X POST "$LARK_WEBHOOK_URL" \
+                  -H 'Content-Type: application/json' --data-binary @- || true
+          fi
+
+      - name: Install agent harness (OpenCode)
+        if: steps.control.outputs.mode == 'work' && contains(fromJSON('["principal-engineer","quality-assurance-engineer"]'), steps.control.outputs.seat)
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
+          opencode --version || true
+
+      - name: Install agent harness (Goose)
+        if: steps.control.outputs.mode == 'work' && contains(fromJSON('["software-engineer","release-engineer"]'), steps.control.outputs.seat)
+        run: |
+          curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          goose --version || true
+
+      - name: Prepare git identity
+        if: steps.control.outputs.mode == 'work'
+        run: |
+          git config user.name "agent-team-ci"
+          git config user.email "agent-team-ci@users.noreply.github.com"
+          git remote set-url --push origin \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+
+      - name: Run the turn (one segment, headless agent)
+        if: steps.control.outputs.mode == 'work'
+        run: |
+          SEAT="${{ steps.control.outputs.seat }}"
+          OBJECTIVE="${{ steps.control.outputs.objective }}"
+          BOARD=agent-team/AGENT-TEAM-TODOS.org
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          TOP=$(grep -E '^\*\* (TODO|PROGRESS|BLOCKED)' "$BOARD" | head -3 | sed 's/^\*\* //' || true)
+          BRANCH="ai/turn-$(date -u +%Y%m%d-%H%M)"
+          git checkout -b "$BRANCH"
+
+          BRIEF="You are the on-turn member of the Agent Team, seat ${SEAT}.
+          TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
+          Law: templates/AGENT-TEAM-COMMON.org. Board: agent-team/AGENT-TEAM-TODOS.org.
+          Roster: agent-team/AGENT-TEAM-MEMBERS.org. Repo facts: README.org, STATE.org.
+          TOP BOARD ITEMS:
+          ${TOP}
+          WORK ONE SEGMENT (time-boxed, max 3 self-attempts per MEMBER LAWS):
+          1. Read the board and templates/AGENT-TEAM-COMMON.org.
+          2. Pick the oldest open item that best serves the TEAM OBJECTIVE and
+             matches your role's duties; if none matches, do the smallest
+             verifiable improvement that does (docs, tests, CI repair).
+          3. Do the work IN THIS BRANCH. Small, verifiable, committed.
+          4. Append a :LOGBOOK: note to the board item: what changed + evidence
+             (file:line, commit sha). Never mark DONE (that is the Lead's gate).
+          5. Commit your changes on this branch with message 'turn(${SEAT}): ...'.
+          6. Do NOT push to ai/main; leave the branch for the Lead's merge gate.
+          Boundaries: no secrets in files or commits; no spend; no destructive
+          actions; stay in scope of the chosen item."
+
+          case "$SEAT" in
+            principal-engineer)
+              export OPENROUTER_API_KEY
+              opencode run --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF" \
+                && TURN_RESULT="opencode run OK" \
+                || TURN_RESULT="BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
+              ;;
+            quality-assurance-engineer)
+              export ZAI_API_KEY
+              opencode run --model "zai/glm-4.7-flash" "$BRIEF" \
+                && TURN_RESULT="opencode run OK" \
+                || TURN_RESULT="BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
+              ;;
+            software-engineer)
+              export GROQ_API_KEY
+              export GOOSE_PROVIDER="groq"
+              export GOOSE_MODEL="qwen/qwen3.8-27b"
+              goose run --no-session -t "$BRIEF" \
+                && TURN_RESULT="goose run OK" \
+                || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
+              ;;
+            release-engineer)
+              export GROQ_API_KEY
+              export GOOSE_PROVIDER="groq"
+              export GOOSE_MODEL="qwen/qwen3.8-27b"
+              goose run --no-session -t "$BRIEF" \
+                && TURN_RESULT="goose run OK" \
+                || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
+              ;;
+          esac
+
+          echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"
+          echo "" >> "$SUMMARY"
+          echo "objective: ${OBJECTIVE}" >> "$SUMMARY"
+          echo "branch: ${BRANCH}" >> "$SUMMARY"
+          echo "result: ${TURN_RESULT}" >> "$SUMMARY"
+          echo "TURN_RESULT=$TURN_RESULT" >> "$GITHUB_ENV"
+          echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
+          echo "TURN_BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      # The agent's branch is pushed for the Lead's merge gate; ONLY the
+      # control-file pointer lands on ai/main, so an agent can never merge
+      # application code past the gate.
+      - name: Push work branch, advance rotation, commit control file
+        if: steps.control.outputs.mode == 'work'
+        run: |
+          git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
+          CTL=agent-team/TEAM-CONTROL.org
+          case "${{ steps.control.outputs.seat }}" in
+            principal-engineer)          NEXT="groq/qwen3.8-27b@goose (Software Engineer)" ;;
+            software-engineer)           NEXT="zai/glm-4.7-flash@opencode (Quality Assurance Engineer)" ;;
+            quality-assurance-engineer)  NEXT="groq/qwen3.8-27b@goose (Release Engineer)" ;;
+            release-engineer)            NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
+          esac
+          git checkout -f ai/main
+          sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
+          git add "$CTL"
+          git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
+            -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
+          git push origin "ai/main" || echo "::warning::control push failed"
+
+      - name: Notify Lark (turn result)
+        if: steps.control.outputs.mode == 'work' && always()
+        run: |
+          if [ -z "$LARK_WEBHOOK_URL" ]; then
+            echo "::notice::LARK_WEBHOOK_URL not set - skipping Lark notify"
+            exit 0
+          fi
+          MSG=$(printf 'Agent Team turn: %s — %s (branch %s) · https://github.com/%s/actions/runs/%s' \
+                "${TURN_SEAT:-unknown}" "${TURN_RESULT:-unknown}" \
+                "${TURN_BRANCH:-none}" "${{ github.repository }}" "${{ github.run_id }}")
+          jq -n --arg t "$MSG" '{msg_type:"text",content:{text:$t}}' \
+            | curl -sS -m 20 -f -X POST "$LARK_WEBHOOK_URL" \
+                -H 'Content-Type: application/json' --data-binary @- || true

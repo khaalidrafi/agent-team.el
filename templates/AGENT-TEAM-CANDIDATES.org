@@ -149,7 +149,9 @@
     omp · pi · cursor · copilot · codebuddy. Dies with the box. Zero heavy
     builds; no candidate's weights run usefully here.
   - CI — GitHub Actions + repo secrets (Owner P0). Survives the box; must be
-    API-reachable by key.
+    API-reachable by key. Seats are REAL agent harnesses (OpenCode, Goose)
+    installed in the runner — never a bare @actions body (Owner order
+    2026-10-20: "no @actions, choose a real agent ... model + agent pair").
   - WEB — chat UI the Owner pastes into: chat.qwen.ai · kimi.com · chat.z.ai ·
     WorkBuddy.ai · MiniMax Agent.
 

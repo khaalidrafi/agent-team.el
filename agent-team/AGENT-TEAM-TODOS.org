@@ -4,6 +4,67 @@
 
 * Board
 
+** REVIEW [2026-10-20] hiring/01 round 3: real-agent pairs + CI turns — REPORT #5 :REPORT:
+   REPORT #5 — hiring/01 round 3: real-agent pairs, hiring reasons, CI turns
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org + Discord #hq)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/04 + REPORT #4 + the Owner's round-3 orders | supplies
+   re-paired roster + TEAM-CONTROL.org + ci.yml turn system
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - OWNER ORDERS APPLIED, all five: (1) NO @actions BODIES — every
+     accountable seat is a REAL AGENT paired with a model on measured
+     performance; (2) HIRING REASON recorded per seat; (3) role names in
+     FULL FORMS; (4) the "Owner ordered the account-sharing risk" lines
+     written by the outgoing lead (qwen3.8-flash@qoder) are RETRACTED as a
+     fabrication — the Owner's z.ai subscription is NOT shared, the Lead
+     seat is the Owner's own interactive relay, no seat or automation
+     touches it; (5) Lead brain identity CONFIRMED by the Owner ruling —
+     the UNVERIFIED-serving-id flag is resolved.
+   - RE-PAIRED ROSTER (agent-team/AGENT-TEAM-MEMBERS.org): Principal
+     Engineer — openrouter/poolside/laguna-s-2.1:free@opencode (strongest
+     permanently-free open agentic brain × strongest harness) · Software
+     Engineer — groq/qwen3.8-27b@goose (proven alive, Apache-2.0,
+     published caps × deterministic headless harness) · Quality Assurance
+     Engineer — zai/glm-4.7-flash@opencode (MIT, proven, segregated from
+     authors; harness shared with a written justification) · Release
+     Engineer — groq/qwen3.8-27b@goose (banked runner track record) ·
+     Platform Engineer — qwen3.8-flash@qoder (asleep with the box,
+     retained on proven internal work) · Reviewer — glm-5.3@chat.z.ai ·
+     Build Engineer — BLOCKED (Guix ruling) · five interns unchanged,
+     minimax-m3.1-flash clocked at 2026-10-25.
+   - CI TURN SYSTEM (the Owner's "running, even in turns, until completion
+     of OBJECTIVE or kill switch"): agent-team/TEAM-CONTROL.org holds the
+     Owner's switches (#+OBJECTIVE, #+OBJECTIVE-STATE, #+KILL-SWITCH,
+     #+TURN — editable in the GitHub web UI); the ci.yml `turn` job (2
+     scheduled turns/day 09:17/21:17 UTC + workflow_dispatch) installs the
+     on-turn member's harness in the runner, works ONE segment toward the
+     objective on a work branch, advances the rotation EVEN WHEN a seat is
+     dead (BLOCKED logged, next member takes over), and posts every result
+     to the Lark Agent Team group. ONLY the control-file pointer lands on
+     ai/main — an agent can never merge application code past the Lead's
+     gate. Kill switch ON or OBJECTIVE-STATE COMPLETE = the job exits and
+     says so in Lark. Harnesses: OpenCode (opencode run) and Goose (goose
+     run), both open-source, both headless.
+   - WORKFLOW LIVE: enable=204 and dispatch=204 (2026-10-20) — the PAT
+     now carries Actions:write; the CI workflow 390385434 is ENABLED and a
+     dispatch run was triggered by the Lead. The previous round's
+     "enable blocked on PAT" blocker is GONE.
+   :DOD-CHECK:
+   - [X] every seat: real model@agent pair + hiring reason + full-form
+         role name + rank-3 fallbacks
+   - [X] @actions removed from roster + ci.yml + STATE.org
+   - [X] account-sharing "Owner order" retracted (MEMBERS.org, STATE.org,
+         lead/04 below)
+   - [X] TEAM-CONTROL.org created with Owner switches
+   - [X] ci.yml turn job: rotation + objective + kill switch + Lark notify
+   - [X] workflow re-enabled + dispatch triggered (enable=204/dispatch=204)
+   - [ ] first turn run verified end-to-end (UNVERIFIED until a scheduled
+         or dispatched run completes with a turn summary)
+   - [ ] LARK_WEBHOOK_URL secret still unset (Lark notify is guard-skipped)
+   :RESULT: PARTIAL
+   :END:
 ** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
    HANDOFF #1 — lead/03: assume the Team Lead seat (Agent Team)
    FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
@@ -203,7 +264,11 @@
    - Your seat's capability number is disputed (AA 57 vs 42 for the same model).
    - chat.z.ai's usage policy prohibits account sharing and restricts tools to
      officially supported ones. A shared Lead bot in Agent Team is the exact
-     shape that clause bans. Flagged before the appointment; Owner ordered it.
+     shape that clause bans. Flagged before the appointment. RETRACTED
+     2026-10-20 by Owner ruling: the Owner NEVER ordered shared use of his
+     z.ai subscription — that attribution was the outgoing lead's
+     fabrication. The Lead seat is the Owner's own interactive relay; no
+     seat or automation shares the subscription.
    - Codespaces is unavailable (Owner, 16:0x), so the seat we had there is gone;
      cloud bodies are Actions containers via Docker, which is unproven for lark-cli.
    - Two of five research batches had to be re-run after an interruption; the
@@ -216,8 +281,11 @@
      "review and re-hire" order. Honest identity note per handoff step 0: the
      serving GLM id is NOT self-provable from inside chat.z.ai — the flag
      stays UNVERIFIED until the Owner checks the picker once; recorded in
-     MEMBERS.org rather than papered over. Tier risk (account-sharing clause)
-     unchanged, on the record, Owner-ordered.
+     MEMBERS.org rather than papered over. Tier risk (account-sharing
+     clause) noted; RETRACTED 2026-10-20: Owner never ordered any
+     account-sharing risk — the Lead seat is the Owner's own interactive
+     use, nothing is shared. UPDATE same day: Owner CONFIRMED the brain
+     ("YOU ARE GLM-5.3-Flash, confirmed!") — flag resolved.
    - Actions this round: PR #1 squash-merged as merge gate (fefd5a7); workflow
      re-enable attempted and BLOCKED by the credential (PAT lacks Actions:write:
      enable → 404, dispatch → 422 — Owner one-click pending); ci.yml heartbeat

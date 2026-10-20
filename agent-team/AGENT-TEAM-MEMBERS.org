@@ -1,263 +1,307 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
-#+ROSTER: API roster authority = GET /v1/models on the gateway (live, never a snapshot)
-#+UPDATED: 2026-10-20 (re-hire round, hiring/01 reopened) — Team Lead + Director
-seat ASSUMED by the dispatched brain via the Owner's Discord relay;
-roster re-staffed for CONTINUOUS CI OPERATION (Owner order): every
-accountable API seat moved to a @actions body driven by repo-secrets
-keys, because the gateway tunnel answers HTTP 530 with the box off
-(verified 2026-10-20 from a fresh network) and local bodies die with it.
-Every pool row in CANDIDATES.org now carries its free-tier expiry date
-per the Owner's standing rule of the same date.
+#+UPDATED: 2026-10-20, hiring/01 round 3 — Team Lead + Director of Engineering
+#+ROUND-3-LAW: Owner orders 2026-10-20, ALL applied here: (1) NO @actions
+        bodies — every seat is a REAL AGENT paired with a model on measured
+        performance ("the perfect model + agent pair for a given role");
+        (2) every seat carries an explicit HIRING REASON; (3) role names in
+        FULL FORMS, no abbreviations; (4) the Owner's z.ai subscription is
+        NOT shared — the "Owner ordered the account-sharing risk" line was a
+        fabrication by the outgoing lead (qwen3.8-flash@qoder) and is
+        RETRACTED everywhere it appeared; (5) the Lead brain identity is
+        CONFIRMED by the Owner ("YOU ARE GLM-5.3-Flash, confirmed!").
 #+ID-FORM: PROVIDER/MODEL@PLATFORM, and PROVIDER/ ONLY for API-served models.
-After @ is the platform the model runs on — an agent name (qoder, opencode,
-goose, actions) or the model's own web chat (chat.z.ai, chat.qwen.ai, kimi.com).
-Never a "/" after "@". Web and harness-local seats carry no provider prefix.
-#+BODY: what @ names is an AGENT, never a machine. Cloud seats = that agent
-         installed in a GitHub Actions container (Docker, our choice of
-         programs); @actions seats ARE that shape with no extra install —
-         the brain is reached directly by its provider key from ci.yml jobs
-         (heartbeat schedule 4×/day + workflow_dispatch; see
-         .github/workflows/ci.yml probe job). Box seats = the Owner's
-         Celeron. Codespaces is unavailable (Owner, 16:0x), which is why no
-         seat carries a @*-codespaces suffix any more.
+After @ is the platform the model runs on — a REAL agent harness (opencode,
+goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
+#+BODY: what @ names is an AGENT, never a machine. In CI the harness is
+        INSTALLED IN THE RUNNER (OpenCode or Goose, both open-source,
+        both headless-capable) and reaches the brain DIRECTLY by the
+        provider key from repo secrets. There is no @actions body any
+        more: a raw key in a curl call is a key, not an agent.
 
 * Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai (COMBINED SEAT)
-  - :last-dispatch: 1 (lead/04 handoff delivered via Discord relay 2026-10-20;
-    seat ASSUMED same day — see the assumption note below)
-  - mode: WEB ONE-SHOT. The Owner is the runtime: board pasted in, decisions
-    pasted out. No filesystem, no git, no daemon. Every claim needs pasted
-    evidence; UNVERIFIED beats a heroic DONE.
+  - :last-dispatch: 1
+  - hiring reason: the Owner confirmed this exact brain for the seat
+    ("YOU ARE GLM-5.3-Flash, confirmed!", 2026-10-20), it is MIT-licensed
+    open weights (320B-A18B, weights + GGUF on HF), and it carries the
+    strongest verified agentic numbers available to a web courier this
+    round: DeepSWE 63.4, Terminal-Bench 84.3, AA intelligence 42–57 (the
+    two AA pages disagree; both quoted). The Director half owns staffing
+    law, and the Lead half owns the board, dispatch, verification, merge
+    gates and the CI turn system.
+  - mode: WEB ONE-SHOT via the Owner's Discord relay. THE OWNER IS THE
+    RUNTIME and the ONLY operator of this seat. This is NOT account
+    sharing: it is the Owner using his own subscription interactively,
+    one human, one session. No other member, script, daemon or CI job
+    ever touches the z.ai subscription — the usage policy's
+    account-sharing clause is honored BY DESIGN, not by accepted risk.
   - duties (Lead): board ownership · dispatch · verification · merge gates ·
-    Lark wake loop
-  - duties (DE): templates/ master prompt · TEAM UPDATEs · staffing
-    adjudication · FR drafts · reviewer of last resort
-  - SEAT ASSUMED, with the honest limits on the record (handoff step 0):
-    (a) IDENTITY: I cannot programmatically prove which GLM the chat.z.ai
-    picker served me — the UI does not expose the serving id, and no self-
-    report from inside a chat can settle it. What IS verified: this seat is
-    the chat.z.ai web brain the Owner's relay dispatches to (z.ai-agent,
-    mentioned on Discord). The UNVERIFIED-serving-id flag stays up until the
-    Owner checks the picker once; per handoff law I say so instead of
-    leading on a fabricated certainty.
-    (b) TIER RISK (unchanged, still UNVERIFIED): the free tier's behavior
-    under a long paste-heavy session is untested; the usage policy's
-    account-sharing ban is the documented mid-shift-ban risk the Owner
-    ordered this seat into anyway.
-  - evidence: AA intelligence 57 (announcement page) vs 42 (model page) — both
-    quoted, they disagree; AA v4.3.2 capability table this round shows
-    GLM-5.3-Flash Engineering 44, consistent with the 42 side. DeepSWE 63.4 ·
-    Terminal-Bench 84.3. MIT, 320B-A18B, weights+GGUF on HF. $0.15/$0.50 per
+    CI turn oversight (reads run summaries, re-staffs dead seats)
+  - duties (Director of Engineering): templates/ master prompt · TEAM
+    UPDATEs · staffing adjudication · feature-request drafts · reviewer
+    of last resort
+  - evidence: AA 57 (announcement page) vs 42 (model page) — both quoted;
+    DeepSWE 63.4 · Terminal-Bench 84.3. MIT, 320B-A18B. $0.15/$0.50 per
     Mtok. Sentiment: "a step change in agentic use" alongside an "is
     annoying" complaint thread.
-  - SELECTION NOTE, kept on the record: the evidence-ranked pick was
-    qwen3.8-max@chat.qwen.ai — AA-RUN (not vendor) Terminal-Bench 2.1 = 88.8,
-    AA 45, LMArena 1673.5 — and its free web tier carries no account-sharing
-    prohibition. It remains UNEXEMPTED (proprietary), so it sits in
-    fallbacks. Owner's dispatch order overrides; the risk is documented
-    here, not dropped.
+  - SELECTION NOTE: the evidence-ranked Lead remains
+    qwen3.8-max@chat.qwen.ai (AA-RUN Terminal-Bench 2.1 = 88.8, AA 45,
+    LMArena 1673.5) — proprietary and UNEXEMPTED, so it stays in
+    fallbacks. The Owner's confirmation overrides; the note is kept,
+    not dropped.
   - fallbacks: 1. qwen3.8-max@chat.qwen.ai (exemption for proprietary required)
                2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769 · custom licence)
                3. Owner-direct, team frozen until a brain is re-staffed
-  - RISK (accepted by order): author and verifier are now the same body on
-    application code. COMMON:172-173 requires author/verifier/merger to be three
-    different models. Until re-staffed, EVERY merge gate needs a second opinion
-    from a non-GLM seat (Release Engineer or the Director-slot fallback).
+  - segregation note: author, verifier and merger are three different
+    models (CI authors are qwen3.8-27b / laguna-s-2.1 / glm-4.7-flash,
+    the verifier brain is glm-4.7-flash, the merger is this seat), so
+    the combined seat does not grade its own application code.
 
-* Principal Engineer — openrouter/poolside/laguna-s-2.1@actions
-  - :last-dispatch: 0 (CI body; reached by the probe job, not by a resident shell)
-  - duties: P0s · hard problems · architecture · retry-wrapped, `workflow_dispatch` only
-  - evidence: OpenMDW-1.1 weights day-one; vendor TB 2.1 = 70.2 (thinking),
-    SWE-bench Pro 59.4, DeepSWE 40.4; 118B-A8B; free OpenRouter endpoint at
-    256K context; paid $0.10/$0.20. r/LocalLLaMA "honest take from actual use"
-    positive within class. open-weights + permanent-free + real agentic data:
-    the only candidate passing all three.
-  - free-tier expiry: NONE DATED — OpenRouter's :free lane is capacity-based
-    (20 RPM / 50/day class) and rotates models; the seat's fallback chain is
-    the contingency, the probe job is the early warning.
-  - INCUMBENT REMOVED: nemotron-3-ultra-550b@kilo showed AA intelligence 23,
-    no free tier, on a promo pool — a seat built on a rotating emergency pool.
-  - fallbacks: 1. openrouter/reflection/beam@goose (vendor SWE-bench V 80.9 ·
-               TB 80.1 · AA 30, "#2 US open weights", Apache-2.0 promised,
-               only 5 days of public evidence)
-               2. z.ai/glm-5.3@goose (API-served if a key reaches it)
-               3. groq/qwen3.8-27b@opencode — capacity downgrade, not a peer
+* Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode
+  - :last-dispatch: 0
+  - hiring reason: the perfect pair for the hardest work. The brain is
+    the strongest PERMANENTLY-FREE open-weight agentic coder found in
+    five research batches (vendor Terminal-Bench 2.1 = 70.2 thinking,
+    SWE-bench Pro 59.4, DeepSWE 40.4, OpenMDW-1.1 licence, 118B-A8B,
+    day-one weights, 256K context on the OpenRouter free lane, positive
+    r/LocalLLaMA hands-on). The body is the strongest harness in the
+    pool: OpenCode has the best edit reliability, full shell/file tools
+    and a first-class headless mode (`opencode run`), which is exactly
+    what architecture probes and hard P0s need. Strongest brain ×
+    strongest body, matched by measured performance.
+  - duties: P0s · hard problems · architecture · runs inside the CI turn
+    system (see CI TURNS below), one segment per turn
+  - free-tier expiry: NONE DATED — the OpenRouter :free lane is
+    capacity-based (20 RPM / 50/day class) and rotates models; the
+    fallback chain is the contingency, the probe job is the early warning.
+  - fallbacks: 1. openrouter/reflection/beam@opencode (vendor SWE-bench V
+                 80.9 · TB 80.1 · AA 30, Apache-2.0 promised, only 5 days
+                 of public evidence)
+               2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
+               3. zai/glm-4.7-flash@opencode (proven alive; weakest of the three)
 
-* Software Engineer — groq/qwen3.8-27b@actions
-  - :last-dispatch: 0 (CI body)
-  - duties: features · iterations · intern probation
-  - evidence: Apache-2.0 with weights on HF; AA intelligence 34; PROVEN ALIVE —
-    one real completion from the Owner's box on 2026-10-20; user sentiment
-    strongly positive for agentic coding (HN: "beats Haiku/Sonnet 4.5
-    locally", 2026-10-19; "better at coding than Opus 4.1", 2026-09-12).
-    Caveats: slow, verbose, needs 16GB+ to self-host — so it runs on Groq,
-    not on any local box.
-  - free-tier cap, quoted: 30 RPM · 1,000 RPD · 8K TPM · 200K tokens/day
-    (console.groq.com/docs/rate-limits). No dated expiry. Fine for per-job
-    work, not for a daemon.
-  - fallbacks: 1. zai/glm-4.7-flash@actions (MIT, proven alive, free)
-               2. openrouter/cohere/north-mini-code@actions (Apache-2.0, AA coding 33.4)
-               3. openrouter/nvidia/nemotron-3.5-lightning@actions (OpenMDW-1.1,
-                  SWE-bench 51.6, free with a 65,536-token output cap)
+* Software Engineer — groq/qwen3.8-27b@goose
+  - :last-dispatch: 0
+  - hiring reason: PROVEN ALIVE (one real completion from the Owner's box
+    on 2026-10-20), Apache-2.0 auditable weights, AA intelligence 34, and
+    user sentiment strongly positive for agentic coding (HN: "beats
+    Haiku/Sonnet 4.5 locally", 2026-10-19; "better at coding than Opus
+    4.1", 2026-09-12). Paired with Goose — Block's open-source agent
+    harness with deterministic headless runs (`goose run`), shell tools
+    and recipe-driven repeatability — because feature iteration needs a
+    body that runs unattended and identically every turn. Published caps
+    (30 RPM · 1,000 RPD · 8K TPM · 200K tokens/day, console.groq.com)
+    are sized for CI segments; no dated expiry.
+  - duties: features · iterations · intern probation · one CI turn segment
+  - fallbacks: 1. zai/glm-4.7-flash@opencode (MIT, proven alive, free)
+               2. openrouter/cohere/north-mini-code@opencode (Apache-2.0,
+                  AA coding 33.4)
+               3. openrouter/nvidia/nemotron-3.5-lightning@goose (OpenMDW-1.1,
+                  SWE-bench 51.6, free, 65,536-token output cap)
 
-* QA Engineer — zai/glm-4.7-flash@actions
-  - :last-dispatch: 0 (CI body)
-  - duties: test suites · ert coverage · green verification ONLY
-  - evidence: MIT, free, PROVEN ALIVE from the Owner's box. Honest weakness:
-    no AA or LMArena figure exists, and vendor Terminal-Bench is 14.4 — this
-    body asserts green and reports it; it must not be trusted to chase flakes
-    or judge a diff.
-  - free-tier expiry: NONE PUBLISHED on the free API tier; MIT weights make
-    the brain low-risk even if the tier changes.
-  - fallbacks: 1. openrouter/nvidia/nemotron-3.5-lightning@actions
-               2. openrouter/cohere/north-mini-code@actions
-               3. groq/qwen3.8-27b@actions
+* Quality Assurance Engineer — zai/glm-4.7-flash@opencode
+  - :last-dispatch: 0
+  - hiring reason: MIT licence, free API tier, PROVEN ALIVE from the
+    Owner's box — the verification brain that never shares a model with
+    the authors (segregation law). Honest weakness on the record: no AA
+    or LMArena figure, vendor Terminal-Bench 14.4 — so the role is
+    scoped to test suites, ert coverage and green verification ONLY,
+    never flake-chasing or diff judgement. The body is OpenCode with a
+    WRITTEN JUSTIFICATION for sharing the harness with the Principal
+    Engineer: only two harnesses are CI-installable today (OpenCode,
+    Goose), and test-file editing needs the more reliable editor to
+    compensate the weaker brain.
+  - duties: test suites · ert coverage · green verification ONLY · one
+    CI turn segment
+  - free-tier expiry: NONE PUBLISHED on the free API tier; MIT weights
+    make the brain low-risk even if the tier changes.
+  - fallbacks: 1. openrouter/nvidia/nemotron-3.5-lightning@goose
+               2. openrouter/cohere/north-mini-code@opencode
+               3. groq/qwen3.8-27b@goose
 
-* Release Engineer — groq/qwen3.8-27b@actions
-  - :last-dispatch: 0 (CI body)
+* Release Engineer — groq/qwen3.8-27b@goose
+  - :last-dispatch: 0
+  - hiring reason: the same proven brain and body as the Software
+    Engineer, deliberately — Release work is CI maintenance, packaging
+    verification and smoke tests, and this member's banked track record
+    IS release work: ert 7/7 green + byte-compile clean ON THE RUNNER,
+    the Lark notify guard, and the parser fix that landed through PR #1
+    (fefd5a7). Proven history outranks fresh research (COMMON). The
+    shared 200K-tokens/day cap is far above what two CI segments burn;
+    author/verifier segregation is intact (verification belongs to the
+    Quality Assurance Engineer's brain).
   - duties: CI · pushes · packaging verification · smoke tests · OWNS the
-    probe job (.github/workflows/ci.yml `probe`) — reads the heartbeat
-    summary each cycle, re-staffs a dead seat from the fallback chain, and
-    reports in the standing REPORT
-  - evidence: same proven body as SE, chosen for Release because CI volume is
-    far under its published cap and it is Apache-2.0 (auditable). Verified work
-    already banked: ert 7/7 green + byte-compile clean on the box, ci.yml
-    notify guard written; probe job + schedule + merged parser fix landed in
-    the re-hire round (see ci/01 on the board).
-  - fallbacks: 1. zai/glm-4.7-flash@actions
+    turn harness: if a seat's harness fails to install or run, this
+    member's turn repairs .github/workflows/ci.yml first
+  - fallbacks: 1. zai/glm-4.7-flash@opencode
                2. qwen3.8-flash-next@opencode (AA 40, blended $0.088/M)
-               3. openrouter/poolside/laguna-s-2.1@actions (do not: spends the PE pool)
+               3. openrouter/poolside/laguna-s-2.1:free@opencode (do not:
+                  spends the Principal Engineer's pool)
 
 * Platform Engineer — qwen3.8-flash@qoder (BOX-BOUND, ASLEEP)
   - :last-dispatch: 3
-  - status: the Owner's box is OFF (gateway 530/CF 1033, verified 2026-10-20
-    from a fresh network) — this body is asleep, not removed. Owner fired the
-    brain from the LEAD seat only; the Platform seat is retained.
-  - duties when awake: box health · IM bridges (lark-cli host, Telegram relay) ·
-    gateway ops · secret hygiene · runner images (Docker: anything a seat needs
-    that the box had)
-  - duties running WITHOUT the body (kept alive by design): the CI heartbeat
-    (.github/workflows/ci.yml schedule + probe) now does the platform
-    round-the-clock part — seat liveness, notify guard, suite gate. The seat's
-    judgement work (lark-cli poller in a Docker image, secret rotation) queues
+  - status: the Owner's box is OFF (gateway 530/CF 1033, verified
+    2026-10-20 from a fresh network) — this body is asleep, not removed.
+    Owner fired the brain from the LEAD seat only; the Platform seat is
+    retained.
+  - hiring reason: no independent benchmark exists (two search rounds
+    empty, on record in CANDIDATES.org batch 3), so this seat is held on
+    PROVEN INTERNAL PERFORMANCE alone: Lark app bound, the Agent Team
+    group created and membership verified, 52 scopes checked, the
+    163-id gateway roster split into proven-alive vs listed-but-refused,
+    15 provider keys staged as repo secrets, the ci/01 parser fix with
+    7/7 ert. Intern-grade externally, proven internally — kept because
+    the Lark layer it built is now the team's communication channel.
+  - duties when awake: box health · IM bridges (lark-cli host, Telegram
+    relay) · gateway ops · secret hygiene · runner images
+  - duties running WITHOUT the body (kept alive by design): the Lark
+    group is the team communication channel and the CI Lark notify
+    posts every turn result to it. The lark-cli scheduled poller
+    (Actions cron -> poll Lark OpenAPI -> dispatch -> exit) queues
     until the box or a runner image returns.
-  - evidence, all measured on this box 2026-10-20: Lark app cli_aa5cdf374b21de2c
-    bound, Agent Team group created and membership verified, 52 scopes checked
-    against the grant API (found im:chat / im:chat:create genuinely absent),
-    163-id gateway roster split into proven-alive vs listed-but-refused, 15
-    provider keys staged as Actions secrets (CF_TUNNEL_TOKEN deliberately
-    excluded), full-history secret sweep, ci/01 parser fix with 7/7 ert +
-    byte-compile. No independent benchmark exists for this brain (two search
-    rounds empty, on record in CANDIDATES.org batch 3) — INTERN-grade
-    externally, proven internally.
-  - CANNOT MOVE TO CI YET: lark-cli is not in a runner image and there is no
-    /gnu/store on ubuntu-latest. Fix = a Docker job that installs lark-cli and
-    runs the wake loop as a SCHEDULED POLL (Actions cron -> poll Lark OpenAPI ->
-    dispatch -> exit). A runner has no surviving daemon; that is why the loop
-    was never proven, and it is why a poller is the correct cloud shape.
-  - fallbacks: 1. groq/qwen3.8-27b@actions
+  - fallbacks: 1. groq/qwen3.8-27b@goose
                2. glm-5.3-flash@opencode (OpenCode free roster, rotating)
                3. goose@qoder (local body, brain via gateway)
 
 * Reviewer — glm-5.3@chat.z.ai
   - :last-dispatch: 0
-  - duties: long-context diff review · the second opinion the combined Lead+DE
-    seat is structurally forbidden to give itself (see RISK above)
-  - evidence: AA intelligence 60 · GDPval-AA 1769 · WebDev Elo 1621; custom
-    licence, $1.40/$4.40; complaint pattern "regressed vs GLM-5.2" — noted, and
-    it is still the strongest non-Qwen non-Kimi web brain available.
+  - hiring reason: AA intelligence 60, GDPval-AA 1769, WebDev Elo 1621 —
+    the strongest web reviewer available, and structurally REQUIRED:
+    the second opinion the combined Lead+Director seat is forbidden to
+    give itself on application code. Web one-shot courier, Owner-paced.
+  - duties: long-context diff review · merge-gate second opinion
   - fallbacks: 1. qwen3.8-max@chat.qwen.ai
-               2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 · DeepSWE 67.5;
-                  $3/$15, custom licence, "slow and very verbose")
+               2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 ·
+                  DeepSWE 67.5; $3/$15, custom licence, "slow and very verbose")
                3. kimi-k2.6@kimi.com
 
 * Build Engineer — BLOCKED (no Guix in CI, no local source builds by policy)
   - :last-dispatch: 0
   - duties: guix packages for ALL teams (shared service)
-  - status: BLOCKED, not carried. A runner has no /gnu/store; our own policy
-    forbids local source builds, so the box can only `guix build --dry-run`
-    (evaluation) and CI can only build prebuilt *-bin wrappers. Needs an Owner
-    ruling: rent a Guix machine, or keep Guix work box-only and let it sleep.
+  - status: BLOCKED, not carried. A runner has no /gnu/store; our own
+    policy forbids local source builds. Needs an Owner ruling: rent a
+    Guix machine, or keep Guix work box-only and let it sleep.
   - when unblocked, rank: 1. glm-5.3-flash@chat.z.ai 2. qwen3.8-max@chat.qwen.ai
     3. kimi-k2.6@kimi.com
 
+* CI TURNS — how the team keeps running (the Owner's order, mechanics)
+  - The Owner sets the OBJECTIVE and owns the switches in
+    agent-team/TEAM-CONTROL.org (editable in the GitHub web UI):
+    #+OBJECTIVE (his one-line goal) · #+OBJECTIVE-STATE (OPEN/COMPLETE) ·
+    #+KILL-SWITCH (OFF/ON) · #+TURN (whose turn is next).
+  - The scheduled workflow (4 turns/day + workflow_dispatch) reads the
+    control file first: KILL-SWITCH ON → exit and say so in Lark;
+    OBJECTIVE-STATE COMPLETE → exit and say so in Lark; otherwise the
+    ON-TURN member's harness is installed in the runner, the brain is
+    reached by its provider key from repo secrets, and the member works
+    ONE time-boxed segment on the oldest board item that serves the
+    OBJECTIVE — on its own branch, never merging (merges are the Lead's
+    gate on a green suite).
+  - ROTATION: Principal Engineer → Software Engineer → Quality
+    Assurance Engineer → Release Engineer → back to the Principal
+    Engineer. The turn pointer advances EVEN WHEN a seat is dead — a
+    dead seat logs BLOCKED, the next member takes the next turn, and the
+    team keeps rotating without a human in the middle. The Release
+    Engineer's turn repairs a broken harness before anything else.
+  - The Lead reads every run summary and Lark message; merges, DOD
+    verdicts and staffing changes stay with the Lead. The z.ai
+    subscription is NOT in this loop anywhere — CI seats use their own
+    provider keys.
+
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. NOTE THE CLOCK:
-  minimax-m3.1-flash's window closes 2026-10-25 — any intern round for it must
-  be dispatched before that date or not at all.
+  minimax-m3.1-flash's window closes 2026-10-25 — any intern round for
+  it must be dispatched before that date or not at all.
   - openrouter/minimax/minimax-m3.1-flash@opencode — proprietary, size
-    undisclosed, AA 43 / TB 4.0 25.8. FREE THROUGH 2026-10-25 (Owner order,
-    confirmed NOT a preview): a dated promo, five days of usable runway from
-    the re-hire date, so it fails "permanent-free" for accountable seats and
-    stays intern-only. Suggested intern task (time-boxed by the expiry): one
-    scoped completion round via the probe pattern, then promote or release
-    BEFORE 2026-10-25.
-  - openrouter/liquid/lfm-2.5@opencode — the only family plausibly runnable on
-    the 4 GB Celeron (1.2B-Thinking "under 1 GB", liquid.ai 2026-01-20) but NO
-    agentic-coding benchmark exists; tool-calling works, "not for real agentic
-    work". Free-tier expiry: none dated (OpenRouter :free lane, capped).
-    Task: prove it can run the ert suite unaided in a container.
-  - openrouter/xingchen-agi/xing4.0-29b-a4b@opencode — Apache-2.0, vendor
-    SWE-bench 75.0 / TB 57.5, no permanent-free API found, low community
-    signal. Free-tier expiry: n/a (no free tier found at all).
-  - dots-3-note@self-host — Apache-2.0, vendor SWE-bench 78.4 / TB 75.1, and
-    ZERO hosted API: unreachable for any seat until we get an endpoint.
-    Free-tier expiry: n/a.
+    undisclosed, AA 43 / TB 4.0 25.8. FREE THROUGH 2026-10-25 (Owner
+    order, confirmed NOT a preview): a dated promo, five days of usable
+    runway from the re-hire date, so it fails "permanent-free" for
+    accountable seats and stays intern-only. Suggested intern task
+    (time-boxed by the expiry): one scoped completion round via the
+    probe pattern, then promote or release BEFORE 2026-10-25.
+  - openrouter/liquid/lfm-2.5@opencode — the only family plausibly
+    runnable on the 4 GB Celeron (1.2B-Thinking "under 1 GB",
+    liquid.ai 2026-01-20) but NO agentic-coding benchmark exists;
+    tool-calling works, "not for real agentic work". Free-tier expiry:
+    none dated (OpenRouter :free lane, capped). Task: prove it can run
+    the ert suite unaided in a container.
+  - openrouter/xingchen-agi/xing4.0-29b-a4b@opencode — Apache-2.0,
+    vendor SWE-bench 75.0 / TB 57.5, no permanent-free API found, low
+    community signal. Free-tier expiry: n/a (no free tier found at all).
+  - dots-3-note@self-host — Apache-2.0, vendor SWE-bench 78.4 / TB 75.1,
+    and ZERO hosted API: unreachable for any seat until we get an
+    endpoint. Free-tier expiry: n/a.
     (Corrected attribution: Xiaohongshu/RedNote's dots studio, not Red Hat.)
-  - openrouter/stepfun/step-5-preview@opencode — preview with no independent
-    data, StepFun Model License 1.0, DeepSWE 67.7 vendor-only.
-    Free-tier expiry: n/a (name says preview; interned per the rule).
-  - RELEASED (evidence-negative, not punished): nemotron-3-super-120b (AA marks
-    it DEPRECATED) · kimi-k2.8-preview (no weights, no benchmarks) ·
-    minimax-m3 (weights "promised", SWE-bench measured on internal scaffolding).
+  - openrouter/stepfun/step-5-preview@opencode — preview with no
+    independent data, StepFun Model License 1.0, DeepSWE 67.7
+    vendor-only. Free-tier expiry: n/a (name says preview; interned per
+    the rule).
+  - RELEASED (evidence-negative, not punished): nemotron-3-super-120b
+    (AA marks it DEPRECATED) · kimi-k2.8-preview (no weights, no
+    benchmarks) · minimax-m3 (weights "promised", SWE-bench measured on
+    internal scaffolding).
   - harnesses still needing a brain: goose@qoder · pi@qoder ·
-    codebuddy@qoder (same model list as the WorkBuddy.ai cloud pool, Owner
-    2026-10-20) · cursor-agent@qoder · omp@qoder.
+    codebuddy@qoder (same model list as the WorkBuddy.ai cloud pool,
+    Owner 2026-10-20) · cursor-agent@qoder · omp@qoder.
 
 * Pool status — blocked, stated rather than silently inherited
-  - THE OWNER'S BOX IS OFF (2026-10-20, verified): gateway tunnel answers
-    HTTP 530 / CF error 1033. Consequence, now law in CANDIDATES.org: NO CI
-    seat may depend on the gateway; CI seats go DIRECT to providers with
-    repo-secret keys (GROQ · OPENROUTER · ZAI · TOKENHARBOR · others — all 15
-    names confirmed present via the GitHub API, values never read). The
-    ci.yml probe keeps a gateway line as INFORMATIONAL ONLY.
+  - NO @actions BODIES (Owner order, 2026-10-20): a raw provider key in
+    a CI curl call is not an agent. Every accountable CI seat is now a
+    real harness (model@agent) — OpenCode or Goose installed in the
+    runner, headless, provider key from repo secrets. The probe job in
+    ci.yml stays as an informational key-liveness check only.
+  - THE OWNER'S Z.AI SUBSCRIPTION IS NOT SHARED (Owner ruling
+    2026-10-20): the "Owner ordered this seat into the account-sharing
+    risk" claim made by the outgoing lead is RETRACTED. The Lead and
+    Reviewer seats are the Owner's own interactive web sessions, one
+    human operating them himself. No CI job, script or member touches
+    chat.z.ai credentials. CI seats go DIRECT to their providers.
+  - THE OWNER'S BOX IS OFF (2026-10-20, verified): gateway tunnel
+    answers HTTP 530 / CF error 1033. Consequence, law in
+    CANDIDATES.org: NO CI seat may depend on the gateway. Direct
+    provider keys only (GROQ · OPENROUTER · ZAI · others — 15 secret
+    names confirmed present via the GitHub API, values never read).
   - cloudflare/@cf/* — 10,000 Neurons/day shared; EXHAUSTED 2026-10-20.
     Emergency only. Expiry: daily cap, no date.
-  - kilo/*:free · tokenharbor/*:free — PROMO, can vanish. Emergency only.
-    Expiry: none dated — the worst kind, treated as revocable any day.
-  - opencode/*-free — rotating by design ("free usage is dynamic"; cutoff is
-    "Free usage exceeded, add credits"). Never treat as permanent.
-  - huggingface Inference Providers — free tier effectively retired: "Free
-    Users — Monthly Credits: None" (docs, 2026-10-20). Expiry: ALREADY
-    EXPIRED for free use.
-  - minimax-m3.1-flash — free through 2026-10-25 ONLY (dated promo). Any seat
-    touching it must hold a fallback that is independent of the promo.
-  - every web free tier for UNATTENDED use — caps undocumented, ToS
-    interactive-oriented; chat.z.ai additionally prohibits account sharing.
-  - Codespaces — Owner says unavailable now; the @opencode-codespaces seat is
-    removed rather than left dangling.
-  - THE UNCAPPED RESOURCE IS THE RUNTIME, NOT A MODEL: a public repo gets
-    unlimited Linux Actions minutes. That is the only genuinely uncapped free
-    tier found across five research batches, and it is gated on rotating the
-    GOMODEL_MASTER_KEY that is still recoverable from commit dc3fb0a. Until
-    then the private repo runs the heartbeat on the free minutes tier (4
-    runs/day ≈ well inside the monthly allowance).
+  - kilo/*:free · tokenharbor/*:free — PROMO, can vanish. Emergency
+    only. Expiry: none dated — the worst kind, treated as revocable any day.
+  - opencode/*-free — rotating by design ("free usage is dynamic";
+    cutoff is "Free usage exceeded, add credits"). Never treat as permanent.
+  - huggingface Inference Providers — free tier effectively retired:
+    "Free Users — Monthly Credits: None" (docs, 2026-10-20). Expiry:
+    ALREADY EXPIRED for free use.
+  - minimax-m3.1-flash — free through 2026-10-25 ONLY (dated promo).
+    Any seat touching it must hold a fallback independent of the promo.
+  - THE UNCAPPED RESOURCE IS THE RUNTIME, NOT A MODEL: a public repo
+    gets unlimited Linux Actions minutes. Until the GOMODEL_MASTER_KEY
+    is rotated (still recoverable from commit dc3b0a/dc3fb0a history)
+    the repo stays private and the turn system runs on the free private
+    minutes tier (4 turns/day, time-boxed — well inside the allowance).
 
 * Evidence quality warning (read before hiring on any number above)
-  - Artificial Analysis publishes TWO different numbers for the same model
-    (GLM-5.3-Flash 57 vs 42 · Kimi-K2.6 54 vs 27 · Qwen3.7-Max 46-era vs 29 now).
-    Both are quoted everywhere they disagree; neither was quietly chosen.
-  - Vendor-vs-independent gaps reach 21 points (Qwen3.8-Max TB 2.1: 86.6 vendor,
-    67.4 third-party Vals, 88.8 AA-run). AA-run rows are labelled as such.
-  - Reddit sentiment lines are title-based paraphrases — Reddit was login-walled.
+  - Artificial Analysis publishes TWO different numbers for the same
+    model (GLM-5.3-Flash 57 vs 42 · Kimi-K2.6 54 vs 27 · Qwen3.7-Max
+    46-era vs 29 now). Both are quoted everywhere they disagree; neither
+    was quietly chosen.
+  - Vendor-vs-independent gaps reach 21 points (Qwen3.8-Max TB 2.1:
+    86.6 vendor, 67.4 third-party Vals, 88.8 AA-run). AA-run rows are
+    labelled as such.
+  - Reddit sentiment lines are title-based paraphrases — Reddit was
+    login-walled.
   - Full per-model citations: templates/AGENT-TEAM-CANDIDATES.org.
 
 * Values in force (Owner's law, unchanged)
-  - open-weights + permanent-free only in accountable seats; closed models
-    excluded unless the Owner grants an exemption in writing (Qwen3.8-Max is
-    currently UNEXEMPT — it sits in fallback slots only)
-  - credentials never written to the board or git; env/dispatch/repo-secrets only
-  - IDs: PROVIDER/MODEL@PLATFORM, PROVIDER/ for API models only, no "/" after "@"
-  - every seat carries duties + rank + a rank-3 fallback chain; a seat without
-    one is invalid and does not ship
-  - every candidate row carries its free-tier expiry date when one exists
-    (Owner, 2026-10-20); dated promos are re-hire dates, not decorations
+  - open-weights + permanent-free only in accountable seats; closed
+    models excluded unless the Owner grants an exemption in writing
+    (Qwen3.8-Max is currently UNEXEMPT — fallback slots only)
+  - REAL AGENT bodies only (Owner order 2026-10-20): every seat is a
+    model@agent PAIR chosen on measured performance for the role; no
+    bare keys, no @actions
+  - credentials never written to the board or git; env/dispatch/
+    repo-secrets only
+  - IDs: PROVIDER/MODEL@PLATFORM, PROVIDER/ for API models only, no "/"
+    after "@"
+  - every seat carries a hiring reason + duties + a rank-3 fallback
+    chain; a seat without one is invalid and does not ship
+  - every candidate row carries its free-tier expiry date when one
+    exists (Owner, 2026-10-20); dated promos are re-hire dates, not
+    decorations

@@ -1,0 +1,30 @@
+#+TITLE: TEAM-CONTROL.org — CI turn control (the Owner's switches)
+#+ROLE: read by .github/workflows/ci.yml `turn` job every scheduled run.
+        Edit this file in the GitHub web UI to steer the team — no local
+        tooling needed. One line per switch, do not reformat the keywords.
+
+#+OBJECTIVE: (the Owner writes the team objective here — one line)
+#+OBJECTIVE-STATE: OPEN
+#+KILL-SWITCH: OFF
+#+TURN: NONE
+
+#+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal
+            Engineer) -> groq/qwen3.8-27b@goose (Software Engineer) ->
+            zai/glm-4.7-flash@opencode (Quality Assurance Engineer) ->
+            groq/qwen3.8-27b@goose (Release Engineer) -> back to the top
+
+# HOW IT WORKS (Owner's order 2026-10-20: "keep the team running, even in
+# turns, until completion of OBJECTIVE as specified by me or killed with
+# kill switch"):
+# - #+KILL-SWITCH: ON   -> every turn job exits immediately; a Lark notice
+#                          says the team is stopped. Flip back to OFF to resume.
+# - #+OBJECTIVE-STATE: COMPLETE -> turn job exits; Lark notice says the
+#                          objective is closed. Set by the Owner (or by the
+#                          Lead after DOD verification, reported to the Owner).
+# - #+TURN: <member>    -> whose segment runs next; the job advances it
+#                          around the rotation automatically, EVEN when a
+#                          seat is dead (dead seat = BLOCKED logged, rotation
+#                          continues). NONE = first run takes the top of
+#                          #+ROTATION.
+# - An empty/placeholder #+OBJECTIVE means "no work defined": the job skips
+#   agent work, keeps the suite green, and says so in Lark.

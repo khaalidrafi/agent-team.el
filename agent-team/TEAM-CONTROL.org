@@ -8,7 +8,7 @@
 #+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"): every rotation seat proves the mesh — on its turn it (1) FIRST reads its inbox agent-team/mailbox/<seat>.org and acts on every STATUS: UNREAD message addressed to it, flipping them READ, (2) verifies ONE fact about the mesh plumbing (mailbox/PROTOCOL.org grammar, .gitattributes union rule, TEAM-CONTROL chain switches, ci.yml self-chain) with file:line evidence, (3) sends at least one peer message using the PROTOCOL grammar (dispatch or report or request, STATUS: UNREAD, committed in the recipient's inbox), (4) mails TO: lead TYPE: report with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
-#+TURN: groq/qwen3.8-27b@goose (Software Engineer)
+#+TURN: zai/glm-4.7-flash@opencode (Quality Assurance Engineer)
 #+STALL-COUNT: 0
 
 #+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal

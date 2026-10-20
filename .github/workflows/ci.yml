@@ -505,7 +505,7 @@ jobs:
   #      (Owner law: keep working until the objective is complete).
   finalize:
     if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-    needs: [turn]
+    needs: [test, turn]
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -586,6 +586,11 @@ jobs:
           if [ "${OBJSTATE:-OPEN}" = "COMPLETE" ]; then DECISION="objective-complete"; fi
           if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
             DECISION="no-objective"
+          fi
+          # Tests red = no agent can even run (turn needs a green suite):
+          # chaining would spin red forever. Halt and page the Lead.
+          if [ "${{ needs.test.result }}" = "failure" ]; then
+            DECISION="tests-red-halt"
           fi
           if [ "$NEW" -ge 4 ] && [ "$DECISION" = "dispatch" ]; then
             DECISION="backoff-dispatch"   # slow-poll: transient dead lanes recover on their own

@@ -157,12 +157,83 @@
     strength of "it is the family I am sitting in" — the acting Lead IS a Qwen
     (qwen3.8-flash@qoder) and that is a disclosed conflict of interest.
 
-* Evidence — remaining open weights (batch 4)
+* Evidence — remaining open weights (batch 4, complete 2026-10-20)
 
-  - EVIDENCE-PENDING (same interruption): nemotron-3-ultra-550b ·
-    nemotron-3-super-120b · nemotron-3.5-lightning · minimax-m3.1-flash ·
-    poolside-laguna-s/xs-2.1 · inkling · north-mini-code · lfm-2.5 ·
-    dots-3-note · xing4.0-29b · step-5-preview · beam · deepseek-v4.1-flash.
+  Reddit threads were login-walled: sentiment lines are title-based
+  paraphrases, so treat sentiment as weaker than the numeric rows.
+
+  - deepseek-v4.1-flash — AA intelligence 45.1 (artificialanalysis.ai, acc
+    2026-10-20), the highest in this batch. Open weights on HF; 552B MoE,
+    8/16B active (deepseek.com news 2026-09-09). Off-peak $0.15/$0.60,
+    peak $0.30/$1.20 (mindstudio.ai 2026-09-12). No vendor SWE-bench/TB
+    retrieved. r/DeepSeek (~2026-09): "cheap per token — but is it actually
+    cheap?" (token-burn skepticism). OWNER FILTER: ds-flash is banned as a
+    RESIDENT body — eligible as an intern/API probe only.
+  - beam@reflection — vendor SWE-bench Verified 80.9 · TB2.1 80.1
+    (reflection.ai/blog/introducing-beam 2026-10-05); AA intelligence 30,
+    coding-agent 28, "#2 US open weights" (AA article ~2026-10-16).
+    Apache-2.0 promised, 501B-A23B. Days old → thin independent evidence.
+  - inkling · inkling-small@thinkingmachines — Apache-2.0 on HF; 975B-A41B /
+    276B-A12B; vendor SWE-bench Verified 77.6 / 80.2 · TB2.1 63.8 / 64.7
+    (thinkingmachines.ai/news/inkling-small 2026-07-30). $4.05 out (Inkling),
+    $1.20 (Small). NO free API tier (time-limited discount only) → not
+    accountable-seat eligible under "permanent-free".
+  - laguna-s-2.1 · laguna-xs-2.1@poolside — 118B-A8B, OpenMDW-1.1, day-one
+    weights; vendor TB2.1 70.2 (thinking) · SWE-bench Pro 59.4 · DeepSWE 40.4
+    (poolside.ai/blog/introducing-laguna-s-2-1 2026-07-21). OpenRouter free
+    endpoint with 256K context; paid $0.10/$0.20. r/LocalLLaMA "Honest take on
+    Laguna S2.1 (from actual use)" ~2026-07-27, positive within class.
+    → BEST accountable-seat candidate in this batch: open weights + free + data.
+  - xing4.0-29b-a4b@xingchen — Apache-2.0; vendor SWE-bench Verified 75.0 ·
+    TB2.1 57.5 (HF card, acc 2026-10-20). China Telecom; 4-bit ≈15 GB → no.
+    No permanent-free found; low community engagement.
+  - dots-3-note@dots-studio — CORRECTION: this is Xiaohongshu/RedNote's dots
+    studio, NOT Red Hat as previously assumed. Apache-2.0, HF 2026-08-14,
+    280B-A16B multimodal; vendor SWE-bench Verified 78.4 · TB2.1 75.1.
+    NO hosted API at all → self-host-only → unreachable for our seats.
+  - nemotron-3.5-lightning@nvidia — 30B-A3B, OpenMDW-1.1, weights+data+recipes
+    (datacamp.com/blog/nemotron-3-5-lightning 2026-08-12); vendor SWE-bench
+    Verified 51.6–52.8 · TB2.1 24.6. OpenRouter FREE tier, "$0 input/$0 output,
+    65,536 max-token cap on the output generation" (same, 2026-08-12) — a real
+    quota, quoted. → QA-grade, not CI-critical.
+  - north-mini-code@cohere — 30B-A3B, Apache-2.0 (cohere.com/blog/north-mini-code
+    2026-06-09); AA coding index 33.4 (AA article, same date); independent note
+    sebastianraschka.com 2026-06-12. openrouter/cohere/north-mini-code:free
+    exists; exact cap wording NOT retrievable → say so, don't invent it. QA only.
+  - nemotron-3-ultra-550b-a55b@nvidia — AA intelligence 23, TB2.1 53.9,
+    TB-Hard 36.4 (AA, acc 2026-10-20); OpenMDW, weights on HF; $0.60/$2.70;
+    no free tier found. NVIDIA dev blog 2026-07-26 claims agentic-RTL lead
+    (vendor). r/LocalLLaMA skeptical ("King of the Deep?"). Marginal — and it
+    is the id currently holding the PE seat on a PROMO pool. Fix that.
+  - nemotron-3-super-120b@a12b — vendor SWE-bench Verified 60.5 · TB-Hard 25.8
+    (llm-stats 2026-03-10); AA intelligence 13, TB2.1 38.6, and AA marks it
+    DEPRECATED (acc 2026-10-20). Superseded → intern-adjacent.
+  - minimax-m3.1-flash — PROPRIETARY, weights not published, size undisclosed;
+    AA intelligence 43 · TB4.0 25.8; $0.15/$0.60, one provider, no free tier
+    (AA page, acc 2026-10-20). "Preview" + closed → emergency/API-only seat.
+  - minimax-m3 — open weights PROMISED, not delivered; vendor TB2.1 66.0 with
+    SWE-bench measured on "internal infra, Claude Code scaffolding"
+    (minimax.io/blog/minimax-m3 2026-06-01) — vendor-only, scaffolding caveat.
+    Verify before trusting (r/opencode "Space Bunny benchmarks" ~2026-10 notes
+    a benchmark-vs-reality gap).
+  - step-5-preview@stepfun — 600B-A27B, StepFun Model License 1.0; HF ~2026-10;
+    vendor DeepSWE 67.7 · TB4 33.3; $1.00/$2.70 (opencode.ai/data acc
+    2026-10-20). Preview with no independent data → INTERNED per the rule.
+  - lfm-2.5@liquid — family 1.2B–24B; 8B-A1B unrestricted open weight
+    (liquid.ai/blog 2026-05-28); NO agentic-coding benchmarks exist (BFCL/Tau2
+    only). The only family plausibly runnable on this 4 GB Celeron
+    (1.2B-Thinking "under 1 GB", liquid.ai 2026-01-20), but r/LocalLLaMA
+    (~2026-08): "not for real agentic work". → local toy / intern fallback.
+
+  Batch conclusion (this is the finding, not a footnote):
+  - NOTHING in this batch runs agentic coding on the Owner's 4 GB Celeron.
+    Every candidate is 27B-active-or-larger. Gateway/API access is therefore
+    MANDATORY, not a convenience — which is also why a cloud Lead without a
+    resident body loses all hands, not just speed.
+  - open-weights + permanent-free + real agentic data, together, leaves exactly
+    three: laguna-s-2.1@poolside · nemotron-3.5-lightning@nvidia ·
+    north-mini-code@cohere — all on OpenRouter's :free lane, which is capped
+    and rotating. "Permanent free" is doing a lot of work in that filter.
 
 * Free tiers vs the "Lead must be uncapped" gate
 

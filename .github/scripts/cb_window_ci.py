@@ -23,6 +23,7 @@ HOME = Path.home()
 CB = HOME / ".codebuddy"
 SHIM = Path("/tmp/cb-browser-url.txt")
 OUT_LOG = Path("/tmp/cb-ci-tui.log")
+URL_RE = re.compile(rb"https://www\.codebuddy\.ai/login\?[^\s\x1b\x07\"]+")
 NOISE = ("plugins", "logs", "traces", "shell-snapshots", "projects", "diagnostics")
 
 ANSI = re.compile(rb"\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07]*\x07|\x1b[=>]")

@@ -3,49 +3,84 @@
         inventory, not endorsement — the values in COMMON filter at staffing
         time. IDs: PROVIDER/MODEL@AGENT/PLATFORM. API roster authority:
         live GET /v1/models (names rotate; this file is character, not catalog)
+#+EXPIRY-LAW: Owner order 2026-10-20 — EVERY candidate row carries its FREE-TIER
+        EXPIRY DATE when one exists. "No dated expiry" is not "permanent": an
+        undated free tier is recorded as undated with its cap/rotation risk,
+        never silently treated as unlimited. Dated promos (e.g.
+        minimax-m3.1-flash, free through 2026-10-25) are RE-HIRE DATES — the
+        seat using one must carry a fallback that is independent of the promo.
 
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
+    [free-tier expiry: none published; agentic features membership-gated]
   - qwen3.8-max · qwen3.7-max · qwen3.7-plus · qwen3.8-omni-flash @ chat.qwen.ai
+    [free-tier expiry: none published; the programmable free lane (Qwen Code
+    OAuth) was DISCONTINUED 2026-04-15 — that is a past-tense expiry; DashScope
+    new-user quota is 90-day dated if that path is ever opened]
   - glm-5.3 · glm-5.3-flash · glm-5.2 @ chat.z.ai
+    [free-tier expiry: none published; caps undocumented; ToS bans account
+    sharing — see the Cloud row for the same note]
   - grok-4.7 · gemini-3.8-flash @ WorkBuddy.ai (cloud agents, chat-shaped)
+    [free-tier expiry: none published; closed weights — values-excluded from
+    accountable seats]
 
 * Agent — Cloud (sandboxed shell)
   - chat.z.ai: glm-5.3 · glm-5.3-flash · glm-5.2 (Z.ai Agent shell for all GLM)
+    [free-tier expiry: none published; caps undocumented; ToS bans account
+    sharing — dated expiry would actually be easier to plan around]
   - WorkBuddy.ai: gemini-3.8-flash · gemini-3.5-flash · glm-5.3-flash/5.3/5.2 ·
     kimi-k3 · kimi-k2.6 · kimi-k2.8-preview · gpt-6-sol/luna · gpt-5.6-terra/luna ·
     gpt-5.5/5.4 [closed] · grok-4.7 · step-5-preview · deepseek-v4.1-flash
+    [free-tier expiry: none published]
   - MiniMax Agent: minimax-m3.1-flash · minimax-m3
-    (CodeBuddy local carries THIS SAME model list — one pool, two harnesses)
+    [free-tier expiry: minimax-m3.1-flash FREE ONLY THROUGH 2026-10-25 (Owner
+    order 2026-10-20) — a dated promo with five days of runway from this file's
+    date; minimax-m3: n/a (no delivered free tier, weights still "promised")]
+  - CodeBuddy: SAME model list as the WorkBuddy.ai cloud pool — one pool, two
+    harnesses (Owner confirmation 2026-10-20; both entries in this file kept
+    in sync from now on) [free-tier expiry: none published]
 
 * Agent — Local (Owner's machine; no heavy builds)
   - qoder: qwen3.8-flash (built-in; other models per Qoder settings)
+    [free-tier expiry: none published — bundled with the Qoder harness]
   - opencode: free roster — glm-5 · glm-5-flash · glm-5.1 · glm-5.1-flash ·
     gpt-5.1/5.1-codex/5.1-codex-mini · gpt-5.2/5.2-codex [closed] ·
     gpt-oss-120b/20b [closed] · minimax-m2 · nemotron-3-super ·
     nemotron-3.5-lightning · nemotron-3.5-super-vl · step-3.5-flash ·
     big-pickle · big-pickle-free · jev-1.13-free! (when listed) ·
     longcat-2.5 · mimo-v2.6 (roster rotates)
+    [free-tier expiry: none dated — explicitly "limited time" per model and
+    "dynamic" by design; treat every id here as revocable without notice]
   - goose (provider-agnostic, BYO brain) · omp · pi (parked, config pending)
   - cursor: cursor-agent · cursor-tab · github-copilot (auto-model)
   - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
+    [free-tier expiry: none published]
 
 * API (via the Owner's gateway)
   #+GATEWAY: LOCAL authority = http://127.0.0.1:8080/v1/models on the Owner's box. The
   public path is the SAME gateway fronted by a Cloudflare Tunnel:
   https://ai.khalidrafi.tech/v1/models — verified answering 401 (live, auth-gated) on
-  2026-10-20. Two consequences: (a) CI CAN reach every model behind it with the tunnel
-  up, and (b) it dies with the box, and its master key is currently recoverable from
-  git history (commit dc3fb0a) — rotate before publishing. A tunnel is not a cloud
-  runtime; it is this laptop wearing a public hat.
+  2026-10-20, and verified answering HTTP 530 / Cloudflare error 1033 (tunnel DOWN,
+  box off) the same day from a fresh network. Consequences: (a) CI CAN reach every
+  model behind it ONLY while the tunnel is up, so (b) NO CI seat may depend on the
+  gateway — CI seats go DIRECT to providers with repo-secret keys, and the gateway
+  probe in ci.yml is informational only. It dies with the box, and its master key is
+  currently recoverable from git history (commit dc3fb0a) — rotate before publishing.
+  A tunnel is not a cloud runtime; it is this laptop wearing a public hat.
   - cloudflare/@cf/ — full Workers AI catalog (llama/qwen/gemma/mistral/
     deepseek-r1-distill/flux/sdxl; 10k Neurons/day shared)
-  - gemini/ — flash family, image, live variants
+    [free-tier expiry: none — but a DAILY CAP, and it is frequently exhausted]
+  - gemini/ — flash family, image, live variants [free-tier expiry: none
+    published; closed weights — values-excluded from accountable seats anyway]
   - groq/ — fast free pool: qwen3.8-27b/8b/4b · gpt-oss-120b/20b [closed] ·
     small+safety models (roster rotates)
+    [free-tier expiry: none published; caps ARE published per model — the
+    good kind of limit, sized for CI jobs]
   - kilo/ — free pool: kimi-k2-instruct · kimi-k2-thinking · qwen3-32b ·
     mistral-small-3.1-24b · llama family · auto (roster rotates)
+    [free-tier expiry: NONE DATED, PROMO — can vanish any day; emergency-only]
   - opencode/ — see Local opencode roster (served via gateway)
+    [free-tier expiry: undated by design — "free usage is dynamic"]
   - openrouter/ — :free roster: nvidia/nemotron-3-ultra-550b-a55b:free ·
     nemotron-3-super-120b-a12b:free · nemotron-3.5-lightning:free ·
     nemotron-3.5-super-vl:free · nemotron-3-nano-omni:free ·
@@ -54,14 +89,20 @@
     thinkingmachines/inkling:free · dots-3-note-preview:free ·
     liquid/lfm-2.5-2.6b:free · inclusionai/ling-3.0-flash-sante:free ·
     apodex/apodex-1.1-mini:free · openrouter/auto:free (20 RPM; 50/day)
+    [free-tier expiry: none dated per model; the LANE is capacity-based and
+    models rotate on and off it — capped (20 RPM / 50/day class) but not dated]
   - ollama-cloud/ — gpt-oss:120b [closed] · nemotron-3-ultra · beam ·
-    kimi-k2 (unstable historically)
+    kimi-k2 (unstable historically) [free-tier expiry: none published]
   - tokenharbor/ — deepseek-v4.1-flash:free
+    [free-tier expiry: NONE DATED, PROMO — can vanish; emergency-only]
   - zai/ — glm-4.5 · glm-4.6v · glm-4.7-flash
+    [free-tier expiry: none published on the GLM-4.7-Flash free API tier;
+    MIT open weights make it low-risk even so]
   - Cloudflare Workers AI direct: llama-3.3-70b-fp8-fast ·
     llama-4-scout-17b-16e · mistral-small-3.1-24b · llama-3.1-8b-fp8 ·
     llama-3.2-3b · llama-3.2-11b-vision · glm-4.7-flash ·
     deepseek-v4.1-flash · clef · clef-flash · clef-omni
+    [free-tier expiry: none — 10k Neurons/day shared cap; emergency-only]
   - OpenRouter direct (owner key): the :free list above
 
 * Decision layer (not an LLM, not chat-compatible)
@@ -158,12 +199,30 @@
   - Sources: lmarena.ai, artificialanalysis.ai, moonshot.ai pricing + tech
     report, huggingface.co/moonshotai, r/LocalLLaMA — 2026-10-20.
 
-* Evidence — Qwen family (batch 3)
+* Evidence — Qwen family (batch 3, PARTIAL FILL 2026-10-20, re-hire round)
 
-  - EVIDENCE-PENDING. The batch was interrupted once and is re-running. Until
-    this block carries source+date per number, no Qwen body gets promoted on the
-    strength of "it is the family I am sitting in" — the acting Lead IS a Qwen
-    (qwen3.8-flash@qoder) and that is a disclosed conflict of interest.
+  - qwen3.8-max (0902) — Artificial Analysis Intelligence Index v4.3.2
+    (artificialanalysis.ai, fetched 2026-10-20 from a fresh network):
+    GDPval-AA sub-scores Engineering 46 (rank 9) · Economics 52 (rank 11) ·
+    Strategy & Ops 47 (rank 12) · Legal 46 · Healthcare 41. No overall
+    intelligence-index number or Terminal-Bench figure retrievable this round.
+    PROPRIETARY — still UNEXEMPTED by the Owner, so it stays in fallback
+    slots (see the Lead seat's selection note in MEMBERS.org).
+  - qwen3.8-flash — NO independent benchmark found. Two batched web-search
+    rounds run this re-hire (queries: "qwen3.8-max benchmark Artificial
+    Analysis Terminal-Bench agentic coding" · "qwen3.8-flash model benchmark
+    review coding agent" · "Qwen3.8-Max model release benchmarks" — plus 7
+    more across free-tier-expiry topics; all returned empty results). Per the
+    law, empty rounds are recorded, not hidden: qwen3.8-flash remains
+    INTERN-grade on external evidence, held up only by measured platform work
+    on the record (lark binding, 163-id roster split, 15 secrets staged,
+    parser fix 7/7 green — see MEMBERS.org Platform seat).
+  - CONFLICT-OF-INTEREST RULE UNCHANGED: no Qwen body is promoted on the
+    strength of "it is the family I am sitting in". The acting Lead is a GLM
+    now; the PE seat's evidence is its own track record, cited above.
+  - groq/qwen3.8-27b — carried by batch 5's primary-source caps (30 RPM ·
+    1,000 RPD · 8K TPM · 200K tokens/day, console.groq.com/docs/rate-limits,
+    acc. 2026-10-20) and PROVEN ALIVE via the gateway the same day.
 
 * Evidence — remaining open weights (batch 4, complete 2026-10-20)
 

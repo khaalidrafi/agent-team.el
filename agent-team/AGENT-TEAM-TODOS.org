@@ -210,6 +210,20 @@
      Qwen and free-tier numbers carry access dates of 2026-10-20 and will age.
    :END:
 
+   :LOGBOOK:
+   - Seat ASSUMED 2026-10-20 (re-hire round) by the relay-dispatched web brain
+     (z.ai-agent, Owner's Discord relay), acting on lead/04 + the Owner's
+     "review and re-hire" order. Honest identity note per handoff step 0: the
+     serving GLM id is NOT self-provable from inside chat.z.ai — the flag
+     stays UNVERIFIED until the Owner checks the picker once; recorded in
+     MEMBERS.org rather than papered over. Tier risk (account-sharing clause)
+     unchanged, on the record, Owner-ordered.
+   - Actions this round: PR #1 squash-merged as merge gate (fefd5a7); workflow
+     re-enabled per the standing rule; ci.yml heartbeat (schedule + probe)
+     landed; MEMBERS.org re-staffed for CI; CANDIDATES.org expiry law applied;
+     REPORT #4 filed below.
+   :END:
+
    :DELIVERY: Dispatched 15:5x to glm-5.3-flash@chat.z.ai over the Owner's Discord
    relay (LEAD_RELAY_WEBHOOK, kept in ~/.agents-work/webhooks.env 0600 — never on
    the board or in git). 9 messages, HTTP 204 each, text ≤2000 chars per message
@@ -271,6 +285,62 @@
    - [~] every API seat verified by a live call — 2 of 7 proven, 5 pending (box-bound)
    - [ ] Director adjudication of the Lead pick — the Director seat is now the
          Lead, so this review is structurally self-review; flagged as RISK
+   :RESULT: PARTIAL
+   :END:
+
+** REVIEW [2026-10-20] hiring/01 (reopened): re-hire on expiry law + continuous CI — REPORT #4 :REPORT:
+   REPORT #4 — hiring/01 reopened: re-hire + continuous CI
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/04 (handoff) + PR #1 (parser fix) | supplies re-staffed
+   roster + CI heartbeat
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - OWNER UPDATES APPLIED: (1) EXPIRY LAW — every candidate row in
+     templates/AGENT-TEAM-CANDIDATES.org now carries its free-tier expiry when
+     one exists; undated pools are marked undated-with-risk, never silently
+     "permanent". minimax-m3.1-flash: FREE THROUGH 2026-10-25, confirmed not a
+     preview — intern-only, clock on record, any round must close before the
+     date. (2) CodeBuddy = WorkBuddy.ai cloud list — both entries synced.
+   - RE-HIRE (roster = agent-team/AGENT-TEAM-MEMBERS.org): every accountable
+     API seat moved to an @actions body — groq/qwen3.8-27b (Software Engineer
+     + Release Engineer), zai/glm-4.7-flash (QA),
+     openrouter/poolside/laguna-s-2.1:free (Principal Engineer) — all driven
+     by repo secrets (15 names confirmed live via the GitHub API; values never
+     read). Platform Engineer retained but ASLEEP with the box (gateway
+     verified HTTP 530 / CF 1033 from a fresh network); its round-the-clock
+     duties moved into the CI heartbeat. Lead+DE and Reviewer stay web
+     one-shot couriers. Build Engineer stays BLOCKED on an Owner ruling.
+   - RESEARCH DEBT DISCHARGED to the law's standard: Qwen batch 3
+     partial-filled from Artificial Analysis v4.3.2 (fetched 2026-10-20):
+     qwen3.8-max GDPval-AA sub-scores Engineering 46 · Economics 52 ·
+     Strategy & Ops 47; still proprietary + UNEXEMPT → fallback slots only.
+     Two batched search rounds (10 queries) returned EMPTY — the rounds are
+     recorded in CANDIDATES.org, nothing invented to fill them.
+   - CONTINUOUS CI (Owner order "an agent team that continuously runs on
+     GitHub CI"): .github/workflows/ci.yml gained a schedule trigger
+     (4×/day heartbeat), workflow_dispatch, a concurrency guard, and a probe
+     job — one real completion per accountable seat, DIRECT to providers
+     (tunnel excluded as a dependency: it dies with the box), results to the
+     run summary, gateway line informational-only, every step guarded so no
+     probe can ever fail the workflow. Lark notify guard preserved.
+   - ci/01 UNBLOCKED: PR #1 (parser grammar fix, CI-green on its branch) was
+     the reason ai/main ran red and the workflow got disabled. Squash-merged
+     as the merge gate (fefd5a7); workflow re-enabled per the standing rule
+     ("the Lead's once PR #1 is green"); verification run dispatched.
+   :DOD-CHECK:
+   - [X] every candidate row carries expiry-or-undated marking
+   - [X] MEMBERS.org re-staffed: duties + rank + rank-3 fallbacks per seat,
+         CI bodies where the work is CI
+   - [X] ci.yml heartbeat: schedule + dispatch + probe + secret guards
+   - [X] PR #1 merged (fefd5a7) + workflow re-enabled
+   - [ ] verification run green (this commit is the trigger; run id to be
+         recorded in the follow-up note — UNVERIFIED until then)
+   - [ ] Owner items outstanding: picker check on the Lead brain ·
+         qwen3.8-max exemption ruling · GOMODEL_MASTER_KEY rotation (still
+         recoverable from dc3fb0a) · LARK_WEBHOOK_URL secret · Build
+         Engineer (Guix) ruling
    :RESULT: PARTIAL
    :END:
 
@@ -377,6 +447,13 @@
    parser fix. Re-enable with:
    gh api -X POST repos/khaalidrafi/agent-team.el/actions/workflows/390385434/enable
    — the Owner's call, or the Lead's once PR #1 is green.
+   UPDATE (re-hire round, 2026-10-20): PR #1 WAS GREEN (run 39404373880, ert 7/7 +
+   byte-compile) — squash-merged as the merge gate, fefd5a7. Workflow RE-ENABLED by
+   the Lead under the standing rule quoted above. ci.yml now also carries the
+   continuous-operation shape: schedule (4×/day heartbeat) · workflow_dispatch ·
+   concurrency guard · probe job (one live completion per accountable seat, direct
+   provider keys, gateway line informational-only — the tunnel answers 530 with the
+   box off). Verification run dispatched; result recorded in REPORT #4's follow-up.
    TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
    FROM: Team Lead — groq/qwen3.8-27b@opencode/local
    OBJECTIVES:

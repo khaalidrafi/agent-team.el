@@ -3,39 +3,50 @@
 * DONE
   - v0.1 bootstrap (board, dispatches, Jev noul, gateway ping) + ert tests
   - teamify: agent-team/ files + templates committed
+  - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
+    byte-compile green on the runner (run 39404373880)
 * IN-FLIGHT
-  - DISPATCH 001: GLM elisp — Jev choice/score (branch ai/elisp-glm)
+  - hiring/01 (reopened): REPORT #4 in REVIEW — re-hire on the expiry law +
+    continuous CI landed (roster re-staffed to @actions bodies, ci.yml
+    heartbeat: schedule 4×/day + probe + guards); verification run pending,
+    recorded when green
   - lark/01: Lark IM layer — Agent Team group LIVE 14:11
     (oc_de19c9d95e0e277c1eb194a4da08674c, bot = manager, Owner = member, bot
-    test message sent). Remaining: user-identity test blocked on scope
-    im:message.send_as_user (device re-auth pending Owner approval), then the
-    10 per-seat custom-bot webhooks (Owner UI) + notify script + CI secret.
-  - lead/03: Team Lead seat HANDOFF — qwen3.8-flash@qoder/local →
-    glm-5.3-flash@opencode/local. Full context in the board's :HANDOFF: drawer.
+    test message sent). Remaining: 10 per-seat custom-bot webhooks (Owner UI)
+    + LARK_WEBHOOK_URL secret + notify wiring (CI guard already skips when
+    unset); wake loop = scheduled poll shape, needs lark-cli in a runner image
 * READY-FOR-HUMAN-REVIEW
-  - lead/02 REPORT #2 (seat assumption + identity correction) — commit e44a4ad
-  - LEAD SEAT SETTLED — Owner asked for the evidence-ranked choice rather than
-    the qwen-family default: Lead = glm-5.3-flash@opencode/local (AA index 42 vs
-    25, Terminal-Bench 84.3, MIT open weights, free tier, and a real shell on
-    this box). qwen3.7-plus stays Director and owes a review of the call.
+  - lead/04 — seat ASSUMED by the relay-dispatched chat.z.ai web brain;
+    serving-id flag honestly UNVERIFIED (picker check is a one-glance Owner
+    item); account-sharing tier risk unchanged, Owner-ordered
+  - REPORT #4 DOD: all re-hire items checked; the open box is the CI
+    verification run + the Owner rulings listed in BLOCKED
 * DEFERRED
 * BLOCKED
-  - ci/01: assigned brain groq/qwen3.8-27b@opencode is down — needs re-staff
-    from the live gateway roster
-  - pools 13:50 +06: groq · opencode-free · cloudflare/@cf all down (Director's
-    report) → resident loop suspended, web one-shot Lead mandated
-  - UNVERIFIED: whether opencode's free tier can reach glm-5.3-flash from this
-    box — the new Lead's first action is to prove it or fall back to
-    glm-5.3@zai/web
+  - Owner's box OFF (gateway tunnel 530 / CF 1033, verified 2026-10-20 from a
+    fresh network): Platform Engineer body asleep; lark-cli work paused; CI
+    seats unaffected (direct provider keys — 15 secret names confirmed)
+  - Owner rulings outstanding: qwen3.8-max exemption · GOMODEL_MASTER_KEY
+    rotation (still recoverable from dc3fb0a — private repo until then) ·
+    Build Engineer (Guix) future · LARK_WEBHOOK_URL secret value
 * TEAM-STAFFING
-  - MODE: WEB (Owner's local box going down 2026-10-20) — seats with @*/local
-    bodies are ASLEEP; see MEMBERS.org §WEB MODE for who survives
-  - Team Lead: glm-5.3-flash@zai/web (ACTING; opencode/local when the box
-    returns) · out: qwen3.8-flash@qoder/local · contest vs qwen3.8-max closed
-  - Director of Engineering: qwen3.7-plus@qwen/web (restored — dual-hat gone,
-    author/verifier segregation intact)
+  - MODE: CI-FIRST (Owner order: the team continuously runs on GitHub CI) —
+    accountable API seats on @actions bodies via repo secrets; web seats are
+    Owner-paced couriers; box seats ASLEEP with the box
+  - Team Lead + Director (combined): glm-5.3-flash@chat.z.ai (assumed this
+    round) · Principal Engineer: openrouter/poolside/laguna-s-2.1@actions ·
+    Software Engineer + Release Engineer: groq/qwen3.8-27b@actions ·
+    QA: zai/glm-4.7-flash@actions · Platform: qwen3.8-flash@qoder (asleep) ·
+    Reviewer: glm-5.3@chat.z.ai · Build Engineer: BLOCKED
+  - CI heartbeat: .github/workflows/ci.yml — push/PR gate (ert + byte-compile)
+    + scheduled probe (01:17/07:17/13:17/19:17 UTC) + workflow_dispatch
   - Reference for web members: agent-team/AGENT-TEAM-ROSTER.org (163 live
-    gateway ids + what was proven/refused today)
+    gateway ids + what was proven/refused today; snapshot, not authority)
 * HIRING-LOG
+  - 2026-10-20 (re-hire round, REPORT #4): hiring/01 reopened by Owner after
+    the Lead handoff; expiry law applied to every candidate row; roster
+    re-staffed CI-first; minimax-m3.1-flash clocked (free through 2026-10-25,
+    intern-only); Qwen batch 3 partial-filled from AA v4.3.2; two search
+    rounds empty, on record; PR #1 merged, workflow re-enabled
 * AUTONOMY
   AUTO

@@ -607,6 +607,9 @@ jobs:
           if [ "$NEW" -ge 4 ] && [ "$DECISION" = "dispatch" ]; then
             DECISION="backoff-dispatch"   # slow-poll: transient dead lanes recover on their own
           fi
+          # Export for the Telegram mirror step below (same job, later step).
+          echo "CHAIN_DECISION=$DECISION" >> "$GITHUB_ENV"
+          echo "CHAIN_STALL=$NEW" >> "$GITHUB_ENV"
           DISPATCH_CODE="n/a"
           if [ "$DECISION" = "dispatch" ] || [ "$DECISION" = "backoff-dispatch" ]; then
             if [ "$DECISION" = "backoff-dispatch" ]; then
@@ -630,3 +633,27 @@ jobs:
           echo "- chain decision: **${DECISION}** (dispatch HTTP ${DISPATCH_CODE})" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
+
+      # Owner channel (Owner order 2026-10-20 ~16:55 #hq: "contact me over
+      # Telegram"). Mirrors every chain verdict; SILENT until the Owner
+      # adds the TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID repo secrets
+      # (bot via @BotFather, chat id from getUpdates after /start).
+      - name: Mirror chain verdict to Telegram (silent without secrets)
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != '' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ] || exit 0
+          TXT="$(printf 'Agent Team — segment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
+            "${{ needs.turn.outputs.turn_branch }}" \
+            "${{ needs.turn.outputs.seg_result }}" \
+            "${{ steps.merge.outputs.outcome }}" \
+            "${{ steps.gate.outputs.gate }}" \
+            "${CHAIN_STALL:-?}" \
+            "${CHAIN_DECISION:-unknown}")"
+          CODE=$(curl -sS -o /dev/null -w '%{http_code}' \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${TXT}") || CODE="curl-failed"
+          echo "telegram mirror: HTTP ${CODE}"

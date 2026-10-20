@@ -39,6 +39,8 @@ jobs:
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
           # Lead's seal PUBLIC key (private counterpart is NOT in the repo)
           CB_SEAL_PUBKEY: 'VfVI1oQWk7+4dIPKjBg9IGrHeKM1VURYg/mUCrJ2YSg='
+          CB_WINDOW_DUR: '180'
+          CB_TUI_DUR: '120'
         run: |
           npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1
           codebuddy --version

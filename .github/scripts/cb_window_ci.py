@@ -20,6 +20,7 @@ import subprocess, sys, tarfile, time, io, glob
 from pathlib import Path
 
 DUR = int(os.environ.get("CB_WINDOW_DUR", "780"))
+TUI_DUR = int(os.environ.get("CB_TUI_DUR", "150"))
 TG_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT = os.environ.get("TELEGRAM_OWNER_ID", "")
 PUBKEY_B64 = os.environ.get("CB_SEAL_PUBKEY", "")
@@ -85,7 +86,7 @@ def tg_send(text: str) -> None:
         code = f"err:{e}"
     print(f"TG_PUSH: HTTP {code}", flush=True)
 
-while time.time() - start < 75 and step < 5:
+while time.time() - start < TUI_DUR and step < 5:
     r, _, _ = select.select([fd], [], [], 1.0)
     if r:
         try:
@@ -118,7 +119,13 @@ while time.time() - start < 75 and step < 5:
             step = 5
 
 if step < 5:
-    print("URL_READY: never (no login URL in 75s) — still watching for a manual replay", flush=True)
+    print("URL_READY: never (no login URL in the TUI phase) — dumping TUI tail:", flush=True)
+    try:
+        tail = OUT_LOG.read_bytes()[-2500:]
+        import re as _re
+        print(_re.sub(rb"\x1b\[[0-9;?]*[a-zA-Z]|\x1b\][^\x07\x1b]*(\x07|\x1b\\\\)", b"", tail).decode("utf-8", "replace"))
+    except Exception as e:
+        print(f"tui dump failed: {e}", flush=True)
 
 # ---- landing watch (CLI keeps polling while alive) ----
 BASE = snapshot()

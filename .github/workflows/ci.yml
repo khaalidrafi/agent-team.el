@@ -60,7 +60,10 @@ concurrency:
 permissions:
   contents: write
   actions: write   # self-chain: finalize re-dispatches the next turn
-  workflows: write # seats may touch CI files on their branches (mesh plumbing verification); without this the App token rejects the whole branch push (QA segment 15:57Z evidence)
+  # NO `workflows: write` here — GitHub rejects the key at workflow-creation
+  # time: every run after 22bb587 startup-FAILED with zero jobs (runs
+  # 39455051426 + 39455277702 evidence). Seats therefore NEVER touch
+  # .github/workflows/* (brief law #10: Lead-owned files, cite in mail).
 
 defaults:
   run:

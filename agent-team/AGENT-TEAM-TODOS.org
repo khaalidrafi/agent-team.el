@@ -89,8 +89,11 @@
       URLs into an env store under ~/.agents-work (chmod 600 — never git, never
       board), wire a notify script + GitHub secret LARK_WEBHOOK_URL. Ties to the
       ci/01 guard (CI must skip notify when the secret is unset).
-   5. Wake loop: lark-cli event consume im.message.receive_v1 --as bot (long
-      connection; no public URL needed).
+   5. Wake loop: BUILD IT (nothing exists yet — see the logbook correction).
+      Transport is proven only: lark-cli event consume im.message.receive_v1
+      --as bot reaches a connected websocket and needs no public URL. A real
+      loop still needs a resident consumer, a chat_id/sender filter, an
+      event→agent dispatcher, and message_id dedupe + restart handling.
    6. Re-staff ci/01 from a LIVE roster id (one verification call first), then
       run the ert suite and byte-compile before claiming anything.
    7. Board law: read an item's :LOGBOOK: before touching it; per-member
@@ -133,6 +136,15 @@
    :END:
    :LOGBOOK:
    CLOCK: [2026-10-20 Tue 13:20]
+   - HANDOFF DELIVERED 14:3x to the incoming Lead (glm-5.3-flash) over the
+     Owner's Discord relay webhook — 3 messages, HTTP 204 each, full text
+     confirmed on the wire. The webhook URL is NOT recorded here: it lives in
+     ~/.agents-work/webhooks.env (0600) as LEAD_RELAY_WEBHOOK. Two operational
+     findings for the next relay: (a) Discord's edge returns 403 to python-urllib's
+     default user-agent — send with a normal client UA; (b) a plain "@z.ai-agent"
+     text mention does NOT ping a bot (needs <@id>), and Discord bots generally
+     ignore webhook-authored messages to prevent loops — so the Owner may have to
+     reply to the pasted handoff manually to wake the agent.
    - Seat relinquished by qwen3.8-flash@qoder/local on Owner's direct order;
      shift ends with lark/01 PROGRESS (blocked on Owner scope release) and
      REPORT #2 in REVIEW (PARTIAL). Nothing left unrecorded.
@@ -202,18 +214,22 @@
          https://applink.larksuite.com/client/chat/open?openChatId=oc_de19c9d95e0e277c1eb194a4da08674c
          (the invite share_link carries a token — kept out of git on purpose).
    - [X] Bot test message sent: om_x100b624651605ca8ed4e1da976cc5a4 (1/2).
-   - [X] Wake loop PROVEN 14:3x while the box was still up:
-         lark-cli event consume im.message.receive_v1 --as bot --timeout 25s
-         → "feishu-websocket: connected" + "ready event_key=im.message.receive_v1";
-         bus daemon auto-exits 30 s after the last consumer. 0 events arrived
-         because the only message sent was the bot's own — bots do not receive
-         their own messages. ONE Owner-authored message in Agent Team closes
-         this; nothing else about the loop is untested.
+   - [ ] Wake loop: NOT BUILT. What was actually done 14:3x is a 25-second
+         connection test — lark-cli event consume im.message.receive_v1 --as bot
+         --timeout 25s reached "feishu-websocket: connected" + ready, then
+         exited with 0 events (the only message sent was the bot's own, and
+         bots do not receive their own messages). No consumer is running now,
+         no daemon survives (the bus daemon self-exits 30 s after the last
+         consumer), and there is no script in the repo. The transport works;
+         the loop does not exist. Corrected from an earlier "PROVEN" wording
+         that claimed more than the evidence — the loop needs: (1) a resident
+         consumer, (2) a filter on chat_id + sender, (3) a dispatcher that
+         turns an event into an agent call, (4) dedupe on message_id + restart.
    - [~] User test message BLOCKED on user scope im:message.send_as_user
          (missing_scope on +messages-send --as user; im:message is not enough).
          DOWNGRADED 14:2x to NOT REQUIRED: nothing the Lead seat does needs the
-         user identity — group creation, manager rights, dispatch posts and the
-         wake loop all work as bot, and both are proven. User identity stays an
+         user identity — group creation, manager rights and dispatch posts work
+         as bot, and all three are proven. User identity stays an
          optional escape hatch (inviting invisible users, +chat-search). Do not
          spend a console round trip on it unless a real task needs user reads.
          Tenant scopes confirmed granted: im:chat, im:chat:create,

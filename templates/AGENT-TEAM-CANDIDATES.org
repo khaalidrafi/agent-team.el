@@ -66,3 +66,128 @@
     tokenharbor/*:free
   - closed (values-excluded for accountable seats): gpt-* · gemini · grok ·
     gemma
+
+* Protocol — how a candidate earns a seat (hiring/01, DISPATCH #3)
+
+  1. NAMED here or on the live gateway roster. A snapshot generates candidates,
+     it never confirms one (that conflation produced the false dispatch #2:
+     kilo/qwen3-32b is listed, the gateway rejects it).
+  2. RESEARCHED — benchmark + real-user review, source + date per claim.
+     "No evidence in my context" is a REFUSAL, not a neutral state.
+  3. REACHABLE from the seat's runtime (resident harness · CI runner · web chat).
+  4. PERMITTED by the Owner's values filters (next section).
+  5. RANKED against the survivors; every seat carries a rank-3 fallback chain.
+
+  ID FORM for seats: MODEL@PLATFORM, no "/" after "@" (Owner rule, and
+  agent-team.el's parser only accepts an unspaced id after "ROLE — ").
+  Catalog rows above keep provider-qualified gateway names because those are
+  endpoint identifiers, not seat identifiers.
+
+* Owner values filters (binding)
+
+  - Open-weights + permanently-free ONLY in accountable seats.
+  - Excluded from accountable seats: gpt · gemini · gemma · grok · llama ·
+    ds-flash as a resident body.
+  - cloudflare/@cf = emergency-only (10k Neurons/day shared; wedged 2026-10-20).
+  - kilo/*:free · tokenharbor/*:free = PROMO, can vanish → emergency-only.
+  - No web models in resident seats. Web brains are one-shot couriers: no
+    filesystem, no git, no daemon; every claim needs pasted evidence.
+  - "No-data" models are INTERNED, never rejected.
+
+* Three reachability worlds (they are NOT one pool)
+
+  - RESIDENT — harness on the 2014 Celeron, 4 GB RAM: qoder · opencode · goose ·
+    omp · pi · cursor · copilot · codebuddy. Dies with the box. Zero heavy
+    builds; no candidate's weights run usefully here.
+  - CI — GitHub Actions + repo secrets (Owner P0). Survives the box; must be
+    API-reachable by key.
+  - WEB — chat UI the Owner pastes into: chat.qwen.ai · kimi.com · chat.z.ai ·
+    WorkBuddy.ai · MiniMax Agent.
+
+* Live gateway roster — proven vs refused (2026-10-20, from this box)
+
+  Full 163-id dump: agent-team/AGENT-TEAM-ROSTER.org. The split that decides
+  staffing:
+
+  - PROVEN ALIVE (one real completion each): qwen3.8-27b · groq/qwen3.8-27b ·
+    glm-4.7-flash · zai/glm-4.7-flash.
+  - PROVEN REFUSED: every opencode/*-free id ("free tier usable only inside
+    OpenCode") · every cloudflare/@cf/* (daily allowance exhausted) ·
+    kilo/qwen3-32b (listed, model_not_found).
+  - PRESENT-UNTESTED: kilo/*:free and tokenharbor/*:free promo pool ·
+    openrouter/*:free · nemotron pool · minimax pool.
+  - ABSENT from the gateway: glm-5.x · all kimi · qwen3.8-max · qwen3.7-plus ·
+    step-5 · beam(non-free). CI seats and gateway seats are different pools.
+
+* Evidence — GLM family (batch 1, complete)
+
+  - glm-5.3@chat.z.ai — AA intelligence 60 (announcement page) vs model-page
+    variance; GDPval-AA 1769; WebDev Elo 1621. CUSTOM licence, not MIT.
+    $1.40/$4.40. Review signal: repeated "regressed vs GLM-5.2" complaints.
+  - glm-5.3-flash@chat.z.ai — AA 57 (announcement) / 42 (model page) — the two
+    AA pages DISAGREE; both quoted. DeepSWE 63.4 · Terminal-Bench 84.3. **MIT**,
+    320B-A18B, weights + GGUF on HF. $0.15/$0.50. Sentiment: "a step change in
+    agentic use" + an "is annoying" complaint thread.
+  - glm-5.2@chat.z.ai — AA 51; SWE-bench Verified 77.8; TB 81.0. MIT. Free tier.
+  - glm-4.7-flash@z.ai — NO AA / no LMArena figure. Vendor-only SWE-bench 59.2,
+    TB 14.4 (weak). MIT 30B-A3B. The only GLM the gateway serves, and it is
+    PROVEN ALIVE here.
+  - Sources: artificialanalysis.ai model pages + Z.ai announcement posts,
+    z.ai pricing, huggingface.co/zai-org, r/LocalLLaMA release threads — all
+    fetched 2026-10-20.
+
+* Evidence — Kimi family (batch 2, complete)
+
+  - kimi-k3@workbuddy — LMArena 1486; WebDev Elo #1 1679; SWE-bench Verified
+    76.8; TB 88.3; DeepSWE 67.5; GDPval-AA 1668; BrowseComp 91.2. CUSTOM Kimi K3
+    licence; 2.8T/104B active — not runnable here. $3/$15. "Strong, slow and
+    very verbose."
+  - kimi-k2.6@kimi — AA 54 (article) vs 27 (model page) — DISAGREE, both quoted.
+    Vendor SWE-bench Verified 80.2 · TB 66.7 · LCB 89.6. Modified MIT; 1T/32B.
+    $0.95/$4.
+  - kimi-k2.8-preview@workbuddy — proprietary, no weights, no published
+    benchmarks → EXCLUDED (no evidence = no seat).
+  - Sources: lmarena.ai, artificialanalysis.ai, moonshot.ai pricing + tech
+    report, huggingface.co/moonshotai, r/LocalLLaMA — 2026-10-20.
+
+* Evidence — Qwen family (batch 3)
+
+  - EVIDENCE-PENDING. The batch was interrupted once and is re-running. Until
+    this block carries source+date per number, no Qwen body gets promoted on the
+    strength of "it is the family I am sitting in" — the acting Lead IS a Qwen
+    (qwen3.8-flash@qoder) and that is a disclosed conflict of interest.
+
+* Evidence — remaining open weights (batch 4)
+
+  - EVIDENCE-PENDING (same interruption): nemotron-3-ultra-550b ·
+    nemotron-3-super-120b · nemotron-3.5-lightning · minimax-m3.1-flash ·
+    poolside-laguna-s/xs-2.1 · inkling · north-mini-code · lfm-2.5 ·
+    dots-3-note · xing4.0-29b · step-5-preview · beam · deepseek-v4.1-flash.
+
+* Free tiers vs the "Lead must be uncapped" gate
+
+  Every candidate that could satisfy it, and what is actually known:
+
+  - glm-5.3-flash@chat.z.ai — web free, agentic shell; official cap wording NOT
+    YET QUOTED.
+  - glm-5.3-flash@opencode — free only inside OpenCode, refused over the API,
+    rotating promo → not permanent by definition.
+  - qwen3.7-plus / qwen3.8-max / qwen3.8-omni-flash@chat.qwen.ai — web free;
+    "Max" tiers are usually the gated ones. Caps NOT YET QUOTED.
+  - kimi-k2.6@kimi — web free; caps NOT YET QUOTED.
+  - nemotron-3-*@nvidia — NIM free tier is documented-CAPPED (quote the number).
+  - north-mini-code · dots-3-note · lfm-2.5 · laguna · inkling · xing4.0 ·
+    qwen3.8-27b@openrouter — genuinely free but the :free lane is rate-limited
+    (openrouter/auto is 20 RPM / 50 per day) and ephemeral.
+  - LEAD GATE: no body is named Lead until its official limit wording is quoted
+    in this section. Verification batch running now. Honest headline risk: a
+    truly uncapped free tier may not exist, in which case the requirement is
+    met by "least-capped + owner-operated", and the Owner must be told that
+    rather than sold a fiction.
+
+* Intern pool (no-data / unevidenced bodies are interned, not rejected)
+
+  A candidate with no benchmark evidence, or excluded from accountable seats by
+  licence or pool, gets an INTERN role: one scoped task, one REPORT, then
+  promotion or release. Five per round. Live list:
+  agent-team/AGENT-TEAM-MEMBERS.org §INTERN POOL.

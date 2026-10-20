@@ -15,6 +15,17 @@
            brief now scans the chat tail instead of inboxes)
 
 :LOGBOOK:
+- [2026-10-21 Thu 02:05 +08] Lead glm-5.3-flash: Owner security + harness
+  law (#hq 17:47Z) — (1) TELEGRAM BRIDGE LOCKED: ingest accepts only the
+  chat id in new secret TELEGRAM_OWNER_ID; every other chat DROPPED and
+  counted in run logs (impersonation impossible); until the Lead verifies
+  the first /start and sets the secret, nothing is ingested (claim only
+  in the run summary); mirror goes to the Owner's chat only. (2)
+  CODEBUDDY LAW: kept for its BUILT-IN models only (dormant until a
+  CodeBuddy credential exists — keys pro-only); for API-served brains
+  there is no novelty in any body — "any agent can ride APIs, no
+  surprise" — so the brain is installed into the BODY THAT FITS the work.
+  Dockerfile comment + TEAM-CHAT note updated to the same law.
 - [2026-10-21 Thu 01:50 +08] Lead glm-5.3-flash: Owner batch (#hq 17:27Z) —
   (1) Qoder PAT delivered -> repo secret QODER_PERSONAL_ACCESS_TOKEN set
   (HTTP 201); platform seat AUTH-READY; THIS turn = the Qoder-on-CI proof

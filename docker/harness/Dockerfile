@@ -42,13 +42,14 @@ RUN export HOME=/usr/local/lib/qoder-home \
  && ln -sf "$QBIN" /usr/local/bin/qoder \
  && qoder --version || true
 
-# --- CodeBuddy body (Owner 2026-10-21: CodeBuddy access keys are pro-only,
-#     so this body rides a THIRD-PARTY backend instead — no CodeBuddy
-#     account needed: CODEBUDDY_API_KEY=<provider key> +
-#     CODEBUDDY_BASE_URL=<OpenAI-compatible endpoint> + --model
-#     (Task 6 auth research). Default lane: ZAI glm-5.3-flash — zero new
-#     spend; flip to OpenRouter when credits land. Headless needs -y in
-#     -p mode for tool use.) -------------------------------------------
+# --- CodeBuddy body (Owner law 2026-10-21 17:47Z: CodeBuddy is kept for
+#     its BUILT-IN models only. For API-served brains there is no novelty
+#     in any body — "any agent can ride APIs, no surprise" — so the model
+#     brain is installed into the BODY THAT FITS the work instead. Baked
+#     and DORMANT until a CodeBuddy account credential exists (access
+#     keys are pro-only; CODEBUDDY_AUTH_TOKEN / CODEBUDDY_API_KEY envs
+#     ready to wire the moment one lands). Headless needs -y in -p mode
+#     for tool use.) ----------------------------------------------------
 RUN npm install -g @tencent-ai/codebuddy-code \
  && codebuddy --version || true
 

@@ -215,7 +215,7 @@ jobs:
     outputs:
       turn_branch: ${{ steps.push.outputs.branch }}
       seg_result: ${{ steps.seg.outputs.result }}
-      tg_chat: ${{ steps.ingest.outputs.chat_id }}   # auto-learned Owner chat id
+      tg_chat: ${{ steps.ingest.outputs.chat_id }}   # owner-locked chat id (secret TELEGRAM_OWNER_ID)
     runs-on: ubuntu-latest
     timeout-minutes: 25
     continue-on-error: true
@@ -304,19 +304,29 @@ jobs:
 
       # Owner channel — INBOUND leg (Owner order 2026-10-21 #hq: "You and
       # any team member should contact me through this [Telegram bot]. And,
-      # my reply should get recorded in TEAM-CHAT.org"). Every private
-      # message the Owner sends @agent_team_bridge_bot is recorded VERBATIM
-      # into the team chat as an @owner entry BEFORE the segment runs, so
-      # the on-turn seat reads it in the chat tail. The chat id is
-      # auto-LEARNED from the first message (no manual secret): exported as
-      # the tg_chat job output for the finalize mirror (outbound leg).
+      # my reply should get recorded in TEAM-CHAT.org"; 17:47Z addendum:
+      # "Keep bridge bot restricted to my chat ID — else anyone can
+      # impersonate me"). Only messages from the Owner's chat (secret
+      # TELEGRAM_OWNER_ID) are recorded VERBATIM into the team chat as an
+      # @owner entry BEFORE the segment runs; every OTHER chat is DROPPED
+      # and counted in the run log — impersonation impossible. Until the
+      # secret is set, even a first contact is dropped and surfaced only in
+      # the run summary as a claim for the Lead to verify and activate.
+      # The tg_chat job output therefore only ever carries the OWNER's id.
       # Runs even when the chain is idle/killed — the chat is the record.
-      - name: Telegram bridge — ingest Owner replies into the team chat
+      - name: Telegram bridge — ingest Owner replies into the team chat (owner-locked)
         id: ingest
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           [ -n "$TELEGRAM_BOT_TOKEN" ] || { echo "telegram: no token — silent"; exit 0; }
+          # OWNER LOCK (Owner order 17:47Z): nothing is ingested unless the
+          # message comes from the Owner's chat id (secret). Others: counted
+          # + dropped, never reach the team chat. Unset secret = even the
+          # first contact is dropped, only a claim is printed for the Lead.
+          OWNER="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID}}"
           git config user.name "agent-team-ci"
           git config user.email "agent-team-ci@users.noreply.github.com"
           git remote set-url --push origin \
@@ -325,10 +335,28 @@ jobs:
           UPD=$(curl -sS --max-time 20 \
             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?allowed_updates=%5B%22message%22%5D&limit=20") || UPD=""
           echo "$UPD" | jq -e '.ok == true' >/dev/null 2>&1 || { echo "telegram: API error or empty — skip"; exit 0; }
-          COUNT=$(echo "$UPD" | jq '[.result[] | select(.message.chat.type=="private") and (.message.text != null)] | length')
-          if [ "$COUNT" -eq 0 ]; then echo "telegram: no pending Owner messages"; exit 0; fi
+          if [ -z "$OWNER" ]; then
+            CLAIM=$(echo "$UPD" | jq -r '[.result[] | select(.message.chat.type=="private") | .message.chat.id] | first // empty')
+            if [ -n "$CLAIM" ]; then
+              echo "::warning::telegram lock ENGAGED, TELEGRAM_OWNER_ID unset — first-contact claim from chat ${CLAIM} DROPPED (nothing reached the team chat; the Lead verifies and sets the secret)"
+              {
+                echo "### Telegram bridge — LOCKED, claim pending"
+                echo "First-contact claim from chat \`${CLAIM}\` was DROPPED (owner lock engaged, secret unset)."
+                echo "The Lead verifies the claim is really the Owner, then sets the TELEGRAM_OWNER_ID secret. Until then NOTHING is ingested — impersonation impossible."
+              } >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "telegram: lock engaged (no owner secret yet), no pending messages"
+            fi
+            exit 0
+          fi
+          COUNT=$(echo "$UPD" | jq --arg owner "$OWNER" '[.result[] | select(.message.chat.type=="private") and (.message.text != null) and ((.message.chat.id | tostring) == $owner)] | length')
+          REJECT=$(echo "$UPD" | jq --arg owner "$OWNER" '[.result[] | select(.message.chat.type=="private") and ((.message.chat.id | tostring) != $owner)] | length')
+          if [ "$REJECT" -gt 0 ]; then
+            echo "::warning::telegram: DROPPED ${REJECT} message(s) from non-owner chat(s) — logged here, never ingested (owner lock)"
+          fi
+          if [ "$COUNT" -eq 0 ]; then echo "telegram: no pending OWNER messages (dropped ${REJECT} non-owner)"; exit 0; fi
           LAST_ID=$(echo "$UPD" | jq '[.result[].update_id] | max')
-          CHAT_ID=$(echo "$UPD" | jq -r '[.result[] | select(.message.chat.type=="private") | .message.chat.id] | first // empty')
+          CHAT_ID="$OWNER"
           TS=$(date -u '+%Y-%m-%d %a %H:%M UTC')
           {
             echo ""
@@ -718,17 +746,22 @@ jobs:
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
 
       # Owner channel — OUTBOUND leg (Owner order 2026-10-21 #hq: contact
-      # over Telegram). Mirrors every chain verdict to the Owner's chat:
-      # chat id = TELEGRAM_CHAT_ID secret if set, else auto-learned by the
-      # turn job's ingest step (tg_chat output). SILENT until the Owner
-      # /starts the bot.
+      # over Telegram; 17:47Z: locked to HIS chat id). Mirrors every chain
+      # verdict to the Owner's chat ONLY: TELEGRAM_OWNER_ID secret, else
+      # TELEGRAM_CHAT_ID, else the owner-locked learned id (tg_chat
+      # output — it only ever carries the verified Owner id). SILENT until
+      # the lock is activated by the Lead.
       - name: Mirror chain verdict to Telegram (silent without secrets)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TG_LEARNED_CHAT: ${{ needs.turn.outputs.tg_chat }}
         run: |
-          CHAT="${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}"
+          # OWNER LOCK (17:47Z): verdicts go ONLY to the Owner's chat —
+          # secret id first, then the owner-locked learned id. No other
+          # destination exists.
+          CHAT="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}}"
           [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
           TXT="$(printf 'Agent Team — segment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
             "${{ needs.turn.outputs.turn_branch }}" \

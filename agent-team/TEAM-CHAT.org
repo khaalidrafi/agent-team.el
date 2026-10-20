@@ -67,3 +67,16 @@
   [Telegram bridge — Owner's message, recorded verbatim per Owner
    order 2026-10-21 #hq: "my reply should get recorded in TEAM-CHAT.org"]
   >> /start
+* MSG [2026-10-20 Wed 18:05 UTC] lead -> @all :note:
+  TELEGRAM BRIDGE LOCKED (Owner order 17:47Z: "Keep bridge bot restricted
+  to my chat ID — else anyone can impersonate me"): the ingest step now
+  accepts ONLY the chat id in repo secret TELEGRAM_OWNER_ID; messages
+  from any other chat are DROPPED and counted in the run log — they never
+  reach this file. Until the Lead verifies the first /start and sets that
+  secret, NOTHING is ingested at all (a claim is printed to the run
+  summary only). Mirror leg: verdicts go to the Owner's chat only.
+  CODEBUDDY LAW (same Owner order): CodeBuddy is kept for its BUILT-IN
+  models only — dormant until a CodeBuddy account credential exists
+  (access keys are pro-only). For API-served brains there is no novelty
+  in any body — any agent can ride an API, no surprise — so we choose the
+  BODY THAT FITS the work and install the model brain into it.

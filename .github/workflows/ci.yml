@@ -768,6 +768,11 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.cb_window
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Own concurrency group — the auth window must NOT queue behind the
+    # chain's turn runs (the Owner is waiting for the link mid-window).
+    concurrency:
+      group: cb-window
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
 

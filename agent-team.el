@@ -302,10 +302,10 @@ BODY lines are indented two spaces (Org list-friendly)."
                               (split-string body "\n") "\n")))
     (concat
      (format "* MSG %s -> @%s :%s:                    :msg:%s:%s:%s:\n"
-             from to-tok kind from-tok to-tag kind)
+             from to-tag kind from-tok to-tag kind)
      ":PROPERTIES:\n"
      (format ":FROM: %s\n" from)
-     (format ":TO: %s\n" to-tok)
+     (format ":TO: %s\n" to-tag)
      (format ":KIND: %s\n" kind)
      (format ":WHEN: %s\n" when)
      ":END:\n"
@@ -390,12 +390,13 @@ scan the tail for @handle pings before picking work)."
   "Non-nil when NAME looks like a credential env var (names only —
 the value never appears anywhere in this package)."
   (and (stringp name)
-       (string-match-p
-        (concat "\\`\\(?:GROQ\\|ZAI\\|ZHIPU\\|OPENROUTER\\|OPENAI\\|ANTHROPIC"
-                "\\|QODER\\|TELEGRAM\\|CODEBUDDY\\|GOMODEL\\|LARK\\|GITHUB"
-                "\\|CLOUDFLARE\\|GEMINI\\|OPCODE\\|OPENCODE\\)[A-Z_]*"
-                "\\(?:API_KEY\\|TOKEN\\|PAT\\|WEBHOOK[A-Z_]*\\|MASTER_KEY"
-                "\\|OWNER_ID\\|ACCOUNT_ID\\)\\'") name)))
+       (let ((case-fold-search nil)) ; regex matching is case-insensitive by default — a lowercase "qoder_token" would otherwise match
+         (string-match-p
+          (concat "\\`\\(?:GROQ\\|ZAI\\|ZHIPU\\|OPENROUTER\\|OPENAI\\|ANTHROPIC"
+                  "\\|QODER\\|TELEGRAM\\|CODEBUDDY\\|GOMODEL\\|LARK\\|GITHUB"
+                  "\\|DISCORD\\|CLOUDFLARE\\|GEMINI\\|OPCODE\\|OPENCODE\\)[A-Z_]*"
+                  "\\(?:API_KEY\\|TOKEN\\|PAT\\|WEBHOOK[A-Z_]*\\|MASTER_KEY"
+                  "\\|OWNER_ID\\|ACCOUNT_ID\\)\\'") name))))
 
 (defun agent-team-env-names ()
   "List the credential-shaped ENV VAR NAMES in this environment.
@@ -455,7 +456,7 @@ inserted into the header block when absent).  Pure — unit-tested."
     (setq lines (mapcar (lambda (l)
                           (if (and (not replaced)
                                    (string-match-p
-                                    (concat "^\\#+" (regexp-quote key) ":") l))
+                                    (concat "^\\#\\+" (regexp-quote key) ":") l))
                               (progn (setq replaced t) line)
                             l))
                         lines))
@@ -475,7 +476,7 @@ inserted into the header block when absent).  Pure — unit-tested."
       (with-temp-buffer
         (insert-file-contents file)
         (goto-char (point-min))
-        (when (re-search-forward (concat "^\\#+" (regexp-quote key) ":[ \t]*\\(.*\\)$") nil t)
+        (when (re-search-forward (concat "^\\#\\+" (regexp-quote key) ":[ \t]*\\(.*\\)$") nil t)
           (string-trim (match-string 1)))))))
 
 (defun agent-team-control-set (key value)

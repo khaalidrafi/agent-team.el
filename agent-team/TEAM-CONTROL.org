@@ -135,4 +135,5 @@
 # current dispatch IS its Qoder-on-CI proof.
 :LOGBOOK:
 - [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
+- [2026-10-20 Tue 20:10] Lead: Owner confirmed DUAL-REPO LEAD (#hq 19:56Z) — this Lead serves khaalidrafi/agent-team.el AND khaalidrafi/admincraft. CHAT ROUTING LAW: each repo's GLM team chat mirrors to its RESPECTIVE Discord channel — finalize now posts the chain verdict + this segment's new TEAM-CHAT.org entries to secret DISCORD_WEBHOOK_TEAM_HQ (this repo -> #hq; admincraft -> DISCORD_WEBHOOK_TEAM_ADMINCRAFT). Silent until the Owner creates the channel webhook (one click) and sets the secret.
 :END:

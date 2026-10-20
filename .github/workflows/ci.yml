@@ -216,6 +216,7 @@ jobs:
       turn_branch: ${{ steps.push.outputs.branch }}
       seg_result: ${{ steps.seg.outputs.result }}
       tg_chat: ${{ steps.ingest.outputs.chat_id }}   # owner-locked chat id (secret TELEGRAM_OWNER_ID)
+      base_sha: ${{ steps.control.outputs.base_sha }} # ai/main before this segment — the Discord chat-mirror diff base
     runs-on: ubuntu-latest
     timeout-minutes: 25
     continue-on-error: true
@@ -247,6 +248,9 @@ jobs:
           OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1)
           TURN=$(grep -oP '^\#\+TURN:\s*\K.*' "$CTL" | head -1 | xargs)
           echo "kill=${KILL:-OFF} objstate=${OBJSTATE:-OPEN} turn='${TURN}'"
+          # Pre-segment ai/main tip: the Discord chat mirror diffs TEAM-CHAT.org
+          # from here to post-merge HEAD to extract THIS segment's GLM chats.
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           if [ "${KILL:-OFF}" = "ON" ]; then
             echo "mode=killed" >> "$GITHUB_OUTPUT"
             exit 0
@@ -917,3 +921,44 @@ jobs:
             --data-urlencode "chat_id=${CHAT}" \
             --data-urlencode "text=${TXT}") || CODE="curl-failed"
           echo "telegram mirror: HTTP ${CODE}"
+
+      # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
+      # Their GLM chats go to their respective Discord channels." This repo's
+      # channel = #hq (secret DISCORD_WEBHOOK_TEAM_HQ, a Discord channel
+      # webhook the Owner creates in one click). Mirrors (1) the chain
+      # verdict and (2) every TEAM-CHAT.org message this segment appended —
+      # the GLM chats — diffed base_sha..post-merge HEAD. SILENT until the
+      # webhook secret exists. FROM/TO law applies to every mirrored block.
+      - name: Mirror verdict + new GLM chats to Discord (silent without secret)
+        env:
+          DISCORD_WEBHOOK_TEAM: ${{ secrets.DISCORD_WEBHOOK_TEAM_HQ }}
+          BASE_SHA: ${{ needs.turn.outputs.base_sha }}
+          TURN_BRANCH: ${{ needs.turn.outputs.turn_branch }}
+          SEG_RESULT: ${{ needs.turn.outputs.seg_result }}
+        run: |
+          [ -n "$DISCORD_WEBHOOK_TEAM" ] || { echo "discord mirror: silent (no DISCORD_WEBHOOK_TEAM_HQ secret yet)"; exit 0; }
+          post() { # chunk to Discord's 2000-char cap
+            local txt="$1"
+            while [ -n "$txt" ]; do
+              local chunk="${txt:0:1900}"; txt="${txt:1900}"
+              curl -sS -o /dev/null -w 'discord mirror: HTTP %{http_code}\n' \
+                "$DISCORD_WEBHOOK_TEAM" \
+                -H 'Content-Type: application/json' \
+                -d "$(python3 -c 'import json,sys; print(json.dumps({"content": sys.stdin.read()}))' <<< "$chunk")" || true
+            done
+          }
+          FROM="FROM: team-lead (glm-5.3-flash, Agent Team @khaalidrafi/agent-team.el)"
+          post "$(printf '%s\nTO: @team (discord #hq)\n\nsegment done\nbranch: %s\nresult: %s\ndecision: %s\nstall: %s' \
+            "$FROM" "${TURN_BRANCH:-?}" "${SEG_RESULT:-?}" "${CHAIN_DECISION:-unknown}" "${CHAIN_STALL:-?}")"
+          # The GLM chats this segment appended (merge landed them in ai/main):
+          if [ -n "$BASE_SHA" ] && git cat-file -e "$BASE_SHA" 2>/dev/null; then
+            ADDED=$(git diff "$BASE_SHA" HEAD -- agent-team/TEAM-CHAT.org 2>/dev/null \
+              | grep '^+' | grep -v '^+++' | sed 's/^+//')
+            if [ -n "$ADDED" ]; then
+              post "$(printf '%s\nTO: @team (discord #hq)\n--- GLM chat, this segment ---\n%s' "$FROM" "$ADDED")"
+            else
+              echo "discord mirror: no new chat entries this segment"
+            fi
+          else
+            echo "discord mirror: base sha unavailable — verdict only"
+          fi

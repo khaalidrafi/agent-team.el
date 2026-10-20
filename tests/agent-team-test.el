@@ -200,22 +200,22 @@ PRIORITY: P1 · ORDER: 2")))
 (ert-deftest agent-team-control-apply-replaces ()
   (let* ((in "#+TITLE: control\n#+TURN: seat-a\n#+STALL-COUNT: 3\n\n* Notes\n")
          (out (agent-team--control-apply in "TURN" "seat-b")))
-    (should (string-match-p "^\\#+TURN: seat-b$" out))
+    (should (string-match-p "^\\#\\+TURN: seat-b$" out))
     (should-not (string-match-p "seat-a" out))
-    (should (string-match-p "^\\#+STALL-COUNT: 3$" out))))
+    (should (string-match-p "^\\#\\+STALL-COUNT: 3$" out))))
 
 (ert-deftest agent-team-control-apply-inserts-before-headline ()
   (let* ((in "#+TITLE: control\n\n* Notes\nbody\n")
          (out (agent-team--control-apply in "KILL-SWITCH" "ON")))
-    (should (string-match-p "^\\#+KILL-SWITCH: ON$" out))
+    (should (string-match-p "^\\#\\+KILL-SWITCH: ON$" out))
     ;; the line lands in the header block, never after the first headline
-    (should (< (string-match "^\\#+KILL-SWITCH" out)
+    (should (< (string-match "^\\#\\+KILL-SWITCH" out)
                (string-match "^\\* Notes" out)))))
 
 (ert-deftest agent-team-control-apply-appends-when-no-headline ()
   (let* ((in "#+TITLE: control\n")
          (out (agent-team--control-apply in "OBJECTIVE" "burn the board")))
-    (should (string-match-p "^\\#+OBJECTIVE: burn the board$" out))))
+    (should (string-match-p "^\\#\\+OBJECTIVE: burn the board$" out))))
 
 (ert-deftest agent-team-chat-format ()
   (let* ((msg (agent-team--chat-format

@@ -80,8 +80,10 @@ jobs:
         # Fails the job on a real error; warnings (free functions under -Q) are
         # informational, matching how we compile locally.
         run: |
-          emacs -Q --batch -L . --eval \
-            '(unless (byte-compile-file "agent-team.el") (kill-emacs 1))'
+          for f in agent-team.el agent-team-sessions.el; do
+            emacs -Q --batch -L . --eval \
+              "(unless (byte-compile-file \"$f\") (kill-emacs 1))"
+          done
 
       - name: Run ert tests
         run: |

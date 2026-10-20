@@ -13,6 +13,12 @@
     SELF-DISPATCHES the next run while objective OPEN + kill switch OFF —
     agents decide run count, stall guard stops after 4 no-progress
     segments, only the Lead sets COMPLETE; mesh/01 rotation running
+  - sessions/01 (Owner order 2026-10-20 15:56): agent-org INTEGRATION
+    phase 1 shipped — agent-team-sessions.el: per-role session registry +
+    M-x agent-team-team-buffer (live cross-agent chat, control switches,
+    board TODOs, inbox UNREAD counts) + M-x agent-team-send-to-role;
+    agent-org = soft dependency; Lead-channel decided: mailbox TO: lead,
+    polled by Lead self-wakeups every 15 min
   - harness/01: OPEN items from demo/01 evidence — (1) OpenRouter key
     needs ~10 credits (free-models-per-day exhausted mid-demo; Release
     BLOCKED) or per-seat provider keys; (2) Principal seat: OpenCode

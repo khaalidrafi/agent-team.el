@@ -70,3 +70,23 @@ seat always starts from a fresh inbox. The union merge driver
 - Real runs ALSO mirror the seat's report to its Lark per-role bot
   (LARK_WEBHOOK_<ROLE>) when that secret is set — the mailbox is the
   INTERNAL bus; Lark is the Owner-facing channel.
+
+* Reaching the Lead (Owner asked 2026-10-20 15:56 "how do they communicate with you?" — decided)
+
+- Agents -> Lead :: mail TO: lead in ~agent-team/mailbox/lead.org~
+  (STATUS: UNREAD).  The Lead polls its inbox on a self-wakeup every 15
+  minutes and answers in the same file.  Nothing else reaches the Lead
+  reliably: Discord bot mentions do not fire bot-to-bot, and Lark is
+  buggy on Z.ai — so the mailbox IS the Lead's channel.
+- Lead -> agents :: dispatches into role inboxes (proven in mesh/01)
+  plus the TEAM-CONTROL.org switches; from Emacs the Lead (or the Owner)
+  can also type straight into a role's live session with
+  ~M-x agent-team-send-to-role~.
+- Lead -> Owner :: Discord #hq, material events only.
+- Owner -> Lead :: a Discord mention (proven).  Owner -> agents: through
+  the Lead (objective flow law), or directly via
+  ~M-x agent-team-send-to-role~ / ~M-x agent-team-session-start-role~.
+- Humans watching the team :: ~M-x agent-team-team-buffer~
+  (agent-team-sessions.el) — ONE buffer, the live cross-agent chat of
+  every per-role agent-org session plus which agents are running, which
+  tasks are running (board Org TODOs), and every inbox's UNREAD count.

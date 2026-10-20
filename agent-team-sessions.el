@@ -164,7 +164,7 @@ carries no headings, and the queue region (\\* NEXT / \\* WAIT / \\* TODO /
                 (setq prompt 'stop)
               (setq prompt head author nil))))
          ((and prompt (not (eq prompt 'stop)) (null author)
-               (string-match "^#[+]ATTR_TEXINFO:[ \t]*:author[ \t]+\\(.*?\\)[ \t]*$" line))
+               (string-match "^[ \t]*#[+]ATTR_TEXINFO:[ \t]*:author[ \t]+\\(.*?\\)[ \t]*$" line))
           (setq author (string-trim (match-string 1 line))))))
       (when (and prompt (not (eq prompt 'stop)))
         (push (cons prompt author) cases))

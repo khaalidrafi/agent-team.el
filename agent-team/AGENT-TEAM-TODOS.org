@@ -4,6 +4,34 @@
 
 * Board
 
+** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:
+   Owner order (Discord #hq 15:56): each role gets its own agent-org session;
+   ONE team buffer shows the live cross-agent chat + which agents/tasks are
+   running, powered by Org TODOs; build on agent-org sessions; include the Lead.
+   :LOGBOOK:
+   - [2026-10-20 Tue 16:08] Lead glm-5.3-flash@chat.z.ai: PHASE 1 BUILT
+     (agent-team-sessions.el, byte-compiled + ert-gated in CI): (1) registry
+     role -> live agent-org chat buffer (register / forget / adopt /
+     session-start-role, which starts a NEW agent-org session in the repo
+     root); (2) M-x agent-team-team-buffer — one read-only view: TEAM-CONTROL
+     switches, board active Org TODOs, per-role session status (agent-org
+     header-line status word), mailbox UNREAD counts + last message, latest
+     exchanges (prompt + answering model) of each live session; refreshes
+     only while displayed (agent-org resource-monitor economy) and on every
+     finished turn via agent-org-response-finished-hook
+     (agent-team-sessions-install); (3) M-x agent-team-send-to-role — type a
+     dispatch straight into a role's live session
+     (agent-org-send-prompt-with-session, queues while streaming). agent-org
+     is a SOFT dependency: CI compiles/tests with none. 5 new ert tests.
+   - [2026-10-20 Tue 16:08] Lead: Lead-channel DECIDED (Owner's open
+     question): agents -> Lead = mailbox TO: lead (Lead self-wakeups poll
+     it every 15 min); Lead -> agents = inbox dispatches + TEAM-CONTROL
+     switches + send-to-role; Owner -> Lead = Discord mention; Lead ->
+     Owner = #hq material events only. Discord bot mentions do NOT fire
+     bot-to-bot and Lark is buggy on Z.ai — the mailbox IS the Lead channel.
+     Written into mailbox/PROTOCOL.org (Reaching the Lead).
+   :END:
+
 ** PROGRESS [2026-10-20] mesh/01 peer mesh + self-chaining CI (Owner-ordered) :mesh/01:
    Owner order (Discord #hq 14:52): "agents talk to each other — work, share
    reports, take each other's help, get dispatches, work — until objective

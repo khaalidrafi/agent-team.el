@@ -43,7 +43,7 @@ jobs:
           npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1
           codebuddy --version
           python3 -m pip install --quiet pynacl
-          python3 scripts/cb_window_ci.py
+          python3 .github/scripts/cb_window_ci.py
 
       - name: Upload sealed credential artifact (1-day retention)
         if: hashFiles('.cb-creds-sealed.bin') != ''

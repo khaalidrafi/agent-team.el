@@ -219,9 +219,10 @@
      MEMBERS.org rather than papered over. Tier risk (account-sharing clause)
      unchanged, on the record, Owner-ordered.
    - Actions this round: PR #1 squash-merged as merge gate (fefd5a7); workflow
-     re-enabled per the standing rule; ci.yml heartbeat (schedule + probe)
-     landed; MEMBERS.org re-staffed for CI; CANDIDATES.org expiry law applied;
-     REPORT #4 filed below.
+     re-enable attempted and BLOCKED by the credential (PAT lacks Actions:write:
+     enable → 404, dispatch → 422 — Owner one-click pending); ci.yml heartbeat
+     (schedule + probe) landed; MEMBERS.org re-staffed for CI; CANDIDATES.org
+     expiry law applied; REPORT #4 filed below.
    :END:
 
    :DELIVERY: Dispatched 15:5x to glm-5.3-flash@chat.z.ai over the Owner's Discord
@@ -325,16 +326,20 @@
      (tunnel excluded as a dependency: it dies with the box), results to the
      run summary, gateway line informational-only, every step guarded so no
      probe can ever fail the workflow. Lark notify guard preserved.
-   - ci/01 UNBLOCKED: PR #1 (parser grammar fix, CI-green on its branch) was
-     the reason ai/main ran red and the workflow got disabled. Squash-merged
-     as the merge gate (fefd5a7); workflow re-enabled per the standing rule
-     ("the Lead's once PR #1 is green"); verification run dispatched.
+   - ci/01 UNBLOCKED, one click short: PR #1 (parser grammar fix, CI-green on
+     its branch) was the reason ai/main ran red and the workflow got disabled.
+     Squash-merged as the merge gate (fefd5a7). Re-enable BLOCKED by the
+     credential: the PAT has no Actions:write (enable → 404, dispatch → 422,
+     both observed). Owner flips the toggle (or hands the Lead any
+     Actions:write token); the heartbeat then self-starts on schedule — no
+     manual run needed.
    :DOD-CHECK:
    - [X] every candidate row carries expiry-or-undated marking
    - [X] MEMBERS.org re-staffed: duties + rank + rank-3 fallbacks per seat,
          CI bodies where the work is CI
    - [X] ci.yml heartbeat: schedule + dispatch + probe + secret guards
-   - [X] PR #1 merged (fefd5a7) + workflow re-enabled
+   - [X] PR #1 merged (fefd5a7); enable blocked on PAT Actions:write — Owner
+         one-click pending, then the schedule self-starts (see ci/01 note)
    - [ ] verification run green (this commit is the trigger; run id to be
          recorded in the follow-up note — UNVERIFIED until then)
    - [ ] Owner items outstanding: picker check on the Lead brain ·
@@ -453,7 +458,17 @@
    continuous-operation shape: schedule (4×/day heartbeat) · workflow_dispatch ·
    concurrency guard · probe job (one live completion per accountable seat, direct
    provider keys, gateway line informational-only — the tunnel answers 530 with the
-   box off). Verification run dispatched; result recorded in REPORT #4's follow-up.
+   box off). CORRECTION — enable + dispatch are BLOCKED BY THE CREDENTIAL: the
+   PAT the Lead holds carries admin/push on Contents but NO Actions:write, so
+   POST .../enable returns 404 and dispatch 422 ("Cannot trigger a
+   workflow_dispatch on a disabled workflow", both observed 2026-10-20).
+   Enable is a one-click Owner item (Actions tab → CI → Enable workflow) or
+   any token with Actions:write. Once enabled NO dispatch is needed: the
+   schedule trigger self-starts the heartbeat at the next cron slot
+   (01:17/07:17/13:17/19:17 UTC — schedule is already on the default branch).
+   Verification evidence meanwhile: the .el content on ai/main is byte-identical
+   to the PR branch that ran 7/7 green (the re-hire commit touched only .org
+   and .yml files); first scheduled run closes the box.
    TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
    FROM: Team Lead — groq/qwen3.8-27b@opencode/local
    OBJECTIVES:

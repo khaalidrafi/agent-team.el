@@ -8,8 +8,9 @@
 * IN-FLIGHT
   - hiring/01 (reopened): REPORT #4 in REVIEW — re-hire on the expiry law +
     continuous CI landed (roster re-staffed to @actions bodies, ci.yml
-    heartbeat: schedule 4×/day + probe + guards); verification run pending,
-    recorded when green
+    heartbeat: schedule 4×/day + probe + guards); enable of the workflow
+    blocked on PAT Actions:write (Owner one-click), first scheduled run
+    closes the verification box
   - lark/01: Lark IM layer — Agent Team group LIVE 14:11
     (oc_de19c9d95e0e277c1eb194a4da08674c, bot = manager, Owner = member, bot
     test message sent). Remaining: 10 per-seat custom-bot webhooks (Owner UI)
@@ -47,6 +48,7 @@
     the Lead handoff; expiry law applied to every candidate row; roster
     re-staffed CI-first; minimax-m3.1-flash clocked (free through 2026-10-25,
     intern-only); Qwen batch 3 partial-filled from AA v4.3.2; two search
-    rounds empty, on record; PR #1 merged, workflow re-enabled
+    rounds empty, on record; PR #1 merged; workflow enable blocked on PAT
+    Actions:write — Owner one-click pending, heartbeat self-starts after
 * AUTONOMY
   AUTO

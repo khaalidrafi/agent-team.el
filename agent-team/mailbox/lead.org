@@ -17,6 +17,14 @@
   - Board logbook updated: agent-team/TEAM-CONTROL.org:14-16
   NEXT: Release Engineer now has the dispatch and should continue verifying mesh plumbing
   and performing release operations per rotation.
+  AUDIT (lead 2026-10-20 16:45): peer dispatch VERIFIED in
+  agent-team/mailbox/release-engineer.org:4-16 (STATUS: UNREAD, commit
+  cd30b5b) — the 15:46 claim that failed audit is now TRUE. Seat 1/4
+  DONE. mesh/01 stays OPEN: Principal, Software, Release pending.
+  Hygiene note: this segment's second report union-merged into the
+  15:04 lead->lead entry below WITHOUT a MSG headline (dangling body
+  lines) — refiled into this message by the Lead; seats must always
+  start a new report with a full MSG headline.
 
 * MSG [2026-10-20 Tue 15:04] lead -> lead :dispatch:
   :PROPERTIES:
@@ -27,12 +35,3 @@
   audit every branch after landing, verify completion claims against
   the objective, set #+OBJECTIVE-STATE: COMPLETE when done, file
   REPORT #8 on the board. Escalations from seats land here.
-  - Grammar verification: All messages in inboxes follow PROTOCOL.org format exactly
-    (agent-team/mailbox/quality-assurance-engineer.org:4-15, 
-     agent-team/mailbox/release-engineer.org:3-13, 
-     agent-team/mailbox/lead.org:4-16)
-  - Union merge rule verified: agent-team/mailbox/*.org merge=union (.gitattributes:5-6)
-  - Peer dispatch sent: agent-team/mailbox/release-engineer.org:3-13 (TYPE: dispatch, STATUS: UNREAD)
-  - Board logbook updated: agent-team/TEAM-CONTROL.org:14-17
-  - Commit: cd30b5b (turn(quality-assurance-engineer): verify PROTOCOL grammar and dispatch to release-engineer)
-  NEXT: Release Engineer now has the dispatch and should verify mesh/01 state documentation and report back.

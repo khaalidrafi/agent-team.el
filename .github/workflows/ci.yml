@@ -253,7 +253,7 @@ jobs:
       - name: Build harness image (preinstalled agents — cached, no installs)
         if: steps.control.outputs.mode == 'work'
         run: |
-          docker buildx build \
+          docker buildx build --load \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             -t agent-team-harness:local \
@@ -307,7 +307,11 @@ jobs:
           # Seat -> body command. Brains come from the baked configs; keys
           # come from repo secrets via env. The harness image has BOTH
           # bodies preinstalled (Owner order: containers, not CI installs).
-          cat > /tmp/turn-inside.sh <<'INNER'
+          # The script lives IN the workspace so the container reads it via
+          # the mount; the verdict is written back as .turn-result.txt —
+          # NO shell pipelines anywhere (CI runs bash -o pipefail: a grep
+          # with no match would silently kill the step — demo/01 turn 5).
+          cat > "$PWD/.turn-inside.sh" <<'INNER'
           #!/usr/bin/env bash
           set +e
           case "$SEAT" in
@@ -329,32 +333,39 @@ jobs:
           esac
           INNER
 
-          docker run --rm -i --user 1001:1001 \
+          if docker run --rm --user 1001:1001 \
             -v "$PWD":/workspace -w /workspace \
             -e SEAT -e BRIEF \
             -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
-            agent-team-harness:local bash -s < /tmp/turn-inside.sh 2>&1 \
-            | tee /tmp/turn-out.txt
-          # The inner script's last TURN_RESULT line is the seat's verdict.
-          grep -o 'TURN_RESULT=.*' /tmp/turn-out.txt | tail -1 > /tmp/turn-result.txt
-          if [ ! -s /tmp/turn-result.txt ]; then
-            echo "TURN_RESULT=BLOCKED (container produced no verdict — read the log)" > /tmp/turn-result.txt
+            agent-team-harness:local bash /workspace/.turn-inside.sh \
+            > /workspace/.turn-out.txt 2>&1; then
+            echo "container verdict captured"
+          else
+            echo "docker run failed — see output below for the cause"
+            tail -30 /workspace/.turn-out.txt || true
+            echo "TURN_RESULT=BLOCKED (docker run failed — see log)" > /workspace/.turn-result.txt
           fi
-          cat /tmp/turn-result.txt >> "$GITHUB_ENV"
+          sed -n '/TURN_RESULT=/p' /workspace/.turn-out.txt > /workspace/.turn-result.tmp || true
+          if [ -s /workspace/.turn-result.tmp ]; then
+            cp /workspace/.turn-result.tmp /workspace/.turn-result.txt
+          fi
+          [ -s /workspace/.turn-result.txt ] || echo "TURN_RESULT=BLOCKED (container wrote no verdict — see log)" > /workspace/.turn-result.txt
+          cat /workspace/.turn-result.txt >> "$GITHUB_ENV"
 
-          TURN_RESULT=$(sed 's/^TURN_RESULT=//' /tmp/turn-result.txt | tail -1)
+          TURN_RESULT=$(sed 's/^TURN_RESULT=//' /workspace/.turn-result.txt | tail -1)
           echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "objective: ${OBJECTIVE}" >> "$SUMMARY"
           echo "branch: ${BRANCH}" >> "$SUMMARY"
           echo "result: ${TURN_RESULT}" >> "$SUMMARY"
           echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
+          rm -f /workspace/.turn-inside.sh /workspace/.turn-out.txt /workspace/.turn-result.txt /workspace/.turn-result.tmp
 
       # The agent's branch is pushed for the Lead's merge gate; ONLY the
       # control-file pointer lands on ai/main, so an agent can never merge
       # application code past the gate.
       - name: Push work branch, advance rotation, commit control file
-        if: steps.control.outputs.mode == 'work'
+        if: always() && steps.control.outputs.mode == 'work'   # never stall the rotation on a step failure
         run: |
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
           CTL=agent-team/TEAM-CONTROL.org

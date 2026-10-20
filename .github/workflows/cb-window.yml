@@ -43,7 +43,6 @@ jobs:
           CB_TUI_DUR: '120'
           # 13-minute landing window (v1 shipped 180s — Owner was promised
           # ~13 min and got 3; run 39481111876 evidence)
-          CB_WINDOW_DUR: '780'
           CB_URL_WAIT: '150'
         run: |
           npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1

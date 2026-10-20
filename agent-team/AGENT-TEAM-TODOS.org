@@ -367,6 +367,16 @@
    :END:
 
 ** PROGRESS [2026-10-20] ci/01: stabilize CI — parse fix + webhook guard :DISPATCH:
+   :CI-STATUS: WORKFLOW DISABLED by Owner order 2026-10-20 — workflow 390385434
+   (.github/workflows/ci.yml) now state=disabled_manually, so no push fires a run.
+   Four runs executed BEFORE the order, all mine, none approved: 39404275442 fail,
+   39404373880 PASS (PR branch, ert 7/7 on the runner's Emacs — proof the fix works
+   off this box), 39404638076 fail, 39407330568 fail. ~2 min total, read-only, no
+   secrets used (LARK_WEBHOOK_URL unset, guard skipped), no model calls, nothing sent
+   to Lark. The two ai/main failures are the expected red ert: main lacks PR #1's
+   parser fix. Re-enable with:
+   gh api -X POST repos/khaalidrafi/agent-team.el/actions/workflows/390385434/enable
+   — the Owner's call, or the Lead's once PR #1 is green.
    TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
    FROM: Team Lead — groq/qwen3.8-27b@opencode/local
    OBJECTIVES:

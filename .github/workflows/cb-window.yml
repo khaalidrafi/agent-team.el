@@ -39,6 +39,8 @@ jobs:
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
           # Lead's seal PUBLIC key (private counterpart is NOT in the repo)
           CB_SEAL_PUBKEY: 'VfVI1oQWk7+4dIPKjBg9IGrHeKM1VURYg/mUCrJ2YSg='
+          CB_WINDOW_DUR: '180'
+          CB_TUI_DUR: '120'
           # 13-minute landing window (v1 shipped 180s — Owner was promised
           # ~13 min and got 3; run 39481111876 evidence)
           CB_WINDOW_DUR: '780'

@@ -235,26 +235,70 @@
     north-mini-code@cohere — all on OpenRouter's :free lane, which is capped
     and rotating. "Permanent free" is doing a lot of work in that filter.
 
-* Free tiers vs the "Lead must be uncapped" gate
+* Free tiers vs the "Lead must be uncapped" gate — GATE FAILED (batch 5)
 
-  Every candidate that could satisfy it, and what is actually known:
+  HEADLINE, stated plainly because the alternative is a fiction: **no free tier
+  on any checked platform is uncapped.** Nine primary sources, all acc.
+  2026-10-20. "Lead = free tier with no caps" cannot be filled from this roster.
 
-  - glm-5.3-flash@chat.z.ai — web free, agentic shell; official cap wording NOT
-    YET QUOTED.
-  - glm-5.3-flash@opencode — free only inside OpenCode, refused over the API,
-    rotating promo → not permanent by definition.
-  - qwen3.7-plus / qwen3.8-max / qwen3.8-omni-flash@chat.qwen.ai — web free;
-    "Max" tiers are usually the gated ones. Caps NOT YET QUOTED.
-  - kimi-k2.6@kimi — web free; caps NOT YET QUOTED.
-  - nemotron-3-*@nvidia — NIM free tier is documented-CAPPED (quote the number).
-  - north-mini-code · dots-3-note · lfm-2.5 · laguna · inkling · xing4.0 ·
-    qwen3.8-27b@openrouter — genuinely free but the :free lane is rate-limited
-    (openrouter/auto is 20 RPM / 50 per day) and ephemeral.
-  - LEAD GATE: no body is named Lead until its official limit wording is quoted
-    in this section. Verification batch running now. Honest headline risk: a
-    truly uncapped free tier may not exist, in which case the requirement is
-    met by "least-capped + owner-operated", and the Owner must be told that
-    rather than sold a fiction.
+  - chat.z.ai web — free GLM-5.3-Flash chat exists, but NO primary doc states
+    daily caps; agentic features are tied to the paid GLM Coding Plan
+    (docs.z.ai/devpack/usage-policy). Verdict: UNKNOWN, limits almost certainly
+    exist. Also: "account sharing prohibited" and plan use restricted to
+    "officially supported tools" → running a shared Team-Lead bot on it risks a
+    MID-SHIFT BAN. This kills glm-5.3-flash@chat.z.ai as an unattended Lead.
+  - Z.ai GLM Coding Plan (paid, $18/mo Lite) — CAPPED with published numbers:
+    Lite 2,000 credits/5h + 10,000/week; Pro 12,000/60,000; Max 28,000/140,000
+    (docs.z.ai/devpack/overview, /faq). The only offering actually designed for
+    continuous agentic coding.
+  - chat.qwen.ai — free interactive chat, caps undocumented (JS-rendered pages,
+    no primary doc). PROGRAMMATIC PATH IS DEAD: Qwen Code's free OAuth tier was
+    discontinued 2026-04-15, already cut 1,000 → 100 requests/day, then closed
+    entirely (github.com/QwenLM/qwen-code/issues/3203). DashScope/Model Studio
+    new-user quota: ~1,000,000 tokens per model, VALID 90 DAYS, then blocked or
+    billed (alibabacloud.com/help/en/model-studio/new-free-quota).
+  - kimi.com — chat free, cap undocumented; agentic features (Kimi Code, Claw,
+    Agent Swarm, Deep Research) are MEMBERSHIP-GATED and metered from a monthly
+    credit pool (kimi.com/en/help/membership/membership-pricing); API rate limits
+    page publishes no numbers.
+  - opencode free roster — explicitly ephemeral: "GLM-5.3-Flash Free is free on
+    OpenCode for a limited time"; staff say "free usage is dynamic, we are always
+    shifting based off what capacity we have vs demand"; hard stop message
+    "Free usage exceeded, add credits" (opencode.ai/v2/docs/console/models,
+    github.com/anomalyco/opencode/issues/28055). Not client-locked after all —
+    usable via API — but undisclosed numeric caps.
+  - groq free — CAPPED, and the caps are published per model: qwen/qwen3.8-27b
+    = 30 RPM · 1,000 RPD · 8K TPM · 200K tokens/day (console.groq.com/docs/
+    rate-limits). Small for an unattended agent, but it is a REAL number, permits
+    scripts, and is far above what a per-push CI probe job burns.
+  - nvidia NIM — "free inference" with no primary doc of the quota; forum
+    consensus ~1,000-credit allowance, ~40-60 RPM (forums.developer.nvidia.com).
+    Verdict: UNKNOWN, terms can change without docs.
+  - cloudflare Workers AI — CAPPED: 10,000 Neurons/day free, then requests fail
+    unless billing is on; some LLMs require a paid billing method just to try
+    (developers.cloudflare.com/workers-ai/platform/pricing). Observed exhausted
+    from this box today, consistent with the cap.
+  - huggingface Inference Providers — free tier effectively GONE: "Free Users —
+    Monthly Credits: None"; PRO = $2.00/mo
+    (huggingface.co/docs/inference-providers/pricing).
+
+  Automated/unattended use, separately from caps:
+  - APIs that explicitly permit scripts: groq · cloudflare · DashScope · HF.
+  - Web chat tiers (chat.z.ai, chat.qwen.ai, kimi.com): none document bot use;
+    interactive-oriented ToS. A web Lead is therefore Owner-paced courier work,
+    which is exactly what COMMON says web brains are.
+
+  CONSEQUENCE FOR STAFFING (the resolution, not a shrug):
+  - The uncapped part has to come from the RUNTIME, not the model: a PUBLIC repo
+    gives unlimited Linux Actions minutes. That is the only genuinely uncapped
+    free resource in this whole picture.
+  - So: Lead = one-shot web brain (Owner pastes in, decisions pasted out) whose
+    caps are irrelevant because dispatch is human-paced; its hands are Actions,
+    and the API brain that touches CI runs on published caps we can size for.
+  - If the Owner wants an UNATTENDED Lead, the honest options are exactly two:
+    (a) relax "no caps" → Z.ai GLM Coding Plan Lite $18/mo (published 2,000
+    credits/5h), or (b) accept groq's 200K tokens/day as a capped primary with
+    CI as the executor. Do not staff an unattended seat on a web free tier.
 
 * Intern pool (no-data / unevidenced bodies are interned, not rejected)
 

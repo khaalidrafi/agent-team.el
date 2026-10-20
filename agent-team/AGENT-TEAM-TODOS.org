@@ -4,6 +4,28 @@
 
 * Board
 
+** PROGRESS [2026-10-20] demo/01 30-minute CI turn-system demo (Owner-ordered) :demo/01:
+   DEMO — 30-minute CI turn-system demo (Owner order, Discord #hq 2026-10-20)
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi · REPO: khaalidrafi/agent-team.el (PUBLIC)
+   PRIORITY: P0 · RISK: writes
+   :LOGBOOK:
+   - [2026-10-20] Owner orders: (a) run a SMALL TEST OBJECTIVE for ~30 min
+     as a demo; (b) comms via THIS BOARD, not the Lark group ("Use Team
+     Todos, instead of Lark group for this"); (c) qwen3.8-flash@qoder
+     NEEDS AUTH — do not use until the Owner provides credentials;
+     (d) the Owner will not edit TEAM-CONTROL.org — objectives are stated
+     to the Lead, who transcribes them into #+OBJECTIVE.
+   - [2026-10-20] Objective transcribed into agent-team/TEAM-CONTROL.org
+     (#+OBJECTIVE line). Mechanism under demo: one turn = one run = one
+     seat's work segment on its own branch; only #+TURN advances on
+     ai/main; the Lead merges at the gate. Each seat files
+     agent-team/demo/<role-slug>.org — that file IS its turn report
+     (no Lark, no board edits by members this run). Rotation: Principal
+     Engineer → Software Engineer → Quality Assurance Engineer → Release
+     Engineer. Lead closes with REPORT #7 after the merge gate.
+   :END:
+
 ** REVIEW [2026-10-20] hiring/01 round 4: hire review + per-role Lark + plan — REPORT #6 :REPORT:
    REPORT #6 — hiring/01 round 4: hire review, per-role Lark bots, THE PLAN
    FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai

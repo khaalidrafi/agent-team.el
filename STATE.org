@@ -6,6 +6,14 @@
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
     byte-compile green on the runner (run 39404373880)
 * IN-FLIGHT
+  - demo/01 (Owner order 2026-10-20, #hq): 30-minute CI turn-system DEMO
+    running — objective transcribed by the LEAD into TEAM-CONTROL.org
+    (the Owner does not edit the control file; objectives flow through
+    the Lead); each seat files agent-team/demo/<role-slug>.org as its
+    turn report; comms via THIS BOARD, NOT Lark (per-role bots not in
+    play this run); Acting Platform Engineer qwen3.8-flash@qoder is
+    HOLD-AUTH (needs Owner credentials — out of all runs until then);
+    Lead merges the turn branches at the gate, then REPORT #7
   - hiring/01 (round 4, Owner orders 2026-10-20): per-role Lark bots
     (members write their own dispatches/reports — generic CI notify
     REMOVED from ci.yml); expiring models allowed as ACTING — Acting

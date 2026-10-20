@@ -29,7 +29,7 @@ concurrency:
 jobs:
   window:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
@@ -39,18 +39,24 @@ jobs:
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
           # Lead's seal PUBLIC key (private counterpart is NOT in the repo)
           CB_SEAL_PUBKEY: 'VfVI1oQWk7+4dIPKjBg9IGrHeKM1VURYg/mUCrJ2YSg='
-          CB_WINDOW_DUR: '180'
-          CB_TUI_DUR: '120'
+          # 13-minute landing window (v1 shipped 180s — Owner was promised
+          # ~13 min and got 3; run 39481111876 evidence)
+          CB_WINDOW_DUR: '780'
+          CB_URL_WAIT: '150'
         run: |
           npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1
           codebuddy --version
           python3 -m pip install --quiet pynacl
           python3 .github/scripts/cb_window_ci.py
 
+      # v1 bug: the sealed file was a DOTFILE and v4 defaults
+      # include-hidden-files:false -> "No files were found" (run 39481111876
+      # evidence). Non-hidden name + explicit include flag.
       - name: Upload sealed credential artifact (1-day retention)
-        if: hashFiles('.cb-creds-sealed.bin') != ''
+        if: always() && hashFiles('cb-creds-sealed.bin') != ''
         uses: actions/upload-artifact@v4
         with:
           name: cb-creds-sealed
-          path: .cb-creds-sealed.bin
+          path: cb-creds-sealed.bin
+          include-hidden-files: true
           retention-days: 1

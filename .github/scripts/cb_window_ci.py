@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 """CodeBuddy OAuth WINDOW on CI (runs inside the GitHub Actions job).
 
-Owner said "Done." but the token grant attaches to the LIVE CLI instance
-that generated the login URL — his approval landed after the Lead's local
-window closed. This job re-runs the flow where the bot token actually
-lives (repo secrets), so the link can be delivered MID-WINDOW:
-
-  1. pty-drive `codebuddy` through the Intl login (region menu included).
-  2. Capture the login URL from the browser shim.
-  3. Telegram it to the Owner IMMEDIATELY (FROM/TO headers per law).
-  4. Keep the CLI polling ~13 min; watch ~/.codebuddy for the credential
-     landing.
-  5. On landing: tar the credential tree and SEAL it with the Lead's
-     libsodium public key (repo is PUBLIC — the artifact must be
-     ciphertext-only), write .cb-creds-sealed.bin for the upload step.
+v2 fixes after run 39481111876 (WINDOW_RESULT=expired, URL never captured):
+  - TRANSCRIPT ECHO: the pty TUI transcript is echoed into the run log
+    (ANSI-stripped tail every ~12s) so a failed capture is debuggable.
+  - CONTENT-AWARE pacing: keystrokes fire on transcript markers, not blind
+    sleeps; every marker miss is logged.
+  - URL capture from BOTH the browser shim AND the raw transcript text.
+  - Artifact written NON-hidden (cb-creds-sealed.bin) — v4 upload skips
+    dotfiles unless include-hidden-files.
 """
 import base64, os, pty, re, select, fcntl, termios, struct, signal
 import subprocess, sys, tarfile, time, io, glob
 from pathlib import Path
 
 DUR = int(os.environ.get("CB_WINDOW_DUR", "780"))
-TUI_DUR = int(os.environ.get("CB_TUI_DUR", "150"))
+URL_WAIT = int(os.environ.get("CB_URL_WAIT", "150"))
 TG_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT = os.environ.get("TELEGRAM_OWNER_ID", "")
 PUBKEY_B64 = os.environ.get("CB_SEAL_PUBKEY", "")
@@ -29,6 +24,8 @@ CB = HOME / ".codebuddy"
 SHIM = Path("/tmp/cb-browser-url.txt")
 OUT_LOG = Path("/tmp/cb-ci-tui.log")
 NOISE = ("plugins", "logs", "traces", "shell-snapshots", "projects", "diagnostics")
+
+ANSI = re.compile(rb"\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07]*\x07|\x1b[=>]")
 
 for p in ("/tmp/fakebrowser", "/tmp/xdg-open"):
     p = Path(p)
@@ -50,6 +47,42 @@ fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 45, 150, 0, 0))
 log = OUT_LOG.open("wb")
 start = time.time()
 step = 0
+url_sent = False
+transcript = bytearray()
+last_echo = 0.0
+
+
+def clean_tail(n=900):
+    txt = ANSI.sub(b"", bytes(transcript[-2400:])).decode("utf-8", "replace")
+    txt = re.sub(r"\s+", " ", txt).strip()
+    return txt[-n:]
+
+
+def echo(force=False):
+    global last_echo
+    if force or time.time() - last_echo >= 12:
+        last_echo = time.time()
+        print(f"TUI[{int(elapsed())}s]: {clean_tail()}", flush=True)
+
+
+def elapsed():
+    return time.time() - start
+
+
+URL_RE = re.compile(rb"https://[^\s\"'<>]*codebuddy[^\s\"'<>]*login[^\s\"'<>]*",
+                    re.I)
+
+
+def find_url():
+    m = URL_RE.search(bytes(transcript))
+    if m:
+        return m.group(0).decode()
+    if SHIM.exists():
+        u = SHIM.read_text().strip()
+        if u and "codebuddy" in u and "login" in u.lower():
+            return u
+    return ""
+
 
 def snapshot():
     out = {}
@@ -63,6 +96,7 @@ def snapshot():
             pass
     return out
 
+
 def cred_shaped(path: Path) -> bool:
     try:
         head = path.read_bytes()[:20000]
@@ -70,23 +104,39 @@ def cred_shaped(path: Path) -> bool:
         return False
     return bool(re.search(rb"(access|refresh)[_]?token|api[_]?key|Bearer [A-Za-z0-9]", head, re.I))
 
+
 def tg_send(text: str) -> None:
     if not (TG_TOKEN and TG_CHAT):
         print("TG_PUSH: skipped (secrets unavailable)", flush=True)
         return
     import urllib.request, urllib.parse
-    code = "?"
     try:
         req = urllib.request.Request(
             f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
             data=urllib.parse.urlencode({"chat_id": TG_CHAT, "text": text}).encode())
         with urllib.request.urlopen(req, timeout=20) as r:
-            code = str(r.status)
+            body = r.read().decode()[:120]
+            print(f"TG_PUSH: HTTP {r.status} {body}", flush=True)
     except Exception as e:
-        code = f"err:{e}"
-    print(f"TG_PUSH: HTTP {code}", flush=True)
+        print(f"TG_PUSH: err {e}", flush=True)
 
-while time.time() - start < TUI_DUR and step < 5:
+
+def deliver(url: str) -> None:
+    global url_sent
+    if url_sent:
+        return
+    url_sent = True
+    tg_send("FROM: team-lead (glm-5.3-flash, Agent Team)\nTO: @owner\n\n"
+            "CODEBUDDY AUTH WINDOW — OPEN NOW (~13 minutes).\n\n"
+            "Click and finish sign-in inside the window; the CLI is polling "
+            "live. If your browser ends at a failed 127.0.0.1 page, that is "
+            "fine — copy the FULL address-bar URL to #hq. The moment you "
+            "approve, the built-in models go live on the roster.\n\n" + url)
+    print(f"URL_READY: {url[:100]}", flush=True)
+
+
+# ---------------- phase 1: drive to the login URL ----------------
+while elapsed() < URL_WAIT and not url_sent:
     r, _, _ = select.select([fd], [], [], 1.0)
     if r:
         try:
@@ -95,59 +145,84 @@ while time.time() - start < TUI_DUR and step < 5:
             break
         if not data:
             break
-        log.write(data); log.flush()
-    el = time.time() - start
-    if step == 0 and el > 10:
+        transcript.extend(data)
+        log.write(data)
+        log.flush()
+        u = find_url()
+        if u:
+            deliver(u)
+            break
+    t = elapsed()
+    view = clean_tail(400).lower()
+
+    def marker(*words):
+        return any(w in view for w in words)
+
+    if step == 0 and (marker("sign in", "login", "auth", "get started", "welcome")
+                      or t > 12):
         os.write(fd, b"\r"); step = 1
-    elif step == 1 and el > 17:
+        print(f"STEP1: Enter @ {t:.0f}s", flush=True)
+    elif step == 1 and (marker(">", "command", "input", "search") or t > 18):
         os.write(fd, b"/login\r"); step = 2
-    elif step == 2 and el > 26:
-        os.write(fd, b"\x1b[B"); step = 3
-    elif step == 3 and el > 29:
-        os.write(fd, b"\r"); step = 4
-    elif step == 4:
-        url = SHIM.read_text().strip() if SHIM.exists() else ""
-        if url and "codebuddy.ai/login" in url:
-            tg_send("FROM: team-lead (glm-5.3-flash, Agent Team)\nTO: @owner\n\n"
-                    "CODEBUDDY AUTH WINDOW — OPEN NOW (~13 minutes).\n\n"
-                    "Click and finish sign-in inside the window; the CLI is "
-                    "polling live. If your browser ends at a failed "
-                    "127.0.0.1 page, that is fine — copy the FULL "
-                    "address-bar URL to #hq. The moment you approve, the "
-                    "built-in models go live on the roster.\n\n" + url)
-            print(f"URL_READY: {url[:60]}…", flush=True)
-            step = 5
+        print(f"STEP2: /login @ {t:.0f}s", flush=True)
+    elif step == 2 and t > 24:
+        # region menu: pick the Intl/overseas entry (arrow-down then Enter,
+        # retried once — menu order is not guaranteed)
+        os.write(fd, b"\x1b[B")
+        print(f"STEP3: arrow-down @ {t:.0f}s", flush=True)
+        step = 3
+    elif step == 3 and t > 27:
+        os.write(fd, b"\r")
+        print(f"STEP4: Enter @ {t:.0f}s", flush=True)
+        step = 4
+    elif step == 4 and t > 33:
+        # second chance: some builds need another Enter on the region list
+        os.write(fd, b"\r")
+        print(f"STEP5: extra Enter @ {t:.0f}s", flush=True)
+        step = 5
+    echo()
 
-if step < 5:
-    print("URL_READY: never (no login URL in the TUI phase) — dumping TUI tail:", flush=True)
-    try:
-        tail = OUT_LOG.read_bytes()[-2500:]
-        import re as _re
-        print(_re.sub(rb"\x1b\[[0-9;?]*[a-zA-Z]|\x1b\][^\x07\x1b]*(\x07|\x1b\\\\)", b"", tail).decode("utf-8", "replace"))
-    except Exception as e:
-        print(f"tui dump failed: {e}", flush=True)
+if not url_sent:
+    print("URL_READY: never — dumping final transcript for post-mortem", flush=True)
+    print("TUI_FINAL: " + clean_tail(1800), flush=True)
 
-# ---- landing watch (CLI keeps polling while alive) ----
+# ---------------- phase 2: landing watch ----------------
 BASE = snapshot()
 landed = None
 end = start + DUR
 print(f"LANDING_WATCH: baseline {len(BASE)} files", flush=True)
 while time.time() < end:
-    if os.path.exists(f"/proc/{pid}") is False:
+    if not os.path.exists(f"/proc/{pid}"):
         print("CLI exited early", flush=True)
         break
     time.sleep(10)
+    # keep draining pty so the CLI never blocks on a full buffer
+    while True:
+        rr, _, _ = select.select([fd], [], [], 0)
+        if not rr:
+            break
+        try:
+            data = os.read(fd, 65536)
+        except OSError:
+            data = b""
+        if not data:
+            break
+        transcript.extend(data)
+        log.write(data)
+        log.flush()
+        u = find_url()
+        if u:
+            deliver(u)
     now = snapshot()
     new = {k: v for k, v in now.items() if k not in BASE}
     changed = {k: v for k, v in now.items() if k in BASE and BASE[k] != v}
-    hits = [k for k in list(new) + list(changed)
-            if cred_shaped(CB / k)]
+    hits = [k for k in list(new) + list(changed) if cred_shaped(CB / k)]
     if hits:
         landed = hits
         print(f"AUTH_LANDED: {len(hits)} credential-shaped file(s): {hits[:4]}", flush=True)
         break
 
-# collect + seal regardless of landing verdict (baseline included)
+# ---------------- phase 3: collect + seal ----------------
 try:
     os.kill(pid, signal.SIGKILL)
 except Exception:
@@ -166,9 +241,12 @@ print(f"COLLECTED: {len(raw)} bytes of ~/.codebuddy tree", flush=True)
 if PUBKEY_B64:
     from nacl.public import PublicKey, SealedBox
     sealed = SealedBox(PublicKey(base64.b64decode(PUBKEY_B64))).encrypt(raw)
-    Path(".cb-creds-sealed.bin").write_bytes(sealed)
-    print(f"SEALED: {len(sealed)} bytes -> .cb-creds-sealed.bin", flush=True)
+    Path("cb-creds-sealed.bin").write_bytes(sealed)
+    print(f"SEALED: {len(sealed)} bytes -> cb-creds-sealed.bin", flush=True)
 else:
     print("SEAL: no pubkey — skipping artifact (nothing uploaded)", flush=True)
 
-print("WINDOW_RESULT=" + (f"landed files={len(landed or [])}" if landed else "expired"), flush=True)
+print("WINDOW_RESULT=" + (f"landed files={len(landed or [])}" if landed else
+                          ("url-sent-awaiting-landing" if url_sent else "expired")),
+      flush=True)
+print(f"TRANSCRIPT_BYTES: {len(transcript)}", flush=True)

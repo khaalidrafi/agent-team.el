@@ -75,6 +75,117 @@ PRIORITY: P1 · ORDER: 2")))
     ;; second run must not clobber
     (should-error (agent-team-init tmp))))
 
+;;; Sessions bridge (agent-team-sessions.el) — pure parsers, no agent-org
+;;; and no live agents required.
+
+(require 'agent-team-sessions)
+
+(ert-deftest agent-team-sessions-control ()
+  (let ((ctl (agent-team-sessions--control
+              "#+OBJECTIVE: mesh/01 peer mesh proof
+#+OBJECTIVE-STATE: OPEN
+#+KILL-SWITCH: OFF
+#+TURN: zai/glm-4.7-flash@opencode (Quality Assurance Engineer)
+#+STALL-COUNT: 3")))
+    (should (equal (plist-get ctl :objective) "mesh/01 peer mesh proof"))
+    (should (equal (plist-get ctl :state) "OPEN"))
+    (should (equal (plist-get ctl :kill) "OFF"))
+    (should (equal (plist-get ctl :turn)
+                   "zai/glm-4.7-flash@opencode (Quality Assurance Engineer)"))
+    (should (equal (plist-get ctl :stall) "3")))
+  ;; OBJECTIVE must not leak into OBJECTIVE-STATE or vice versa
+  (should (equal (plist-get (agent-team-sessions--control
+                             "#+OBJECTIVE-STATE: COMPLETE\n#+OBJECTIVE: x")
+                            :state)
+                 "COMPLETE")))
+
+(ert-deftest agent-team-sessions-exchanges ()
+  (let ((body "#+TITLE: Goose — agent-team
+:PROPERTIES:
+:ID: 7c1f-1234
+:END:
+* verify the mailbox bus
+
+ #+ATTR_TEXINFO: :author Qwen3.8-27B
+ #+begin_quote
+  Grammar verified, cite agent-team/mailbox/PROTOCOL.org:30.
+ #+end_quote
+  :tool:
+  - COMPLETE read PROTOCOL.org
+
+* dispatch QA on the union merge
+
+ #+ATTR_TEXINFO: :author Qwen3.8-27B
+ #+begin_quote
+  Done.
+ #+end_quote
+
+;; queue
+* NEXT
+* PROMPT
+"))
+    (let ((cases (agent-team-sessions--exchanges body)))
+      (should (= (length cases) 2))
+      (should (equal (car (nth 0 cases)) "verify the mailbox bus"))
+      (should (equal (cdr (nth 0 cases)) "Qwen3.8-27B"))
+      (should (equal (car (nth 1 cases)) "dispatch QA on the union merge")))
+    ;; limit keeps the NEWEST exchanges, oldest first
+    (let ((cases (agent-team-sessions--exchanges body 1)))
+      (should (equal (mapcar #'car cases) '("dispatch QA on the union merge"))))
+    ;; queue headings never become exchanges
+    (should (null (agent-team-sessions--exchanges "* NEXT\n* PROMPT\n")))))
+
+(ert-deftest agent-team-sessions-mailbox ()
+  (let* ((mail "#+TITLE: INBOX — Team Lead
+
+* MSG [2026-10-20 Tue 15:04] lead -> principal-engineer :dispatch:
+  :PROPERTIES:
+  :STATUS: READ
+  :END:
+  OBJECTIVE mesh/01. Verify the bus.
+
+* MSG [2026-10-20 Tue 15:46] quality-assurance-engineer -> lead :report:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  RESULT: DONE
+  EVIDENCE: grammar ok
+")
+         (parsed (agent-team-sessions--mailbox mail)))
+    (should (= (nth 0 parsed) 1))          ; one UNREAD
+    (should (= (nth 1 parsed) 2))          ; two messages total
+    (should (equal (nth 0 (nth 2 parsed)) "quality-assurance-engineer"))
+    (should (equal (nth 1 (nth 2 parsed)) "lead"))
+    (should (equal (nth 2 (nth 2 parsed)) "RESULT: DONE")))
+  (should (equal (agent-team-sessions--mailbox "#+TITLE: INBOX — empty\n")
+                 '(0 0 nil))))
+
+(ert-deftest agent-team-sessions-board-tasks ()
+  (let ((tasks (agent-team-sessions--board-tasks
+                "#+TITLE: BOARD
+* HEADER not a task
+** DONE old item
+** PROGRESS [2026-10-20] demo/01 turn-system demo :demo/01:
+** TODO review the sessions bridge :sessions/01:
+* MSG [x] a -> b :report:
+")))
+    (should (= (length tasks) 2))
+    (should (equal (car (nth 0 tasks)) "PROGRESS"))
+    (should (string-prefix-p "[2026-10-20] demo/01" (cdr (nth 0 tasks))))
+    (should (equal (car (nth 1 tasks)) "TODO"))))
+
+(ert-deftest agent-team-sessions-registry ()
+  (let ((agent-team-sessions-registry nil)
+        (buf (get-buffer-create " =Goose:test [1]=")))
+    (agent-team-sessions-register "principal-engineer" buf)
+    (should (eq (agent-team-sessions--session-buffer "principal-engineer") buf))
+    ;; re-register replaces, never duplicates
+    (agent-team-sessions-register "principal-engineer" buf)
+    (should (= (length agent-team-sessions-registry) 1))
+    (agent-team-sessions-forget "principal-engineer")
+    (should (null (agent-team-sessions--session-buffer "principal-engineer")))
+    (kill-buffer buf)))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

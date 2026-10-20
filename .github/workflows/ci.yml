@@ -60,6 +60,7 @@ concurrency:
 permissions:
   contents: write
   actions: write   # self-chain: finalize re-dispatches the next turn
+  workflows: write # seats may touch CI files on their branches (mesh plumbing verification); without this the App token rejects the whole branch push (QA segment 15:57Z evidence)
 
 defaults:
   run:
@@ -351,6 +352,11 @@ jobs:
              objective and only the Lead sets OBJECTIVE-STATE: COMPLETE.
           9. Do NOT push to ai/main; the CI self-chain auto-merges your
              branch right after the segment (peer mail must propagate).
+          10. LEAD-OWNED FILES — never edit, only read and cite:
+             .github/workflows/*, agent-team/TEAM-CONTROL.org,
+             .gitattributes. Verify plumbing facts with file:line evidence
+             in your mail/report instead. (Editing them breaks the chain's
+             git permissions and the rotation pointer.)
           Boundaries: no secrets in files or commits; no spend; no destructive
           actions; stay in scope of the item you picked."
 
@@ -462,6 +468,12 @@ jobs:
             release-engineer)            NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
           esac
           git checkout -f ai/main
+          # Race-proof the control commit: my (Lead's) pushes or another
+          # finalize can move ai/main while this segment ran — a plain push
+          # would be rejected (fetch first) and the rotation pointer lost
+          # (QA segment 15:57Z evidence). Reset to origin and re-apply.
+          git fetch origin ai/main
+          git reset --hard origin/ai/main
           sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
           git add "$CTL"
           git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
@@ -550,6 +562,10 @@ jobs:
           case "$RESULT" in *BLOCKED*) PROGRESS=no ;; esac
           if [ "$PROGRESS" = "yes" ]; then NEW=0; else NEW=$((STALL+1)); fi
           if [ "$NEW" != "$STALL" ]; then
+            # Race-proof (Lead pushes can move ai/main mid-run — same class
+            # as the 15:57Z fetch-first rejection): reset, re-apply, commit.
+            git fetch origin ai/main
+            git reset --hard origin/ai/main
             sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
             git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \

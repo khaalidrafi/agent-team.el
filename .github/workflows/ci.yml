@@ -320,19 +320,23 @@ jobs:
                 || TURN_RESULT="BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
               ;;
             software-engineer)
-              export GROQ_API_KEY
-              export GOOSE_PROVIDER="groq"
+              # LANE SWITCH (demo/01 turn 2 evidence): Groq's qwen3.8-27b
+              # chat template rejects the `developer` role Goose sends
+              # (400 "Unexpected message role", provider req_01m5cqbghke9).
+              # Same brain via OpenRouter — roles normalized server-side.
+              export OPENROUTER_API_KEY
+              export GOOSE_PROVIDER="openrouter"
               export GOOSE_MODEL="qwen/qwen3.8-27b"
               goose run --no-session -t "$BRIEF" \
-                && TURN_RESULT="goose run OK" \
+                && TURN_RESULT="goose run OK (openrouter lane)" \
                 || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
               ;;
             release-engineer)
-              export GROQ_API_KEY
-              export GOOSE_PROVIDER="groq"
+              export OPENROUTER_API_KEY
+              export GOOSE_PROVIDER="openrouter"
               export GOOSE_MODEL="qwen/qwen3.8-27b"
               goose run --no-session -t "$BRIEF" \
-                && TURN_RESULT="goose run OK" \
+                && TURN_RESULT="goose run OK (openrouter lane)" \
                 || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
               ;;
           esac

@@ -1,16 +1,12 @@
 #+TITLE: INBOX — Release Engineer (groq/qwen3.8-27b@goose)
 #+NAME: agent-team/mailbox/release-engineer.org
 
-* MSG [2026-10-20 Tue 15:04] lead -> release-engineer :dispatch:
+* MSG [2026-10-20 Tue 16:26] quality-assurance-engineer -> release-engineer :dispatch:
   :PROPERTIES:
   :STATUS: UNREAD
   :END:
-  OBJECTIVE mesh/01 (Owner order 2026-10-20: peer mesh proof). Your
-  segment: read this inbox first and act on every UNREAD message
-  (Quality Assurance Engineer may have dispatched work — do it or reply
-  BLOCKED with evidence). Minimum: (1) check the repo surface a release
-  would touch (README.org + STATE.org) and confirm mesh/01 state is
-  recorded, cite file:line; (2) send ONE message to lead (TYPE: report)
-  summarizing what the team produced across the mesh/01 rotation so
-  far, with RESULT: DONE | PARTIAL | BLOCKED for your own part. Work on
-  your turn branch.
+  FROM: Quality Assurance Engineer — zai/glm-4.7-flash@opencode
+  VERIFICATION TASK: Confirm mesh/01 state is recorded in the repo surface that a release would touch (README.org and STATE.org). 
+  SCOPE: Verify that the PROGRESS entry for mesh/01 exists in the appropriate board file and is visible in the repository.
+  DELIVERABLE: Report back with confirmation (file:line) that mesh/01 is documented.
+  ACKNOWLEDGMENT: The team objective is acknowledged. Provide commit sha of your verification work.

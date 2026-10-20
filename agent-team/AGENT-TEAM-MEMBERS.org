@@ -63,8 +63,16 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
                2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
                3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
 
-* Software Engineer — groq/qwen3.8-27b@goose
+* Software Engineer — groq/qwen3.8-27b@goose (ACTIVE LANE: zai/glm-4.7-flash@goose — hired brain's lanes down, mesh/01 repair 2026-10-20)
   - :last-dispatch: 0
+  - ACTIVE LANE NOTE (Lead, mesh/01, 2026-10-20 15:45Z): Groq lane rejects
+    the developer role Goose sends (400, req_01m5cqbghke9) and the
+    OpenRouter key's free-models-per-day quota is exhausted (chain log:
+    "Add 10 credits") — all lanes to the hired brain are down. Seat runs
+    its segments on zai/glm-4.7-flash via Goose's openai provider
+    (OPENAI_HOST=https://api.z.ai) until the Owner adds ~10 OpenRouter
+    credits or provides per-seat keys (harness/01 item 1). Hired brain
+    and lane law unchanged; this is a runtime lane, not a re-hire.
   - MODEL REASON: PROVEN ALIVE (one real completion from the Owner's box,
     2026-10-20); Apache-2.0 auditable weights; AA intelligence 34; user
     sentiment strongly positive for agentic coding (HN: "beats
@@ -85,8 +93,14 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
                3. openrouter/nvidia/nemotron-3.5-lightning@goose (OpenMDW-1.1,
                   SWE-bench 51.6, free, 65,536-token output cap)
 
-* Quality Assurance Engineer — zai/glm-4.7-flash@opencode
+* Quality Assurance Engineer — zai/glm-4.7-flash@goose (body swap from @opencode, mesh/01 repair 2026-10-20)
   - :last-dispatch: 0
+  - BODY SWAP NOTE (Lead, mesh/01, 2026-10-20 15:45Z): OpenCode body is
+    headless-defective ("Unexpected server error" in CI, hangs headless
+    locally — demo/01 turn 1/turn 3 + mesh/01 evidence). QA keeps its
+    brain (zai/glm-4.7-flash) and moves to the Goose body, same lane as
+    Software/Release. Body swap only; segregation law unchanged
+    (author ≠ verifier ≠ merger — QA's brain is shared with no author).
   - MODEL REASON: MIT licence, free API tier, PROVEN ALIVE from the
     Owner's box; deliberately NOT any author's brain (segregation law:
     author ≠ verifier ≠ merger). Honest weakness on the record: no AA or

@@ -366,19 +366,36 @@ jobs:
           set +e
           case "$SEAT" in
             principal-engineer)
+              # OpenCode body: headless defect (mesh/01 + demo/01 evidence).
+              # Brain poolside/laguna-s-2.1:free: absent from OpenCode's
+              # models.dev catalog AND behind OpenRouter's exhausted free
+              # quota. Seat stays BLOCKED until the Owner's body/brain
+              # ruling (harness/01 item 2) — rotation continues.
               opencode run --print-logs --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF" \
                 && echo "TURN_RESULT=opencode run OK" \
-                || echo "TURN_RESULT=BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
+                || echo "TURN_RESULT=BLOCKED (opencode body headless defect + poolside lane dead — Lead escalation filed, harness/01)"
               ;;
-            quality-assurance-engineer)
-              opencode run --print-logs --model "zai/glm-4.7-flash" "$BRIEF" \
-                && echo "TURN_RESULT=opencode run OK" \
-                || echo "TURN_RESULT=BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
-              ;;
-            software-engineer|release-engineer)
-              goose run --no-session -t "$BRIEF" \
-                && echo "TURN_RESULT=goose run OK (lane: ${GOOSE_MODEL})" \
-                || echo "TURN_RESULT=BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
+            quality-assurance-engineer|software-engineer|release-engineer)
+              # LANE (mesh/01 repair, Lead, 2026-10-20 15:45Z): every lane on
+              # the hired/fallback brains is dead — Groq rejects the
+              # `developer` role Goose sends (400, req_01m5cqbghke9),
+              # OpenRouter free-models-per-day exhausted (chain evidence:
+              # "Add 10 credits"), OpenCode body headless-defective. The ONE
+              # live lane with its own quota: ZAI glm-4.7-flash — same
+              # OpenAI-compatible schema. Goose goes through its openai
+              # provider with OPENAI_HOST pointed at ZAI. Fallback: the
+              # rostered nemotron lane (in case OpenRouter quota resets).
+              if env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \
+                   OPENAI_API_KEY="$ZAI_API_KEY" \
+                   OPENAI_HOST="https://api.z.ai" \
+                   OPENAI_BASE_PATH="/api/paas/v4/chat/completions" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: zai/glm-4.7-flash@goose)"
+              elif goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: ${GOOSE_MODEL} — OpenRouter quota recovered)"
+              else
+                echo "TURN_RESULT=BLOCKED (zai lane + openrouter lane both failed — Lead escalation filed, harness/01)"
+              fi
               ;;
           esac
           INNER

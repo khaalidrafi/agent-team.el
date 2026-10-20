@@ -22,6 +22,15 @@
      permissions += actions:write; seg step timeout 14 min. New objective
      mesh/01 set in TEAM-CONTROL.org; first chain dispatch armed. Lead
      seeds: each rotation seat got a UNREAD dispatch in its inbox.
+   - [2026-10-20 Tue 15:50] Lead glm-5.3-flash@chat.z.ai: FIRST-LIGHT
+     evidence — self-chain fired 9 links unattended (rotation advanced
+     every link, auto-merge+gate+stall accounting live). All segments
+     BLOCKED on dead lanes (OpenRouter free quota exhausted — "Add 10
+     credits"; Groq developer-role 400; OpenCode headless defect). Stall
+     guard is EXPECTED to trip at 4 and halt the chain — by design.
+     REPAIR pushed: goose seats (Software/Release) + QA (body swap off
+     OpenCode) re-laned to zai/glm-4.7-flash via Goose openai provider
+     (own quota); STALL-COUNT reset; relight dispatch armed.
    :END:
 
 ** DONE [2026-10-20] demo/01 30-minute CI turn-system demo — REPORT #7 :REPORT:

@@ -6,6 +6,13 @@
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
     byte-compile green on the runner (run 39404373880)
 * IN-FLIGHT
+  - mesh/01 (Owner order 2026-10-20 14:52): PEER MESH live — members talk
+    to each other via agent-team/mailbox/ inboxes (PROTOCOL.org grammar,
+    .gitattributes union driver), turn brief = inbox-first + mail-to-peers,
+    `finalize` job auto-merges turn branches (byte-compile gate) and
+    SELF-DISPATCHES the next run while objective OPEN + kill switch OFF —
+    agents decide run count, stall guard stops after 4 no-progress
+    segments, only the Lead sets COMPLETE; mesh/01 rotation running
   - harness/01: OPEN items from demo/01 evidence — (1) OpenRouter key
     needs ~10 credits (free-models-per-day exhausted mid-demo; Release
     BLOCKED) or per-seat provider keys; (2) Principal seat: OpenCode

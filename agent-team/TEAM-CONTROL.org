@@ -5,10 +5,11 @@
         and the LEAD transcribes it into #+OBJECTIVE verbatim in intent.
         One line per switch, do not reformat the keywords.
 
-#+OBJECTIVE: DEMO (Owner order 2026-10-20, ~30 min): each on-turn seat creates agent-team/demo/<role-slug>.org holding (1) its full-form role (2) its model@agent id (3) ONE fact it verified in this repo with file:line evidence (4) a line RESULT: DONE | PARTIAL | BLOCKED; that demo file IS the turn report — do NOT edit AGENT-TEAM-TODOS.org and do NOT use Lark this run (board-not-Lark law for this demo); rotation runs until all four rotation seats have filed; the Lead merges at the gate
-#+OBJECTIVE-STATE: COMPLETE
+#+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"): every rotation seat proves the mesh — on its turn it (1) FIRST reads its inbox agent-team/mailbox/<seat>.org and acts on every STATUS: UNREAD message addressed to it, flipping them READ, (2) verifies ONE fact about the mesh plumbing (mailbox/PROTOCOL.org grammar, .gitattributes union rule, TEAM-CONTROL chain switches, ci.yml self-chain) with file:line evidence, (3) sends at least one peer message using the PROTOCOL grammar (dispatch or report or request, STATUS: UNREAD, committed in the recipient's inbox), (4) mails TO: lead TYPE: report with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
+#+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
-#+TURN: groq/qwen3.8-27b@goose (Software Engineer)
+#+TURN: NONE
+#+STALL-COUNT: 0
 
 #+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal
             Engineer) -> groq/qwen3.8-27b@goose (Software Engineer) ->
@@ -22,21 +23,35 @@
 # HOW IT WORKS (Owner's order 2026-10-20: "keep the team running, even in
 # turns, until completion of OBJECTIVE as specified by me or killed with
 # kill switch"):
-# - #+KILL-SWITCH: ON   -> every turn job exits immediately; a Lark notice
-#                          says the team is stopped. Flip back to OFF to resume.
-# - #+OBJECTIVE-STATE: COMPLETE -> turn job exits; Lark notice says the
-#                          objective is closed. Set by the Owner (or by the
-#                          Lead after DOD verification, reported to the Owner).
+# - #+KILL-SWITCH: ON   -> every turn job exits immediately; the chain
+#                          stops. Flip back to OFF and the next run resumes it.
+# - #+OBJECTIVE-STATE: COMPLETE -> turn job exits and the chain stops
+#                          ("objective-complete"). Set ONLY by the Lead after
+#                          verifying the objective's Definition of Done
+#                          (seats never complete their own objective — they
+#                          mail TO: lead; the Owner audits).
 # - #+TURN: <member>    -> whose segment runs next; the job advances it
 #                          around the rotation automatically, EVEN when a
 #                          seat is dead (dead seat = BLOCKED logged, rotation
 #                          continues). NONE = first run takes the top of
 #                          #+ROTATION.
+# - #+STALL-COUNT: <n>  -> consecutive no-progress segments; +1 per
+#                          no-progress segment, reset to 0 when work lands.
+#                          At 4 the self-chain STOPS (stall guard) and the
+#                          Lead investigates. Progress = branch merged with
+#                          a green byte-compile gate and a non-BLOCKED result.
 # - An empty/placeholder #+OBJECTIVE means "no work defined": the job skips
-#   agent work, keeps the suite green, and says so in the run summary.
+#   agent work, keeps the suite green, and the chain stops.
 #
-# DEMO RUN 2026-10-20 (demo/01): the current #+OBJECTIVE is the Owner's
-# 30-minute demo. Comms go to the BOARD (agent-team/AGENT-TEAM-TODOS.org
-# + agent-team/demo/ files), NOT the Lark group (Owner: "use Team Todos,
-# instead of Lark group for this"). qwen3.8-flash@qoder is HOLD-AUTH:
-# the Owner has not provided its credentials — it is NOT in this demo.
+# SELF-CHAIN (Owner order 2026-10-20 14:52: unlimited runs, agents decide
+# how many runs an objective takes): after each segment the `finalize` job
+# auto-merges the seat's branch into ai/main (byte-compile gate; mailbox
+# appends union-merged) and re-dispatches the next run itself while this
+# objective is OPEN and the kill switch is OFF. Nobody waits for the Lead
+# to relay mail — members talk to each other through their inboxes in
+# agent-team/mailbox/ (grammar: agent-team/mailbox/PROTOCOL.org).
+#
+# DEMO RUN 2026-10-20 (demo/01) is CLOSED — REPORT #7 on the board.
+# CURRENT RUN mesh/01: mechanism-proof for the peer mesh (like demo/01,
+# comms law: board + mailboxes, NOT Lark — Lark secrets still pending).
+# qwen3.8-flash@qoder is HOLD-AUTH: not in this run.

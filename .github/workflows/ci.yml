@@ -25,6 +25,22 @@ name: CI
 # (LARK_WEBHOOK_<ROLE>) written by the members themselves.  The GoModel
 # gateway is DOWN (Owner, 2026-10-20) and gone from this workflow; the
 # repo is PUBLIC (unlimited Linux Actions minutes).
+# (7) PEER MESH + SELF-CHAINING RUNS (Owner order 2026-10-20 #hq 14:52:
+# "agents talk to each other ... automatically send and receive messages
+# and keep working ... CI runs unlimited ... until objective complete to
+# its finest"): members send each other dispatch/report/request/review
+# mail through their inboxes in agent-team/mailbox/ (grammar:
+# agent-team/mailbox/PROTOCOL.org; .gitattributes union-merges appends
+# so concurrent messages are never lost).  The turn brief makes every
+# seat read its inbox FIRST and write peer mail after its segment.  The
+# `finalize` job AUTO-MERGES the turn branch into ai/main behind a
+# byte-compile gate, advances #+STALL-COUNT (0 on progress, +1 on a
+# no-progress segment), and then RE-DISPATCHES the next run itself
+# while #+OBJECTIVE-STATE is not COMPLETE and #+KILL-SWITCH is OFF --
+# the agents decide how many runs an objective takes.  The stall guard
+# stops the chain after 4 consecutive no-progress segments; only the
+# Lead (verifying against the objective) sets COMPLETE; the Owner
+# audits and keeps the kill switch.
 
 on:
   push:
@@ -43,6 +59,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write   # self-chain: finalize re-dispatches the next turn
 
 defaults:
   run:
@@ -178,12 +195,17 @@ jobs:
   #                               (preinstalled in the harness container)
   #                               for one segment toward the objective,
   #                               advance the rotation, commit.
-  # The turn NEVER merges to ai/main application code (merge gate is the
-  # Lead's, on a green suite + verification pass) and NEVER fails the run on
-  # a seat problem: a dead seat logs BLOCKED and the rotation advances.
+  # The seat's branch is auto-merged into ai/main by the `finalize` job
+  # (byte-compile gate + union-merged mailboxes) so peer mail propagates
+  # seat-to-seat with NO Lead in the loop; the Lead audits every landed
+  # branch and gates OBJECTIVE completion.  A dead seat logs BLOCKED and
+  # the rotation advances -- a run NEVER fails on a seat problem.
   turn:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: [test, probe]
+    outputs:
+      turn_branch: ${{ steps.push.outputs.branch }}
+      seg_result: ${{ steps.seg.outputs.result }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     continue-on-error: true
@@ -268,7 +290,9 @@ jobs:
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
 
       - name: Run the turn (one segment, preinstalled agent in container)
+        id: seg
         if: steps.control.outputs.mode == 'work'
+        timeout-minutes: 14   # a hung harness fails THIS step, not the rotation
         run: |
           SEAT="${{ steps.control.outputs.seat }}"
           OBJECTIVE="${{ steps.control.outputs.objective }}"
@@ -283,26 +307,47 @@ jobs:
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
           Law: templates/AGENT-TEAM-COMMON.org. Board: agent-team/AGENT-TEAM-TODOS.org.
           Roster: agent-team/AGENT-TEAM-MEMBERS.org. Repo facts: README.org, STATE.org.
+          PEER MESH (Owner law 2026-10-20: members talk to each other — work,
+          share reports, take each other's help, get dispatches):
+          mailbox grammar in agent-team/mailbox/PROTOCOL.org; every member's
+          inbox is agent-team/mailbox/<seat>.org (seats: principal-engineer,
+          software-engineer, quality-assurance-engineer, release-engineer, lead).
           TOP BOARD ITEMS:
           ${TOP}
           WORK ONE SEGMENT (time-boxed, max 3 self-attempts per MEMBER LAWS):
-          1. Read the board and templates/AGENT-TEAM-COMMON.org.
-          2. Pick the oldest open item that best serves the TEAM OBJECTIVE and
-             matches your role's duties; if none matches, do the smallest
+          1. READ YOUR INBOX FIRST (agent-team/mailbox/${SEAT}.org): act on
+             every STATUS: UNREAD message addressed to you — do the work,
+             answer it, or reply BLOCKED with evidence — then flip those
+             messages to STATUS: READ. Never touch other seats' messages.
+          2. Pick your work toward the TEAM OBJECTIVE: the oldest open board
+             item that serves it and matches your role, or any task a peer
+             dispatched to your inbox; if none matches, do the smallest
              verifiable improvement that does (docs, tests, CI repair).
           3. Do the work IN THIS BRANCH. Small, verifiable, committed.
-          4. Append a :LOGBOOK: note to the board item: what changed + evidence
-             (file:line, commit sha). Never mark DONE (that is the Lead's gate).
-          5. Commit your changes on this branch with message 'turn(${SEAT}): ...'.
-          6. REPORT: DEMO runs (demo/01) — write your REPORT into the work the
-             objective asks for (the demo file). Real runs — POST your REPORT
-             to YOUR role's Lark custom-bot webhook in env ROLE_LARK_WEBHOOK
+          4. WRITE MAIL to peers (exact grammar per PROTOCOL.org, one org
+             headline per message, STATUS: UNREAD, committed in the
+             recipient's inbox file): dispatch downstream work, report
+             upstream results with evidence (file:line, commit sha), and
+             send TYPE: request / escalation TO: lead after 2 failed
+             self-attempts. Taking a peer's help IS encouraged.
+          5. Append a :LOGBOOK: note to the board item you touched: what
+             changed + evidence (file:line, commit sha). Never mark DONE
+             (that is the Lead's gate).
+          6. Commit everything on this branch with message 'turn(${SEAT}): ...'.
+          7. REPORT: write your report as mailbox mail TO: lead (TYPE:
+             report, RESULT: DONE | PARTIAL | BLOCKED, evidence included).
+             Real runs ALSO post it to YOUR role's Lark custom-bot webhook
+             in env ROLE_LARK_WEBHOOK
              (JSON {\"msg_type\":\"text\",\"content\":{\"text\":\"REPORT — <task-id>: <title>\\nFROM: <role> — <model@agent>\\nRESULT: DONE | PARTIAL | BLOCKED\\nEVIDENCE: <file:line / commit sha>\\nNEXT: <what remains>\"}})
-             only if it is non-empty; if empty, skip silently and note it in
-             the board LOGBOOK. Never put credentials in any message body.
-          7. Do NOT push to ai/main; leave the branch for the Lead's merge gate.
+             only if it is non-empty; if empty, skip silently and note it
+             in the board LOGBOOK. Never put credentials in any message.
+          8. Never claim the OBJECTIVE complete yourself: a completion claim
+             goes TO: lead as mailbox mail; the Lead verifies against the
+             objective and only the Lead sets OBJECTIVE-STATE: COMPLETE.
+          9. Do NOT push to ai/main; the CI self-chain auto-merges your
+             branch right after the segment (peer mail must propagate).
           Boundaries: no secrets in files or commits; no spend; no destructive
-          actions; stay in scope of the chosen item."
+          actions; stay in scope of the item you picked."
 
           # Seat -> body command. Brains come from the baked configs; keys
           # come from repo secrets via env. The harness image has BOTH
@@ -360,6 +405,7 @@ jobs:
           sed -n '1,80p' /tmp/.turn-out.txt || true
 
           TURN_RESULT=$(sed 's/^TURN_RESULT=//' "$PWD/.turn-result.txt" | tail -1)
+          echo "result=${TURN_RESULT}" >> "$GITHUB_OUTPUT"
           echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "objective: ${OBJECTIVE}" >> "$SUMMARY"
@@ -368,13 +414,14 @@ jobs:
           echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
           rm -f "$PWD/.turn-inside.sh" "$PWD/.turn-result.txt" /tmp/.turn-out.txt /tmp/.turn-result.tmp
 
-      # The agent's branch is pushed for the Lead's merge gate; ONLY the
-      # control-file pointer lands on ai/main, so an agent can never merge
-      # application code past the gate.
+      # Peer-mesh law: the seat's branch is auto-merged by `finalize` right
+      # after this step; ONLY the control-file pointer lands on ai/main here.
       - name: Push work branch, advance rotation, commit control file
+        id: push
         if: always() && steps.control.outputs.mode == 'work'   # never stall the rotation on a step failure
         run: |
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
+          echo "branch=${TURN_BRANCH:-}" >> "$GITHUB_OUTPUT"
           CTL=agent-team/TEAM-CONTROL.org
           case "${{ steps.control.outputs.seat }}" in
             principal-engineer)          NEXT="groq/qwen3.8-27b@goose (Software Engineer)" ;;
@@ -388,3 +435,118 @@ jobs:
           git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
             -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
           git push origin "ai/main" || echo "::warning::control push failed"
+
+  # SELF-CHAIN — the last link of every turn (Owner order 2026-10-20 #hq
+  # 14:52: unlimited runs, agents decide how many runs an objective takes).
+  # After every segment:
+  #   1. AUTO-MERGE the seat's work branch into ai/main. Mailbox mail and
+  #      board notes propagate seat-to-seat with NO Lead in the loop
+  #      (mailboxes are union-merged via .gitattributes, so concurrent
+  #      appends never conflict). A byte-compile gate runs on the merged
+  #      tree: red work never lands (merge is undone, branch stays).
+  #   2. Advance #+STALL-COUNT: +1 on a no-progress segment (dead seat,
+  #      BLOCKED, conflict, gate red), reset to 0 when work lands.
+  #   3. DISPATCH the next run itself while the objective is open and the
+  #      kill switch is OFF. The chain stops on: KILL-SWITCH ON,
+  #      OBJECTIVE-STATE COMPLETE, no objective, or 4 consecutive
+  #      no-progress segments (stall guard — the Lead investigates and
+  #      relights the chain with a control commit).
+  finalize:
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    needs: [turn]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ai/main
+
+      - name: Auto-merge the turn branch (peer mail propagation)
+        id: merge
+        run: |
+          git config user.name "agent-team-ci"
+          git config user.email "agent-team-ci@users.noreply.github.com"
+          git remote set-url --push origin \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          BRANCH="${{ needs.turn.outputs.turn_branch }}"
+          RESULT="${{ needs.turn.outputs.seg_result }}"
+          OUTCOME="no-branch"
+          if [ -n "$BRANCH" ] && git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$BRANCH"
+            if git merge --no-ff --no-edit "origin/$BRANCH"; then
+              OUTCOME="merged"
+            else
+              git merge --abort || true
+              OUTCOME="conflict-left-for-lead"
+            fi
+          fi
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "outcome=$OUTCOME" >> "$GITHUB_OUTPUT"
+          echo "MERGE: $OUTCOME (branch: ${BRANCH:-none}, segment result: ${RESULT:-none})"
+
+      - name: Byte-compile gate, land the merge
+        id: gate
+        run: |
+          if [ "${{ steps.merge.outputs.outcome }}" != "merged" ]; then
+            echo "gate=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox
+          if emacs -Q --batch -L . --eval \
+            '(unless (byte-compile-file "agent-team.el") (kill-emacs 1))'; then
+            echo "gate=green" >> "$GITHUB_OUTPUT"
+            git push origin "ai/main"
+            git push origin --delete "${{ steps.merge.outputs.branch }}" || true
+          else
+            git reset --hard origin/ai/main
+            echo "gate=red-merge-undone" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stall accounting + dispatch the next run (self-chain)
+        run: |
+          CTL=agent-team/TEAM-CONTROL.org
+          RESULT="${{ needs.turn.outputs.seg_result }}"
+          OUTCOME="${{ steps.merge.outputs.outcome }}"
+          GATE="${{ steps.gate.outputs.gate }}"
+          STALL=$(grep -oP '^\#\+STALL-COUNT:\s*\K\d+' "$CTL" | head -1); STALL=${STALL:-0}
+          PROGRESS=no
+          if [ "$OUTCOME" = "merged" ] && [ "$GATE" = "green" ]; then PROGRESS=yes; fi
+          case "$RESULT" in *BLOCKED*) PROGRESS=no ;; esac
+          if [ "$PROGRESS" = "yes" ]; then NEW=0; else NEW=$((STALL+1)); fi
+          if [ "$NEW" != "$STALL" ]; then
+            sed -i "s|^\#\+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
+            git add "$CTL"
+            git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \
+              || echo "::notice::stall commit empty"
+            git push origin "ai/main" || echo "::warning::stall push failed"
+          fi
+          # Decide the next link in the chain
+          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1)
+          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1)
+          DECISION="dispatch"
+          if [ "${KILL:-OFF}" = "ON" ]; then DECISION="kill-switch"; fi
+          if [ "${OBJSTATE:-OPEN}" = "COMPLETE" ]; then DECISION="objective-complete"; fi
+          if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
+            DECISION="no-objective"
+          fi
+          if [ "$NEW" -ge 4 ]; then DECISION="stall-guard-tripped"; fi
+          DISPATCH_CODE="n/a"
+          if [ "$DECISION" = "dispatch" ]; then
+            sleep 20   # let the control push settle; the concurrency group serializes anyway
+            DISPATCH_CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/ci.yml/dispatches" \
+              -d '{"ref":"ai/main"}')
+          fi
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          echo "## Chain — finalize" >> "$SUMMARY"
+          echo "" >> "$SUMMARY"
+          echo "- merge: ${OUTCOME} (${{ steps.merge.outputs.branch }})" >> "$SUMMARY"
+          echo "- byte-compile gate: ${GATE:-skipped}" >> "$SUMMARY"
+          echo "- stall count: ${NEW} (guard trips at 4)" >> "$SUMMARY"
+          echo "- chain decision: **${DECISION}** (dispatch HTTP ${DISPATCH_CODE})" >> "$SUMMARY"
+          echo "" >> "$SUMMARY"
+          echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"

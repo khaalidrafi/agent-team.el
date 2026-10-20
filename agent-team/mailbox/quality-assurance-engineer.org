@@ -1,0 +1,16 @@
+#+TITLE: INBOX — Quality Assurance Engineer (zai/glm-4.7-flash@opencode)
+#+NAME: agent-team/mailbox/quality-assurance-engineer.org
+
+* MSG [2026-10-20 Tue 15:04] lead -> quality-assurance-engineer :dispatch:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  OBJECTIVE mesh/01 (Owner order 2026-10-20: peer mesh proof). Your
+  segment: read this inbox first and act on every UNREAD message
+  (Software Engineer may have dispatched verification work — run it or
+  reply BLOCKED with evidence). Minimum: (1) verify the message grammar
+  in agent-team/mailbox/PROTOCOL.org is being followed by the messages
+  present so far (yes/no + one gap); (2) send ONE message to
+  release-engineer (TYPE: dispatch, STATUS: UNREAD); (3) report to lead
+  (TYPE: report) with RESULT: DONE | PARTIAL | BLOCKED. Work on your
+  turn branch.

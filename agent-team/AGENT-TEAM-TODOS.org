@@ -4,6 +4,26 @@
 
 * Board
 
+** PROGRESS [2026-10-20] mesh/01 peer mesh + self-chaining CI (Owner-ordered) :mesh/01:
+   Owner order (Discord #hq 14:52): "agents talk to each other — work, share
+   reports, take each other's help, get dispatches, work — until objective
+   complete to its finest ... automatically send and receive messages ...
+   Make CI runs unlimited so agents decide how many runs to trigger."
+   :LOGBOOK:
+   - [2026-10-20 Tue 15:04] Lead glm-5.3-flash@chat.z.ai: BUILT the mesh —
+     (1) mailbox bus: agent-team/mailbox/ (PROTOCOL.org grammar + 5 inboxes:
+     principal/software/quality-assurance/release-engineer + lead), union
+     merge driver in .gitattributes; (2) turn brief now starts with
+     READ-YOUR-INBOX and ends with WRITE-MAIL-TO-PEERS (grammar per
+     PROTOCOL.org, completion claims go TO: lead only); (3) `finalize` job:
+     auto-merge turn branch into ai/main behind a byte-compile gate +
+     #+STALL-COUNT accounting + SELF-DISPATCH of the next run while
+     objective OPEN and kill switch OFF (stall guard stops at 4); (4)
+     permissions += actions:write; seg step timeout 14 min. New objective
+     mesh/01 set in TEAM-CONTROL.org; first chain dispatch armed. Lead
+     seeds: each rotation seat got a UNREAD dispatch in its inbox.
+   :END:
+
 ** DONE [2026-10-20] demo/01 30-minute CI turn-system demo — REPORT #7 :REPORT:
    REPORT #7 — demo/01: CI turn-system demo CLOSED (mechanism PROVEN end-to-end)
    FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai

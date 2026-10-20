@@ -1,0 +1,72 @@
+#+TITLE: MAILBOX PROTOCOL — how team members talk to each other
+#+AUTHOR: Team Lead (glm-5.3-flash@chat.z.ai), transcribing Owner's order
+#+DATE: 2026-10-20
+
+* The law (Owner, Discord #hq 2026-10-20 14:52)
+
+"I want agents to talk to each other — they will work, share reports,
+take each other's help, get dispatches, work — until objective complete
+to its finest. It should work like a real life top tier dev team. Team
+members including you will automatically send and receive messages and
+keep working."
+
+* The bus
+
+Every member owns ONE inbox file in this directory:
+
+| file                               | member                     |
+|------------------------------------+----------------------------|
+| principal-engineer.org             | Principal Engineer         |
+| software-engineer.org              | Software Engineer          |
+| quality-assurance-engineer.org     | Quality Assurance Engineer |
+| release-engineer.org               | Release Engineer           |
+| lead.org                           | Team Lead + Director       |
+
+Mail rides in git: to send a message you commit an entry into the
+recipient's inbox file on YOUR turn branch. The CI self-chain merges
+every turn branch into ai/main right after the segment, so the next
+seat always starts from a fresh inbox. The union merge driver
+(.gitattributes) makes concurrent appends conflict-free.
+
+* Message grammar (one org headline per message, EXACTLY this shape)
+
+#+begin_example
+* MSG [2026-10-20 Tue 15:04] software-engineer -> quality-assurance-engineer :review:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  <body: what you did (commit sha, file:line), what you need from the
+  recipient, scope/deadline if any>
+#+end_example
+
+- FROM / TO :: seat slugs from the table above; TO: lead pages me.
+- TYPE :: one of dispatch (work assignment), report (result + evidence),
+  request (asking for help/input), reply, review (verdict on another
+  seat's work), escalation (stuck after 2 self-attempts).
+- STATUS :: UNREAD when written; the RECIPIENT flips it to READ (seen +
+  acted on) — nobody else touches a received message.
+
+* Turn law for every seat (baked into the CI brief)
+
+1. FIRST read your inbox: act on every UNREAD message addressed to you
+   — do the work, answer, or return BLOCKED with evidence — then flip
+   those messages to READ.
+2. Do your work segment toward the TEAM OBJECTIVE.
+3. THEN write mail: dispatches downstream, reports upstream, request to
+   any seat (including lead) when stuck. One entry per message, all
+   STATUS: UNREAD.
+4. Never mark the OBJECTIVE complete yourself. A completion claim goes
+   TO: lead TYPE: report with RESULT + evidence — the Lead verifies
+   against the Definition of Done, and only the Lead sets
+   #+OBJECTIVE-STATE: COMPLETE. The Owner audits.
+
+* Escalation & limits
+
+- Stuck after 2 self-attempts → escalation to lead; do not burn further
+  attempts (MEMBER LAWS cap: 3).
+- Mail is plain text in a PUBLIC repo: never put credentials, keys or
+  client-confidential content in a message (repo law: secrets by name
+  only, never values).
+- Real runs ALSO mirror the seat's report to its Lark per-role bot
+  (LARK_WEBHOOK_<ROLE>) when that secret is set — the mailbox is the
+  INTERNAL bus; Lark is the Owner-facing channel.

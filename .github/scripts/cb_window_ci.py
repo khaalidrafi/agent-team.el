@@ -65,21 +65,44 @@ def echo(force=False):
         print(f"TUI[{int(elapsed())}s]: {clean_tail()}", flush=True)
 
 
+def dump_full(tag):
+    """Print the WHOLE cleaned transcript (v3 post-mortem aid: the device
+    URL can scroll past before any tail-only echo) — capped at 6000 chars
+    of cleaned text, oldest first."""
+    txt = ANSI.sub(b"", bytes(transcript)).decode("utf-8", "replace")
+    txt = re.sub(r"[ \t]+", " ", txt)
+    lines = [l.strip() for l in txt.splitlines() if l.strip()]
+    seen, out = set(), []
+    for l in lines:  # spinner frames spam — dedupe while keeping order
+        key = l[:60]
+        if key in seen and "Waiting" in l:
+            continue
+        seen.add(key)
+        out.append(l)
+    print(f"TUI_FULL[{tag}]: " + " | ".join(out)[:6000], flush=True)
+
+
 def elapsed():
     return time.time() - start
 
 
-URL_RE = re.compile(rb"https://[^\s\"'<>]*codebuddy[^\s\"'<>]*login[^\s\"'<>]*",
-                    re.I)
+URL_RE = re.compile(rb"https?://[^\s\"'<>]{8,}", re.I)
+# hosts that are NOT the login URL (noise from the CLI's own traffic hints)
+URL_NOISE = ("qoder.com", "github.com", "api.", "telegram.org", "npmjs", "registry")
 
 
 def find_url():
-    m = URL_RE.search(bytes(transcript))
-    if m:
-        return m.group(0).decode()
+    """Scan the WHOLE transcript for candidate auth URLs. Device-flow URLs
+    do not always contain 'login' (v2 missed exactly that — run
+    39485306549: the CLI sat in 'Waiting for auth' with its URL already
+    scrolled past). Any non-noise https URL is a candidate."""
+    for m in URL_RE.finditer(bytes(transcript)):
+        u = m.group(0).decode(errors="replace")
+        if not any(n in u.lower() for n in URL_NOISE):
+            return u
     if SHIM.exists():
         u = SHIM.read_text().strip()
-        if u and "codebuddy" in u and "login" in u.lower():
+        if u and u.startswith("http"):
             return u
     return ""
 
@@ -150,6 +173,7 @@ while elapsed() < URL_WAIT and not url_sent:
         log.flush()
         u = find_url()
         if u:
+            dump_full("url-found")
             deliver(u)
             break
     t = elapsed()
@@ -184,6 +208,7 @@ while elapsed() < URL_WAIT and not url_sent:
 
 if not url_sent:
     print("URL_READY: never — dumping final transcript for post-mortem", flush=True)
+    dump_full("final")
     print("TUI_FINAL: " + clean_tail(1800), flush=True)
 
 # ---------------- phase 2: landing watch ----------------
@@ -212,6 +237,7 @@ while time.time() < end:
         log.flush()
         u = find_url()
         if u:
+            dump_full("url-found-phase2")
             deliver(u)
     now = snapshot()
     new = {k: v for k, v in now.items() if k not in BASE}

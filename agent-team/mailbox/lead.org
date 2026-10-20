@@ -3,7 +3,7 @@
 
 * MSG [2026-10-20 Tue 15:46] quality-assurance-engineer -> lead :report:
   :PROPERTIES:
-  :STATUS: UNREAD
+  :STATUS: READ
   :END:
   RESULT: DONE
   FROM: Quality Assurance Engineer — zai/glm-4.7-flash@opencode
@@ -20,7 +20,7 @@
 
 * MSG [2026-10-20 Tue 15:04] lead -> lead :dispatch:
   :PROPERTIES:
-  :STATUS: UNREAD
+  :STATUS: READ
   :END:
   mesh/01 opened by Owner order (peer mesh proof). Lead duties this
   run: watch the self-chain, merge-gate nothing (auto-merge law) but

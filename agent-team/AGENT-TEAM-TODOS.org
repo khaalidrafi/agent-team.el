@@ -7,7 +7,8 @@
 ** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
    HANDOFF #1 — lead/03: assume the Team Lead seat (Agent Team)
    FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
-   TO: Team Lead (acting in) — glm-5.3-flash@opencode/local
+   TO: Team Lead (acting in) — glm-5.3-flash@zai/web (WEB MODE; opencode/local
+       when the Owner's box returns)
        (final choice on evidence; the earlier qwen3.7-plus vs qwen3.8-max
        contest is closed — neither holds the seat. See MEMBERS.org for the
        ranked rationale and the disclosed family conflict.)
@@ -60,12 +61,17 @@
      was created the same minute. im:message:send was NOT applied and the user
      scope im:message.send_as_user is missing — that is the only scope gap left.
    :NEXT:
-   0. Prove your own brain before claiming the seat: run one real turn through
-      opencode on this box and report the model id that ACTUALLY answered. The
-      gateway rejects opencode/glm-5.3-flash-free for external callers, so this
-      only works from inside opencode — and if it does not work at all, say so
+   0. Prove your own identity: report the model id that ACTUALLY answers in the
+      chat.z.ai picker. UNVERIFIED whether glm-5.3-flash is selectable on the
+      free web tier — if the picker shows only glm-5.3, take the seat on that
+      and correct your roster entry. If you cannot confirm what you are, SAY SO
       and hand back rather than leading on an unverified identity (that is
-      exactly the error dispatch #2 made with kilo/qwen3-32b).
+      exactly the error dispatch #2 made with kilo/qwen3-32b — listed, rejected).
+   0b. WEB MODE, the Owner's local box is going down: you have NO shell. Dictate
+      exact commands, the Owner runs them on whatever machine is up and pastes
+      the output. Never guess a command — AGENT-TEAM-ROSTER.org holds what the
+      gateway actually serves, and COMMON §LARK holds the lark-cli recipe that
+      already worked verbatim today.
    1. DONE 14:11 — Owner applied the scopes; verified at grant_status 1 with
       lark-cli api GET /open-apis/application/v6/scopes --as bot --page-all.
       Keep that command as the standing check before blaming the console.
@@ -196,6 +202,13 @@
          https://applink.larksuite.com/client/chat/open?openChatId=oc_de19c9d95e0e277c1eb194a4da08674c
          (the invite share_link carries a token — kept out of git on purpose).
    - [X] Bot test message sent: om_x100b624651605ca8ed4e1da976cc5a4 (1/2).
+   - [X] Wake loop PROVEN 14:3x while the box was still up:
+         lark-cli event consume im.message.receive_v1 --as bot --timeout 25s
+         → "feishu-websocket: connected" + "ready event_key=im.message.receive_v1";
+         bus daemon auto-exits 30 s after the last consumer. 0 events arrived
+         because the only message sent was the bot's own — bots do not receive
+         their own messages. ONE Owner-authored message in Agent Team closes
+         this; nothing else about the loop is untested.
    - [~] User test message BLOCKED on user scope im:message.send_as_user
          (missing_scope on +messages-send --as user; im:message is not enough).
          DOWNGRADED 14:2x to NOT REQUIRED: nothing the Lead seat does needs the

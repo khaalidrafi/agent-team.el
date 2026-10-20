@@ -2,7 +2,7 @@
 #+ROSTER: API roster authority = GET /v1/models on the gateway
 #+UPDATED: 2026-10-20 — Lead contest CLOSED: glm-5.3-flash@opencode/local (evidence-ranked, not family habit); Director restored to qwen3.7-plus
 
-* Team Lead — glm-5.3-flash@opencode/local (ACTING; contest closed 2026-10-20 14:2x)
+* Team Lead — glm-5.3-flash@zai/web (ACTING, WEB MODE — box going down 2026-10-20; body reverts to opencode/local when the box returns)
   - :last-dispatch: 1 (this handoff is #1 to this brain in this seat)
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
   - START HERE: lead/03 :HANDOFF: drawer on the board — CONTEXT/NEXT/BOUNDARIES/
@@ -102,6 +102,34 @@
 * Sleeper shift (pending CI green) — open-weights free brains on Actions
   - kimi-k2.5 / qwen3.8-27b / deepseek-v4.1-flash @ openrouter:free + groq (student 3000 min/mo)
   - author: sleeper-shift@github-actions — never impersonates a human member
+
+* WEB MODE (Owner's local box going down 2026-10-20) — who survives the shutdown
+
+  Bodies die with the box. Any seat whose body is @*/local or @goose/local is
+  ASLEEP until it returns; only these surfaces keep working: chat.z.ai,
+  chat.qwen.ai, kimi web, opencode/codespaces (remote), github-actions.
+
+  - Team Lead (web mode, ranked):
+      1. glm-5.3-flash@zai/web — AA 42, MIT open weights, and chat.z.ai carries
+         agentic features (its tools run in Z.ai's sandbox, NOT on the Owner's
+         box — so it still cannot execute lark-cli; commands must be relayed)
+      2. glm-5.3@zai/web — stronger coding, same body, costlier
+      3. qwen3.8-max@qwen/web — prompt-only web, weaker index
+      4. kimi-k2.6@kimi/web — one-shot courier only
+    UNVERIFIED: whether glm-5.3-flash is selectable in the free chat.z.ai picker.
+    Check the picker before dispatching; if absent, rank 2 takes the seat.
+  - ASLEEP while the box is down: Principal Engineer · QA Engineer · Platform
+    Engineer · Release Engineer (local bodies) · Product Engineer · Reviewer ·
+    Build Engineer (already one-shot couriers)
+  - STILL LIVE: Software Engineer — groq/qwen3.8-27b@opencode/CODESPACES (remote
+    body, unaffected) · Sleeper shift on Actions · Director of Engineering
+  - What web mode costs: nothing that was already done, and no new Lark writes —
+    the group, bot manager rights and the wake loop are server-side and survive.
+    What stops is anything needing a shell on this box: lark-cli sends, event
+    consume, gateway verification, guix work.
+  - Handover rule for web mode: the Lead dictates exact commands, the Owner runs
+    them on whatever machine is up, and the pasted output is the evidence. A
+    web Lead that invents command output is a false report, not a report.
 
 * Values in force (Owner's law)
   - open-weights + permanent-free only in accountable seats; closed models excluded

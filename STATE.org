@@ -28,10 +28,14 @@
     box — the new Lead's first action is to prove it or fall back to
     glm-5.3@zai/web
 * TEAM-STAFFING
-  - Team Lead: glm-5.3-flash@opencode/local (ACTING) · out:
-    qwen3.8-flash@qoder/local · contest vs qwen3.8-max closed
+  - MODE: WEB (Owner's local box going down 2026-10-20) — seats with @*/local
+    bodies are ASLEEP; see MEMBERS.org §WEB MODE for who survives
+  - Team Lead: glm-5.3-flash@zai/web (ACTING; opencode/local when the box
+    returns) · out: qwen3.8-flash@qoder/local · contest vs qwen3.8-max closed
   - Director of Engineering: qwen3.7-plus@qwen/web (restored — dual-hat gone,
     author/verifier segregation intact)
+  - Reference for web members: agent-team/AGENT-TEAM-ROSTER.org (163 live
+    gateway ids + what was proven/refused today)
 * HIRING-LOG
 * AUTONOMY
   AUTO

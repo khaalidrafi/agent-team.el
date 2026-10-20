@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 """CodeBuddy OAuth WINDOW on CI (runs inside the GitHub Actions job).
 
-v2 fixes after run 39481111876 (WINDOW_RESULT=expired, URL never captured):
-  - TRANSCRIPT ECHO: the pty TUI transcript is echoed into the run log
-    (ANSI-stripped tail every ~12s) so a failed capture is debuggable.
-  - CONTENT-AWARE pacing: keystrokes fire on transcript markers, not blind
-    sleeps; every marker miss is logged.
-  - URL capture from BOTH the browser shim AND the raw transcript text.
-  - Artifact written NON-hidden (cb-creds-sealed.bin) — v4 upload skips
-    dotfiles unless include-hidden-files.
+v4 (runs 39481111876 / 39483540900 / 39485306549 / 39486356977 post-mortems):
+  - v2: blind timed keystrokes + URL regex requiring /login -> missed the
+    device-flow URL entirely.
+  - v3: transcript echo WORKED (root cause visible) but the first screen is
+    the FOLDER-TRUST dialog, keystrokes fired before it, and the URL
+    capture matched the dialog's "Learn more" docs link (false positive).
+  - v4: FULLY MARKER-DRIVEN — answer the trust dialog when it appears,
+    handle the region menu when it appears, watch for ANY real auth URL
+    (docs links are noise now), and dump the full de-spammed transcript
+    every 30s so the URL is readable from the run log even if the
+    automated capture misses it.
 """
 import base64, os, pty, re, select, fcntl, termios, struct, signal
 import subprocess, sys, tarfile, time, io, glob
 from pathlib import Path
 
 DUR = int(os.environ.get("CB_WINDOW_DUR", "780"))
-URL_WAIT = int(os.environ.get("CB_URL_WAIT", "150"))
+URL_WAIT = int(os.environ.get("CB_URL_WAIT", "240"))
 TG_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT = os.environ.get("TELEGRAM_OWNER_ID", "")
 PUBKEY_B64 = os.environ.get("CB_SEAL_PUBKEY", "")
@@ -23,10 +26,14 @@ HOME = Path.home()
 CB = HOME / ".codebuddy"
 SHIM = Path("/tmp/cb-browser-url.txt")
 OUT_LOG = Path("/tmp/cb-ci-tui.log")
-URL_RE = re.compile(rb"https://www\.codebuddy\.ai/login\?[^\s\x1b\x07\"]+")
 NOISE = ("plugins", "logs", "traces", "shell-snapshots", "projects", "diagnostics")
 
 ANSI = re.compile(rb"\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07]*\x07|\x1b[=>]")
+URL_RE = re.compile(rb"https?://[^\s\"'<>]{8,}", re.I)
+# a candidate auth URL names codebuddy/tencent and is NOT documentation
+URL_NOISE = ("/docs", "docs.", "qoder.com", "github.com", "api.", "telegram.org",
+             "npmjs", "registry", "codebuddy.ai/settings")
+
 
 for p in ("/tmp/fakebrowser", "/tmp/xdg-open"):
     p = Path(p)
@@ -47,63 +54,60 @@ if pid == 0:
 fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 45, 150, 0, 0))
 log = OUT_LOG.open("wb")
 start = time.time()
-step = 0
 url_sent = False
 transcript = bytearray()
 last_echo = 0.0
-
-
-def clean_tail(n=900):
-    txt = ANSI.sub(b"", bytes(transcript[-2400:])).decode("utf-8", "replace")
-    txt = re.sub(r"\s+", " ", txt).strip()
-    return txt[-n:]
-
-
-def echo(force=False):
-    global last_echo
-    if force or time.time() - last_echo >= 12:
-        last_echo = time.time()
-        print(f"TUI[{int(elapsed())}s]: {clean_tail()}", flush=True)
-
-
-def dump_full(tag):
-    """Print the WHOLE cleaned transcript (v3 post-mortem aid: the device
-    URL can scroll past before any tail-only echo) — capped at 6000 chars
-    of cleaned text, oldest first."""
-    txt = ANSI.sub(b"", bytes(transcript)).decode("utf-8", "replace")
-    txt = re.sub(r"[ \t]+", " ", txt)
-    lines = [l.strip() for l in txt.splitlines() if l.strip()]
-    seen, out = set(), []
-    for l in lines:  # spinner frames spam — dedupe while keeping order
-        key = l[:60]
-        if key in seen and "Waiting" in l:
-            continue
-        seen.add(key)
-        out.append(l)
-    print(f"TUI_FULL[{tag}]: " + " | ".join(out)[:6000], flush=True)
+last_dump = 0.0
+last_send = 0.0
+sent_trust = 0
+sent_region = 0
 
 
 def elapsed():
     return time.time() - start
 
 
-URL_RE = re.compile(rb"https?://[^\s\"'<>]{8,}", re.I)
-# hosts that are NOT the login URL (noise from the CLI's own traffic hints)
-URL_NOISE = ("qoder.com", "github.com", "api.", "telegram.org", "npmjs", "registry")
+def clean_text():
+    txt = ANSI.sub(b"", bytes(transcript)).decode("utf-8", "replace")
+    return re.sub(r"[ \t]+", " ", txt)
+
+
+def clean_tail(n=900):
+    txt = re.sub(r"\s+", " ", clean_text()).strip()
+    return txt[-n:]
+
+
+def echo():
+    global last_echo
+    if time.time() - last_echo >= 12:
+        last_echo = time.time()
+        print(f"TUI[{int(elapsed())}s]: {clean_tail()}", flush=True)
+
+
+def dump_full(tag):
+    txt = clean_text()
+    lines = [l.strip() for l in txt.splitlines() if l.strip()]
+    seen, out = set(), []
+    for l in lines:
+        key = l[:60]
+        if key in seen and ("Waiting" in l or "Cancel" in l):
+            continue
+        seen.add(key)
+        out.append(l)
+    print(f"TUI_FULL[{tag}@{int(elapsed())}s]: " + " | ".join(out)[:6000], flush=True)
+
+
+URL_RE_OK = re.compile(r"https?://[^\s\"'<>]*(codebuddy|tencent)[^\s\"'<>]*", re.I)
 
 
 def find_url():
-    """Scan the WHOLE transcript for candidate auth URLs. Device-flow URLs
-    do not always contain 'login' (v2 missed exactly that — run
-    39485306549: the CLI sat in 'Waiting for auth' with its URL already
-    scrolled past). Any non-noise https URL is a candidate."""
-    for m in URL_RE.finditer(bytes(transcript)):
-        u = m.group(0).decode(errors="replace")
+    for m in URL_RE_OK.finditer(clean_text()):
+        u = m.group(0)
         if not any(n in u.lower() for n in URL_NOISE):
             return u
     if SHIM.exists():
         u = SHIM.read_text().strip()
-        if u and u.startswith("http"):
+        if u and u.startswith("http") and not any(n in u.lower() for n in URL_NOISE):
             return u
     return ""
 
@@ -151,15 +155,30 @@ def deliver(url: str) -> None:
         return
     url_sent = True
     tg_send("FROM: team-lead (glm-5.3-flash, Agent Team)\nTO: @owner\n\n"
-            "CODEBUDDY AUTH WINDOW — OPEN NOW (~13 minutes).\n\n"
-            "Click and finish sign-in inside the window; the CLI is polling "
-            "live. If your browser ends at a failed 127.0.0.1 page, that is "
-            "fine — copy the FULL address-bar URL to #hq. The moment you "
-            "approve, the built-in models go live on the roster.\n\n" + url)
-    print(f"URL_READY: {url[:100]}", flush=True)
+            "CODEBUDDY AUTH WINDOW — OPEN NOW (~13 minutes). THIS is the "
+            "real auth link (the earlier message was a false capture of a "
+            "docs link — disregard it).\n\n"
+            "Open it and finish sign-in inside the window; the CLI is "
+            "polling live. If your browser ends at a failed 127.0.0.1 "
+            "page, that is fine — copy the FULL address-bar URL to #hq. "
+            "The moment you approve, the built-in models go live.\n\n"
+            + url)
+    print(f"URL_READY: {url[:120]}", flush=True)
 
 
-# ---------------- phase 1: drive to the login URL ----------------
+def maybe_send(data: bytes, what: str):
+    """Throttle keystrokes: never two within 6s (a stray second Enter
+    jumps menus — v2/v3 evidence)."""
+    global last_send
+    if time.time() - last_send < 6:
+        return False
+    os.write(fd, data)
+    last_send = time.time()
+    print(f"KEY: {what} @ {elapsed():.0f}s", flush=True)
+    return True
+
+
+# ---------------- phase 1: drive to the login URL (marker-driven) -------
 while elapsed() < URL_WAIT and not url_sent:
     r, _, _ = select.select([fd], [], [], 1.0)
     if r:
@@ -177,42 +196,31 @@ while elapsed() < URL_WAIT and not url_sent:
             dump_full("url-found")
             deliver(u)
             break
-    t = elapsed()
-    view = clean_tail(400).lower()
+    view = clean_tail(1500).lower()
 
-    def marker(*words):
-        return any(w in view for w in words)
-
-    if step == 0 and (marker("sign in", "login", "auth", "get started", "welcome")
-                      or t > 12):
-        os.write(fd, b"\r"); step = 1
-        print(f"STEP1: Enter @ {t:.0f}s", flush=True)
-    elif step == 1 and (marker(">", "command", "input", "search") or t > 18):
-        os.write(fd, b"/login\r"); step = 2
-        print(f"STEP2: /login @ {t:.0f}s", flush=True)
-    elif step == 2 and t > 24:
-        # region menu: pick the Intl/overseas entry (arrow-down then Enter,
-        # retried once — menu order is not guaranteed)
-        os.write(fd, b"\x1b[B")
-        print(f"STEP3: arrow-down @ {t:.0f}s", flush=True)
-        step = 3
-    elif step == 3 and t > 27:
-        os.write(fd, b"\r")
-        print(f"STEP4: Enter @ {t:.0f}s", flush=True)
-        step = 4
-    elif step == 4 and t > 33:
-        # second chance: some builds need another Enter on the region list
-        os.write(fd, b"\r")
-        print(f"STEP5: extra Enter @ {t:.0f}s", flush=True)
-        step = 5
+    # 1. folder-trust dialog — ALWAYS first screen on a fresh tree
+    if ("trust the files" in view or "trust folder" in view) and sent_trust < 3:
+        if maybe_send(b"\r", "trust-dialog Enter"):
+            sent_trust += 1
+    # 2. region menu (numbered options mentioning Intl/overseas/global)
+    elif any(w in view for w in ("international", "overseas", "region",
+                                 "mainland")) and sent_region < 2:
+        if maybe_send(b"\x1b[B", "region arrow-down"):
+            sent_region += 1
+    elif sent_region in (1,) and sent_trust >= 1:
+        if maybe_send(b"\r", "region confirm Enter"):
+            sent_region = 2
+    # 3. periodic full transcript dumps — the URL cannot hide from these
+    if time.time() - last_dump >= 30:
+        last_dump = time.time()
+        dump_full("probe")
     echo()
 
 if not url_sent:
     print("URL_READY: never — dumping final transcript for post-mortem", flush=True)
     dump_full("final")
-    print("TUI_FINAL: " + clean_tail(1800), flush=True)
 
-# ---------------- phase 2: landing watch ----------------
+# ---------------- phase 2: landing watch (keep answering prompts) -------
 BASE = snapshot()
 landed = None
 end = start + DUR
@@ -222,7 +230,6 @@ while time.time() < end:
         print("CLI exited early", flush=True)
         break
     time.sleep(10)
-    # keep draining pty so the CLI never blocks on a full buffer
     while True:
         rr, _, _ = select.select([fd], [], [], 0)
         if not rr:
@@ -240,6 +247,11 @@ while time.time() < end:
         if u:
             dump_full("url-found-phase2")
             deliver(u)
+    # keep answering the trust dialog if a later prompt re-appears
+    view = clean_tail(600).lower()
+    if ("trust the files" in view or "trust folder" in view) and sent_trust < 5:
+        maybe_send(b"\r", "phase2 trust-dialog Enter")
+        sent_trust += 1
     now = snapshot()
     new = {k: v for k, v in now.items() if k not in BASE}
     changed = {k: v for k, v in now.items() if k in BASE and BASE[k] != v}

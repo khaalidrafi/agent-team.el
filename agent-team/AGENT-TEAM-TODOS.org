@@ -4,12 +4,13 @@
 
 * Board
 
-** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to qwen3.7-plus (acting Lead) :HANDOFF:
-   HANDOFF #2 — lead/03: relinquish the Team Lead seat (Agent Team)
+** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
+   HANDOFF #1 — lead/03: assume the Team Lead seat (Agent Team)
    FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
-   TO: Team Lead (acting in) — qwen3.7-plus@qwen/web
-       CONTESTED — Director a3203d3 (13:52) mandates qwen3.8-max@qwen/web;
-       Owner ruling decides. Drawer is written for whichever brain wins.
+   TO: Team Lead (acting in) — glm-5.3-flash@opencode/local
+       (final choice on evidence; the earlier qwen3.7-plus vs qwen3.8-max
+       contest is closed — neither holds the seat. See MEMBERS.org for the
+       ranked rationale and the disclosed family conflict.)
    REPO: khaalidrafi/agent-team.el
    DEPS: lark-cli ~/.guix-profile/bin/lark-cli v1.0.98 (uses — lark/01) · GoModel gateway http://127.0.0.1:8080 (uses — roster/brain verification) · Lark developer console (blocks — Owner-only: scope apply + version release)
    PRIORITY: P0 · RISK: writes
@@ -59,16 +60,22 @@
      was created the same minute. im:message:send was NOT applied and the user
      scope im:message.send_as_user is missing — that is the only scope gap left.
    :NEXT:
+   0. Prove your own brain before claiming the seat: run one real turn through
+      opencode on this box and report the model id that ACTUALLY answered. The
+      gateway rejects opencode/glm-5.3-flash-free for external callers, so this
+      only works from inside opencode — and if it does not work at all, say so
+      and hand back rather than leading on an unverified identity (that is
+      exactly the error dispatch #2 made with kilo/qwen3-32b).
    1. DONE 14:11 — Owner applied the scopes; verified at grant_status 1 with
       lark-cli api GET /open-apis/application/v6/scopes --as bot --page-all.
       Keep that command as the standing check before blaming the console.
       The scopes/apply shortcut was NOT needed (never fired).
    2. DONE 14:11 by the out-going Lead before the seat changed — see lark/01:
       group "Agent Team" oc_de19c9d95e0e277c1eb194a4da08674c exists, bot is
-      manager, Owner is a member, bot test message sent. REMAINING: user-identity
-      test message is blocked on user scope im:message.send_as_user (device
-      re-auth started, 600 s window; if approval fails the Owner must add that
-      scope in the console first). Recipe in COMMON §LARK.
+      manager, Owner is a member, bot test message sent. REMAINING: the per-seat
+      custom-bot webhooks (Owner UI) + notify script + CI secret. Recipe in
+      COMMON §LARK. The user-identity test is NOT required — see lark/01 logbook;
+      ignore the device re-auth, that scope gap costs nothing.
    3. Escape hatch if the bot path stays blocked: create the group AS USER
       (scope already granted), then the Owner adds the Team Lead app bot from
       group settings (im:chat.members:bot_access is granted).
@@ -89,16 +96,27 @@
      · guix home reconfigure · committing anything under .agent-org/ · writing
      any credential to the board or git.
    :OPEN-RISKS:
-   - LEAD SEAT IS CONTESTED: this handoff (Owner order) names
-     qwen3.7-plus@qwen/web; the Director pushed a3203d3 at 13:52 naming
-     qwen3.8-max@qwen/web. Both are recorded in MEMBERS.org, neither deleted.
-     RECEIVER: do NOT start dispatching until the Owner rules which brain holds
-     the seat — two Leads writing the board is worse than one slow Lead. If you
-     are qwen3.8-max, this drawer's CONTEXT/NEXT still apply to you verbatim.
-   - Dual hat: the Director brain now also holds Lead → author/verifier
-     segregation is broken. Owner must re-staff Director or rule on it.
-   - The new Lead is a WEB model: no shell of its own. Every claim must be an
-     Owner-relayed command with pasted evidence; nothing "verified" without it.
+   - SEAT NOW SETTLED (Owner asked for the evidence-ranked choice, not the
+     qwen-family default): Lead = glm-5.3-flash@opencode/local. Risks that came
+     with it, all UNVERIFIED until you test them:
+     a. opencode's free tier reaching glm-5.3-flash from THIS box — the gateway
+        rejects that id for external callers ("only from within OpenCode"), and
+        the box's outbound path has been flaky all day. First action: one real
+        turn through opencode, and report the id that actually answered.
+     b. The selection was made by a qwen-family brain excluding its own family.
+        Numbers are third-party (AA 42 vs 25; Terminal-Bench 84.3; DeepSWE
+        63.4 vs 58.7) but the JUDGMENT is conflicted → Director review is
+        mandatory before this stands as settled staffing.
+     c. If opencode is unusable, the seat falls to glm-5.3@zai/web — which is a
+        web body again, so every command must be Owner-relayed with pasted
+        evidence, exactly as the qwen-web option would have.
+   - The Lead's Lark authority is the BOT identity, and it is proven working
+     (group created, message sent). The user identity is an optional escape
+     hatch only — do not spend an Owner console round trip on
+     im:message.send_as_user unless a task genuinely needs user-side reads.
+   - You have a shell (opencode on this box) — that is the whole reason you got
+     the seat over the web candidates. Use it: run the command, paste the real
+     output into the board. A claim with no output behind it is not a report.
    - User access token expired 15:10 +06 today; refresh valid to 2026-10-27 and
      lark-cli auto-refreshes, but re-check auth status --verify --json before
      any --as user call.
@@ -156,7 +174,7 @@
    - Create "Agent Team" group; Team Lead bot as manager; Owner as member.
    - Per-seat custom-bot webhooks added by Owner (UI-only); Lead wires them to CI + relay.
    - Wake loop documented: event consume im.message.receive_v1 (long connection).
-   DEFINITION OF DONE: group exists with bot + Owner; one test message per identity; webhook relay script + CI secret wired; procedure in COMMON §LARK.
+   DEFINITION OF DONE: group exists with bot + Owner; one test message sent via the bot identity (user identity optional — see logbook); webhook relay script + CI secret wired; procedure in COMMON §LARK.
    :LOGBOOK:
    CLOCK: [2026-10-20 Tue 12:36]
    - [X] lark-cli bound: profile team-lead, brand lark, app "Team Lead"
@@ -178,13 +196,16 @@
          https://applink.larksuite.com/client/chat/open?openChatId=oc_de19c9d95e0e277c1eb194a4da08674c
          (the invite share_link carries a token — kept out of git on purpose).
    - [X] Bot test message sent: om_x100b624651605ca8ed4e1da976cc5a4 (1/2).
-   - [ ] User test message BLOCKED on user scope im:message.send_as_user
-         (missing_scope on +messages-send --as user; the app's user array has
-         im:message but not the split send-as-user scope). Device re-auth flow
-         started 14:11, code expires in 600 s — if approval fails, the Owner
-         must add im:message.send_as_user to the console user scopes first.
-         Tenant scopes now confirmed granted: im:chat, im:chat:create,
-         im:chat.members:bot_access (im:message:send was NOT applied).
+   - [~] User test message BLOCKED on user scope im:message.send_as_user
+         (missing_scope on +messages-send --as user; im:message is not enough).
+         DOWNGRADED 14:2x to NOT REQUIRED: nothing the Lead seat does needs the
+         user identity — group creation, manager rights, dispatch posts and the
+         wake loop all work as bot, and both are proven. User identity stays an
+         optional escape hatch (inviting invisible users, +chat-search). Do not
+         spend a console round trip on it unless a real task needs user reads.
+         Tenant scopes confirmed granted: im:chat, im:chat:create,
+         im:chat.members:bot_access (im:message:send was NOT applied — and was
+         not needed).
    - [ ] Scope status re-verified 13:20 (GET /open-apis/application/v6/scopes,
          bot, --page-all): 52 scopes all grant_status 1; im:chat and
          im:chat:create ABSENT → Owner has not applied them, no new version

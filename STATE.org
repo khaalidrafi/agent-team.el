@@ -11,24 +11,27 @@
     im:message.send_as_user (device re-auth pending Owner approval), then the
     10 per-seat custom-bot webhooks (Owner UI) + notify script + CI secret.
   - lead/03: Team Lead seat HANDOFF — qwen3.8-flash@qoder/local →
-    qwen3.7-plus@qwen/web (Owner order). Full context in the board's
-    :HANDOFF: drawer.
+    glm-5.3-flash@opencode/local. Full context in the board's :HANDOFF: drawer.
 * READY-FOR-HUMAN-REVIEW
   - lead/02 REPORT #2 (seat assumption + identity correction) — commit e44a4ad
-  - LEAD SEAT CONTEST — Owner order (13:2x) named qwen3.7-plus@qwen/web; the
-    Director's commit a3203d3 (13:52) named qwen3.8-max@qwen/web. Both are on
-    the roster as one CONTESTED entry. Needs one ruling from you.
+  - LEAD SEAT SETTLED — Owner asked for the evidence-ranked choice rather than
+    the qwen-family default: Lead = glm-5.3-flash@opencode/local (AA index 42 vs
+    25, Terminal-Bench 84.3, MIT open weights, free tier, and a real shell on
+    this box). qwen3.7-plus stays Director and owes a review of the call.
 * DEFERRED
 * BLOCKED
   - ci/01: assigned brain groq/qwen3.8-27b@opencode is down — needs re-staff
     from the live gateway roster
   - pools 13:50 +06: groq · opencode-free · cloudflare/@cf all down (Director's
     report) → resident loop suspended, web one-shot Lead mandated
+  - UNVERIFIED: whether opencode's free tier can reach glm-5.3-flash from this
+    box — the new Lead's first action is to prove it or fall back to
+    glm-5.3@zai/web
 * TEAM-STAFFING
-  - Team Lead: CONTESTED — qwen3.7-plus@qwen/web (Owner order, lead/03 handoff)
-    vs qwen3.8-max@qwen/web (Director a3203d3) · out: qwen3.8-flash@qoder/local
-  - Director of Engineering: VACANT — was qwen3.7-plus@qwen/web, dual-hatted as
-    Lead (author/verifier segregation broken meanwhile)
+  - Team Lead: glm-5.3-flash@opencode/local (ACTING) · out:
+    qwen3.8-flash@qoder/local · contest vs qwen3.8-max closed
+  - Director of Engineering: qwen3.7-plus@qwen/web (restored — dual-hat gone,
+    author/verifier segregation intact)
 * HIRING-LOG
 * AUTONOMY
   AUTO

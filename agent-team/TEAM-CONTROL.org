@@ -11,6 +11,10 @@
 #+TURN: zai/glm-4.7-flash@opencode (Quality Assurance Engineer)
 #+STALL-COUNT: 3
 
+:LOGBOOK:
+- [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
+:END:
+
 #+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal
             Engineer) -> groq/qwen3.8-27b@goose (Software Engineer) ->
             zai/glm-4.7-flash@opencode (Quality Assurance Engineer) ->
@@ -55,3 +59,6 @@
 # CURRENT RUN mesh/01: mechanism-proof for the peer mesh (like demo/01,
 # comms law: board + mailboxes, NOT Lark — Lark secrets still pending).
 # qwen3.8-flash@qoder is HOLD-AUTH: not in this run.
+:LOGBOOK:
+- [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
+:END:

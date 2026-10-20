@@ -172,8 +172,11 @@ carries no headings, and the queue region (\\* NEXT / \\* WAIT / \\* TODO /
       (if (and limit (> (length cases) limit)) (last cases limit) cases))))
 
 (defconst agent-team-sessions--msg-re
-  "^\\* MSG \\[[^]]+\\][ \t]+\\([^ \t]+\\)[ \t]+->[ \t]+\\([^ \t:]+\\)[ \t]*\\(:[a-z-]+\\)?[ \t]*$"
-  "One mailbox message headline (PROTOCOL.org grammar).")
+  "^\\* MSG \\[[^]]+\\][ \t]+\\([^ \t]+\\)[ \t]+->[ \t]+\\([^ \t:]+\\)[ \t]*\\(:[a-z-]+\\)?:?[ \t]*$"
+  "One mailbox message headline (PROTOCOL.org grammar).
+The optional org tag `:type:' carries a TRAILING colon — `:?` eats it
+(Lead repair, mesh/01: without it every typed headline failed to match
+and every inbox parsed as empty — ert agent-team-sessions-mailbox).")
 
 (defun agent-team-sessions--summary (body)
   "First prose line of a message BODY (below its properties drawer)."

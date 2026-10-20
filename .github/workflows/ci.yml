@@ -214,15 +214,43 @@ jobs:
 
       - name: Install agent harness (OpenCode)
         if: steps.control.outputs.mode == 'work' && contains(fromJSON('["principal-engineer","quality-assurance-engineer"]'), steps.control.outputs.seat)
+        continue-on-error: true   # dead harness = BLOCKED + rotation advances, never a stalled pointer
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
+          # Explicit provider config: poolside/laguna-s-2.1:free is not in
+          # OpenCode's bundled model catalog — without this mapping the run
+          # dies with "Unexpected server error" (demo/01 turn 1 evidence).
+          mkdir -p "$HOME/.config/opencode"
+          cat > "$HOME/.config/opencode/opencode.json" <<'EOF'
+          {
+            "$schema": "https://opencode.ai/config.json",
+            "provider": {
+              "openrouter": {
+                "npm": "@openrouter/ai-sdk-provider",
+                "name": "OpenRouter",
+                "options": { "apiKey": "{env:OPENROUTER_API_KEY}" },
+                "models": {
+                  "poolside/laguna-s-2.1:free": { "name": "Laguna S 2.1 (free)" }
+                }
+              }
+            }
+          }
+          EOF
           opencode --version || true
 
       - name: Install agent harness (Goose)
         if: steps.control.outputs.mode == 'work' && contains(fromJSON('["software-engineer","release-engineer"]'), steps.control.outputs.seat)
+        continue-on-error: true   # dead harness = BLOCKED + rotation advances, never a stalled pointer
         run: |
-          curl -fsSL https://github.com/block/goose/releases/download/stable/download_cli.sh | bash
+          # Direct tarball install: the download_cli.sh installer opens
+          # /dev/tty for interactive config and dies on CI runners with
+          # "No such device or address" (demo/01 turn 2 evidence).
+          mkdir -p "$HOME/.local/bin" /tmp/goose-dl
+          curl -fsSL -o /tmp/goose-dl/goose.tar.bz2 \
+            "https://github.com/block/goose/releases/download/stable/goose-x86_64-unknown-linux-gnu.tar.bz2"
+          tar -xjf /tmp/goose-dl/goose.tar.bz2 -C /tmp/goose-dl
+          install -m 0755 /tmp/goose-dl/goose "$HOME/.local/bin/goose"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           goose --version || true
 

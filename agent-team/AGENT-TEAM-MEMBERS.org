@@ -1,42 +1,18 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
-#+UPDATED: 2026-10-20 — Lead contest CLOSED: glm-5.3-flash@opencode/local (evidence-ranked, not family habit); Director restored to qwen3.7-plus
+#+UPDATED: 2026-10-20 — Lead contest CLOSED: glm-5.3-flash@opencode-local (evidence-ranked, not family habit); Director restored to qwen3.7-plus
 
-* Team Lead — glm-5.3-flash@zai/web (ACTING, WEB MODE — box going down 2026-10-20; body reverts to opencode/local when the box returns)
-  - :last-dispatch: 1 (this handoff is #1 to this brain in this seat)
-  - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - START HERE: lead/03 :HANDOFF: drawer on the board — CONTEXT/NEXT/BOUNDARIES/
-    OPEN-RISKS carry the whole shift; lark/01 is the live P0
-  - selection evidence (ranked, not habit):
-    1. BODY — the seat executes lark-cli/git/curl on this box. opencode/local is
-       installed (v2.0.27, ~/.local/bin/opencode; headless via --prompt, and it
-       speaks acp). A web brain with a hosted sandbox cannot do the job at all.
-    2. MIND — Artificial Analysis Intelligence Index 42 vs 25 for
-       qwen3.7-plus; Terminal-Bench 2.1 84.3; DeepSWE 63.4 (beats
-       Qwen3.8-Flash-Next's 58.7).
-    3. LAW — MIT open weights + opencode free tier satisfy "open-weights +
-       permanent-free only in accountable seats". qwen3.7-plus is API-only
-       (closed) → excluded by the team's own values clause.
-    4. qwen3.8-omni-flash REJECTED on evidence: AA intelligence index "not yet
-       scored" + gated to a paid plan; its omni-modality edge is unused by a
-       text board.
-    Disclosed conflict: this selection was written by a qwen-family brain
-    (qwen3.8-flash@qoder) judging its OWN family out. Numbers are third-party
-    (Artificial Analysis, DataCamp), not self-report. Director review required.
-  - fallbacks: 1. glm-5.3@zai/web (Owner-summoned courier, same family)
-               2. qwen3.8-max@qwen/web
-               3. DEGRADATION: kimi-k2.6@kimi/web one-shot
-  - out of seat: qwen3.8-flash@qoder/local (deepseek-v4.1-flash@qoder for the
-    first half of that shift) — relieved by Owner order; work in lead/02
-    REPORT #2 + lead/03. The qwen3.7-plus vs qwen3.8-max contest is CLOSED:
-    neither holds the seat, so no Owner ruling is needed.
-  - brain audit carried forward: dispatch #2 named kilo/qwen3-32b — gateway
-    rejected it (model_not_found). Live roster (GET /v1/models, 163 ids) is the
-    only authority. NEVER dispatch a snapshot name.
-  - restore (Director's condition, kept): groq/qwen3.8-27b@opencode/local
-    resumes when groq+opencode are green from the box (PE watch).
-  - outage 2026-10-20 13:50 +06: groq · opencode-free · cloudflare/@cf all down
-    (cf = daily quota exhausted, verified 13:5x). Resident-local law after.
+* Team Lead — qwen3.8-flash@qoder (ACTING, OUTAGE)
+  - :last-dispatch: 2
+  - duties: board owner · dispatches · verification · merge gates
+  - mode: RESIDENT LOCAL via Qoder (built-in brain; outage interim)
+  - fallbacks: 1. glm-5.3@zai (one-shot courier assist)
+               2. Owner-direct
+               3. restore groq/qwen3.8-27b@opencode-local when pools green (PE watch)
+  - ID RULE: PROVIDER/MODEL@AGENT — single token after @, NO slash;
+    platform folds into the agent name (opencode-local, opencode-codespaces)
+  - outage 2026-10-20 15:00 +06: groq · opencode-free · cloudflare/@cf down;
+    Qoder's built-in brain is the last local light.
 
 * Director of Engineering — qwen3.7-plus@qwen/web (restored; Lead no longer dual-hatted)
   - :last-dispatch: 1
@@ -48,33 +24,33 @@
                2. kimi-k2.6@kimi/web
                3. glm-5.3@zai/web
 
-* Principal Engineer — kilo/nemotron-3-ultra-550b@opencode/local
+* Principal Engineer — kilo/nemotron-3-ultra-550b@opencode-local
   - duties: P0s · hard problems · architecture (retry-wrapped; promo pool = visitor, not resident)
-  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
-               2. groq/qwen3.8-27b@opencode/local
-               3. groq/llama-3.3-70b-versatile@opencode/local
+  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode-local
+               2. groq/qwen3.8-27b@opencode-local
+               3. groq/llama-3.3-70b-versatile@opencode-local
 
-* Software Engineer — groq/qwen3.8-27b@opencode/codespaces
+* Software Engineer — groq/qwen3.8-27b@opencode-codespaces
   - duties: features · iterations · intern-probation
-  - fallbacks: 1. deepseek-v4.1-flash@opencode/local
-               2. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
-               3. kimi-k2.5@opencode/local (openrouter :free, ephemeral)
+  - fallbacks: 1. deepseek-v4.1-flash@opencode-local
+               2. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode-local
+               3. kimi-k2.5@opencode-local (openrouter :free, ephemeral)
 
-* QA Engineer — deepseek-v4.1-flash@opencode/local
+* QA Engineer — deepseek-v4.1-flash@opencode-local
   - duties: test suites · ert coverage · green verification
-  - fallbacks: 1. groq/qwen3.8-27b@opencode/local
+  - fallbacks: 1. groq/qwen3.8-27b@opencode-local
                2. mistral-small-3.1@cloudflare/@cf (via gateway)
-               3. kimi-k2.5@opencode/local (ephemeral)
+               3. kimi-k2.5@opencode-local (ephemeral)
 
 * Release Engineer — qwen3.8-flash@qoder/local
   - duties: CI · pushes · packaging verification · smoke tests
-  - fallbacks: 1. qwen3.8-flash@opencode/local
+  - fallbacks: 1. qwen3.8-flash@opencode-local
                2. glm-4.7-flash@cloudflare/@cf (via gateway)
                3. qwen3.7-plus@qoder/local
 
 * Platform Engineer — qwen3.8-flash@qoder/local
   - duties: box health · IM bridges (Telegram relay, lark-cli host) · gateway ops
-  - fallbacks: 1. qwen3.8-flash@opencode/local
+  - fallbacks: 1. qwen3.8-flash@opencode-local
                2. goose (local body, brain via gateway)
                3. qwen3.7-plus@qoder/local
 

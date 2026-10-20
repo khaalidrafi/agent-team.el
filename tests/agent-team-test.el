@@ -186,6 +186,55 @@ PRIORITY: P1 · ORDER: 2")))
     (should (null (agent-team-sessions--session-buffer "principal-engineer")))
     (kill-buffer buf)))
 
+(ert-deftest agent-team-env-shape-p ()
+  (should (agent-team--env-shape-p "QODER_PERSONAL_ACCESS_TOKEN"))
+  (should (agent-team--env-shape-p "TELEGRAM_BOT_TOKEN"))
+  (should (agent-team--env-shape-p "GOMODEL_MASTER_KEY"))
+  (should (agent-team--env-shape-p "OPENROUTER_API_KEY"))
+  (should (agent-team--env-shape-p "LARK_WEBHOOK_PRINCIPAL_ENGINEER"))
+  (should (not (agent-team--env-shape-p "PATH")))
+  (should (not (agent-team--env-shape-p "HOME")))
+  (should (not (agent-team--env-shape-p "MY_SECRET_THING")))
+  (should (not (agent-team--env-shape-p "qoder_token"))))
+
+(ert-deftest agent-team-control-apply-replaces ()
+  (let* ((in "#+TITLE: control\n#+TURN: seat-a\n#+STALL-COUNT: 3\n\n* Notes\n")
+         (out (agent-team--control-apply in "TURN" "seat-b")))
+    (should (string-match-p "^\\#+TURN: seat-b$" out))
+    (should-not (string-match-p "seat-a" out))
+    (should (string-match-p "^\\#+STALL-COUNT: 3$" out))))
+
+(ert-deftest agent-team-control-apply-inserts-before-headline ()
+  (let* ((in "#+TITLE: control\n\n* Notes\nbody\n")
+         (out (agent-team--control-apply in "KILL-SWITCH" "ON")))
+    (should (string-match-p "^\\#+KILL-SWITCH: ON$" out))
+    ;; the line lands in the header block, never after the first headline
+    (should (< (string-match "^\\#+KILL-SWITCH" out)
+               (string-match "^\\* Notes" out)))))
+
+(ert-deftest agent-team-control-apply-appends-when-no-headline ()
+  (let* ((in "#+TITLE: control\n")
+         (out (agent-team--control-apply in "OBJECTIVE" "burn the board")))
+    (should (string-match-p "^\\#+OBJECTIVE: burn the board$" out))))
+
+(ert-deftest agent-team-chat-format ()
+  (let* ((msg (agent-team--chat-format
+               "platform-engineer" "@lead" "report"
+               "RESULT: DONE\nEVIDENCE: file:12" "[2026-10-21 Wed 09:00 UTC]"))
+         (lines (split-string msg "\n")))
+    ;; headline carries the FROM (Owner law: headings contain FROM content)
+    (should (string-prefix-p "* MSG platform-engineer -> @lead :report:" (nth 0 lines)))
+    (should (string-match-p ":msg:platform-engineer:lead:report:" (nth 0 lines)))
+    (should (equal ":PROPERTIES:" (nth 1 lines)))
+    (should (equal ":FROM: platform-engineer" (nth 2 lines)))
+    (should (equal ":TO: lead" (nth 3 lines)))
+    (should (equal ":KIND: report" (nth 4 lines)))
+    (should (equal ":WHEN: [2026-10-21 Wed 09:00 UTC]" (nth 5 lines)))
+    (should (equal ":END:" (nth 6 lines)))
+    ;; body lines indented two spaces
+    (should (equal "  RESULT: DONE" (nth 7 lines)))
+    (should (equal "  EVIDENCE: file:12" (nth 8 lines)))))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

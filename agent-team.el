@@ -21,6 +21,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
 
 (defgroup agent-team nil
   "Tools for running a multi-model AI agent team."
@@ -276,6 +277,231 @@ DONE is terminal (EM-only by convention; this command does not enforce roles)."
     (message "agent-team: %s -> %s" kw next)))
 
 
+;;; Team mesh: TEAM-CHAT.org (one chat buffer, mailbox deprecated)
+
+(defun agent-team--chat-file ()
+  "The team chat file (ONE append-only Org buffer, Owner law 16:55)."
+  (agent-team--file "TEAM-CHAT.org"))
+
+(defun agent-team--control-file ()
+  "The control file (turn pointer, objective, kill switch, stall count)."
+  (agent-team--file "TEAM-CONTROL.org"))
+
+(defun agent-team--chat-format (from to kind body when)
+  "Render one chat message per the FORMAT LAW (Owner 17:55Z).
+Headline carries FROM; routing rides Org tags + a :PROPERTIES: drawer;
+WHEN is an Org inactive timestamp string like \"[2026-10-21 Wed 09:00 UTC]\".
+BODY lines are indented two spaces (Org list-friendly)."
+  (let* ((from-tok (replace-regexp-in-string "[ \t]+" "-" (downcase from)))
+         (to-tok   (replace-regexp-in-string "[ \t]+" "-" (downcase to)))
+         (to-tag   (string-remove-prefix "@" to-tok))
+         (indented (mapconcat (lambda (l)
+                                (if (string-empty-p (string-trim l))
+                                    ""
+                                  (concat "  " (string-trim-right l))))
+                              (split-string body "\n") "\n")))
+    (concat
+     (format "* MSG %s -> @%s :%s:                    :msg:%s:%s:%s:\n"
+             from to-tok kind from-tok to-tag kind)
+     ":PROPERTIES:\n"
+     (format ":FROM: %s\n" from)
+     (format ":TO: %s\n" to-tok)
+     (format ":KIND: %s\n" kind)
+     (format ":WHEN: %s\n" when)
+     ":END:\n"
+     indented)))
+
+(defun agent-team-chat-append (from to kind body)
+  "Append one chat message to agent-team/TEAM-CHAT.org (append-only:
+existing entries are never edited — the guard is Org motion + EOF insert).
+FROM defaults to `agent-team-em-id'.  Returns the inserted headline."
+  (interactive
+   (let ((from (read-string "FROM: " agent-team-em-id))
+         (to (completing-read "TO (@handle): "
+                              '("@lead" "@owner" "@all") nil nil))
+         (kind (completing-read "KIND: "
+                                '("dispatch" "report" "request"
+                                  "escalation" "review" "note")
+                                nil t nil nil "note"))
+         (body (read-string "Body: ")))
+     (list from to kind body)))
+  (let* ((file (agent-team--chat-file))
+         (msg (agent-team--chat-format
+               from to kind body
+               (format-time-string "[%Y-%m-%d %a %H:%M UTC]" nil t))))
+    (make-directory (file-name-directory file) t)
+    (with-current-buffer (find-file-noselect file)
+      (save-excursion
+        (goto-char (point-max))
+        (insert "\n" msg))
+      (save-buffer))
+    (kill-new msg)
+    (message "agent-team: chat message appended (%s -> %s)" from to)))
+
+(defun agent-team-chat-open ()
+  "Open the team chat at the end (the live tail is where work is)."
+  (interactive)
+  (find-file (agent-team--chat-file))
+  (goto-char (point-max)))
+
+(defun agent-team-chat-tail (&optional n)
+  "Echo the last N chat headlines (default 5) — the read-first law."
+  (interactive)
+  (let* ((file (agent-team--chat-file))
+         (count (or n 5))
+         (heads))
+    (when (file-exists-p file)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-max))
+        (while (and (> count 0)
+                    (re-search-backward "^\\* MSG " nil t))
+          (push (buffer-substring (line-beginning-position)
+                                  (line-end-position))
+                heads)
+          (setq count (1- count)))))
+    (if heads
+        (message "chat tail:\n%s" (mapconcat #'identity heads "\n"))
+      (message "chat: empty (no MSG headlines yet)"))))
+
+(defun agent-team-chat-pings-to (handle)
+  "Echo unanswered-style pings to HANDLE (the brief's scan-first law:
+scan the tail for @handle pings before picking work)."
+  (interactive "sHandle (e.g. platform-engineer): ")
+  (let* ((file (agent-team--chat-file))
+         (rx (concat "^\\* MSG .*@.*\\b" (regexp-quote handle) "\\b"))
+         (hits))
+    (when (file-exists-p file)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        (while (re-search-forward rx nil t)
+          (push (buffer-substring (line-beginning-position)
+                                  (line-end-position))
+                hits))))
+    (if hits
+        (message "pings to @%s:\n%s" handle
+                 (mapconcat #'identity (nreverse hits) "\n"))
+      (message "no pings to @%s in the chat" handle))))
+
+;;; Secret law: env-var names travel, values never do
+
+(defun agent-team--env-shape-p (name)
+  "Non-nil when NAME looks like a credential env var (names only —
+the value never appears anywhere in this package)."
+  (and (stringp name)
+       (string-match-p
+        (concat "\\`\\(?:GROQ\\|ZAI\\|ZHIPU\\|OPENROUTER\\|OPENAI\\|ANTHROPIC"
+                "\\|QODER\\|TELEGRAM\\|CODEBUDDY\\|GOMODEL\\|LARK\\|GITHUB"
+                "\\|CLOUDFLARE\\|GEMINI\\|OPCODE\\|OPENCODE\\)[A-Z_]*"
+                "\\(?:API_KEY\\|TOKEN\\|PAT\\|WEBHOOK[A-Z_]*\\|MASTER_KEY"
+                "\\|OWNER_ID\\|ACCOUNT_ID\\)\\'") name)))
+
+(defun agent-team-env-names ()
+  "List the credential-shaped ENV VAR NAMES in this environment.
+Secret law (Owner 18:27Z): members share credentials as env var NAMES —
+a peer confirms the NAME and has-it/absent; the asker reads the value
+from their OWN environment.  Values are never printed by this command."
+  (interactive)
+  (let ((names (sort
+                (delete-dups
+                 (delq nil (mapcar (lambda (e)
+                                     (when (stringp e)
+                                       (let ((n (car (split-string e "="))))
+                                         (and (agent-team--env-shape-p n) n))))
+                                   process-environment)))
+                #'string<)))
+    (if (called-interactively-p 'any)
+        (with-help-window "*agent-team env names*"
+          (princ "Credential env var NAMES in this environment:\n\n")
+          (princ (mapconcat #'identity names "\n"))
+          (princ "\n\nLaw: ask a peer for the NAME, read the value from
+your own env with (getenv \"NAME\").  Never echo values."))
+      names)))
+
+(defun agent-team-env-look (name)
+  "Look into the env for credential NAME — the Owner's law in action:
+\"members will simply ask another agent to look into the PAT env\".
+Answers presence + shape only; the value is never displayed.  Returns
+`set' / `unset' / `nonstandard' for scripting."
+  (interactive "sENV VAR NAME (e.g. QODER_PERSONAL_ACCESS_TOKEN): ")
+  (let* ((val (getenv name))
+         (status (cond ((not val) "unset")
+                       ((and (agent-team--env-shape-p name)
+                             (>= (length val) 12)) "set")
+                       (t "nonstandard"))))
+    (message "%s: %s%s" name status
+             (if (equal status "set")
+                 (format " (%d chars) — read it from your own env; never echo"
+                         (length val))
+               ""))
+    status))
+
+(defun agent-team-env-require (name)
+  "Error unless NAME is set in the environment (gateway law extended:
+every credential-consuming command can demand its key up front)."
+  (unless (getenv name)
+    (user-error "agent-team: env var %s is NOT set — ask the Lead/peer for the NAME, then export it" name))
+  t)
+
+;;; Control plane: TEAM-CONTROL.org (turn pointer / objective / kill switch)
+
+(defun agent-team--control-apply (content key value)
+  "Return CONTENT with its #+KEY: line replaced by VALUE (or the line
+inserted into the header block when absent).  Pure — unit-tested."
+  (let ((line (concat "#+" key ": " value))
+        (lines (split-string content "\n"))
+        replaced)
+    (setq lines (mapcar (lambda (l)
+                          (if (and (not replaced)
+                                   (string-match-p
+                                    (concat "^\\#+" (regexp-quote key) ":") l))
+                              (progn (setq replaced t) line)
+                            l))
+                        lines))
+    (unless replaced
+      (let ((pos (cl-position-if (lambda (l) (string-prefix-p "* " l)) lines)))
+        (if pos
+            (setq lines (append (cl-subseq lines 0 pos)
+                                (list line)
+                                (cl-subseq lines pos)))
+          (setq lines (append lines (list line))))))
+    (string-join lines "\n")))
+
+(defun agent-team-control-get (key)
+  "Read the #+KEY: value from TEAM-CONTROL.org (nil when absent)."
+  (let ((file (agent-team--control-file)))
+    (when (file-exists-p file)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        (when (re-search-forward (concat "^\\#+" (regexp-quote key) ":[ \t]*\\(.*\\)$") nil t)
+          (string-trim (match-string 1)))))))
+
+(defun agent-team-control-set (key value)
+  "Set #+KEY: to VALUE in TEAM-CONTROL.org (TURN / KILL-SWITCH /
+OBJECTIVE / OBJECTIVE-STATE / STALL-COUNT).  The CI chain reads these
+verbatim each run — this is how the Lead paces the rotation from Emacs."
+  (interactive "sKey (TURN|KILL-SWITCH|OBJECTIVE|OBJECTIVE-STATE|STALL-COUNT): \nsValue: ")
+  (let* ((file (agent-team--control-file))
+         (content (if (file-exists-p file)
+                      (with-temp-buffer
+                        (insert-file-contents file)
+                        (buffer-string))
+                    (progn
+                      (make-directory (file-name-directory file) t)
+                      "#+TITLE: TEAM-CONTROL.org — chain control\n"))))
+    (with-temp-file file
+      (insert (agent-team--control-apply content key value)))
+    (message "agent-team: %s -> %s" key value)))
+
+(defun agent-team-kill-switch (on)
+  "Flip the chain kill switch (ON stops every future turn; the Owner
+keeps the final authority — this is the Lead's hand on the same lever)."
+  (interactive (list (y-or-n-p "KILL-SWITCH ON (stops the chain)? ")))
+  (agent-team-control-set "KILL-SWITCH" (if on "ON" "OFF"))
+  (message "agent-team: KILL-SWITCH %s" (if on "ON — chain halts" "OFF — chain runs")))
+
 ;;; Gateway: Jev + health
 
 (defun agent-team--curl (args)

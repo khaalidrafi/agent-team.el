@@ -35,8 +35,36 @@ PRIORITY: P1 · ORDER: 2")))
 * Platform Engineer — Qwen3.8-Flash @ Qoder
 ")))
     (should (equal (agent-team--parse-members tmp)
-                   '(("Platform Engineer" . "Qwen3.8-Flash @ Qoder")
-                     ("Build Engineer" . "GLM-5.3 @ chat.z.ai"))))))
+                   '(("Platform Engineer" . "Qwen3.8-Flash@Qoder")
+                     ("Build Engineer" . "GLM-5.3@chat.z.ai"))))))
+
+;; ci/01: the board drifted into three id grammars and the old regexp matched
+;; only the compact one, silently dropping every spaced heading.  The parser
+;; now normalizes instead of rejecting.
+(ert-deftest agent-team-parse-members-tolerates-id-grammars ()
+  (let ((tmp (make-temp-file "members" nil ".org"
+"* Team Lead — qwen3.8-flash@qoder (ACTING, OUTGOING)
+* Director of Engineering — glm-5.3-flash @ chat.z.ai
+* Software Engineer — groq/qwen3.8-27b @opencode-codespaces
+  - duties: features
+* QA Engineer — deepseek-v4.1-flash@ opencode/local
+* Intern bench (no-data to intern, never rejected)
+* WEB MODE (box going down) — who survives the shutdown
+")))
+    (should (equal (agent-team--parse-members tmp)
+                   '(("QA Engineer" . "deepseek-v4.1-flash@opencode/local")
+                     ("Software Engineer" . "groq/qwen3.8-27b@opencode-codespaces")
+                     ("Director of Engineering" . "glm-5.3-flash@chat.z.ai")
+                     ("Team Lead" . "qwen3.8-flash@qoder"))))))
+
+(ert-deftest agent-team-normalize-member-id ()
+  (should (equal (agent-team--normalize-member-id "GLM-5.3 @ chat.z.ai")
+                 "GLM-5.3@chat.z.ai"))
+  (should (equal (agent-team--normalize-member-id "glm-5.3-flash@zai (restored)")
+                 "glm-5.3-flash@zai"))
+  ;; not a member id: no "@" (this is what keeps prose headings out of the roster)
+  (should (eq (agent-team--normalize-member-id "who survives the shutdown") nil))
+  (should (eq (agent-team--normalize-member-id "") nil)))
 
 (ert-deftest agent-team-init-scaffolds ()
   (let ((tmp (make-temp-file "proj" t)))

@@ -1,0 +1,60 @@
+name: CI
+
+# Cloud CI is the Owner's P0: it is what keeps the team alive when the local
+# box goes off.  Two rules follow from that.  (1) CI must verify the same things
+# we verify locally -- ert suite AND byte-compile, not one without the other.
+# (2) CI must never fail for a reason unrelated to the code: the Lark notify
+# step is guarded, so a missing webhook secret is reported and skipped instead
+# of curl-ing an empty URL.
+
+on:
+  push:
+    branches: [ai/main]
+  pull_request:
+    branches: [ai/main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Emacs
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox
+
+      - name: Byte-compile
+        # Fails the job on a real error; warnings (free functions under -Q) are
+        # informational, matching how we compile locally.
+        run: |
+          emacs -Q --batch -L . --eval \
+            '(unless (byte-compile-file "agent-team.el") (kill-emacs 1))'
+
+      - name: Run ert tests
+        run: |
+          emacs -Q --batch -L . -L tests -l tests/agent-team-test.el \
+            --eval '(ert-run-tests-batch-and-exit "agent-team")'
+
+      - name: Notify Lark (webhook)
+        if: always()
+        env:
+          # Secrets go through env, never inline into the shell text: an
+          # interpolated secret on a command line is both a quoting hazard and
+          # visible in the process list of the runner.
+          LARK_WEBHOOK_URL: ${{ secrets.LARK_WEBHOOK_URL }}
+          RESULT: ${{ job.status }}
+          EVENT: ${{ github.event_name }}
+          SHA: ${{ github.sha }}
+          REF: ${{ github.ref_name }}
+          RUN: ${{ github.run_id }}
+        run: |
+          if [ -z "$LARK_WEBHOOK_URL" ]; then
+            echo "::notice::LARK_WEBHOOK_URL not set - skipping Lark notify"
+            exit 0
+          fi
+          MSG=$(printf 'CI %s %s@%s: %s · https://github.com/%s/actions/runs/%s' \
+                "$EVENT" "$REF" "${SHA:0:7}" "$RESULT" \
+                "${{ github.repository }}" "$RUN")
+          jq -n --arg t "$MSG" '{msg_type:"text",content:{text:$t}}' \
+            | curl -sS -f -X POST "$LARK_WEBHOOK_URL" \
+                -H 'Content-Type: application/json' \
+                --data-binary @-

@@ -15,7 +15,8 @@
   - WorkBuddy.ai: gemini-3.8-flash · gemini-3.5-flash · glm-5.3-flash/5.3/5.2 ·
     kimi-k3 · kimi-k2.6 · kimi-k2.8-preview · gpt-6-sol/luna · gpt-5.6-terra/luna ·
     gpt-5.5/5.4 [closed] · grok-4.7 · step-5-preview · deepseek-v4.1-flash
-  - MiniMax Agent: minimax-m3.1-flash-preview · minimax-m3
+  - MiniMax Agent: minimax-m3.1-flash · minimax-m3
+    (CodeBuddy local carries THIS SAME model list — one pool, two harnesses)
 
 * Agent — Local (Owner's machine; no heavy builds)
   - qoder: qwen3.8-flash (built-in; other models per Qoder settings)
@@ -24,12 +25,19 @@
     gpt-oss-120b/20b [closed] · minimax-m2 · nemotron-3-super ·
     nemotron-3.5-lightning · nemotron-3.5-super-vl · step-3.5-flash ·
     big-pickle · big-pickle-free · jev-1.13-free! (when listed) ·
-    longcat-2.5 · mimo-v2.6 · space-bunny (roster rotates)
+    longcat-2.5 · mimo-v2.6 (roster rotates)
   - goose (provider-agnostic, BYO brain) · omp · pi (parked, config pending)
   - cursor: cursor-agent · cursor-tab · github-copilot (auto-model)
-  - codebuddy: deepseek-v4.1-flash (built-in) + shared model list
+  - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
 
-* API (via the Owner's gateway — ai.khalidrafi.tech / 127.0.0.1:8080)
+* API (via the Owner's gateway)
+  #+GATEWAY: LOCAL authority = http://127.0.0.1:8080/v1/models on the Owner's box. The
+  public path is the SAME gateway fronted by a Cloudflare Tunnel:
+  https://ai.khalidrafi.tech/v1/models — verified answering 401 (live, auth-gated) on
+  2026-10-20. Two consequences: (a) CI CAN reach every model behind it with the tunnel
+  up, and (b) it dies with the box, and its master key is currently recoverable from
+  git history (commit dc3fb0a) — rotate before publishing. A tunnel is not a cloud
+  runtime; it is this laptop wearing a public hat.
   - cloudflare/@cf/ — full Workers AI catalog (llama/qwen/gemma/mistral/
     deepseek-r1-distill/flux/sdxl; 10k Neurons/day shared)
   - gemini/ — flash family, image, live variants
@@ -208,9 +216,11 @@
   - nemotron-3-super-120b@a12b — vendor SWE-bench Verified 60.5 · TB-Hard 25.8
     (llm-stats 2026-03-10); AA intelligence 13, TB2.1 38.6, and AA marks it
     DEPRECATED (acc 2026-10-20). Superseded → intern-adjacent.
-  - minimax-m3.1-flash — PROPRIETARY, weights not published, size undisclosed;
-    AA intelligence 43 · TB4.0 25.8; $0.15/$0.60, one provider, no free tier
-    (AA page, acc 2026-10-20). "Preview" + closed → emergency/API-only seat.
+  - minimax-m3.1-flash — **FREE THROUGH 2026-10-25** (Owner order 2026-10-20). A
+    dated promo, not a permanent free tier: five days of runway, then billed or gone,
+    so it fails "permanent-free" for accountable seats while the price is still live.
+    No "preview" variant exists — the name is minimax-m3.1-flash. PROPRIETARY, weights
+    not published, size undisclosed; AA intelligence 43 · TB4.0 25.8; $0.15/$0.60 (AA page).
   - minimax-m3 — open weights PROMISED, not delivered; vendor TB2.1 66.0 with
     SWE-bench measured on "internal infra, Claude Code scaffolding"
     (minimax.io/blog/minimax-m3 2026-06-01) — vendor-only, scaffolding caveat.
@@ -218,7 +228,8 @@
     a benchmark-vs-reality gap).
   - step-5-preview@stepfun — 600B-A27B, StepFun Model License 1.0; HF ~2026-10;
     vendor DeepSWE 67.7 · TB4 33.3; $1.00/$2.70 (opencode.ai/data acc
-    2026-10-20). Preview with no independent data → INTERNED per the rule.
+    2026-10-20). Its own name says preview and there is no independent data →
+    INTERNED per the rule. (Distinct from minimax-m3.1-flash, which is NOT a preview.)
   - lfm-2.5@liquid — family 1.2B–24B; 8B-A1B unrestricted open weight
     (liquid.ai/blog 2026-05-28); NO agentic-coding benchmarks exist (BFCL/Tau2
     only). The only family plausibly runnable on this 4 GB Celeron

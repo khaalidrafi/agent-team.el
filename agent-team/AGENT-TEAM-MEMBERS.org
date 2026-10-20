@@ -150,7 +150,8 @@ Never a "/" after "@". Web and harness-local seats carry no provider prefix.
   - openrouter/stepfun/step-5-preview@opencode — preview with no independent
     data, StepFun Model License 1.0, DeepSWE 67.7 vendor-only.
   - openrouter/minimax/minimax-m3.1-flash@opencode — proprietary, size
-    undisclosed, AA 43 / TB 4.0 25.8; plus the harnesses still needing a brain:
+    undisclosed, AA 43 / TB 4.0 25.8; FREE THROUGH 2026-10-25 (Owner), so it is a
+    dated promo rather than a permanent-free body — five days of usable runway. plus the harnesses still needing a brain:
     goose@qoder · pi@qoder · codebuddy@qoder · cursor-agent@qoder · omp@qoder.
   - RELEASED (evidence-negative, not punished): nemotron-3-super-120b (AA marks
     it DEPRECATED) · kimi-k2.8-preview (no weights, no benchmarks) ·

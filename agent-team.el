@@ -293,7 +293,8 @@ Headline carries FROM; routing rides Org tags + a :PROPERTIES: drawer;
 WHEN is an Org inactive timestamp string like \"[2026-10-21 Wed 09:00 UTC]\".
 BODY lines are indented two spaces (Org list-friendly)."
   (let* ((from-tok (replace-regexp-in-string "[ \t]+" "-" (downcase from)))
-         (to-tok   (replace-regexp-in-string "[ \t]+" "-" (downcase to)))
+         (to-tok   (string-remove-prefix
+                    "@" (replace-regexp-in-string "[ \t]+" "-" (downcase to))))
          (to-tag   (string-remove-prefix "@" to-tok))
          (indented (mapconcat (lambda (l)
                                 (if (string-empty-p (string-trim l))

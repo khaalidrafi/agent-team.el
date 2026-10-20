@@ -351,6 +351,8 @@ jobs:
           fi
           [ -s "$PWD/.turn-result.txt" ] || echo "TURN_RESULT=BLOCKED (container wrote no verdict — see log)" > "$PWD/.turn-result.txt"
           cat "$PWD/.turn-result.txt" >> "$GITHUB_ENV"
+          echo "---- container output (up to 80 lines) ----"
+          sed -n '1,80p' /tmp/.turn-out.txt || true
 
           TURN_RESULT=$(sed 's/^TURN_RESULT=//' "$PWD/.turn-result.txt" | tail -1)
           echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"

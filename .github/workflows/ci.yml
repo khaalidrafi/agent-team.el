@@ -54,7 +54,12 @@ on:
     # Six turns/day on the public repo (unlimited Linux minutes):
     # 01:17 / 05:17 / 09:17 / 13:17 / 17:17 / 21:17 UTC.
     - cron: '17 1,5,9,13,17,21 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      cb_window:
+        description: 'Open the CodeBuddy OAuth auth window (login link is Telegram-delivered to the Owner mid-window)'
+        type: boolean
+        default: false
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -607,7 +612,7 @@ jobs:
               # Fallback lane per roster: zai/glm-4.7-flash@goose (acting).
               if env HOME=/usr/local/lib/qoder-home \
                    qoder -p "$BRIEF" --output-format json \
-                   --permission-mode accept_edits --max-turns 20; then
+                   --permission-mode accept_edits --max-turns 100; then
                 echo "TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — body PROVEN on CI)"
               elif env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \
                    OPENAI_API_KEY="$ZAI_API_KEY" \
@@ -746,6 +751,45 @@ jobs:
           git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
             -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
           git push origin "ai/main" || echo "::warning::control push failed"
+
+  # CodeBuddy OAuth WINDOW (Owner "Done." 18:27Z: his browser approval
+  # landed AFTER the Lead's local CLI poll window closed — the token grant
+  # attaches to the LIVE CLI instance that generated the login URL). This
+  # Lead-ops job re-runs the Intl login flow ON a runner — where the bot
+  # token actually lives — so the link is delivered MID-WINDOW: pty-drive
+  # the CLI, Telegram the fresh link to the Owner's locked chat, keep
+  # polling ~13 min, and on landing upload the credential tree as a
+  # LIBSODIUM-SEALED artifact (repo is PUBLIC: the artifact must be
+  # ciphertext-only; the Lead's private key never leaves his box).
+  # NOTE: the one-off npm install here is Lead ops, NOT a turn seat — the
+  # "agents preinstalled" law for turn jobs is untouched (codebuddy stays
+  # baked in the harness image).
+  cb-window:
+    if: github.event_name == 'workflow_dispatch' && inputs.cb_window
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Open the CodeBuddy login window (pty-driven, TG-delivered)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
+          # Lead's seal PUBLIC key (private counterpart is NOT in the repo)
+          CB_SEAL_PUBKEY: 'VfVI1oQWk7+4dIPKjBg9IGrHeKM1VURYg/mUCrJ2YSg='
+        run: |
+          npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1
+          codebuddy --version
+          python3 -m pip install --quiet pynacl
+          python3 scripts/cb_window_ci.py
+
+      - name: Upload sealed credential artifact (1-day retention)
+        if: hashFiles('.cb-creds-sealed.bin') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: cb-creds-sealed
+          path: .cb-creds-sealed.bin
+          retention-days: 1
 
   # SELF-CHAIN — the last link of every turn (Owner order 2026-10-20 #hq
   # 14:52: unlimited runs, agents decide how many runs an objective takes).

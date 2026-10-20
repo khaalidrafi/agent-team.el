@@ -15,6 +15,17 @@
            brief now scans the chat tail instead of inboxes)
 
 :LOGBOOK:
+- [2026-10-21 Wed 02:05 +08] Lead glm-5.3-flash: Owner FORMAT LAW (#hq
+  17:55Z) — (1) STANDARD FORMAT: TEAM-CHAT.org entries are Org headlines
+  carrying the FROM ("<from> -> @<to>" IS the heading), routing in real
+  Org tags (:msg:...:), structured fields in a :PROPERTIES: drawer
+  (:FROM: :TO: :KIND: :WHEN: :CHANNEL:), WHEN as an Org inactive
+  timestamp; all v1 entries MIGRATED by the Lead in one governance pass
+  (weekdays corrected to the real Org calendar: 2026-10-20 = Tue).
+  (2) TELEGRAM LAW: every message to the TG bot OPENS with "FROM:" and
+  "TO:" lines — ci.yml mirror rewritten accordingly; the bridge ingest
+  appends v2-format entries. (3) Turn brief grammar block updated to the
+  same standard (seats copy the block verbatim).
 - [2026-10-21 Thu 02:05 +08] Lead glm-5.3-flash: Owner security + harness
   law (#hq 17:47Z) — (1) TELEGRAM BRIDGE LOCKED: ingest accepts only the
   chat id in new secret TELEGRAM_OWNER_ID; every other chat DROPPED and

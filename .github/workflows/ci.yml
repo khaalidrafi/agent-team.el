@@ -360,7 +360,14 @@ jobs:
           TS=$(date -u '+%Y-%m-%d %a %H:%M UTC')
           {
             echo ""
-            echo "* MSG [${TS}] @owner (tg) -> @lead :note:"
+            echo "* MSG owner (tg) -> @lead :note:                    :msg:owner:lead:note:"
+            echo ":PROPERTIES:"
+            echo ":FROM: owner"
+            echo ":TO: lead"
+            echo ":KIND: note"
+            echo ":WHEN: [${TS}]"
+            echo ":CHANNEL: telegram"
+            echo ":END:"
             echo "  [Telegram bridge — Owner's message, recorded verbatim per Owner"
             echo "   order 2026-10-21 #hq: \"my reply should get recorded in TEAM-CHAT.org\"]"
             echo "$UPD" | jq -r '.result[] | select(.message.chat.type=="private") | select(.message.text) |
@@ -412,10 +419,23 @@ jobs:
           PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
           to each other — work, share reports, take each other's help, get
           dispatches; 16:55: team chat is ONE Org file, direct pings, no
-          mailbox): agent-team/TEAM-CHAT.org. Append one org headline per
-          message AT EOF:
-          * MSG [YYYY-MM-DD Eee HH:MM UTC] ${SEAT} -> @<to|all> :<kind>:
-          kinds: dispatch | report | request | escalation | review | note.
+          mailbox; 17:55 FORMAT LAW: standard Org format — the headline
+          carries the FROM, fields ride Org tags + a :PROPERTIES: drawer):
+          agent-team/TEAM-CHAT.org. Append one message AT EOF in this
+          EXACT format:
+          * MSG ${SEAT} -> @<to|all> :<kind>:      :msg:${SEAT}:<to-sans-at>:<kind>:
+          :PROPERTIES:
+          :FROM: ${SEAT}
+          :TO: <to|all>
+          :KIND: <dispatch|report|request|escalation|review|note>
+          :WHEN: [YYYY-MM-DD Eee HH:MM UTC]
+          :END:
+          <indented body lines>
+          The headline MUST carry the FROM (Owner: \"Org headings should
+          contain the FROM content\"); tags + properties drawer = Org
+          syntax; WHEN is an Org inactive timestamp. Never edit existing
+          entries — append only. Any Telegram-bound message MUST open with
+          \"FROM: <seat>\" and \"TO: @owner\" lines (Owner law 17:55).
           Handles: @principal-engineer @software-engineer
           @quality-assurance-engineer @release-engineer @lead @owner.
           mailbox/ is a frozen archive — NEVER write there.
@@ -767,7 +787,9 @@ jobs:
           # destination exists.
           CHAT="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}}"
           [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
-          TXT="$(printf 'Agent Team — segment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
+          # TELEGRAM LAW (Owner order 17:55Z): every message to the TG bot
+          # MUST contain FROM and TO — they open the text.
+          TXT="$(printf 'FROM: team-lead (glm-5.3-flash, Agent Team)\nTO: @owner\n\nsegment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
             "${{ needs.turn.outputs.turn_branch }}" \
             "${{ needs.turn.outputs.seg_result }}" \
             "${{ steps.merge.outputs.outcome }}" \

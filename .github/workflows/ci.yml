@@ -333,6 +333,13 @@ jobs:
           esac
           INNER
 
+          echo "---- docker smoke test (diagnose silent container) ----"
+          docker image ls agent-team-harness:local --format 'IMG {{.Repository}}:{{.Tag}} {{.Size}}' || true
+          docker run --rm -v "$PWD":/workspace -w /workspace \
+            agent-team-harness:local bash -c 'echo HELLO; id; ls -la /workspace/.turn-inside.sh; echo "SEAT_IN_CONTAINER=[$SEAT]"; echo INNER_SEEN; exit 42' \
+            || echo "smoke docker-run exit=$?"
+          echo "---- end smoke test ----"
+
           if docker run --rm --user 1001:1001 \
             -v "$PWD":/workspace -w /workspace \
             -e SEAT -e BRIEF \

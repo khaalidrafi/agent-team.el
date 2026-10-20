@@ -8,7 +8,7 @@
 #+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"; channel migrated to ONE chat file per Owner order 2026-10-20 16:55 #hq): every rotation seat proves the mesh — on its turn it (1) FIRST scans the tail of the team chat agent-team/TEAM-CHAT.org and acts on every @ping addressed to it (or @all) that it has not answered, (2) verifies ONE fact about the mesh plumbing (TEAM-CHAT.org law header, .gitattributes union rule, TEAM-CONTROL chain switches, ci.yml self-chain) with file:line evidence, (3) appends at least one peer message to the chat (dispatch, report, request, or a direct @ping to a peer — no mailbox), (4) reports @lead in the chat with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
-#+TURN: qwen3.8-flash@qoder (Acting Platform Engineer) — one-off Lead-paced Qoder-on-CI proof dispatch (AUTH-READY 2026-10-21); the advance case returns the rotation to Principal Engineer
+#+TURN: openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)
 #+STALL-COUNT: 6
 #+CHANNEL: agent-team/TEAM-CHAT.org (single-buffer team chat, direct @pings —
            mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn

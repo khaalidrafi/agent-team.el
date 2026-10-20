@@ -2,17 +2,16 @@
 #+ROSTER: API roster authority = GET /v1/models on the gateway
 #+UPDATED: 2026-10-20 — final seats + rank-3 fallbacks (handover day)
 
-* Team Lead — openrouter/kimi-k2.5@goose/local (OUTAGE INTERIM)
+* Team Lead — openrouter/nvidia/nemotron-3-super-120b-a12b:free@goose/local (OUTAGE INTERIM)
   - :last-dispatch: 1
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - fallbacks: 1. kilo/nemotron-3-super-120b@goose/local (promo pool — emergency-only)
-               2. DEGRADATION: Owner-summoned glm-5.3@zai/web (judgment) while rung 1 holds the board
-               3. RESTORE openrouter/kimi-k2.5 → groq/qwen3.8-27b when pools green (PE watch)
-  - body note: goose — installed, `goose run` headless, Rust-light on the potato;
-    OpenCode IP-blocked (interim only, restore when unblocked)
-  - outage note 2026-10-20 14:00 +08: DOWN: groq · opencode free · cloudflare/@cf.
-    Qoder brains error via groq (Release/Platform degraded — re-point or idle).
-    Tunnel UP. Standing lesson: 3+ independent providers minimum (Hunyuan, BE).
+  - fallbacks: 1. kilo/kimi-k2-thinking@goose/local (open, thinking)
+               2. DEGRADATION: Owner-summoned glm-5.3@zai/web (judgment)
+               3. RESTORE groq/qwen3.8-27b@opencode/local when pools green (PE watch)
+  - body: goose (OpenCode IP-blocked; interim only)
+  - outage 2026-10-20 12:20 +06: DOWN groq · opencode-free · cloudflare/@cf.
+    Qoder degraded (groq-brained). Verified against snapshot roster (live
+    endpoint wedged); names must be re-verified against GET /v1/models.
 
 * Director of Engineering — qwen3.7-plus@qwen/web
   - :last-dispatch: 1

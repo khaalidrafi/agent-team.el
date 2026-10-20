@@ -6,14 +6,20 @@
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
     byte-compile green on the runner (run 39404373880)
 * IN-FLIGHT
-  - demo/01 (Owner order 2026-10-20, #hq): 30-minute CI turn-system DEMO
-    running — objective transcribed by the LEAD into TEAM-CONTROL.org
-    (the Owner does not edit the control file; objectives flow through
-    the Lead); each seat files agent-team/demo/<role-slug>.org as its
-    turn report; comms via THIS BOARD, NOT Lark (per-role bots not in
-    play this run); Acting Platform Engineer qwen3.8-flash@qoder is
-    HOLD-AUTH (needs Owner credentials — out of all runs until then);
-    Lead merges the turn branches at the gate, then REPORT #7
+  - harness/01: OPEN items from demo/01 evidence — (1) OpenRouter key
+    needs ~10 credits (free-models-per-day exhausted mid-demo; Release
+    BLOCKED) or per-seat provider keys; (2) Principal seat: OpenCode
+    cannot host poolside/laguna-s-2.1:free (absent from models.dev
+    catalog, ProviderModelNotFoundError) — brain swap / body swap /
+    catalog bypass ruling needed; (3) goose+groq developer-role 400
+    (req_01m5cqbghke9) — Groq lane down, nemotron fallback in use;
+    (4) qwen3.8-flash@qoder HOLD-AUTH (Owner creds pending); (5) Lark
+    per-role bots (LARK_WEBHOOK_<ROLE>) for real runs — board is
+    demo-only channel per Owner
+  - demo/01 CLOSED: REPORT #7 on the board — mechanism PROVEN (12 turns,
+    Docker harness live in CI, ghcr image published, 2/4 seats delivered
+    merged work, control pointer advanced every run, rotation never
+    stalled)
   - hiring/01 (round 4, Owner orders 2026-10-20): per-role Lark bots
     (members write their own dispatches/reports — generic CI notify
     REMOVED from ci.yml); expiring models allowed as ACTING — Acting

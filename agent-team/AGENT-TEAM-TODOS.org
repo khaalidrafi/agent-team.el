@@ -4,7 +4,63 @@
 
 * Board
 
-** PROGRESS [2026-10-20] demo/01 30-minute CI turn-system demo (Owner-ordered) :demo/01:
+** DONE [2026-10-20] demo/01 30-minute CI turn-system demo — REPORT #7 :REPORT:
+   REPORT #7 — demo/01: CI turn-system demo CLOSED (mechanism PROVEN end-to-end)
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (Discord #hq) · REPO: khaalidrafi/agent-team.el
+   :RESULTS:
+   - RESULT: DONE (mechanism) / 2 of 4 seats filed work, 2 of 4 BLOCKED
+     with diagnosed root causes. Board channel used, not Lark (Owner law
+     for demo runs). Objectives flow Owner → Lead → TEAM-CONTROL.org.
+   - DELIVERED (merged at the Lead's gate, in agent-team/demo/):
+     1. software-engineer.org — groq/qwen3.8-27b@goose ON THE ROSTERED
+        FALLBACK openrouter/nvidia/nemotron-3.5-lightning:free. Verified
+        agent-team--normalize-member-id (agent-team.el:75) normalizes
+        spaced + compact ID grammars; test evidence cited. Commit
+        49d243b on ai/turn-20261020-1422.
+     2. quality-assurance-engineer.org — zai/glm-4.7-flash@opencode.
+        Verified the QA pairing rationale against the roster (lines
+        49-53, quoted). RESULT: PARTIAL (honest). Commit 25ab22f on
+        ai/turn-20261020-1426.
+   - BLOCKED (evidence, not hand-waving):
+     3. Release Engineer — goose OK, lane DOWN: OpenRouter
+        "free-models-per-day" quota exhausted mid-demo (the whole key
+        shares 50 req/day; probes + earlier turns burned it). Run
+        39440022547 log. FIX: add ~10 credits (1000 free req/day) or
+        give seats separate provider keys.
+     4. Principal Engineer — opencode refuses poolside/laguna-s-2.1:free:
+        ProviderModelNotFoundError — brain alive on OpenRouter (probe
+        200s) but ABSENT from OpenCode's models.dev catalog. Run
+        39440389574 log. FIX options: catalog-compatible brain swap
+        (roster fallback 1: reflection/beam — needs catalog check), a
+        different body (pi/omp), or an OpenCode catalog bypass.
+   - HARNESS BUGS FIXED DURING THE DEMO (each with CI-log evidence):
+     a. goose installer needs /dev/tty on CI → direct tarball install
+        (now baked in docker/harness).
+     b. Groq qwen3.8-27b template rejects the developer role goose
+        sends (HTTP 400, req_01m5cqbghke9x8c77r6gbk6zwk) → goose seats
+        moved to the rostered fallback lane.
+     c. CI bash runs with pipefail: an unmatched grep silently killed a
+        turn step → no pipelines left in the turn step.
+     d. /workspace is the IN-CONTAINER mount, not a host path → VM-side
+        artifacts moved to /tmp.
+     e. SEAT/BRIEF were unexported shell vars → `docker run -e NAME`
+        passed EMPTY strings (smoke test proved it) → values now passed
+        explicitly.
+     f. Advance step now `if: always()` — the rotation can NEVER stall.
+   - ARCHITECTURE (Owner order, live): docker/harness image — OpenCode +
+     Goose + baked configs (opencode.json, goose-config.yaml), NO keys
+     baked; published to ghcr.io/khaalidrafi/agent-team-harness:latest
+     by the harness job; turn segments run INSIDE the container.
+   - DEMO TOTAL: 12 dispatch/schedule turns exercised; rotation
+     Principal → Software → QA → Release → Principal completed twice;
+     control-file pointer advanced every run; ai/main only ever got
+     control commits from CI + Lead-gated merges.
+   :END:
+
+** DONE [2026-10-20] demo/01 30-minute CI turn-system demo (Owner-ordered) :demo/01:
+   CLOSED by REPORT #7 above — mechanism proven end-to-end; 2/4 seats filed,
+   2/4 BLOCKED with evidence; see REPORT #7.
    DEMO — 30-minute CI turn-system demo (Owner order, Discord #hq 2026-10-20)
    FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
    TO: Owner — Khalid Rafi · REPO: khaalidrafi/agent-team.el (PUBLIC)

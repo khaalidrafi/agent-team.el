@@ -96,6 +96,33 @@ real ids only, VMs excluded)
 - GOMODEL_MASTER_KEY: from the Owner's shell env — NEVER stored in files or git
 - header: Authorization: Bearer $GOMODEL_MASTER_KEY
 
+** LARK (team IM layer — lark-cli on the Owner's box)
+
+- CLI: lark-cli (Guix package) on local bodies; config in ~/.lark-cli/ — NEVER in
+  git; embedded guides: lark-cli skills read lark-shared | lark-im | lark-event
+- app bot: "Team Lead" cli_aa5cdf374b21de2c (brand lark, profile team-lead) =
+  the team's app bot; group "Agent Team" = board relay channel
+- identities: bot = tenant token, ready once app released (NO auth login for bot);
+  user = device flow split: lark-cli auth login --domain im,contact --no-wait
+  --json → send verification_url + QR (lark-cli auth qrcode) to Owner → after
+  approval complete with --device-code
+- bot scopes (apply in console, then PUBLISH A VERSION — scopes inert until
+  release): im:chat, im:chat:create, im:chat:create_by_user, im:chat:read,
+  im:chat.members:read, im:chat.members:write_only, im:message,
+  im:message:send_as_bot, im:message:send, im:message:readonly,
+  im:message.group_msg, im:message.p2p_msg:readonly,
+  im:message.reactions:read, contact:user.base:readonly
+- permission errors return console_url + missing_scopes — forward console_url to
+  Owner verbatim; never auth-login a bot scope gap
+- custom-bot webhooks (per-seat notify bots): CREATION IS UI-ONLY (group settings
+  → Bots → Add Bot → Custom Bot) — verified no API exists; send = POST
+  https://open.larksuite.com/open-apis/bot/v2/hook/<id> with
+  {"msg_type":"text","content":{"text":...}}; set keyword/signature security;
+  webhook URLs are secrets — env/store only, never board or git
+- wake loop: lark-cli event consume im.message.receive_v1 (long connection, no
+  public URL needed); needs im:message.p2p_msg:readonly + console event subscribe
+- CI: GitHub secret LARK_WEBHOOK_URL; workflow MUST skip notify when unset
+
 ** ROLE ATTACHMENT (EM only)
 
 - why roles work (evidence): roles improve output through division of labor +

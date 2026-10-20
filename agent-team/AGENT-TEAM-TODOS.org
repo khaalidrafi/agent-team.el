@@ -4,6 +4,60 @@
 
 * Board
 
+** REVIEW [2026-10-20] lead/02: assume Team Lead seat (identity corrected) — REPORT #2 :REPORT:
+   REPORT #2 — lead/02: assume the seat (identity corrected)
+   FROM: Team Lead (acting) — qwen3.8-flash@qoder/local
+   TO: Director of Engineering — kimi-k2.6@kimi/web
+   REPO: khaalidrafi/agent-team.el
+   DEPS: GoModel gateway 127.0.0.1:8080 (uses — brain verification) · lark-cli (uses — lark/01)
+   PRIORITY: P0 · RISK: writes
+   :PROPERTIES:
+   :RESULT: PARTIAL
+   :DELIVERED: ai/main (this commit; see git log — seat fix + LARK docs + lark/01)
+   :NEEDS: Director ack of corrected identity · re-staff ci/01 · Owner release of Team Lead app (lark/01)
+   :END:
+   :LOGBOOK:
+   - State changed by Team Lead (acting) — deepseek-v4.1-flash@qoder/local →
+     qwen3.8-flash@qoder/local (harness handoff) on [2026-10-20]: PROGRESS flipped
+     at seat assumption; this entry is the REPORT #2 flip to REVIEW.
+   - OBJECTIVES: assume seat · verify brain · flip first board item PROGRESS · REPORT #2.
+   - [X] Seat assumed; board + MEMBERS updated (identity corrected in seat entry).
+   - [X] Brain verified — ground truth over snapshot: gateway REJECTED dispatch's
+         kilo/qwen3-32b (model_not_found) and bare deepseek-v4.1-flash; live roster
+         carries opencode/deepseek-v4.1-flash-free + tokenharbor/deepseek-v4.1-flash:free;
+         Owner confirmed DS Flash on Qoder; mid-shift handoff to qwen3.8-flash@qoder.
+   - [ ] Lark urgent — moved to its own item lark/01 (PROGRESS; blocked on app release).
+   - [ ] ci/01 verification — assigned SE brain groq/qwen3.8-27b@opencode is down
+         (outage); item untouched, needs re-staff. UNVERIFIED, no claims.
+   :END:
+
+** PROGRESS [2026-10-20] lark/01: Lark IM layer — app bot, Agent Team group, per-seat webhooks :DISPATCH:
+   TO: Team Lead (acting) — qwen3.8-flash@qoder/local
+   FROM: Owner (direct ask, relayed in DISPATCH #2) — Khalid Rafi
+   REPO: khaalidrafi/agent-team.el (+ Lark tenant "Team Lead" app, external)
+   DEPS: lark-cli Guix package (uses — installed, v1.0.98) · Team Lead app cli_aa5cdf374b21de2c (supplies bot identity) · Lark developer console (blocks — Owner-only: scopes apply + release + custom-bot UI)
+   PRIORITY: P0 · RISK: writes
+   OBJECTIVES:
+   - Bind lark-cli to the Team Lead app; bot + user identities live.
+   - Create "Agent Team" group; Team Lead bot as manager; Owner as member.
+   - Per-seat custom-bot webhooks added by Owner (UI-only); Lead wires them to CI + relay.
+   - Wake loop documented: event consume im.message.receive_v1 (long connection).
+   DEFINITION OF DONE: group exists with bot + Owner; one test message per identity; webhook relay script + CI secret wired; procedure in COMMON §LARK.
+   :LOGBOOK:
+   CLOCK: [2026-10-20 Tue 12:36]
+   - [X] lark-cli bound: profile team-lead, brand lark, app "Team Lead"
+         cli_aa5cdf374b21de2c; bot identity verified ready; user identity done via
+         device flow (domains im,contact). Secrets env/stdin only, never in repo.
+   - [X] Docs verified (open.larksuite.com llms chain + lark-cli skills): custom-bot
+         webhook creation is UI-ONLY — no API exists; send = POST
+         /open-apis/bot/v2/hook/<id>; scopes need console apply + version release.
+         Full procedure: templates/AGENT-TEAM-COMMON.org §LARK.
+   - [ ] Group creation BLOCKED: app missing im:chat* scopes (error 99991672);
+         14-scope list handed to Owner; retry on their "done".
+   - [ ] Per-seat webhooks: Owner UI step (10 seat names supplied); then Lead wires
+         notify script + LARK_WEBHOOK_URL GitHub secret (ties to ci/01 guard).
+   :END:
+
 ** PROGRESS [2026-10-20] ci/01: stabilize CI — parse fix + webhook guard :DISPATCH:
    TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
    FROM: Team Lead — groq/qwen3.8-27b@opencode/local

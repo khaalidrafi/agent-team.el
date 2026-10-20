@@ -1,17 +1,25 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
-#+UPDATED: 2026-10-20 — final seats + rank-3 fallbacks (handover day)
+#+UPDATED: 2026-10-20 — Lead identity corrected (qwen3.8-flash@qoder acting; brain audit in seat entry)
 
-* Team Lead — kilo/qwen3-32b@goose/local (OUTAGE INTERIM)
+* Team Lead — qwen3.8-flash@qoder/local (ACTING; identity corrected 2026-10-20)
   - :last-dispatch: 2
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - fallbacks: 1. kilo/mistral-small-3.1-24b-instruct@goose/local
-               2. openrouter/qwen/qwen3.8-27b:free@goose/local
+  - brain audit: dispatch #2 claimed kilo/qwen3-32b — gateway rejected it
+    (model_not_found, no such id on live roster); Owner confirmed
+    deepseek-v4.1-flash@qoder for the seat; mid-shift harness handoff to
+    qwen3.8-flash@qoder (same body). DS Flash gateway ids on record:
+    opencode/deepseek-v4.1-flash-free (OpenCode-only tier),
+    tokenharbor/deepseek-v4.1-flash:free.
+  - fallbacks: 1. cloudflare/@cf/mistralai/mistral-small-3.1-24b-instruct@goose/local
+               2. groq/qwen/qwen3.8-27b@goose/local
                3. DEGRADATION: Owner-summoned glm-5.3@zai/web
-  - body: goose (OpenCode IP-blocked; interim only)
+  - body: qoder/local — hosts lark-cli (profile team-lead, app
+    cli_aa5cdf374b21de2c); Lark setup state lives in lark/01 on the board
   - outage 2026-10-20 12:25 +06: veto cascade applied — no web/nemotron/kimi-k2/
-    llama/gemma/gpt/cf/ds-flash; groq+opencode down. Names from snapshot
-    roster; re-verify vs GET /v1/models when unwedged.
+    llama/gemma/gpt/cf/ds-flash; groq+opencode down. Snapshot names re-checked
+    vs live GET /v1/models 12:38: kilo/mistral-small + openrouter/qwen3.8-27b
+    absent → fallbacks above use live ids only.
 
 * Director of Engineering — qwen3.7-plus@qwen/web
   - :last-dispatch: 1

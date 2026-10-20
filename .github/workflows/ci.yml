@@ -522,9 +522,13 @@ jobs:
               # Acting Platform Engineer qwen3.8-flash@qoder — Qoder-on-CI
               # PROOF dispatch (AUTH-READY 2026-10-21: Owner delivered the
               # PAT; repo secret QODER_PERSONAL_ACCESS_TOKEN). The CLI
-              # auto-detects CI and uses the PAT — no browser. Fallback
-              # lane per roster: zai/glm-4.7-flash@goose (acting).
-              if qoder -p "$BRIEF" --output-format json \
+              # auto-detects CI and uses the PAT — no browser. HOME is
+              # pinned to the install dir: the `qoder` launcher resolves
+              # its CLI under ITS HOME (proof run 39467719908 failed with
+              # the default /home/agent — "Qoder CLI is not installed").
+              # Fallback lane per roster: zai/glm-4.7-flash@goose (acting).
+              if env HOME=/usr/local/lib/qoder-home \
+                   qoder -p "$BRIEF" --output-format json \
                    --permission-mode accept_edits --max-turns 20; then
                 echo "TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — body PROVEN on CI)"
               elif env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \

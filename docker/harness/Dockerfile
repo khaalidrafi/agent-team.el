@@ -32,15 +32,19 @@ RUN mkdir -p /tmp/goose-dl \
 
 # --- Qoder body (keys landed 2026-10-21: Owner PAT -> repo secret
 #     QODER_PERSONAL_ACCESS_TOKEN; CLI auto-detects CI and uses the PAT,
-#     no browser — Task 6 auth research). Install under /usr/local/lib so
-#     the non-root run user can traverse it; binary path found at build
-#     time and symlinked (installer's target dir is not documented). ------
+#     no browser — Task 6 auth research).
+#     RUNTIME ROOT CAUSE (proof run 39467719908, first platform segment):
+#     the installer's `qoder` launcher resolves the real CLI under ITS
+#     HOME — at build (HOME=/usr/local/lib/qoder-home) the version check
+#     passed, at segment runtime HOME=/home/agent it printed "Qoder CLI
+#     is not installed". Fix: keep the install tree under a+rwx and run
+#     the launcher with HOME pinned to the install dir (also done in
+#     ci.yml's platform branch). Version check is FATAL now — a body that
+#     cannot run must fail the build loudly, not hide behind || true. ---
 RUN export HOME=/usr/local/lib/qoder-home \
  && curl -fsSL https://qoder.com/install | bash \
- && chmod -R a+rX /usr/local/lib/qoder-home \
- && QBIN=$(find /usr/local/lib/qoder-home -type f -name qoder | head -1) \
- && ln -sf "$QBIN" /usr/local/bin/qoder \
- && qoder --version || true
+ && chmod -R a+rwX /usr/local/lib/qoder-home \
+ && timeout 60 qoder --version
 
 # --- CodeBuddy body (Owner law 2026-10-21 17:47Z: CodeBuddy is kept for
 #     its BUILT-IN models only. For API-served brains there is no novelty
@@ -51,7 +55,7 @@ RUN export HOME=/usr/local/lib/qoder-home \
 #     ready to wire the moment one lands). Headless needs -y in -p mode
 #     for tool use.) ----------------------------------------------------
 RUN npm install -g @tencent-ai/codebuddy-code \
- && codebuddy --version || true
+ && timeout 60 codebuddy --version
 
 # --- Non-root run user (matches the Actions runner uid 1001) ---------------
 RUN useradd -m -u 1001 agent

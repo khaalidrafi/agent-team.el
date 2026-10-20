@@ -2,23 +2,17 @@
 #+ROSTER: API roster authority = GET /v1/models on the gateway
 #+UPDATED: 2026-10-20 — final seats + rank-3 fallbacks (handover day)
 
-* Team Lead — groq/qwen3.8-27b@opencode/local
+* Team Lead — openrouter/kimi-k2.5@goose/local (OUTAGE INTERIM)
   - :last-dispatch: 1
   - duties: board owner · dispatches · verification · merge gates · Lark wake loop
-  - fallbacks: 1. glm-5.3-flash@opencode/free-roster (open-weights, large-MoE flash;
-                  most-stable entries in the opencode roster; KEEP-LIGHTS-ON tier —
-                  escalate deep-judgment moments to rung 3 sooner)
-               2. groq/qwen3.8-8b@opencode/local (standing pool, smaller sibling)
-               2. groq/qwen3.8-8b@opencode/local (standing pool, smaller sibling)
-               3. DEGRADATION MODE: resident loop suspends; Lead duties pass
-                  ONE-SHOT to qwen3.8-max@qwen/web (Owner-summoned) until a
-                  standing local pool returns
-  - note: with the Owner's filters (no cf/llama/flash/promos/ollama-cloud),
-    groq is the ONLY standing local pool — same-family depth + named
-    degradation is the truthful rank-3, not pretend-diversity
-  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode/local
-               2. groq/llama-3.3-70b-versatile@opencode/local (rotation)
-               3. deepseek-v4.1-flash@opencode/local
+  - fallbacks: 1. kilo/nemotron-3-super-120b@goose/local (promo pool — emergency-only)
+               2. DEGRADATION: Owner-summoned glm-5.3@zai/web (judgment) while rung 1 holds the board
+               3. RESTORE openrouter/kimi-k2.5 → groq/qwen3.8-27b when pools green (PE watch)
+  - body note: goose — installed, `goose run` headless, Rust-light on the potato;
+    OpenCode IP-blocked (interim only, restore when unblocked)
+  - outage note 2026-10-20 14:00 +08: DOWN: groq · opencode free · cloudflare/@cf.
+    Qoder brains error via groq (Release/Platform degraded — re-point or idle).
+    Tunnel UP. Standing lesson: 3+ independent providers minimum (Hunyuan, BE).
 
 * Director of Engineering — qwen3.7-plus@qwen/web
   - :last-dispatch: 1

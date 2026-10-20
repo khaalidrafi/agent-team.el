@@ -2,6 +2,14 @@
 #+AUTHOR: Team Lead (glm-5.3-flash@chat.z.ai), transcribing Owner's order
 #+DATE: 2026-10-20
 
+* DEPRECATED 2026-10-20 17:10 UTC (Owner order, #hq 16:55)
+
+The mailbox system below is SUPERSEDED by agent-team/TEAM-CHAT.org —
+ONE chat buffer for the whole team, direct @pings, no inbox files.
+This file remains only as a historical record of the mesh/01 grammar;
+do NOT write new mail to mailbox/ files. See TEAM-CHAT.org header for
+the live law.
+
 * The law (Owner, Discord #hq 2026-10-20 14:52)
 
 "I want agents to talk to each other — they will work, share reports,

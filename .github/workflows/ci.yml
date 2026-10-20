@@ -28,11 +28,14 @@ name: CI
 # (7) PEER MESH + SELF-CHAINING RUNS (Owner order 2026-10-20 #hq 14:52:
 # "agents talk to each other ... automatically send and receive messages
 # and keep working ... CI runs unlimited ... until objective complete to
-# its finest"): members send each other dispatch/report/request/review
-# mail through their inboxes in agent-team/mailbox/ (grammar:
-# agent-team/mailbox/PROTOCOL.org; .gitattributes union-merges appends
-# so concurrent messages are never lost).  The turn brief makes every
-# seat read its inbox FIRST and write peer mail after its segment.  The
+# its finest"): members talk in agent-team/TEAM-CHAT.org — ONE
+# append-only chat buffer readable from a single Org buffer, direct
+# @pings between seats, no inbox relay (Owner order 2026-10-20 16:55
+# #hq: team chat = one Org file; "one agent should be able to directly
+# ping another, not through mailbox"; .gitattributes union-merges
+# appends so concurrent messages are never lost).  The turn brief makes
+# every seat scan the chat tail for pings to it FIRST and post its
+# report/peer messages there after its segment.  The
 # `finalize` job AUTO-MERGES the turn branch into ai/main behind a
 # byte-compile gate, advances #+STALL-COUNT (0 on progress, +1 on a
 # no-progress segment), and then RE-DISPATCHES the next run itself
@@ -202,7 +205,7 @@ jobs:
   #                               for one segment toward the objective,
   #                               advance the rotation, commit.
   # The seat's branch is auto-merged into ai/main by the `finalize` job
-  # (byte-compile gate + union-merged mailboxes) so peer mail propagates
+  # (byte-compile gate + union-merged team chat) so chat propagates
   # seat-to-seat with NO Lead in the loop; the Lead audits every landed
   # branch and gates OBJECTIVE completion.  A dead seat logs BLOCKED and
   # the rotation advances -- a run NEVER fails on a seat problem.
@@ -318,45 +321,54 @@ jobs:
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
           Law: templates/AGENT-TEAM-COMMON.org. Board: agent-team/AGENT-TEAM-TODOS.org.
           Roster: agent-team/AGENT-TEAM-MEMBERS.org. Repo facts: README.org, STATE.org.
-          PEER MESH (Owner law 2026-10-20: members talk to each other — work,
-          share reports, take each other's help, get dispatches):
-          mailbox grammar in agent-team/mailbox/PROTOCOL.org; every member's
-          inbox is agent-team/mailbox/<seat>.org (seats: principal-engineer,
-          software-engineer, quality-assurance-engineer, release-engineer, lead).
+          PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
+          to each other — work, share reports, take each other's help, get
+          dispatches; 16:55: team chat is ONE Org file, direct pings, no
+          mailbox): agent-team/TEAM-CHAT.org. Append one org headline per
+          message AT EOF:
+          * MSG [YYYY-MM-DD Eee HH:MM UTC] ${SEAT} -> @<to|all> :<kind>:
+          kinds: dispatch | report | request | escalation | review | note.
+          Handles: @principal-engineer @software-engineer
+          @quality-assurance-engineer @release-engineer @lead @owner.
+          mailbox/ is a frozen archive — NEVER write there.
           TOP BOARD ITEMS:
           ${TOP}
           WORK ONE SEGMENT (time-boxed, max 3 self-attempts per MEMBER LAWS):
-          1. READ YOUR INBOX FIRST (agent-team/mailbox/${SEAT}.org): act on
-             every STATUS: UNREAD message addressed to you — do the work,
-             answer it, or reply BLOCKED with evidence — then flip those
-             messages to STATUS: READ. Never touch other seats' messages.
+          1. READ THE TEAM CHAT FIRST (agent-team/TEAM-CHAT.org): scan the
+             tail for @${SEAT} pings you have not answered — do the work,
+             answer it, or reply BLOCKED with evidence, by appending your
+             reply to the chat. Never edit or delete an existing entry;
+             never touch other seats' entries.
           2. Pick your work toward the TEAM OBJECTIVE: the oldest open board
              item that serves it and matches your role, or any task a peer
-             dispatched to your inbox; if none matches, do the smallest
+             pinged to you in the chat; if none matches, do the smallest
              verifiable improvement that does (docs, tests, CI repair).
           3. Do the work IN THIS BRANCH. Small, verifiable, committed.
-          4. WRITE MAIL to peers (exact grammar per PROTOCOL.org, one org
-             headline per message, STATUS: UNREAD, committed in the
-             recipient's inbox file): dispatch downstream work, report
-             upstream results with evidence (file:line, commit sha), and
-             send TYPE: request / escalation TO: lead after 2 failed
-             self-attempts. Taking a peer's help IS encouraged.
+          4. POST TO THE TEAM CHAT (agent-team/TEAM-CHAT.org, append at
+             EOF, one headline per message, direct @pings): dispatch
+             downstream work to peers, report upstream results with
+             evidence (file:line, commit sha), and send :request: /
+             :escalation: @lead after 2 failed self-attempts. Taking a
+             peer's help IS encouraged — ping them directly.
           5. Append a :LOGBOOK: note to the board item you touched: what
              changed + evidence (file:line, commit sha). Never mark DONE
              (that is the Lead's gate).
           6. Commit everything on this branch with message 'turn(${SEAT}): ...'.
-          7. REPORT: write your report as mailbox mail TO: lead (TYPE:
-             report, RESULT: DONE | PARTIAL | BLOCKED, evidence included).
+          7. REPORT: append your report to agent-team/TEAM-CHAT.org as
+             '${SEAT} -> @lead :report:' (RESULT: DONE | PARTIAL | BLOCKED,
+             evidence included).
              Real runs ALSO post it to YOUR role's Lark custom-bot webhook
              in env ROLE_LARK_WEBHOOK
              (JSON {\"msg_type\":\"text\",\"content\":{\"text\":\"REPORT — <task-id>: <title>\\nFROM: <role> — <model@agent>\\nRESULT: DONE | PARTIAL | BLOCKED\\nEVIDENCE: <file:line / commit sha>\\nNEXT: <what remains>\"}})
              only if it is non-empty; if empty, skip silently and note it
              in the board LOGBOOK. Never put credentials in any message.
           8. Never claim the OBJECTIVE complete yourself: a completion claim
-             goes TO: lead as mailbox mail; the Lead verifies against the
-             objective and only the Lead sets OBJECTIVE-STATE: COMPLETE.
+             goes to the chat as '${SEAT} -> @lead :report:'; the Lead
+             verifies against the objective and only the Lead sets
+             OBJECTIVE-STATE: COMPLETE.
           9. Do NOT push to ai/main; the CI self-chain auto-merges your
-             branch right after the segment (peer mail must propagate).
+             branch right after the segment (your chat posts must
+             propagate).
           10. LEAD-OWNED FILES — never edit, only read and cite:
              .github/workflows/*, agent-team/TEAM-CONTROL.org,
              .gitattributes. Verify plumbing facts with file:line evidence
@@ -488,9 +500,9 @@ jobs:
   # SELF-CHAIN — the last link of every turn (Owner order 2026-10-20 #hq
   # 14:52: unlimited runs, agents decide how many runs an objective takes).
   # After every segment:
-  #   1. AUTO-MERGE the seat's work branch into ai/main. Mailbox mail and
+  #   1. AUTO-MERGE the seat's work branch into ai/main. Team chat and
   #      board notes propagate seat-to-seat with NO Lead in the loop
-  #      (mailboxes are union-merged via .gitattributes, so concurrent
+  #      (TEAM-CHAT.org is union-merged via .gitattributes, so concurrent
   #      appends never conflict). A byte-compile gate runs on the merged
   #      tree: red work never lands (merge is undone, branch stays).
   #   2. Advance #+STALL-COUNT: +1 on a no-progress segment (dead seat,

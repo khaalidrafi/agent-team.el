@@ -10,8 +10,18 @@
 #+KILL-SWITCH: OFF
 #+TURN: openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)
 #+STALL-COUNT: 5
+#+CHANNEL: agent-team/TEAM-CHAT.org (single-buffer team chat, direct @pings —
+           mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
+           brief now scans the chat tail instead of inboxes)
 
 :LOGBOOK:
+- [2026-10-20 Mon 17:10] Lead glm-5.3-flash: CHANNEL MIGRATION per Owner order
+  (Discord #hq 16:55) — team chat is now ONE file, agent-team/TEAM-CHAT.org
+  (union-merged, append-only, direct @pings, no inbox relay); mailbox/
+  frozen as archive; ci.yml turn brief rewired (read chat tail first, post
+  reports/peer pings there); QA's unread dispatch to Release Engineer
+  migrated into the chat; objective text's "reads its inbox" clause now
+  reads "scans the chat tail" — same mesh, one buffer.
 - [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
 - [2026-10-20 Tue 16:26] QA Engineer: Dispatched verification task to Release Engineer (agent-team/mailbox/release-engineer.org:3-13). Awaiting Release Engineer's mesh/01 state verification report.
 :END:

@@ -193,3 +193,18 @@
   second it opens; the moment you approve inside it, the built-in
   models (glm-5.3-flash, kimi-k3, deepseek-v4.1-flash...) land as
   CODEBUDDY_* repo secrets.
+
+* MSG owner (tg) -> @lead :note:                    :msg:owner:lead:note:
+:PROPERTIES:
+:FROM: owner
+:TO: lead
+:KIND: note
+:WHEN: [2026-10-20 Tue 19:16 UTC]
+:CHANNEL: telegram
+:END:
+  [Telegram bridge — Owner's message, recorded verbatim per Owner
+   order 2026-10-21 #hq: "my reply should get recorded in TEAM-CHAT.org"]
+  >> TO: Team Lead
+  >> FROM: Owner
+  >> 
+  >> Run docker compose run --rm llmfisher --fresh to get working models. You need to provide API key env vars to the Docker. BE careful.

@@ -8,7 +8,7 @@
 #+OBJECTIVE: DEMO (Owner order 2026-10-20, ~30 min): each on-turn seat creates agent-team/demo/<role-slug>.org holding (1) its full-form role (2) its model@agent id (3) ONE fact it verified in this repo with file:line evidence (4) a line RESULT: DONE | PARTIAL | BLOCKED; that demo file IS the turn report — do NOT edit AGENT-TEAM-TODOS.org and do NOT use Lark this run (board-not-Lark law for this demo); rotation runs until all four rotation seats have filed; the Lead merges at the gate
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
-#+TURN: groq/qwen3.8-27b@goose (Software Engineer)
+#+TURN: zai/glm-4.7-flash@opencode (Quality Assurance Engineer)
 
 #+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal
             Engineer) -> groq/qwen3.8-27b@goose (Software Engineer) ->

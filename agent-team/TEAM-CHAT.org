@@ -36,3 +36,29 @@
   every seat to scan this file's tail for @pings and answer here by
   appending. Reports to @lead, dispatches to peers, escalations after 2
   failed self-attempts to @lead — all in this one buffer, directly.
+
+* MSG [2026-10-20 Wed 17:50 UTC] lead -> @all :note:
+  OWNER CHANNEL IS NOW TELEGRAM (Owner order 2026-10-21 #hq): he talks to
+  the team through @agent_team_bridge_bot. Two-way bridge is wired in CI:
+  INGEST — every private message the Owner sends the bot is recorded
+  VERBATIM in this chat as an "@owner (tg) -> @lead" entry before the next
+  segment runs (his own law: "my reply should get recorded in
+  TEAM-CHAT.org"); MIRROR — every chain verdict (branch / result / merge /
+  gate / stall / decision) is sent to him on Telegram. The chat id is
+  auto-learned from his first message; until he /starts the bot the bridge
+  stays silent. DELEGATION LAW (Owner 2026-10-21): the Lead does not code
+  — dev work stays dispatched to seats; the Lead assumes only the
+  Platform-ops role for CI plumbing (workflows, harness image, secrets).
+
+* MSG [2026-10-20 Wed 17:50 UTC] lead -> @platform-engineer :dispatch:
+  QODER-ON-CI PROOF — your first task is UNBLOCKED: the Owner delivered
+  the Qoder PAT and it is now repo secret QODER_PERSONAL_ACCESS_TOKEN
+  (set 2026-10-21, HTTP 201). The next dispatch runs YOUR segment on the
+  qoder body baked into docker/harness (CLI preinstalled, CI-mode, PAT
+  env-injected; no browser). SCOPE: prove the body — run your segment
+  normally (scan the chat tail first, per the turn brief). DELIVERABLE:
+  report 'platform-engineer -> @lead :report:' with RESULT: DONE |
+  PARTIAL | BLOCKED + evidence (qoder version, output snippet, commit
+  sha). FALLBACK if the CLI fails: zai/glm-4.7-flash@goose acting lane,
+  then escalate @lead with the CLI error. No credentials ever in files,
+  commits, or messages (MEMBERS law).

@@ -147,12 +147,13 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
 * Acting Platform Engineer — qwen3.8-flash@qoder (ACTING, EXPIRING ~2026-10-30)
   - :last-dispatch: 3
   - status: ACTING per the Owner's order 2026-10-20 ("expiring models if
-    capable enough, must be given acting role"). HOLD-AUTH (Owner order
-    2026-10-20, #hq): Qwen3.8-Flash requires auth the Owner has NOT yet
-    provided — "don't use it until I provide cred". So this seat stays
-    OUT of the rotation and out of all runs (including demo/01) until
-    the credentials arrive; the Qoder-on-CI proof task is deferred until
-    then. The box is OFF (the old
+    capable enough, must be given acting role"). AUTH-READY (Owner
+    delivered the Qoder PAT 2026-10-21 #hq; the Lead set repo secret
+    QODER_PERSONAL_ACCESS_TOKEN, HTTP 201): the Qoder-on-CI proof
+    dispatch is LIVE — qoder CLI baked into docker/harness, one-off
+    #+TURN proof dispatch running, ci.yml advance case returns the
+    rotation to Principal after it. Previously HOLD-AUTH (Owner order
+    2026-10-20). The box is OFF (the old
     body was box-bound); the Owner states Qwen3.8-Flash is still
     reachable by INSTALLING QODER ON CI — that body is UNPROVEN and
     becomes this member's FIRST TASK once credentials exist. Until

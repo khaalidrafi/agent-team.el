@@ -215,6 +215,7 @@ jobs:
     outputs:
       turn_branch: ${{ steps.push.outputs.branch }}
       seg_result: ${{ steps.seg.outputs.result }}
+      tg_chat: ${{ steps.ingest.outputs.chat_id }}   # auto-learned Owner chat id
     runs-on: ubuntu-latest
     timeout-minutes: 25
     continue-on-error: true
@@ -222,6 +223,8 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      # Acting Platform Engineer's key (Owner delivered the PAT 2026-10-21).
+      QODER_PERSONAL_ACCESS_TOKEN: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
       # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
       # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
       # group through ITS role's bot. No generic CI notifications exist.
@@ -265,6 +268,7 @@ jobs:
             groq/qwen3.8-27b@goose*Software*)                NEXT_SEAT=software-engineer ;;
             zai/glm-4.7-flash@opencode*)                     NEXT_SEAT=quality-assurance-engineer ;;
             groq/qwen3.8-27b@goose*Release*)                 NEXT_SEAT=release-engineer ;;
+            qwen3.8-flash@qoder*)                            NEXT_SEAT=platform-engineer ;;
             *)                                               NEXT_SEAT=principal-engineer ;;
           esac
           echo "seat=$NEXT_SEAT" >> "$GITHUB_OUTPUT"
@@ -297,6 +301,62 @@ jobs:
           git config user.email "agent-team-ci@users.noreply.github.com"
           git remote set-url --push origin \
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+
+      # Owner channel — INBOUND leg (Owner order 2026-10-21 #hq: "You and
+      # any team member should contact me through this [Telegram bot]. And,
+      # my reply should get recorded in TEAM-CHAT.org"). Every private
+      # message the Owner sends @agent_team_bridge_bot is recorded VERBATIM
+      # into the team chat as an @owner entry BEFORE the segment runs, so
+      # the on-turn seat reads it in the chat tail. The chat id is
+      # auto-LEARNED from the first message (no manual secret): exported as
+      # the tg_chat job output for the finalize mirror (outbound leg).
+      # Runs even when the chain is idle/killed — the chat is the record.
+      - name: Telegram bridge — ingest Owner replies into the team chat
+        id: ingest
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          [ -n "$TELEGRAM_BOT_TOKEN" ] || { echo "telegram: no token — silent"; exit 0; }
+          git config user.name "agent-team-ci"
+          git config user.email "agent-team-ci@users.noreply.github.com"
+          git remote set-url --push origin \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          CHAT=agent-team/TEAM-CHAT.org
+          UPD=$(curl -sS --max-time 20 \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?allowed_updates=%5B%22message%22%5D&limit=20") || UPD=""
+          echo "$UPD" | jq -e '.ok == true' >/dev/null 2>&1 || { echo "telegram: API error or empty — skip"; exit 0; }
+          COUNT=$(echo "$UPD" | jq '[.result[] | select(.message.chat.type=="private") and (.message.text != null)] | length')
+          if [ "$COUNT" -eq 0 ]; then echo "telegram: no pending Owner messages"; exit 0; fi
+          LAST_ID=$(echo "$UPD" | jq '[.result[].update_id] | max')
+          CHAT_ID=$(echo "$UPD" | jq -r '[.result[] | select(.message.chat.type=="private") | .message.chat.id] | first // empty')
+          TS=$(date -u '+%Y-%m-%d %a %H:%M UTC')
+          {
+            echo ""
+            echo "* MSG [${TS}] @owner (tg) -> @lead :note:"
+            echo "  [Telegram bridge — Owner's message, recorded verbatim per Owner"
+            echo "   order 2026-10-21 #hq: \"my reply should get recorded in TEAM-CHAT.org\"]"
+            echo "$UPD" | jq -r '.result[] | select(.message.chat.type=="private") | select(.message.text) |
+                     "  >> " + (.message.text | gsub("\n"; "\n  >> "))'
+          } >> "$CHAT"
+          git add "$CHAT"
+          git commit -m "tg-ingest: ${COUNT} Owner message(s) -> team chat" || echo "::notice::nothing to commit"
+          # Race-proof push (Lead pushes move ai/main mid-run): rebase + retry.
+          PUSHED=no
+          for i in 1 2 3; do
+            if git push origin "ai/main"; then PUSHED=yes; break; fi
+            git fetch origin ai/main && git rebase origin/ai/main || git rebase --abort
+          done
+          if [ "$PUSHED" = "yes" ] && [ -n "$LAST_ID" ]; then
+            curl -sS -o /dev/null "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=$((LAST_ID+1))"
+            echo "telegram: ingested ${COUNT} message(s), chat_id=${CHAT_ID:-unlearned}, offset confirmed"
+          else
+            git checkout -- "$CHAT" || true
+            echo "::warning::telegram ingest push failed — messages left unconfirmed for the next run"
+          fi
+          if [ -n "$CHAT_ID" ]; then
+            echo "chat_id=${CHAT_ID}" >> "$GITHUB_OUTPUT"
+            echo "TG_LEARNED_CHAT=${CHAT_ID}" >> "$GITHUB_ENV"
+          fi
 
       - name: Run the turn (one segment, preinstalled agent in container)
         id: seg
@@ -430,6 +490,25 @@ jobs:
                 echo "TURN_RESULT=BLOCKED (zai lane + openrouter lane both failed — Lead escalation filed, harness/01)"
               fi
               ;;
+            platform-engineer)
+              # Acting Platform Engineer qwen3.8-flash@qoder — Qoder-on-CI
+              # PROOF dispatch (AUTH-READY 2026-10-21: Owner delivered the
+              # PAT; repo secret QODER_PERSONAL_ACCESS_TOKEN). The CLI
+              # auto-detects CI and uses the PAT — no browser. Fallback
+              # lane per roster: zai/glm-4.7-flash@goose (acting).
+              if qoder -p "$BRIEF" --output-format json \
+                   --permission-mode accept_edits --max-turns 20; then
+                echo "TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — body PROVEN on CI)"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \
+                   OPENAI_API_KEY="$ZAI_API_KEY" \
+                   OPENAI_HOST="https://api.z.ai" \
+                   OPENAI_BASE_PATH="/api/paas/v4/chat/completions" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (acting lane: zai/glm-4.7-flash@goose — qoder CLI failed)"
+              else
+                echo "TURN_RESULT=BLOCKED (qoder CLI + acting zai lane both failed — harness/01)"
+              fi
+              ;;
           esac
           INNER
 
@@ -442,6 +521,7 @@ jobs:
             -v "$PWD":/workspace -w /workspace \
             -e SEAT="${SEAT}" -e BRIEF="${BRIEF}" \
             -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
+            -e QODER_PERSONAL_ACCESS_TOKEN \
             agent-team-harness:local bash /workspace/.turn-inside.sh \
             > /tmp/.turn-out.txt 2>&1; then
             echo "container verdict captured"
@@ -483,6 +563,9 @@ jobs:
             software-engineer)           NEXT="zai/glm-4.7-flash@opencode (Quality Assurance Engineer)" ;;
             quality-assurance-engineer)  NEXT="groq/qwen3.8-27b@goose (Release Engineer)" ;;
             release-engineer)            NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
+            # One-off Lead-paced proof dispatch (AUTH-READY 2026-10-21):
+            # after the Platform segment the rotation returns to the top.
+            platform-engineer)          NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
           esac
           git checkout -f ai/main
           # Race-proof the control commit: my (Lead's) pushes or another
@@ -634,17 +717,19 @@ jobs:
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
 
-      # Owner channel (Owner order 2026-10-20 ~16:55 #hq: "contact me over
-      # Telegram"). Mirrors every chain verdict; SILENT until the Owner
-      # adds the TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID repo secrets
-      # (bot via @BotFather, chat id from getUpdates after /start).
+      # Owner channel — OUTBOUND leg (Owner order 2026-10-21 #hq: contact
+      # over Telegram). Mirrors every chain verdict to the Owner's chat:
+      # chat id = TELEGRAM_CHAT_ID secret if set, else auto-learned by the
+      # turn job's ingest step (tg_chat output). SILENT until the Owner
+      # /starts the bot.
       - name: Mirror chain verdict to Telegram (silent without secrets)
-        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && secrets.TELEGRAM_CHAT_ID != '' }}
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TG_LEARNED_CHAT: ${{ needs.turn.outputs.tg_chat }}
         run: |
-          [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ] || exit 0
+          CHAT="${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}"
+          [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
           TXT="$(printf 'Agent Team — segment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
             "${{ needs.turn.outputs.turn_branch }}" \
             "${{ needs.turn.outputs.seg_result }}" \
@@ -654,6 +739,6 @@ jobs:
             "${CHAIN_DECISION:-unknown}")"
           CODE=$(curl -sS -o /dev/null -w '%{http_code}' \
             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "chat_id=${CHAT}" \
             --data-urlencode "text=${TXT}") || CODE="curl-failed"
           echo "telegram mirror: HTTP ${CODE}"

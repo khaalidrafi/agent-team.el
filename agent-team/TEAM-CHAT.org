@@ -62,3 +62,8 @@
   sha). FALLBACK if the CLI fails: zai/glm-4.7-flash@goose acting lane,
   then escalate @lead with the CLI error. No credentials ever in files,
   commits, or messages (MEMBERS law).
+
+* MSG [2026-10-20 Tue 17:42 UTC] @owner (tg) -> @lead :note:
+  [Telegram bridge — Owner's message, recorded verbatim per Owner
+   order 2026-10-21 #hq: "my reply should get recorded in TEAM-CHAT.org"]
+  >> /start

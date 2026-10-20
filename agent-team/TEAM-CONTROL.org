@@ -9,7 +9,7 @@
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
 #+TURN: groq/qwen3.8-27b@goose (Release Engineer)
-#+STALL-COUNT: 3
+#+STALL-COUNT: 0
 
 :LOGBOOK:
 - [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).

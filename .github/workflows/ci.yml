@@ -295,7 +295,12 @@ jobs:
         timeout-minutes: 14   # a hung harness fails THIS step, not the rotation
         run: |
           SEAT="${{ steps.control.outputs.seat }}"
-          OBJECTIVE="${{ steps.control.outputs.objective }}"
+          # Read the objective FROM THE FILE, never by ${{ }} text
+          # substitution: an objective containing quotes/$/backticks must
+          # never be rendered into the script by the workflow template
+          # (mesh/01 turn 1-5: objective text with "quotes" broke bash
+          # parsing -> exit 127 before any agent ran).
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1)
           BOARD=agent-team/AGENT-TEAM-TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"
           TOP=$(grep -E '^\*\* (TODO|PROGRESS|BLOCKED)' "$BOARD" | head -3 | sed 's/^\*\* //' || true)
@@ -515,7 +520,7 @@ jobs:
           case "$RESULT" in *BLOCKED*) PROGRESS=no ;; esac
           if [ "$PROGRESS" = "yes" ]; then NEW=0; else NEW=$((STALL+1)); fi
           if [ "$NEW" != "$STALL" ]; then
-            sed -i "s|^\#\+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
+            sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
             git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \
               || echo "::notice::stall commit empty"

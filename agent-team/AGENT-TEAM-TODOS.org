@@ -154,6 +154,112 @@
      one clobbering the other; adjudication raised to the Owner.
    :END:
 
+** PROGRESS [2026-10-20] lead/04: Team Lead + Director COMBINED — HANDOFF to glm-5.3-flash@chat.z.ai :HANDOFF:
+   TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   FROM: Platform Engineer — qwen3.8-flash@qoder (outgoing acting Lead, fired from
+   the Lead seat by Owner order 15:4x; retains Platform)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/03 (prior handoff) | supplies hiring/01 REPORT #3 | blocks ci/01 merge
+   PRIORITY: P0 · RISK: reads
+   :HANDOFF:
+   :FROM: qwen3.8-flash@qoder (acting Lead, dispatches #1-#3 as a body, no hands since)
+   :CONTEXT: You hold BOTH the Lead and Director seats by Owner order. You are a web
+   brain: the Owner is your runtime. Board = agent-team/AGENT-TEAM-TODOS.org,
+   roster = agent-team/AGENT-TEAM-MEMBERS.org (rewritten 16:0x with the hiring/01
+   evidence), inventory + all citations = templates/AGENT-TEAM-CANDIDATES.org,
+   gateway ground truth = agent-team/AGENT-TEAM-ROSTER.org. Law =
+   templates/AGENT-TEAM-COMMON.org. Owner surface = STATE.org.
+   :NEXT:
+   0. Rule on the RISK you inherited: author+verifier are now you. COMMON:172-173
+      wants three different models on application code. Interim answer written into
+      the roster: Reviewer — glm-5.3@chat.z.ai is your second opinion on merges.
+   1. Verify your own seat before dispatching anything: is glm-5.3-flash in the
+      FREE chat.z.ai picker, and what does the free tier do under a long session.
+      Every "uncapped free tier" candidate failed verification this round; your
+      predecessor's appointment rests on that unverified assumption.
+   2. Accept or overrule the selection note: the evidence-ranked Lead was
+      qwen3.8-max@chat.qwen.ai (AA-RUN TB 2.1 = 88.8) and the Owner's
+      order put you here. Documented in the roster, not hidden. Say "I accept,
+      and here is why" or ask the Owner to re-rule.
+   3. lark/01 (P0, still open): Owner must apply the updated tenant scopes
+      (im:chat, im:chat:create, im:message:send) and RELEASE a version — scopes
+      are inert until published. Then per-seat custom-bot webhooks are UI-ONLY:
+      the Owner adds 10 bots in the Agent Team UI, we wire LARK_WEBHOOK_URL.
+   4. Wake loop is NOT BUILT. What exists is a 25-second connection test. Correct
+      cloud shape: not a daemon (a runner has no surviving process) but a
+      SCHEDULED POLL — Actions cron -> poll im.message.v1 via OpenAPI -> dispatch
+      -> exit. Needs the Lark app id+secret as two more repo secrets and a Docker
+      job. Platform Engineer (me) can write it while the box lives.
+   5. Build Engineer is BLOCKED: no /gnu/store on a runner, no local source builds
+      by policy. Needs an Owner ruling (rent a Guix machine or let it sleep).
+   6. Rotate GOMODEL_MASTER_KEY. It is recoverable from commit dc3fb0a and the
+      gateway is publicly live (401 on ai.khalidrafi.tech/v1/models). Until
+      rotated, do NOT publish the repo; after rotation, publishing is what buys
+      uncapped CI minutes — the only genuinely uncapped free tier found.
+   :BOUNDARIES: you do not merge application code you authored (that is the RISK
+   above) · no spend without the Owner · pool repair is PE/BE work · never write a
+   credential to the board, git, or a webhook body · nothing under .agent-org/.
+   :OPEN-RISKS:
+   - Your seat's capability number is disputed (AA 57 vs 42 for the same model).
+   - chat.z.ai's usage policy prohibits account sharing and restricts tools to
+     officially supported ones. A shared Lead bot in Agent Team is the exact
+     shape that clause bans. Flagged before the appointment; Owner ordered it.
+   - Codespaces is unavailable (Owner, 16:0x), so the seat we had there is gone;
+     cloud bodies are Actions containers via Docker, which is unproven for lark-cli.
+   - Two of five research batches had to be re-run after an interruption; the
+     Qwen and free-tier numbers carry access dates of 2026-10-20 and will age.
+   :END:
+
+** PROGRESS [2026-10-20] hiring/01: staff the team per protocol — REPORT #3 :REPORT:
+   TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   FROM: Platform Engineer — qwen3.8-flash@qoder (was acting Lead for this dispatch)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes DISPATCH #3 (kimi-k2.6@kimi.com) | supplies AGENT-TEAM-MEMBERS.org
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - NEED → CANDIDATES: built the missing inventory, templates/AGENT-TEAM-CANDIDATES.org
+     (COMMON §MODELS × live GET /v1/models = 163 ids), each row tagged by reachability
+     class: RESIDENT / CI / WEB. They are three different pools and the old roster
+     conflated them — that is how a promo-pool brain ended up in the Principal seat.
+   - RESEARCH: five batches, source + date per claim. Complete: GLM, Kimi, other
+     open weights (14 models), free-tier caps (9 platforms). The Qwen and
+     open-weights batches were interrupted mid-run and RE-RUN rather than guessed;
+     nothing in the roster rests on "no evidence in my context".
+   - PROVEN PERFORMANCE beats a listing: from this box, groq/qwen3.8-27b and
+     zai/glm-4.7-flash answered real completions; every opencode/*-free id refused
+     (OpenCode-only), every cloudflare/@cf/* was quota-exhausted, and
+     kilo/qwen3-32b is listed but model_not_found. 5 of 14 named seats sit on API
+     bodies that still need one live verification call each before dispatch.
+   - LIVE ROSTER: agent-team/AGENT-TEAM-ROSTER.org. A snapshot generates
+     candidates and confirms none of them.
+   - DECIDE: every seat carries duties + rank + rank-3 fallbacks. Two seats carry
+     an explicit status instead of a silent name: Build Engineer BLOCKED (no Guix
+     in CI), Platform Engineer box-bound until a Docker runner installs lark-cli.
+   - INTERN pool listed (5 + 5 harness bodies) and 3 candidates RELEASED on
+     evidence, not punished: nemotron-3-super (AA DEPRECATED),
+     kimi-k2.8-preview (no weights, no benchmarks), minimax-m3 (weights promised).
+   - OWNER RULINGS RECEIVED: kimi excluded from Lead on rate limits; Lead+DE
+     combined; seat dispatched to glm-5.3-flash@chat.z.ai; Codespaces unavailable.
+   - FINDING THE REQUIREMENT CANNOT MEET: "free tier with no caps" does not exist.
+     Groq 200K tokens/day · Cloudflare 10,000 Neurons/day · Z.ai Lite 2,000
+     credits/5h · Qwen Code free OAuth DISCONTINUED 2026-04-15 · HF free credits
+     now NONE · OpenRouter :free 20 RPM/50 per day · web tiers undocumented. The
+     only uncapped free resource is the runtime: public-repo Actions minutes.
+   - EXEMPTION STILL OUTSTANDING: qwen3.8-max@chat.qwen.ai has the strongest
+     independently-run agentic number found (AA-run TB 2.1 = 88.8%) and is
+     proprietary, so it is parked in fallback slots until the Owner grants or
+     denies an exemption in writing.
+   :DOD-CHECK:
+   - [X] MEMBERS.org rewritten: duties + rank + rank-3 fallbacks + evidence, per seat
+   - [X] intern pool listed
+   - [X] committed with MODEL author + co-author trailers
+   - [X] REPORT #3 on the board with citations + intern assignments
+   - [~] every API seat verified by a live call — 2 of 7 proven, 5 pending (box-bound)
+   - [ ] Director adjudication of the Lead pick — the Director seat is now the
+         Lead, so this review is structurally self-review; flagged as RISK
+   :RESULT: PARTIAL
+   :END:
+
 ** REVIEW [2026-10-20] lead/02: assume Team Lead seat (identity corrected) — REPORT #2 :REPORT:
    REPORT #2 — lead/02: assume the seat (identity corrected)
    FROM: Team Lead (acting) — qwen3.8-flash@qoder/local

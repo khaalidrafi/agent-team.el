@@ -1,114 +1,191 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
-#+ROSTER: API roster authority = GET /v1/models on the gateway
-#+UPDATED: 2026-10-20 — Lead contest CLOSED: glm-5.3-flash@opencode-local (evidence-ranked, not family habit); Director restored to qwen3.7-plus
+#+ROSTER: API roster authority = GET /v1/models on the gateway (live, never a snapshot)
+#+UPDATED: 2026-10-20 16:0x +06 — hiring/01 REPORT #3. Lead+DE COMBINED by Owner
+order; seat dispatched to glm-5.3-flash@chat.z.ai. Evidence pick was
+qwen3.8-max@chat.qwen.ai (see that seat's note: the order overrode the numbers).
+#+ID-FORM: PROVIDER/MODEL@PLATFORM, and PROVIDER/ ONLY for API-served models.
+After @ is the platform the model runs on — an agent name (qoder, opencode,
+goose, actions) or the model's own web chat (chat.z.ai, chat.qwen.ai, kimi.com).
+Never a "/" after "@". Web and harness-local seats carry no provider prefix.
+#+BODY: what @ names is an AGENT, never a machine. Cloud seats = that agent
+         installed in a GitHub Actions container (Docker, our choice of programs);
+         box seats = the Owner's Celeron. Codespaces is unavailable (Owner, 16:0x),
+         which is why no seat carries a @*-codespaces suffix any more.
 
-* Team Lead — qwen3.8-flash@qoder (ACTING, OUTAGE)
-  - :last-dispatch: 2
-  - duties: board owner · dispatches · verification · merge gates
-  - mode: RESIDENT LOCAL via Qoder (built-in brain; outage interim)
-  - fallbacks: 1. glm-5.3@zai (one-shot courier assist)
-               2. Owner-direct
-               3. restore groq/qwen3.8-27b@opencode-local when pools green (PE watch)
-  - ID RULE: PROVIDER/MODEL@AGENT — single token after @, NO slash;
-    platform folds into the agent name (opencode-local, opencode-codespaces)
-  - outage 2026-10-20 15:00 +06: groq · opencode-free · cloudflare/@cf down;
-    Qoder's built-in brain is the last local light.
+* Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai (COMBINED SEAT)
+  - :last-dispatch: 0 (incoming; assumed on Owner's dispatch order)
+  - mode: WEB ONE-SHOT. The Owner is the runtime: board pasted in, decisions
+    pasted out. No filesystem, no git, no daemon. Every claim needs pasted
+    evidence; UNVERIFIED beats a heroic DONE.
+  - duties (Lead): board ownership · dispatch · verification · merge gates ·
+    Lark wake loop
+  - duties (DE): templates/ master prompt · TEAM UPDATEs · staffing
+    adjudication · FR drafts · reviewer of last resort
+  - evidence: AA intelligence 57 (announcement page) vs 42 (model page) — both
+    quoted, they disagree. DeepSWE 63.4 · Terminal-Bench 84.3. MIT, 320B-A18B,
+    weights+GGUF on HF. $0.15/$0.50 per Mtok. Sentiment: "a step change in
+    agentic use" alongside an "is annoying" complaint thread.
+  - SELECTION NOTE, kept on the record: the evidence-ranked pick was
+    qwen3.8-max@chat.qwen.ai — AA-RUN (not vendor) Terminal-Bench 2.1 = 88.8,
+    AA 45, LMArena 1673.5 — and its free web tier carries no account-sharing
+    prohibition. chat.z.ai's usage policy DOES prohibit account sharing and
+    restricts plan use to officially supported tools, which is exactly a shared
+    Lead bot in Agent Team. Owner's dispatch order overrides that judgment;
+    the risk is documented here, not dropped.
+  - fallbacks: 1. qwen3.8-max@chat.qwen.ai (exemption for proprietary required)
+               2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769 · custom licence)
+               3. Owner-direct, team frozen until a brain is re-staffed
+  - RISK (accepted by order): author and verifier are now the same body on
+    application code. COMMON:172-173 requires author/verifier/merger to be three
+    different models. Until re-staffed, EVERY merge gate needs a second opinion
+    from a non-GLM seat (Release Engineer or the Director-slot fallback).
+  - VERIFT BEFORE FIRST DISPATCH (both cheap, both unverified today):
+    a. is glm-5.3-flash actually selectable in the FREE chat.z.ai picker?
+    b. what does the free tier do under a long paste-heavy session? Every
+       "uncapped free tier" candidate failed verification this round.
 
-* Director of Engineering — glm-5.3-flash@zai (restored; Lead no longer dual-hatted)
-  - :last-dispatch: 1
-  - duties: templates/ master prompt · TEAM UPDATEs · staffing adjudication · FR drafts · reviewer of last resort
-  - FIRST JOB: review the Lead selection above. A qwen-family brain excluded its
-    own family on third-party numbers — adjudicate that, noting your review is
-    partly self-review of the qwen line.
-  - fallbacks: 1. qwen3.8-max@qwen/web
-               2. kimi-k2.6@kimi/web
-               3. glm-5.3@zai/web
+* Principal Engineer — openrouter/poolside/laguna-s-2.1@opencode
+  - :last-dispatch: 0
+  - duties: P0s · hard problems · architecture · retry-wrapped, `workflow_dispatch` only
+  - evidence: OpenMDW-1.1 weights day-one; vendor TB 2.1 = 70.2 (thinking),
+    SWE-bench Pro 59.4, DeepSWE 40.4; 118B-A8B; free OpenRouter endpoint at
+    256K context; paid $0.10/$0.20. r/LocalLLaMA "honest take from actual use"
+    positive within class. open-weights + permanent-free + real agentic data:
+    the only candidate passing all three.
+  - INCUMBENT REMOVED: nemotron-3-ultra-550b@kilo showed AA intelligence 23,
+    no free tier, on a promo pool — a seat built on a rotating emergency pool.
+  - fallbacks: 1. openrouter/reflection/beam@goose (vendor SWE-bench V 80.9 ·
+               TB 80.1 · AA 30, "#2 US open weights", Apache-2.0 promised,
+               only 5 days of public evidence)
+               2. z.ai/glm-5.3@goose (API-served if a key reaches it)
+               3. groq/qwen3.8-27b@opencode — capacity downgrade, not a peer
 
-* Principal Engineer — kilo/nemotron-3-ultra-550b@opencode-local
-  - duties: P0s · hard problems · architecture (retry-wrapped; promo pool = visitor, not resident)
-  - fallbacks: 1. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode-local
-               2. groq/qwen3.8-27b@opencode-local
-               3. groq/llama-3.3-70b-versatile@opencode-local
+* Software Engineer — groq/qwen3.8-27b@goose
+  - :last-dispatch: 0
+  - duties: features · iterations · intern probation
+  - evidence: Apache-2.0 with weights on HF; AA intelligence 34; PROVEN ALIVE —
+    one real completion from this box on 2026-10-20; user sentiment strongly
+    positive for agentic coding (HN: "beats Haiku/Sonnet 4.5 locally",
+    2026-10-19; "better at coding than Opus 4.1", 2026-09-12). Caveats: slow,
+    verbose, needs 16GB+ to self-host — so it runs on Groq, not on this box.
+  - free-tier cap, quoted: 30 RPM · 1,000 RPD · 8K TPM · 200K tokens/day
+    (console.groq.com/docs/rate-limits). Fine for per-job work, not for a daemon.
+  - fallbacks: 1. zai/glm-4.7-flash@opencode (MIT, proven alive, free)
+               2. openrouter/cohere/north-mini-code@opencode (Apache-2.0, AA coding 33.4)
+               3. openrouter/nvidia/nemotron-3.5-lightning@opencode (OpenMDW-1.1,
+                  SWE-bench 51.6, free with a 65,536-token output cap)
 
-* Software Engineer — groq/qwen3.8-27b@opencode-codespaces
-  - duties: features · iterations · intern-probation
-  - fallbacks: 1. deepseek-v4.1-flash@opencode-local
-               2. cloudflare/@cf/deepseek-r1-distill-qwen-32b@opencode-local
-               3. kimi-k2.5@opencode-local (openrouter :free, ephemeral)
+* QA Engineer — zai/glm-4.7-flash@opencode
+  - :last-dispatch: 0
+  - duties: test suites · ert coverage · green verification ONLY
+  - evidence: MIT, free, PROVEN ALIVE from this box. Honest weakness: no AA or
+    LMArena figure exists, and vendor Terminal-Bench is 14.4 — this body asserts
+    green and reports it; it must not be trusted to chase flakes or judge a diff.
+  - fallbacks: 1. openrouter/nvidia/nemotron-3.5-lightning@opencode
+               2. openrouter/cohere/north-mini-code@opencode
+               3. groq/qwen3.8-27b@opencode
 
-* QA Engineer — deepseek-v4.1-flash@opencode-local
-  - duties: test suites · ert coverage · green verification
-  - fallbacks: 1. groq/qwen3.8-27b@opencode-local
-               2. mistral-small-3.1@cloudflare/@cf (via gateway)
-               3. kimi-k2.5@opencode-local (ephemeral)
-
-* Release Engineer — qwen3.8-flash@qoder/local
+* Release Engineer — groq/qwen3.8-27b@opencode
+  - :last-dispatch: 0
   - duties: CI · pushes · packaging verification · smoke tests
-  - fallbacks: 1. qwen3.8-flash@opencode-local
-               2. glm-4.7-flash@cloudflare/@cf (via gateway)
-               3. qwen3.7-plus@qoder/local
+  - evidence: same proven body as SE, chosen for Release because CI volume is
+    far under its published cap and it is Apache-2.0 (auditable). Verified work
+    already banked: ert 7/7 green + byte-compile clean on the box, ci.yml
+    notify guard written.
+  - fallbacks: 1. zai/glm-4.7-flash@opencode
+               2. qwen3.8-flash-next@opencode (AA 40, blended $0.088/M)
+               3. openrouter/poolside/laguna-s-2.1@opencode (do not: spends the PE pool)
 
-* Platform Engineer — qwen3.8-flash@qoder/local
-  - duties: box health · IM bridges (Telegram relay, lark-cli host) · gateway ops
-  - fallbacks: 1. qwen3.8-flash@opencode-local
-               2. goose (local body, brain via gateway)
-               3. qwen3.7-plus@qoder/local
+* Platform Engineer — qwen3.8-flash@qoder
+  - :last-dispatch: 3
+  - duties: box health · IM bridges (lark-cli host, Telegram relay) · gateway ops ·
+    secret hygiene · runner images (Docker: anything a seat needs that the box had)
+  - evidence, all measured on this box today: Lark app cli_aa5cdf374b21de2c bound,
+    Agent Team group created and membership verified, 52 scopes checked against
+    the grant API (found im:chat / im:chat:create genuinely absent), 163-id
+    gateway roster split into proven-alive vs listed-but-refused, 15 provider
+    keys staged as Actions secrets (CF_TUNNEL_TOKEN deliberately excluded),
+    full-history secret sweep, ci/01 parser fix with 7/7 ert + byte-compile.
+  - CANNOT MOVE TO CI YET: lark-cli is not in a runner image and there is no
+    /gnu/store on ubuntu-latest. Fix = a Docker job that installs lark-cli and
+    runs the wake loop as a SCHEDULED POLL (Actions cron -> poll Lark OpenAPI ->
+    dispatch -> exit). A runner has no surviving daemon; that is why the loop
+    was never proven, and it is why a poller is the correct cloud shape.
+  - fallbacks: 1. groq/qwen3.8-27b@opencode
+               2. glm-5.3-flash@opencode (OpenCode free roster, rotating)
+               3. goose@qoder (local body, brain via gateway)
 
-* Product Engineer — glm-5.3@zai/web
-  - duties: agent-team.el code dev (one-shot courier; web paste until Z.ai answers)
-  - fallbacks: 1. kimi-k2.6@kimi/web
-               2. qwen3.8-max@qwen/web
-               3. qwen3.7-plus@qwen/web
+* Reviewer — glm-5.3@chat.z.ai
+  - :last-dispatch: 0
+  - duties: long-context diff review · the second opinion the combined Lead+DE
+    seat is structurally forbidden to give itself (see RISK above)
+  - evidence: AA intelligence 60 · GDPval-AA 1769 · WebDev Elo 1621; custom
+    licence, $1.40/$4.40; complaint pattern "regressed vs GLM-5.2" — noted, and
+    it is still the strongest non-Qwen non-Kimi web brain available.
+  - fallbacks: 1. qwen3.8-max@chat.qwen.ai
+               2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 · DeepSWE 67.5;
+                  $3/$15, custom licence, "slow and very verbose")
+               3. kimi-k2.6@kimi.com
 
-* Reviewer — qwen3.8-max@qwen/web
-  - duties: long-context diff review (one-shot courier)
-  - fallbacks: 1. qwen3.7-plus@qwen/web
-               2. kimi-k2.6@kimi/web
-               3. glm-5.3@zai/web
+* Build Engineer — BLOCKED (no Guix in CI, no local source builds by policy)
+  - :last-dispatch: 0
+  - duties: guix packages for ALL teams (shared service)
+  - status: BLOCKED, not carried. A runner has no /gnu/store; our own policy
+    forbids local source builds, so the box can only `guix build --dry-run`
+    (evaluation) and CI can only build prebuilt *-bin wrappers. Needs an Owner
+    ruling: rent a Guix machine, or keep Guix work box-only and let it sleep.
+  - when unblocked, rank: 1. glm-5.3-flash@chat.z.ai 2. qwen3.8-max@chat.qwen.ai
+    3. kimi-k2.6@kimi.com
 
-* Build Engineer — glm-5.3@zai/web
-  - duties: guix packages for ALL teams (common service; lark-cli + lightpanda/moli dispatched, silent)
-  - fallbacks: 1. qwen3.7-plus@qwen/web
-               2. kimi-k2.6@kimi/web
-               3. qwen3.8-max@qwen/web
+* Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
+  - openrouter/liquid/lfm-2.5@opencode — the only family plausibly runnable on
+    this 4 GB Celeron (1.2B-Thinking "under 1 GB", liquid.ai 2026-01-20) but NO
+    agentic-coding benchmark exists; tool-calling works, "not for real agentic
+    work". Task: prove it can run the ert suite unaided in a container.
+  - openrouter/xingchen-agi/xing4.0-29b-a4b@opencode — Apache-2.0, vendor
+    SWE-bench 75.0 / TB 57.5, no permanent-free API found, low community signal.
+  - dots-3-note@self-host — Apache-2.0, vendor SWE-bench 78.4 / TB 75.1, and
+    ZERO hosted API: unreachable for any seat until we get an endpoint.
+    (Corrected attribution: Xiaohongshu/RedNote's dots studio, not Red Hat.)
+  - openrouter/stepfun/step-5-preview@opencode — preview with no independent
+    data, StepFun Model License 1.0, DeepSWE 67.7 vendor-only.
+  - openrouter/minimax/minimax-m3.1-flash@opencode — proprietary, size
+    undisclosed, AA 43 / TB 4.0 25.8; plus the harnesses still needing a brain:
+    goose@qoder · pi@qoder · codebuddy@qoder · cursor-agent@qoder · omp@qoder.
+  - RELEASED (evidence-negative, not punished): nemotron-3-super-120b (AA marks
+    it DEPRECATED) · kimi-k2.8-preview (no weights, no benchmarks) ·
+    minimax-m3 (weights "promised", SWE-bench measured on internal scaffolding).
 
-* Intern bench (no-data → intern, never rejected)
-  - codebuddy (ds-flash built-in — first round) · omp · cursor-agent · goose · pi (parked)
+* Pool status — blocked, stated rather than silently inherited
+  - cloudflare/@cf/* — 10,000 Neurons/day shared; EXHAUSTED today. Emergency only.
+  - kilo/*:free · tokenharbor/*:free — PROMO, can vanish. Emergency only.
+  - opencode/*-free — rotating by design ("free usage is dynamic"; cutoff is
+    "Free usage exceeded, add credits"). Never treat as permanent.
+  - huggingface Inference Providers — free tier effectively retired: "Free
+    Users — Monthly Credits: None" (docs, 2026-10-20).
+  - every web free tier for UNATTENDED use — caps undocumented, ToS
+    interactive-oriented; chat.z.ai additionally prohibits account sharing.
+  - Codespaces — Owner says unavailable now; the @opencode-codespaces seat is
+    removed rather than left dangling.
+  - THE UNCAPPED RESOURCE IS THE RUNTIME, NOT A MODEL: a public repo gets
+    unlimited Linux Actions minutes. That is the only genuinely uncapped free
+    tier found across five research batches, and it is gated on rotating the
+    GOMODEL_MASTER_KEY that is still recoverable from commit dc3fb0a.
 
-* Sleeper shift (pending CI green) — open-weights free brains on Actions
-  - kimi-k2.5 / qwen3.8-27b / deepseek-v4.1-flash @ openrouter:free + groq (student 3000 min/mo)
-  - author: sleeper-shift@github-actions — never impersonates a human member
+* Evidence quality warning (read before hiring on any number above)
+  - Artificial Analysis publishes TWO different numbers for the same model
+    (GLM-5.3-Flash 57 vs 42 · Kimi-K2.6 54 vs 27 · Qwen3.7-Max 46-era vs 29 now).
+    Both are quoted everywhere they disagree; neither was quietly chosen.
+  - Vendor-vs-independent gaps reach 21 points (Qwen3.8-Max TB 2.1: 86.6 vendor,
+    67.4 third-party Vals, 88.8 AA-run). AA-run rows are labelled as such.
+  - Reddit sentiment lines are title-based paraphrases — Reddit was login-walled.
+  - Full per-model citations: templates/AGENT-TEAM-CANDIDATES.org.
 
-* WEB MODE (Owner's local box going down 2026-10-20) — who survives the shutdown
-
-  Bodies die with the box. Any seat whose body is @*/local or @goose/local is
-  ASLEEP until it returns; only these surfaces keep working: chat.z.ai,
-  chat.qwen.ai, kimi web, opencode/codespaces (remote), github-actions.
-
-  - Team Lead (web mode, ranked):
-      1. glm-5.3-flash@zai/web — AA 42, MIT open weights, and chat.z.ai carries
-         agentic features (its tools run in Z.ai's sandbox, NOT on the Owner's
-         box — so it still cannot execute lark-cli; commands must be relayed)
-      2. glm-5.3@zai/web — stronger coding, same body, costlier
-      3. qwen3.8-max@qwen/web — prompt-only web, weaker index
-      4. kimi-k2.6@kimi/web — one-shot courier only
-    UNVERIFIED: whether glm-5.3-flash is selectable in the free chat.z.ai picker.
-    Check the picker before dispatching; if absent, rank 2 takes the seat.
-  - ASLEEP while the box is down: Principal Engineer · QA Engineer · Platform
-    Engineer · Release Engineer (local bodies) · Product Engineer · Reviewer ·
-    Build Engineer (already one-shot couriers)
-  - STILL LIVE: Software Engineer — groq/qwen3.8-27b@opencode/CODESPACES (remote
-    body, unaffected) · Sleeper shift on Actions · Director of Engineering
-  - What web mode costs: nothing that was already done, and no new Lark writes —
-    the group, bot manager rights and the wake loop are server-side and survive.
-    What stops is anything needing a shell on this box: lark-cli sends, event
-    consume, gateway verification, guix work.
-  - Handover rule for web mode: the Lead dictates exact commands, the Owner runs
-    them on whatever machine is up, and the pasted output is the evidence. A
-    web Lead that invents command output is a false report, not a report.
-
-* Values in force (Owner's law)
-  - open-weights + permanent-free only in accountable seats; closed models excluded
-  - credentials never written anywhere (env/dispatch only)
-  - IDs always PROVIDER/MODEL@AGENT/PLATFORM, both halves in every FROM:
-  - EVERY seat carries ranked fallbacks, minimum 3 — a seat without a fallback chain is an incomplete entry
+* Values in force (Owner's law, unchanged)
+  - open-weights + permanent-free only in accountable seats; closed models
+    excluded unless the Owner grants an exemption in writing (Qwen3.8-Max is
+    currently UNEXEMPT — it sits in fallback slots only)
+  - credentials never written to the board or git; env/dispatch/repo-secrets only
+  - IDs: PROVIDER/MODEL@PLATFORM, PROVIDER/ for API models only, no "/" after "@"
+  - every seat carries duties + rank + a rank-3 fallback chain; a seat without
+    one is invalid and does not ship

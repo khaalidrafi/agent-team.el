@@ -72,20 +72,37 @@ a task by resetting it to TODO."
     ("DONE" "DONE")
     (_ nil)))
 
+(defun agent-team--normalize-member-id (tail)
+  "Return the canonical compact member id from a heading's TAIL, or nil.
+TAIL is everything after \"ROLE — \" on a members heading.  Accepts both
+grammars the board has actually used — spaced \"<model> @ <platform>\" prose
+and compact \"model@platform\" — drops a trailing \"(annotation)\" such as
+\"qwen3.8-flash@qoder (ACTING)\", and collapses the id to one space-free
+token so every consumer sees a single grammar (Owner rule: MODEL@PLATFORM,
+no \"/\" after \"@\").  A tail with no \"@\" is not a member id at all, which
+is how plain section headings like \"WEB MODE ... — who survives\" are
+rejected instead of being parsed as a seat."
+  (when (string-match "\\`[^(:]+" tail)
+    (let ((id (replace-regexp-in-string "[ \t]+" "" (match-string 0 tail))))
+      (when (string-match "\\`[^@]+@[^@]+\\'" id) id))))
+
 (defun agent-team--parse-members (file)
   "Parse FILE (AGENT-TEAM-MEMBERS.org) into an alist of (ROLE . MODEL@PLATFORM).
-Reverses file order so top-listed roles complete first."
+Reverses file order so top-listed roles complete first.  Headings whose tail
+carries no parsable id are skipped, so a role never gets a blank brain."
   (let (out)
     (when (file-exists-p file)
       (with-temp-buffer
         (insert-file-contents file)
         (goto-char (point-min))
-        (while (re-search-forward "^\\* \\(.+?\\) — \\([^ \n]+@[^ \n]+\\)"
+        (while (re-search-forward "^\\* \\(.+?\\) — \\(.*\\)$"
                                   nil t)
-          (push (cons (match-string-no-properties 1)
-                      (match-string-no-properties 2))
-                out))))
-    out))
+          (let ((role (match-string-no-properties 1))
+                (id (agent-team--normalize-member-id
+                     (match-string-no-properties 2))))
+            (when id
+              (push (cons role id) out)))))
+    out)))
 
 
 ;;; File locations

@@ -15,7 +15,8 @@ RUN apt-get update \
 
 # --- OpenCode body (preinstalled once, reused every turn) -------------------
 # Installed under /usr/local/lib so the non-root run user can traverse it.
-RUN HOME=/usr/local/lib/opencode-home curl -fsSL https://opencode.ai/install | bash \
+RUN export HOME=/usr/local/lib/opencode-home \
+ && curl -fsSL https://opencode.ai/install | bash \
  && chmod -R a+rX /usr/local/lib/opencode-home \
  && ln -sf /usr/local/lib/opencode-home/.opencode/bin/opencode /usr/local/bin/opencode
 

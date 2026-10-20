@@ -373,6 +373,10 @@ jobs:
             echo "$UPD" | jq -r '.result[] | select(.message.chat.type=="private") | select(.message.text) |
                      "  >> " + (.message.text | gsub("\n"; "\n  >> "))'
           } >> "$CHAT"
+          # SECRET GUARD (Owner order 18:27Z): his message is recorded
+          # VERBATIM — but a credential pasted by mistake must never reach
+          # git history. Redact in place, then commit.
+          bash .github/scripts/secret-guard.sh file "$CHAT"
           git add "$CHAT"
           git commit -m "tg-ingest: ${COUNT} Owner message(s) -> team chat" || echo "::notice::nothing to commit"
           # Race-proof push (Lead pushes move ai/main mid-run): rebase + retry.
@@ -392,6 +396,31 @@ jobs:
             echo "chat_id=${CHAT_ID}" >> "$GITHUB_OUTPUT"
             echo "TG_LEARNED_CHAT=${CHAT_ID}" >> "$GITHUB_ENV"
           fi
+
+      - name: Restore previous session of this seat (resume context)
+        id: sess-restore
+        if: steps.control.outputs.mode == 'work'
+        env:
+          SEAT: ${{ steps.control.outputs.seat }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ART_ID=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=100" \
+            | jq -r --arg p "sessions-${SEAT}-" \
+              '[.artifacts[] | select(.name | startswith($p))] | sort_by(.id) | last | .id // empty')
+          [ -n "$ART_ID" ] || { echo "sessions: no previous artifact for ${SEAT} — cold start"; exit 0; }
+          curl -sSL -H "Authorization: Bearer $GH_TOKEN" -o "$PWD/.sessions-prev.zip" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${ART_ID}/zip"
+          mkdir -p "$PWD/.sessions-restore"
+          unzip -q -o "$PWD/.sessions-prev.zip" -d "$PWD/.sessions-restore" || true
+          TGZ=$(ls "$PWD"/.sessions-restore/sessions-*.tgz 2>/dev/null | head -1)
+          if [ -n "${TGZ:-}" ]; then
+            rm -rf /tmp/sessx && mkdir -p /tmp/sessx
+            tar xzf "$TGZ" -C /tmp/sessx 2>/dev/null || true
+            rm -rf "$PWD/.sessions-restore" && mv /tmp/sessx "$PWD/.sessions-restore"
+          fi
+          rm -f "$PWD/.sessions-prev.zip"
+          echo "sessions: restored artifact ${ART_ID} for seat ${SEAT}"
 
       - name: Run the turn (one segment, preinstalled agent in container)
         id: seg
@@ -482,8 +511,25 @@ jobs:
              .gitattributes. Verify plumbing facts with file:line evidence
              in your mail/report instead. (Editing them breaks the chain's
              git permissions and the rotation pointer.)
-          Boundaries: no secrets in files or commits; no spend; no destructive
-          actions; stay in scope of the item you picked."
+          Boundaries: no spend; no destructive actions; stay in scope of
+          the item you picked.
+          SECRET LAW (Owner order 2026-10-21 18:27Z #hq): credentials
+          NEVER travel in chat, files, commits, or messages — they live
+          in ENV VARS (repo secrets -> process env, e.g.
+          QODER_PERSONAL_ACCESS_TOKEN). If you need a credential a peer
+          holds, ask for its ENV VAR NAME; the peer replies with the NAME
+          and a has-it confirmation, NEVER the value; you read it from
+          your OWN environment (Emacs members: (getenv "NAME")). Never
+          echo a secret value anywhere. The SECRET GUARD
+          (.github/scripts/secret-guard.sh) redacts leaked values from
+          every commit, chat entry, and session artifact before they
+          reach git history.
+          SESSION LAW (same Owner order — session files matter): your CLI
+          session files are collected at the end of the turn, SCRUBBED of
+          secrets, and uploaded as artifact 'sessions-<seat>-<run>'
+          (30-day retention). The next turn of YOUR seat restores them
+          before you run — resume your context (codebuddy -c / goose /
+          opencode session files) instead of starting cold."
 
           # Seat -> body command. Brains come from the baked configs; keys
           # come from repo secrets via env. The harness image has BOTH
@@ -495,6 +541,18 @@ jobs:
           cat > "$PWD/.turn-inside.sh" <<'INNER'
           #!/usr/bin/env bash
           set +e
+          # SESSION RESTORE (Owner order 18:27Z: session files are
+          # important — resume with context): the host mounted the seat's
+          # previous SCRUBBED session tree at /sessions-restore; drop it
+          # into $HOME before anything runs.
+          if [ -d /sessions-restore ]; then
+            mkdir -p "$HOME"
+            if [ -d /sessions-restore/home/agent ]; then
+              cp -a /sessions-restore/home/agent/. "$HOME/" 2>/dev/null || true
+            else
+              cp -a /sessions-restore/. "$HOME/" 2>/dev/null || true
+            fi
+          fi
           case "$SEAT" in
             principal-engineer)
               # OpenCode body + poolside: OpenCode cannot host the model
@@ -562,6 +620,20 @@ jobs:
               fi
               ;;
           esac
+          # SESSION COLLECT (Owner order 18:27Z): persist THIS turn's CLI
+          # session files — the container is --rm, they die here unless
+          # captured. Scrubbing happens on the host before upload.
+          SESS="/workspace/.turn-sessions.tgz"
+          rm -f "$SESS"
+          tar czf "$SESS" -C / \
+            "${HOME#/}/.qoder" \
+            "${HOME#/}/.config/goose/sessions" \
+            "${HOME#/}/.local/share/opencode" \
+            "${HOME#/}/.codebuddy/projects" \
+            "${HOME#/}/.codebuddy/sessions" \
+            "usr/local/lib/qoder-home/.qoder" \
+            2>/dev/null || true
+          [ -s "$SESS" ] || echo "sessions: nothing collected this turn" >&2
           INNER
 
           # SEAT/BRIEF are shell assignments, NOT exported env vars —
@@ -569,8 +641,10 @@ jobs:
           # EMPTY strings into the container (smoke test 14:18: SEAT=[]), so
           # the inner case matched nothing and exited silently. Pass values
           # explicitly instead.
+          mkdir -p "$PWD/.sessions-restore"
           if docker run --rm --user 1001:1001 \
             -v "$PWD":/workspace -w /workspace \
+            -v "$PWD/.sessions-restore":/sessions-restore:ro \
             -e SEAT="${SEAT}" -e BRIEF="${BRIEF}" \
             -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
             -e QODER_PERSONAL_ACCESS_TOKEN \
@@ -601,12 +675,53 @@ jobs:
           echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
           rm -f "$PWD/.turn-inside.sh" "$PWD/.turn-result.txt" /tmp/.turn-out.txt /tmp/.turn-result.tmp
 
+      # SESSION FILES (Owner order 2026-10-21 18:27Z "how will you handle
+      # agents' session files? ... We need the session files to resume with
+      # context for a team member. They are important."): the container is
+      # --rm, so sessions die with it unless collected. The seat's tarball
+      # is scrubbed file-by-file by the SECRET GUARD (a session that
+      # swallowed a token must not leak it into the artifact), re-packed
+      # and uploaded. Resume: the next turn of THIS seat downloads the
+      # newest artifact and mounts it back into the container's $HOME.
+      - name: Persist session files (scrub -> artifact)
+        id: sess
+        if: always() && steps.control.outputs.mode == 'work'
+        env:
+          SEAT: ${{ steps.control.outputs.seat }}
+        run: |
+          echo "found=no" >> "$GITHUB_OUTPUT"
+          [ -s "$PWD/.turn-sessions.tgz" ] || { echo "sessions: nothing collected"; exit 0; }
+          rm -rf /tmp/sess && mkdir -p /tmp/sess
+          tar xzf "$PWD/.turn-sessions.tgz" -C /tmp/sess 2>/dev/null || true
+          N=0
+          while IFS= read -r f; do
+            if out=$(bash .github/scripts/secret-guard.sh file "$f"); then N=$((N+1)); fi
+          done < <(find /tmp/sess -type f 2>/dev/null)
+          tar czf "/tmp/sessions-${SEAT}-${GITHUB_RUN_NUMBER}.tgz" -C /tmp/sess . 2>/dev/null || true
+          if [ -s "/tmp/sessions-${SEAT}-${GITHUB_RUN_NUMBER}.tgz" ]; then
+            echo "found=yes" >> "$GITHUB_OUTPUT"
+            echo "sessions: ${N} file(s) had secret hits — redacted before upload" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          rm -f "$PWD/.turn-sessions.tgz"
+
+      - name: Upload session artifact (30-day retention)
+        if: always() && steps.sess.outputs.found == 'yes'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sessions-${{ steps.control.outputs.seat }}-${{ github.run_number }}
+          path: /tmp/sessions-*.tgz
+          retention-days: 30
+          if-no-files-found: ignore
+
       # Peer-mesh law: the seat's branch is auto-merged by `finalize` right
       # after this step; ONLY the control-file pointer lands on ai/main here.
       - name: Push work branch, advance rotation, commit control file
         id: push
         if: always() && steps.control.outputs.mode == 'work'   # never stall the rotation on a step failure
         run: |
+          # SECRET GUARD (Owner order 18:27Z): scan the whole branch diff
+          # for leaked credential values and amend them out BEFORE push.
+          bash .github/scripts/secret-guard.sh branch origin/ai/main
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
           echo "branch=${TURN_BRANCH:-}" >> "$GITHUB_OUTPUT"
           CTL=agent-team/TEAM-CONTROL.org
@@ -695,6 +810,7 @@ jobs:
           if emacs -Q --batch -L . --eval \
             '(unless (byte-compile-file "agent-team.el") (kill-emacs 1))'; then
             echo "gate=green" >> "$GITHUB_OUTPUT"
+            bash .github/scripts/secret-guard.sh staged
             git push origin "ai/main"
             git push origin --delete "${{ steps.merge.outputs.branch }}" || true
           else

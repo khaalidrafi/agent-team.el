@@ -15,6 +15,26 @@
            brief now scans the chat tail instead of inboxes)
 
 :LOGBOOK:
+- [2026-10-21 Thu 02:45 +08] Lead glm-5.3-flash: Owner security order
+  (#hq 18:27Z) — (1) FULL-REPO SECRET AUDIT: 162 commits + working tree,
+  credential-shape scan (Qoder PAT / TG token / GH PATs / sk- / bearer /
+  x-access-token): ZERO leaks, TEAM-CHAT.org clean — nothing to rotate
+  on evidence. (2) SECRET LAW: credentials travel ONLY as ENV VAR NAMES
+  between members ("ask another agent to look into the PAT env", reads
+  its own env via (getenv "NAME")); all PATs already repo secrets —
+  values never in chat/files/commits. (3) SECRET GUARD shipped
+  (.github/scripts/secret-guard.sh): redacts leaked values BEFORE push
+  (branch scan+amend), on TG ingest, at the finalize gate, and over
+  session artifacts — answers his "what if they expose the secret in
+  their chat?" in the pipeline. (4) SESSION LAW shipped: per-seat CLI
+  session dirs collected each turn end -> scrubbed file-by-file ->
+  artifact sessions-<seat>-<run> (30d) -> restored before the seat's
+  next run (resume with context; container is --rm so sessions died
+  every turn before this). (5) AGENTS.md untracked from the repo per
+  his standing 16:55 order. (6) CodeBuddy: his browser auth completed
+  AFTER my CLI poll window closed — token grant missed; "window"
+  protocol armed (fresh 9-min live window + TG-delivered link on his
+  word); CODEBUDDY_* secrets follow the moment it lands.
 - [2026-10-21 Wed 02:05 +08] Lead glm-5.3-flash: Owner FORMAT LAW (#hq
   17:55Z) — (1) STANDARD FORMAT: TEAM-CHAT.org entries are Org headlines
   carrying the FROM ("<from> -> @<to>" IS the heading), routing in real

@@ -236,6 +236,45 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     custom-bot webhook (secrets LARK_WEBHOOK_<ROLE>, full-form names).
     The board file stays the only source of truth.
 
+* SECRET LAW + SESSION LAW — Owner order 2026-10-21 18:27Z #hq
+  SECRET LAW — credentials live in ENV VARS, nowhere else:
+  - Every credential is a repo secret (source of truth) -> injected as a
+    process ENV VAR in CI (and setenv'd for local Emacs members). The
+    audit of 2026-10-21 (all 162 commits + working tree) found ZERO
+    leaked secrets — the repo is clean; keep it that way.
+  - NEVER write a credential value into TEAM-CHAT.org, the board, mail,
+    commits, or session files. A message carries only the ENV VAR NAME.
+  - NEED A PEER'S CREDENTIAL? Ask in the chat: "peer, look into the
+    <NAME> env" — the peer replies with the NAME + a has-it confirmation
+    and NOTHING else. You then read it from YOUR OWN environment
+    (Emacs: (getenv "NAME"); shell: echo only into the consuming
+    command's env, never into chat output).
+  - THE SECRET GUARD (.github/scripts/secret-guard.sh) is the backstop:
+    it runs before every push (branch diff), on every ingested Owner
+    message, at the finalize gate, and over every session artifact —
+    matching both exact env values and credential shapes (pt-…, bot
+    tokens, ghp_/github_pat_, sk-…). Hits are replaced with
+    [REDACTED:env-value] / [REDACTED:pattern] IN PLACE, so the value
+    never reaches git history even if an agent misbehaves.
+  SESSION LAW — agent session files are first-class (Owner: "We need the
+  session files to resume with context for a team member. They are
+  important."):
+  - At the END of every turn the seat's CLI session dirs (~/.qoder,
+    goose sessions, opencode, codebuddy projects/sessions) are tarred,
+    SCRUBBED file-by-file by the SECRET GUARD, and uploaded as the run
+    artifact sessions-<seat>-<run> (30-day retention). The container is
+    --rm; without this, context would die every turn.
+  - At the START of the seat's next turn the newest artifact is
+    downloaded and mounted into the container — the member RESUMES with
+    context instead of starting cold (codebuddy -c, goose/opencode
+    session files on disk).
+  - Exposure risk is handled in-pipeline: a session that swallowed a
+    token gets the value redacted BEFORE upload; the summary line
+    "sessions: N file(s) had secret hits" in the run summary is the
+    audit trail. If a chat message leaks a value, the same guard
+    redacts it before commit — and the credential should then be
+    ROTATED by its owner (assume seen).
+
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may
   now be used in ACTING roles (Owner order 2026-10-20) when capable

@@ -40,10 +40,17 @@ RUN mkdir -p /tmp/goose-dl \
 #     is not installed". Fix: keep the install tree under a+rwx and run
 #     the launcher with HOME pinned to the install dir (also done in
 #     ci.yml's platform branch). Version check is FATAL now — a body that
-#     cannot run must fail the build loudly, not hide behind || true. ---
+#     cannot run must fail the build loudly, not hide behind || true.
+#     PATH FIX (CI evidence 2026-10-21, runs 39470194454/39470807232): the
+#     installer does NOT put the dispatcher on PATH at all — it lives at
+#     $HOME/.qoder/entry/qoder and resolves the real CLI via
+#     $HOME/.local/bin/qodercli. Symlink the entry into /usr/local/bin at
+#     build; HOME stays pinned (build here, runtime in ci.yml) so the
+#     dispatcher's $HOME-relative discovery works for uid 1001. ---
 RUN export HOME=/usr/local/lib/qoder-home \
  && curl -fsSL https://qoder.com/install | bash \
  && chmod -R a+rwX /usr/local/lib/qoder-home \
+ && ln -sf /usr/local/lib/qoder-home/.qoder/entry/qoder /usr/local/bin/qoder \
  && timeout 60 qoder --version
 
 # --- CodeBuddy body (Owner law 2026-10-21 17:47Z: CodeBuddy is kept for

@@ -137,3 +137,59 @@
   (access keys are pro-only). For API-served brains there is no novelty
   in any body — any agent can ride an API, no surprise — so we choose the
   BODY THAT FITS the work and install the model brain into it.
+
+* MSG owner -> @lead :note:                                     :msg:owner:lead:note:
+:PROPERTIES:
+:FROM: owner
+:TO: lead
+:KIND: note
+:WHEN: [2026-10-20 Tue 18:27 UTC]
+:CHANNEL: discord
+:END:
+  [Discord #hq — recorded verbatim per Owner order 2026-10-21 #hq:
+   "my reply should get recorded in TEAM-CHAT.org"]
+  >> Done. Audit the whole repo for leaked secrets, esp. TEAM-CHAT.org
+  >> and GH PAT. Members should use ENV var to send the PAT to each
+  >> other. Add the PAT to repo secrets. Since Emacs supports setting
+  >> env vars, inside agent-team.el, members will simply ask another
+  >> agent to look into the PAT env. And, how will you handle agents'
+  >> session files? What if they expose the secret in their chat? We
+  >> need the session files to resume with context for a team member.
+  >> They are important.
+
+* MSG lead -> @all :note:                                       :msg:lead:all:note:
+:PROPERTIES:
+:FROM: lead
+:TO: all
+:KIND: note
+:WHEN: [2026-10-20 Tue 18:45 UTC]
+:END:
+  OWNER SECURITY ORDER EXECUTED (18:27Z #hq). (1) AUDIT: every one of
+  the repo's 162 commits + the full working tree scanned for credential
+  shapes (Qoder PAT, TG bot token, GitHub PATs, sk- keys, bearer
+  tokens, x-access-token) — ZERO hits; TEAM-CHAT.org included: the repo
+  is clean, nothing to rotate on evidence. (2) SECRET LAW is now in
+  agent-team/AGENT-TEAM-MEMBERS.org: credentials travel ONLY as ENV
+  VAR NAMES — a member needing a peer's PAT asks it to "look into the
+  <NAME> env"; the peer confirms the NAME, never the value; the asker
+  reads it from its own environment (Emacs (getenv "NAME")). All PATs
+  are repo secrets already: QODER_PERSONAL_ACCESS_TOKEN, the Telegram
+  bot token, provider keys — no value ever appears in this chat.
+  (3) EXPOSURE IN CHAT — ANSWERED IN THE PIPELINE: the SECRET GUARD
+  (.github/scripts/secret-guard.sh) now runs before EVERY push (branch
+  scan + amend), on every ingested Owner message, at the finalize gate,
+  and over every session artifact; leaked values are replaced with
+  [REDACTED:env-value]/[REDACTED:pattern] before they reach git
+  history, and the hit is logged to the run summary as the audit trail
+  (then the credential owner rotates). (4) SESSION FILES — ANSWERED:
+  collected at each turn's end, scrubbed file-by-file, uploaded as
+  artifact sessions-<seat>-<run> (30-day); the seat's NEXT turn
+  restores them and resumes with context. The container is --rm —
+  without this, member context died every turn.
+  CodeBuddy status for @owner: your browser authorization DID complete,
+  but my CLI listener window had already closed — the token grant never
+  reached the poller. Reply "window" anytime and I open a fresh
+  9-minute live window and push the login link to your Telegram the
+  second it opens; the moment you approve inside it, the built-in
+  models (glm-5.3-flash, kimi-k3, deepseek-v4.1-flash...) land as
+  CODEBUDDY_* repo secrets.

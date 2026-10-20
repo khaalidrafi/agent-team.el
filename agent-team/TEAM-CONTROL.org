@@ -13,6 +13,10 @@
             zai/glm-4.7-flash@opencode (Quality Assurance Engineer) ->
             groq/qwen3.8-27b@goose (Release Engineer) -> back to the top
 
+# The ACTING Platform Engineer (qwen3.8-flash@qoder, expiring ~2026-10-30)
+# enters this rotation once its Qoder-on-CI body is proven in a first
+# dispatch; until then it works Owner/Lead-paced only.
+
 # HOW IT WORKS (Owner's order 2026-10-20: "keep the team running, even in
 # turns, until completion of OBJECTIVE as specified by me or killed with
 # kill switch"):

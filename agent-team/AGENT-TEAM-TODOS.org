@@ -4,6 +4,114 @@
 
 * Board
 
+** REVIEW [2026-10-20] hiring/01 round 4: hire review + per-role Lark + plan — REPORT #6 :REPORT:
+   REPORT #6 — hiring/01 round 4: hire review, per-role Lark bots, THE PLAN
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org + Discord #hq)
+   REPO: khaalidrafi/agent-team.el · branch ai/main (PUBLIC as of this round)
+   DEPS: consumes REPORT #5 + the Owner's round-4 orders | supplies reviewed
+   roster (model+agent reasons separate) + per-role Lark wiring + the plan
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - HIRE REVIEW (every seat, model reason + agent reason separate +
+     pair fit — full text in agent-team/AGENT-TEAM-MEMBERS.org):
+     1. Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode.
+        MODEL: strongest permanently-free open agentic brain (TB 2.1 70.2
+        thinking, SWE-bench Pro 59.4, DeepSWE 40.4, OpenMDW-1.1, 256K ctx).
+        AGENT: OpenCode = best edit reliability + full tools + headless.
+        PAIR: max reasoning × max editing for P0s and architecture.
+     2. Software Engineer — groq/qwen3.8-27b@goose. MODEL: proven alive,
+        Apache-2.0, AA 34, strong agentic sentiment, published caps.
+        AGENT: Goose = deterministic headless runs + shell tools.
+        PAIR: repeatable unattended throughput for feature iteration.
+     3. Quality Assurance Engineer — zai/glm-4.7-flash@opencode. MODEL:
+        MIT, proven alive, deliberately not an author's brain (TB 14.4 →
+        duties scoped to green verification). AGENT: OpenCode's
+        guardrailed editing compensates the weaker brain (justified
+        sharing). PAIR: reliability over brilliance for verification.
+     4. Release Engineer — groq/qwen3.8-27b@goose. MODEL: banked runner
+        record (ert 7/7 on runner, notify guard, PR #1 merge). AGENT:
+        Goose recipes = reproducible CI repair. PAIR: deterministic body
+        for small high-stakes CI edits; owns harness repair.
+     5. Acting Platform Engineer — qwen3.8-flash@qoder (NEW, ACTING,
+        EXPIRES ~2026-10-30). MODEL: proven internal record exactly
+        matching the seat (Lark binding, 163-id roster split, 15 secrets
+        staged, parser fix 7/7). AGENT: native harness; Qoder-on-CI
+        UNPROVEN — first task proves it or reports BLOCKED. PAIR: the
+        platform work this goal needs is what it already did once.
+     6. Reviewer — glm-5.3@chat.z.ai. MODEL: AA 60, GDPval-AA 1769.
+        AGENT: zero-credential web courier. PAIR: independent merge-gate
+        second opinion, no supply-chain risk.
+     7. Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+        (Owner-confirmed). 8. Build Engineer — BLOCKED, not needed for
+        this goal. VERDICT: each seat is a deliberate performance-based
+        pair; no seat kept on habit.
+   - ROLE COVERAGE for the goal "CI-based continuously working team until
+     objective completion": direction + merge gates (Lead+Director) ·
+     building (Software Engineer) · hard problems (Principal Engineer) ·
+     verification (Quality Assurance Engineer) · CI operations (Release
+     Engineer) · communications/infra (Acting Platform Engineer) ·
+     independent review (Reviewer). NO GAP for this goal; Build Engineer
+     stays blocked (no Guix work in scope).
+   - PER-ROLE LARK (Owner order applied): generic CI notifications
+     REMOVED from ci.yml entirely; each member now writes its own
+     DISPATCH/REPORT to the Lark Agent Team group through its role's
+     custom-bot webhook (env ROLE_LARK_WEBHOOK → secrets
+     LARK_WEBHOOK_<FULL-FORM-ROLE>); unset webhook = skip + record on
+     board. COMMON gained §LARK with the law.
+   - GOMODEL DOWN (Owner) → gateway probe + gateway deps removed from
+     ci.yml; COMMON §GATEWAY marked DOWN; all access = direct provider
+     keys from repo secrets.
+   - REPO PUBLISHED (Lead, Owner order): public → unlimited Linux
+     Actions minutes → schedule raised to SIX turns/day
+     (01:17/05:17/09:17/13:17/17:17/21:17 UTC).
+   - THE PLAN (goal: a CI-based continuously working team until
+     objective completion):
+     1. ROSTER LOCKED (this round): four rotating CI seats + acting
+        Platform Engineer (joins rotation after body proof) + web
+        Lead/Reviewer + blocked Build Engineer. Expiry clocks on record:
+        qwen3.8-flash ~2026-10-30, minimax-m3.1-flash 2026-10-25.
+     2. OWNER SETUP (two items): create the per-role custom bots in the
+        Lark UI (full-form role names, 10 from lark/01) → add secrets
+        LARK_WEBHOOK_PRINCIPAL_ENGINEER / _SOFTWARE_ENGINEER /
+        _QUALITY_ASSURANCE_ENGINEER / _RELEASE_ENGINEER (+ others);
+        write the one-line OBJECTIVE into #+OBJECTIVE in
+        agent-team/TEAM-CONTROL.org.
+     3. TURNS RUN (already live, six/day): each turn = on-turn member
+        reads board + law → works one segment on the oldest item serving
+        the OBJECTIVE on its own branch → posts its own REPORT to its
+        role bot in Lark → rotation advances EVEN IF the seat died
+        (BLOCKED logged). Control pointer is the only thing landing on
+        ai/main; merges stay the Lead's gate on green suite.
+     4. LEAD LOOP: read run summaries + Lark traffic each cycle → verify
+        DOD → merge green work to ai/main → re-staff dead seats from
+        fallback chains → keep STATE.org truthful.
+     5. ACTING PLATFORM ENGINEER FIRST DISPATCH: prove Qoder-on-CI
+        headless; then wire + document the per-role webhook procedure
+        (COMMON §LARK) and join the rotation.
+     6. CLOCK DISCIPLINE: before 2026-10-25 — minimax-m3.1-flash
+        intern/acting round or it lapses; ~2026-10-30 — acting Platform
+        Engineer term ends unless Owner renews; re-hire from fallback
+        chains on any expiry, no seat left dangling.
+     7. COMPLETION / STOP: when the OBJECTIVE's DOD is green and
+        Lead-verified, OBJECTIVE-STATE flips COMPLETE → turns stop with
+        a stand-down record; the Owner's #+KILL-SWITCH: ON halts
+        everything instantly at any time. Both switches are the Owner's
+        alone (the Lead proposes, the Owner flips).
+   :DOD-CHECK:
+   - [X] every seat: MODEL REASON + AGENT REASON + PAIR FIT, full forms
+   - [X] role coverage checked against the stated goal — no gap
+   - [X] generic Lark notify removed; per-role webhook wiring in ci.yml
+   - [X] COMMON §LARK law added; §GATEWAY marked DOWN
+   - [X] GoModel probe/deps removed from ci.yml
+   - [X] repo published (public, visibility confirmed via API)
+   - [X] schedule raised to six turns/day
+   - [ ] per-role bots exist + secrets set (Owner UI — pending)
+   - [ ] first REAL work turn with the Owner's OBJECTIVE line (pending)
+   - [ ] Qoder-on-CI body proven (Acting Platform Engineer first task)
+   :RESULT: PARTIAL
+   :END:
+
 ** REVIEW [2026-10-20] hiring/01 round 3: real-agent pairs + CI turns — REPORT #5 :REPORT:
    REPORT #5 — hiring/01 round 3: real-agent pairs, hiring reasons, CI turns
    FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai

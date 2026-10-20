@@ -20,17 +20,33 @@ gateway) is the sole authority; that endpoint can wedge on the Owner's
 loaded Celeron — trust diffs, never block on it. Space calls; bursts stress
 the box.
 
-** GATEWAY AUTH (Owner gateway + Jev)
+** GATEWAY AUTH (Owner gateway + Jev) — STATUS: GATEWAY DOWN
 
-- base URL: https://ai.khalidrafi.tech
-- local URL: http://127.0.0.1:8080 (preferred for local agents — immune to
-  tunnel flakiness)
+- 2026-10-20, Owner: GoModel is now DOWN. Neither https://ai.khalidrafi.tech
+  nor http://127.0.0.1:8080 may be a dependency of any seat. All provider
+  access goes DIRECT with API keys from repo secrets. This section is kept
+  only as the historical reference; treat every gateway id as unreachable
+  until the Owner brings it back.
 - GOMODEL_MASTER_KEY: from the Owner's shell env — NEVER stored in files,
   commits, boards, or repos; dispatches may carry it, files never do
 - header: Authorization: Bearer $GOMODEL_MASTER_KEY
-- tunnel alternative (Owner's choice): frp self-hosted — frps on the Tencent
-  Lighthouse trial VM, frpc on the box (Chinese, open-source, Apache-2.0, no
-  third-party MITM)
+
+** LARK (team communication — per-role bots, Owner order 2026-10-20)
+
+- The Lark "Agent Team" group is the team's communication channel.
+- NO generic CI/system notifications. Every DISPATCH and REPORT is written
+  to the group BY THE MEMBER ITSELF, through that member's OWN custom-bot
+  webhook (one bot per role, created by the Owner in the Lark UI).
+- webhook URLs live ONLY as repo secrets named LARK_WEBHOOK_<ROLE> in the
+  role's FULL FORM (e.g. LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER); they are
+  passed to the member's harness as env at dispatch/turn time
+- a member with an unset webhook skips the send and records that fact on
+  the board — a missing bot never blocks the work
+- message shape: the MESSAGE STANDARD header (FROM: full role —
+  model@platform) + RESULT (DONE | PARTIAL | BLOCKED) + EVIDENCE (file:line
+  or commit sha) + NEXT; short, scannable, no credentials in any body
+- the board file remains the ONLY source of truth: a Lark message that is
+  not reflected on the board does not count
 
 ** ROLE ATTACHMENT (EM only)
 

@@ -6,57 +6,64 @@
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
     byte-compile green on the runner (run 39404373880)
 * IN-FLIGHT
-  - hiring/01 (round 3, Owner orders 2026-10-20): real-agent pairs replace
-    @actions bodies (roster + ci.yml turn job + TEAM-CONTROL.org); turn
-    system runs the team in rotation until OBJECTIVE complete or kill
-    switch; workflow re-enabled by the Lead (enable=204, dispatch=204 —
-    the PAT now carries Actions:write); verification run pending
-  - lark/01: Lark IM layer — Agent Team group LIVE 14:11
-    (oc_de19c9d95e0e277c1eb194a4da08674c, bot = manager, Owner = member, bot
-    test message sent). Remaining: 10 per-seat custom-bot webhooks (Owner UI)
-    + LARK_WEBHOOK_URL secret + notify wiring (CI guard already skips when
-    unset); wake loop = scheduled poll shape, needs lark-cli in a runner image
+  - hiring/01 (round 4, Owner orders 2026-10-20): per-role Lark bots
+    (members write their own dispatches/reports — generic CI notify
+    REMOVED from ci.yml); expiring models allowed as ACTING — Acting
+    Platform Engineer qwen3.8-flash@qoder (expires ~2026-10-30,
+    Qoder-on-CI body to prove); GoModel gateway DOWN — gateway probe and
+    deps removed; repo PUBLISHED (public, unlimited minutes, six
+    turns/day); per-seat MODEL REASON + AGENT REASON + PAIR FIT recorded
+  - lark/01: Lark IM layer — Agent Team group LIVE 14:11. Remaining:
+    Owner creates the per-role custom bots (10 names supplied) → secrets
+    LARK_WEBHOOK_<FULL-FORM-ROLE>; members skip the send until then
 * READY-FOR-HUMAN-REVIEW
   - lead/04 — seat ASSUMED and CONFIRMED by the Owner ruling 2026-10-20
-    ("YOU ARE GLM-5.3-Flash, confirmed!") — the serving-id UNVERIFIED flag
-    is RESOLVED by that confirmation. RETRACTION on the record: the
-    "account-sharing tier risk, Owner-ordered" line written by the
-    outgoing lead was NOT the Owner's order and is removed everywhere;
-    the Owner's z.ai subscription is NOT shared — the Lead seat is the
-    Owner's own interactive relay, and no seat or automation touches it
-  - REPORT #5 (hiring/01 round 3): real-agent pairs + CI turn system —
-    open box: first turn run verification + LARK_WEBHOOK_URL secret
+    ("YOU ARE GLM-5.3-Flash, confirmed!") — serving-id flag RESOLVED.
+    RETRACTION on the record: the "account-sharing tier risk,
+    Owner-ordered" line was the outgoing lead's fabrication — the
+    Owner's z.ai subscription is NOT shared, nothing automation touches it
+  - REPORT #6 (hiring/01 round 4): hire review + plan — open boxes:
+    per-role Lark bots (Owner UI + secrets) · first REAL work turn
+    (needs the Owner's OBJECTIVE line) · Qoder-on-CI proof (Acting PE)
 * DEFERRED
 * BLOCKED
-  - Owner's box OFF (gateway tunnel 530 / CF 1033, verified 2026-10-20 from a
-    fresh network): Platform Engineer body asleep; lark-cli work paused; CI
-    seats unaffected (direct provider keys — 15 secret names confirmed)
-  - Owner rulings outstanding: qwen3.8-max exemption · GOMODEL_MASTER_KEY
-    rotation (still recoverable from dc3fb0a — private repo until then) ·
-    Build Engineer (Guix) future · LARK_WEBHOOK_URL secret value
+  - GOMODEL GATEWAY DOWN (Owner, 2026-10-20): no seat depends on it;
+    direct provider keys only (15 secret names confirmed)
+  - Owner's box OFF: local bodies asleep (goose@qoder, pi@qoder,
+    cursor-agent@qoder, omp@qoder, codebuddy@qoder); CI unaffected
+  - Owner items outstanding: per-role Lark bots in UI +
+    LARK_WEBHOOK_<ROLE> secrets · OBJECTIVE one-liner in
+    agent-team/TEAM-CONTROL.org · qwen3.8-max exemption ruling ·
+    Build Engineer (Guix) future ruling
 * TEAM-STAFFING
-  - MODE: CI TURNS (Owner order 2026-10-20: no @actions bodies — REAL
-    agent harnesses, model@agent pairs on performance; the team rotates
-    in turns until OBJECTIVE complete or #+KILL-SWITCH: ON in
-    agent-team/TEAM-CONTROL.org)
+  - MODE: CI TURNS on the PUBLIC repo (six turns/day 01:17–21:17 UTC,
+    every 4h + workflow_dispatch); rotation Principal → Software →
+    Quality Assurance → Release (Acting Platform joins after its
+    Qoder-on-CI body is proven); per-role Lark bots carry member-written
+    dispatches/reports; kill switch / objective-complete in
+    agent-team/TEAM-CONTROL.org
   - Team Lead + Director of Engineering: glm-5.3-flash@chat.z.ai
     (Owner-confirmed; web relay, Owner-paced) · Principal Engineer:
     openrouter/poolside/laguna-s-2.1:free@opencode · Software Engineer:
     groq/qwen3.8-27b@goose · Quality Assurance Engineer:
     zai/glm-4.7-flash@opencode · Release Engineer: groq/qwen3.8-27b@goose
-    · Platform Engineer: qwen3.8-flash@qoder (asleep with the box) ·
-    Reviewer: glm-5.3@chat.z.ai · Build Engineer: BLOCKED (Guix ruling)
-  - CI turn system: .github/workflows/ci.yml `turn` job — schedule
-    2×/day (09:17/21:17 UTC) + workflow_dispatch; rotation Principal →
-    Software → Quality Assurance → Release; one work segment per turn on
-    the oldest board item serving the OBJECTIVE; branch-only output
-    (merge stays the Lead's gate); turn pointer advances even when a
-    seat is dead; Owner switches in agent-team/TEAM-CONTROL.org
-  - CI gate: push/PR run ert + byte-compile; probe job = informational
-    key-liveness (direct providers; gateway line informational only)
+    · Acting Platform Engineer: qwen3.8-flash@qoder (EXPIRES ~2026-10-30;
+    Qoder-on-CI body to prove) · Reviewer: glm-5.3@chat.z.ai · Build
+    Engineer: BLOCKED
+  - CI gate: push/PR run ert + byte-compile; probe = informational
+    key-liveness, direct providers only (GoModel removed — DOWN)
   - Reference for web members: agent-team/AGENT-TEAM-ROSTER.org (163 live
     gateway ids + what was proven/refused today; snapshot, not authority)
 * HIRING-LOG
+  - 2026-10-20 (round 4, REPORT #6): hire review demanded by Owner —
+    every seat now argues MODEL REASON and AGENT REASON separately plus
+    PAIR FIT for duties. Changes: generic Lark notify REMOVED (per-role
+    bots instead, members write their own reports); GoModel gateway
+    DOWN → gateway probe removed; repo PUBLISHED → six turns/day;
+    Acting Platform Engineer HIRED (qwen3.8-flash@qoder, expiring
+    ~2026-10-30, Qoder-on-CI body to prove, first task = prove body +
+    wire per-role webhooks); role-coverage checked — all roles for the
+    CI-team goal present, Build Engineer stays blocked
   - 2026-10-20 (round 3, REPORT #5): Owner orders — no @actions bodies
     (real agent harnesses only), hiring reasons mandatory, full-form role
     names, z.ai subscription NOT shared (outgoing lead's account-sharing

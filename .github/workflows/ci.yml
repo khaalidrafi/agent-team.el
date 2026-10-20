@@ -1,24 +1,24 @@
 name: CI
 
 # Cloud CI is the Owner's P0: it is what keeps the team alive when the local
-# box goes off.  Four rules follow from that.  (1) CI must verify the same
+# box goes off.  Five rules follow from that.  (1) CI must verify the same
 # things we verify locally -- ert suite AND byte-compile, not one without the
 # other.  (2) CI must never fail for a reason unrelated to the code: every
-# network-facing step is guarded, so a missing secret or a dead endpoint is
-# reported and skipped instead of failing the run.  (3) The team must RUN
-# CONTINUOUSLY, IN TURNS (Owner order 2026-10-20): the scheduled `turn` job
-# rotates the real-agent seats (model@agent pairs from
-# agent-team/AGENT-TEAM-MEMBERS.org) through one work segment per run, until
-# the OBJECTIVE in agent-team/TEAM-CONTROL.org is marked COMPLETE or the
-# Owner flips #+KILL-SWITCH: ON.  (4) A real agent, not a bare key: each
-# seat's harness (OpenCode / Goose) is installed in the runner and reaches
-# the brain directly by its provider key from repo secrets -- there is no
-# @actions body any more (Owner order 2026-10-20).
-#
-# Probes hit providers DIRECTLY. The GoModel gateway (ai.khalidrafi.tech) is
-# this laptop wearing a public hat: it answered HTTP 530 / CF error 1033 with
-# the box off (verified 2026-10-20), so no CI seat may depend on it. Its probe
-# below is informational only.
+# network-facing step is guarded, so a missing secret is reported and skipped
+# instead of failing the run.  (3) The team must RUN CONTINUOUSLY, IN TURNS
+# (Owner order 2026-10-20): the scheduled `turn` job rotates the real-agent
+# seats (model@agent pairs from agent-team/AGENT-TEAM-MEMBERS.org) through
+# one work segment per run, until the OBJECTIVE in agent-team/TEAM-CONTROL.org
+# is marked COMPLETE or the Owner flips #+KILL-SWITCH: ON.  (4) A real agent,
+# not a bare key: each seat's harness (OpenCode / Goose) is installed in the
+# runner and reaches the brain directly by its provider key from repo
+# secrets -- there is no @actions body (Owner order 2026-10-20).  (5) Lark
+# communication is PER-ROLE (Owner order 2026-10-20): there are NO generic CI
+# notifications -- each member writes its own DISPATCH/REPORT to the Lark
+# Agent Team group through its role's custom-bot webhook (repo secret
+# LARK_WEBHOOK_<ROLE>). The GoModel gateway is DOWN (Owner, 2026-10-20) and
+# is gone from this workflow entirely; the repo is PUBLIC (unlimited Linux
+# Actions minutes).
 
 on:
   push:
@@ -26,12 +26,9 @@ on:
   pull_request:
     branches: [ai/main]
   schedule:
-    # Two scheduled turns/day (09:17 / 21:17 UTC) keep a private repo well
-    # inside the free minutes tier; workflow_dispatch lets the Owner pulse
-    # extra turns on demand. Publishing the repo later unlocks unlimited
-    # minutes and a faster cadence.
-    - cron: '17 9 * * *'
-    - cron: '17 21 * * *'
+    # Six turns/day on the public repo (unlimited Linux minutes):
+    # 01:17 / 05:17 / 09:17 / 13:17 / 17:17 / 21:17 UTC.
+    - cron: '17 1,5,9,13,17,21 * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -67,35 +64,11 @@ jobs:
           emacs -Q --batch -L . -L tests -l tests/agent-team-test.el \
             --eval '(ert-run-tests-batch-and-exit "agent-team")'
 
-      - name: Notify Lark (webhook)
-        if: always()
-        env:
-          # Secrets go through env, never inline into the shell text: an
-          # interpolated secret on a command line is both a quoting hazard and
-          # visible in the process list of the runner.
-          LARK_WEBHOOK_URL: ${{ secrets.LARK_WEBHOOK_URL }}
-          RESULT: ${{ job.status }}
-          EVENT: ${{ github.event_name }}
-          SHA: ${{ github.sha }}
-          REF: ${{ github.ref_name }}
-          RUN: ${{ github.run_id }}
-        run: |
-          if [ -z "$LARK_WEBHOOK_URL" ]; then
-            echo "::notice::LARK_WEBHOOK_URL not set - skipping Lark notify"
-            exit 0
-          fi
-          MSG=$(printf 'CI %s %s@%s: %s · https://github.com/%s/actions/runs/%s' \
-                "$EVENT" "$REF" "${SHA:0:7}" "$RESULT" \
-                "${{ github.repository }}" "$RUN")
-          jq -n --arg t "$MSG" '{msg_type:"text",content:{text:$t}}' \
-            | curl -sS -f -X POST "$LARK_WEBHOOK_URL" \
-                -H 'Content-Type: application/json' \
-                --data-binary @-
-
   # Seat-liveness heartbeat. One real completion per accountable API seat,
   # direct to the provider. Results land in the run summary; NOTHING here can
   # fail the workflow -- a dead seat is an operational fact to read in the
-  # summary, never a red run.
+  # summary, never a red run. GoModel gateway removed: DOWN (Owner,
+  # 2026-10-20); seats go DIRECT to providers with repo-secret keys only.
   probe:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: test
@@ -109,7 +82,6 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
         run: |
           SUMMARY="$GITHUB_STEP_SUMMARY"
           echo "## Seat probe — ${GITHUB_SHA::7} (${{ github.event_name }})" >> "$SUMMARY"
@@ -158,34 +130,9 @@ jobs:
             "https://openrouter.ai/api/v1/chat/completions" \
             "nvidia/nemotron-3.5-lightning:free" "$OPENROUTER_API_KEY"
 
-          # INFORMATIONAL ONLY: the Owner's gateway (tunnel). Expected down
-          # (530) whenever the box is off. Never a seat dependency.
-          probe "gateway/glm-4.7-flash (informational)" \
-            "https://ai.khalidrafi.tech/v1/chat/completions" \
-            "glm-4.7-flash" "$GOMODEL_MASTER_KEY"
-
           echo "" >> "$SUMMARY"
           echo "Law: a probe row is evidence of the RUNTIME, not of quality —" >> "$SUMMARY"
           echo "seat ranks live in agent-team/AGENT-TEAM-MEMBERS.org." >> "$SUMMARY"
-
-      - name: Notify Lark (webhook)
-        if: always()
-        env:
-          LARK_WEBHOOK_URL: ${{ secrets.LARK_WEBHOOK_URL }}
-          EVENT: ${{ github.event_name }}
-          SHA: ${{ github.sha }}
-          RUN: ${{ github.run_id }}
-        run: |
-          if [ -z "$LARK_WEBHOOK_URL" ]; then
-            echo "::notice::LARK_WEBHOOK_URL not set - skipping Lark notify"
-            exit 0
-          fi
-          MSG=$(printf 'Heartbeat %s @%s: seat probe done · https://github.com/%s/actions/runs/%s' \
-                "$EVENT" "${SHA:0:7}" "${{ github.repository }}" "$RUN")
-          jq -n --arg t "$MSG" '{msg_type:"text",content:{text:$t}}' \
-            | curl -sS -f -X POST "$LARK_WEBHOOK_URL" \
-                -H 'Content-Type: application/json' \
-                --data-binary @-
 
   # ONE TURN OF WORK (Owner order 2026-10-20). Reads agent-team/TEAM-CONTROL.org:
   #   #+KILL-SWITCH: ON        -> stop everything, say so in Lark, exit green.
@@ -207,7 +154,13 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-      LARK_WEBHOOK_URL: ${{ secrets.LARK_WEBHOOK_URL }}
+      # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
+      # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
+      # group through ITS role's bot. No generic CI notifications exist.
+      LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
+      LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
+      LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER: ${{ secrets.LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER }}
+      LARK_WEBHOOK_RELEASE_ENGINEER: ${{ secrets.LARK_WEBHOOK_RELEASE_ENGINEER }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -258,11 +211,6 @@ jobs:
             no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
           esac
           echo "$MSG" >> "$SUMMARY"
-          if [ -n "$LARK_WEBHOOK_URL" ]; then
-            jq -n --arg t "Agent Team: $MSG" '{msg_type:"text",content:{text:$t}}' \
-              | curl -sS -m 20 -f -X POST "$LARK_WEBHOOK_URL" \
-                  -H 'Content-Type: application/json' --data-binary @- || true
-          fi
 
       - name: Install agent harness (OpenCode)
         if: steps.control.outputs.mode == 'work' && contains(fromJSON('["principal-engineer","quality-assurance-engineer"]'), steps.control.outputs.seat)
@@ -312,9 +260,23 @@ jobs:
           4. Append a :LOGBOOK: note to the board item: what changed + evidence
              (file:line, commit sha). Never mark DONE (that is the Lead's gate).
           5. Commit your changes on this branch with message 'turn(${SEAT}): ...'.
-          6. Do NOT push to ai/main; leave the branch for the Lead's merge gate.
+          6. REPORT TO LARK (Owner order: members write their own reports): POST
+             your REPORT to YOUR role's Lark custom-bot webhook in env
+             ROLE_LARK_WEBHOOK — only if it is non-empty. Format: JSON
+             {\"msg_type\":\"text\",\"content\":{\"text\":\"REPORT — <task-id>: <title>\\nFROM: <your role> — <your model@agent>\\nRESULT: DONE | PARTIAL | BLOCKED\\nEVIDENCE: <file:line / commit sha>\\nNEXT: <what remains>\"}}.
+             If ROLE_LARK_WEBHOOK is empty, skip silently and note it in the
+             board LOGBOOK. Never put credentials in the message body.
+          7. Do NOT push to ai/main; leave the branch for the Lead's merge gate.
           Boundaries: no secrets in files or commits; no spend; no destructive
           actions; stay in scope of the chosen item."
+
+          # The on-turn member's own Lark bot (per-role webhook, Owner order).
+          case "$SEAT" in
+            principal-engineer)         export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_PRINCIPAL_ENGINEER" ;;
+            software-engineer)          export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_SOFTWARE_ENGINEER" ;;
+            quality-assurance-engineer) export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER" ;;
+            release-engineer)           export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_RELEASE_ENGINEER" ;;
+          esac
 
           case "$SEAT" in
             principal-engineer)
@@ -376,17 +338,3 @@ jobs:
           git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
             -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
           git push origin "ai/main" || echo "::warning::control push failed"
-
-      - name: Notify Lark (turn result)
-        if: steps.control.outputs.mode == 'work' && always()
-        run: |
-          if [ -z "$LARK_WEBHOOK_URL" ]; then
-            echo "::notice::LARK_WEBHOOK_URL not set - skipping Lark notify"
-            exit 0
-          fi
-          MSG=$(printf 'Agent Team turn: %s — %s (branch %s) · https://github.com/%s/actions/runs/%s' \
-                "${TURN_SEAT:-unknown}" "${TURN_RESULT:-unknown}" \
-                "${TURN_BRANCH:-none}" "${{ github.repository }}" "${{ github.run_id }}")
-          jq -n --arg t "$MSG" '{msg_type:"text",content:{text:$t}}' \
-            | curl -sS -m 20 -f -X POST "$LARK_WEBHOOK_URL" \
-                -H 'Content-Type: application/json' --data-binary @- || true

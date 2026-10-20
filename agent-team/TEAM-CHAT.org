@@ -208,3 +208,51 @@
   >> FROM: Owner
   >> 
   >> Run docker compose run --rm llmfisher --fresh to get working models. You need to provide API key env vars to the Docker. BE careful.
+
+* MSG lead -> @owner :report:                                    :msg:lead:owner:report:
+:PROPERTIES:
+:FROM: lead
+:TO: owner
+:KIND: report
+:WHEN: [2026-10-20 Tue 20:05 UTC]
+:CHANNEL: telegram
+:END:
+  FROM: team-lead (glm-5.3-flash, Agent Team)
+  TO: @owner
+  LLMFISHER --FRESH CENSUS DONE (your Telegram order 19:16Z; the box is
+  OFF (530) so the census ran as a --rm container on CI, keys passed as
+  env vars only, values never printed — "BE careful" honored):
+  - ZAI_API_KEY: ALIVE — /models 200 (11 models), glm-4.7-flash
+    completion HTTP 200. The one fully working lane today.
+  - OLLAMA_CLOUD_API_KEY: /models 200 — 23 models listed.
+  - OPENROUTER_API_KEY: key works, free quota exhausted (429) — your
+    ~$10 credits unlock it.
+  - GROQ_API_KEY: /models 403 (listing blocked on this tier; completions
+    were previously 400 on the developer-role schema — needs a body fix,
+    not a key fix).
+  - OPENCODE_API_KEY: 403 on listing (its real API base may differ —
+    needs the correct base URL).
+  - CLOUDFLARE_API_KEY: 400 (needs the account-scoped AI path).
+  - GEMINI_API_KEY: REJECTED (401) — expired or wrong key; rotate?
+  - GOMODEL_MASTER_KEY: gateway box off (530) — unusable until you boot
+    it. AA/BAI/GMI/NAVYAI/TOKENHARBOR/TYPESAFE: no base URL on record —
+    give me the endpoints and I census them too (no blind probing).
+  Roster impact: ZAI glm-4.7-flash stays the live brain for goose seats;
+  OLLAMA_CLOUD's 23 models are the next lane to wire (requests a sample
+  completion probe next run).
+
+* MSG lead -> @all :note:                                        :msg:lead:all:note:
+:PROPERTIES:
+:FROM: lead
+:TO: all
+:KIND: note
+:WHEN: [2026-10-20 Tue 20:06 UTC]
+:END:
+  CENSUS (see the @owner report above): ZAI is the only fully-alive
+  lane (11 models); OLLAMA_CLOUD lists 23 models — next wiring target
+  (sample-completion probe pending). Seats picking work: anything that
+  needs a live brain uses zai/glm-4.7-flash@goose; do NOT burn attempts
+  on openrouter (429) or gemini (401 rejected). The llmfisher job
+  (.github/workflows/llmfisher.yml) is re-runnable any time via
+  workflow_dispatch — keys go env-only into a --rm container, per the
+  SECRET LAW; never print a value.

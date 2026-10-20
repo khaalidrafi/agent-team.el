@@ -54,24 +54,21 @@
      OLLAMA_CLOUD/GEMINI/ZAI/TYPESAFE/AA/BAI/GMI/NAVYAI keys, CF_TUNNEL_TOKEN.
      Do NOT paste values into any web model's chat — that sends them to a third
      party and logs them. Paste the path and have the Owner relay.
-   - Owner's word 13:25: "scopes will be updated" — treat step 1 as pending
-     their release, not as their failure to act.
+   - Owner's word 13:25: "scopes will be updated" — DONE 14:11: tenant im:chat +
+     im:chat:create verified at grant_status 1 (54 scopes total) and the group
+     was created the same minute. im:message:send was NOT applied and the user
+     scope im:message.send_as_user is missing — that is the only scope gap left.
    :NEXT:
-   1. Ask the Owner the one blocking question: "did you paste the updated
-      tenant scopes AND publish a version?" Then re-run the scope query; success
-      = im:chat and im:chat:create present at grant_status 1.
-      Shortcut the Owner may prefer (found this session, DRY-RUN ONLY — never
-      fired, and it is a permission action so get their explicit GO):
-      lark-cli api POST /open-apis/application/v6/scopes/apply --as bot --data
-      '{"scope_info":[{"scope_name":"im:chat","scope_type":"tenant"},{"scope_name":"im:chat:create","scope_type":"tenant"},{"scope_name":"im:message:send","scope_type":"tenant"}]}'
-      — app self-manages (application:application:self_manage is granted); an
-      approval request lands in the Owner's admin queue instead of JSON paste.
-      A version release may still be required — that is the open question.
-   2. Retry the blocked group creation:
-      lark-cli im +chat-create --as bot --name "Agent Team" --description "khaalidrafi/agent-team.el — board relay & dispatch wake loop" --users ou_fdccdb0c3968de7d363b56fb9c154513 --set-bot-manager
-      On 232043 (bot cannot invite invisible users): create bot-only, then add
-      the Owner as member --as user. Send one test message per identity. Record
-      chat_id + group link in lark/01's :LOGBOOK:.
+   1. DONE 14:11 — Owner applied the scopes; verified at grant_status 1 with
+      lark-cli api GET /open-apis/application/v6/scopes --as bot --page-all.
+      Keep that command as the standing check before blaming the console.
+      The scopes/apply shortcut was NOT needed (never fired).
+   2. DONE 14:11 by the out-going Lead before the seat changed — see lark/01:
+      group "Agent Team" oc_de19c9d95e0e277c1eb194a4da08674c exists, bot is
+      manager, Owner is a member, bot test message sent. REMAINING: user-identity
+      test message is blocked on user scope im:message.send_as_user (device
+      re-auth started, 600 s window; if approval fails the Owner must add that
+      scope in the console first). Recipe in COMMON §LARK.
    3. Escape hatch if the bot path stays blocked: create the group AS USER
       (scope already granted), then the Owner adds the Team Lead app bot from
       group settings (im:chat.members:bot_access is granted).
@@ -171,6 +168,23 @@
          Full procedure: templates/AGENT-TEAM-COMMON.org §LARK.
    - [ ] Group creation BLOCKED: app missing im:chat* scopes (error 99991672);
          14-scope list handed to Owner; retry on their "done".
+         RESOLVED 14:11 — Owner applied scopes; see next lines.
+   - [X] AGENT TEAM GROUP EXISTS: chat_id oc_de19c9d95e0e277c1eb194a4da08674c,
+         private group, created --as bot with --set-bot-manager. Members
+         verified via +chat-members-list: Team Lead bot
+         (ou_5a14e61ac673d06f2305a2f21222cffe, app cli_aa5cdf374b21de2c,
+         tenant 19b046b7ec5f1978) + Khalid Rafi
+         (ou_fdccdb0c3968de7d363b56fb9c154513). Open:
+         https://applink.larksuite.com/client/chat/open?openChatId=oc_de19c9d95e0e277c1eb194a4da08674c
+         (the invite share_link carries a token — kept out of git on purpose).
+   - [X] Bot test message sent: om_x100b624651605ca8ed4e1da976cc5a4 (1/2).
+   - [ ] User test message BLOCKED on user scope im:message.send_as_user
+         (missing_scope on +messages-send --as user; the app's user array has
+         im:message but not the split send-as-user scope). Device re-auth flow
+         started 14:11, code expires in 600 s — if approval fails, the Owner
+         must add im:message.send_as_user to the console user scopes first.
+         Tenant scopes now confirmed granted: im:chat, im:chat:create,
+         im:chat.members:bot_access (im:message:send was NOT applied).
    - [ ] Scope status re-verified 13:20 (GET /open-apis/application/v6/scopes,
          bot, --page-all): 52 scopes all grant_status 1; im:chat and
          im:chat:create ABSENT → Owner has not applied them, no new version

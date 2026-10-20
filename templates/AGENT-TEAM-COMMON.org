@@ -102,16 +102,37 @@ real ids only, VMs excluded)
   git; embedded guides: lark-cli skills read lark-shared | lark-im | lark-event
 - app bot: "Team Lead" cli_aa5cdf374b21de2c (brand lark, profile team-lead) =
   the team's app bot; group "Agent Team" = board relay channel
+  chat_id oc_de19c9d95e0e277c1eb194a4da08674c (created 2026-10-20, private,
+  bot = manager, Owner = member)
+- RECIPE that worked (verbatim, bot identity, once scopes were granted):
+  lark-cli im +chat-create --as bot --name "Agent Team" --description "…" \\
+    --users <owner_open_id> --set-bot-manager
+  verify with lark-cli im +chat-members-list --chat-id <oc_…> --as bot
+  send with lark-cli im +messages-send --chat-id <oc_…> --as bot --text "…"
+  invite share_links carry a token → never commit them; the openChatId applink
+  is safe (it only opens a chat the reader is already in)
+- identity asymmetry (live evidence): bot sends with im:message:send_as_bot;
+  USER sends need the separate scope im:message.send_as_user — im:message alone
+  is not enough. Fix by console-adding the user scope, then device re-auth:
+  lark-cli auth login --scope "im:message.send_as_user" --no-wait --json
+- check what is ACTUALLY granted before blaming the console UI:
+  lark-cli api GET /open-apis/application/v6/scopes --as bot --page-size 100
+  --page-all → grant_status 1 = live, 2 = pending; a scope missing from the
+  list was never applied. This is how "scopes added" gets verified, not assumed.
 - identities: bot = tenant token, ready once app released (NO auth login for bot);
   user = device flow split: lark-cli auth login --domain im,contact --no-wait
   --json → send verification_url + QR (lark-cli auth qrcode) to Owner → after
-  approval complete with --device-code
+  approval complete with --device-code. Codes expire in 600 s — a stale code
+  errors "device_code is invalid", just restart the flow.
 - bot scopes (apply in console, then PUBLISH A VERSION — scopes inert until
   release): im:chat, im:chat:create, im:chat:create_by_user, im:chat:read,
   im:chat.members:read, im:chat.members:write_only, im:message,
   im:message:send_as_bot, im:message:send, im:message:readonly,
   im:message.group_msg, im:message.p2p_msg:readonly,
   im:message.reactions:read, contact:user.base:readonly
+- console batch import shape (Owner's own format, use this and nothing else):
+  {"scopes":{"tenant":[…],"user":[…]}} — one object, two string arrays. A
+  bare list or two separate blocks is rejected as invalid.
 - permission errors return console_url + missing_scopes — forward console_url to
   Owner verbatim; never auth-login a bot scope gap
 - custom-bot webhooks (per-seat notify bots): CREATION IS UI-ONLY (group settings

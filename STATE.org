@@ -5,10 +5,11 @@
   - teamify: agent-team/ files + templates committed
 * IN-FLIGHT
   - DISPATCH 001: GLM elisp — Jev choice/score (branch ai/elisp-glm)
-  - lark/01: Lark IM layer — bot + user identities live, Agent Team group
-    BLOCKED on Owner: apply tenant scopes (im:chat, im:chat:create,
-    im:message:send) and publish a version. Then Lead runs the retry in the
-    board's lark/01.
+  - lark/01: Lark IM layer — Agent Team group LIVE 14:11
+    (oc_de19c9d95e0e277c1eb194a4da08674c, bot = manager, Owner = member, bot
+    test message sent). Remaining: user-identity test blocked on scope
+    im:message.send_as_user (device re-auth pending Owner approval), then the
+    10 per-seat custom-bot webhooks (Owner UI) + notify script + CI secret.
   - lead/03: Team Lead seat HANDOFF — qwen3.8-flash@qoder/local →
     qwen3.7-plus@qwen/web (Owner order). Full context in the board's
     :HANDOFF: drawer.

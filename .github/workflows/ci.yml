@@ -366,14 +366,24 @@ jobs:
           set +e
           case "$SEAT" in
             principal-engineer)
-              # OpenCode body: headless defect (mesh/01 + demo/01 evidence).
-              # Brain poolside/laguna-s-2.1:free: absent from OpenCode's
-              # models.dev catalog AND behind OpenRouter's exhausted free
-              # quota. Seat stays BLOCKED until the Owner's body/brain
-              # ruling (harness/01 item 2) — rotation continues.
-              opencode run --print-logs --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF" \
-                && echo "TURN_RESULT=opencode run OK" \
-                || echo "TURN_RESULT=BLOCKED (opencode body headless defect + poolside lane dead — Lead escalation filed, harness/01)"
+              # OpenCode body + poolside: OpenCode cannot host the model
+              # (absent from its models.dev catalog — demo/01 evidence) and
+              # OpenRouter's free quota is exhausted. Attempt order:
+              # 1. opencode (in case the catalog/defect is repaired);
+              # 2. goose via OpenRouter poolside — SELF-HEALS the moment the
+              #    Owner adds ~10 credits (harness/01 item 1/2); OpenRouter
+              #    normalizes Goose's developer role server-side (demo/01
+              #    evidence: qwen3.8-27b worked via OpenRouter, Groq didn't).
+              if opencode run --print-logs --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF"; then
+                echo "TURN_RESULT=opencode run OK"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL="poolside/laguna-s-2.1:free" \
+                   OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+                   OPENAI_HOST="https://openrouter.ai/api/v1" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: openrouter/poolside@goose — credits landed)"
+              else
+                echo "TURN_RESULT=BLOCKED (poolside dead on both bodies — Owner ruling: credits or brain swap, harness/01)"
+              fi
               ;;
             quality-assurance-engineer|software-engineer|release-engineer)
               # LANE (mesh/01 repair, Lead, 2026-10-20 15:45Z): every lane on

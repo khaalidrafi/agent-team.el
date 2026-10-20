@@ -53,6 +53,15 @@ jobs:
       # v1 bug: the sealed file was a DOTFILE and v4 defaults
       # include-hidden-files:false -> "No files were found" (run 39481111876
       # evidence). Non-hidden name + explicit include flag.
+      - name: Upload raw transcript (post-mortem, 1-day)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cb-transcript
+          path: cb-transcript.txt
+          retention-days: 1
+          if-no-files-found: ignore
+
       - name: Upload sealed credential artifact (1-day retention)
         if: always() && hashFiles('cb-creds-sealed.bin') != ''
         uses: actions/upload-artifact@v4

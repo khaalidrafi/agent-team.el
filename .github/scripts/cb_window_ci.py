@@ -128,6 +128,12 @@ while elapsed() < DUR and not url:
 if not url:
     print("URL_READY: never — dumping final transcript for post-mortem", flush=True)
     print("TUI_FULL[final]: " + clean_tail()[:5500], flush=True)
+    raw_all = OUT_LOG.read_bytes()
+    Path("cb-transcript.txt").write_bytes(raw_all)
+    for m in re.finditer(rb"https?://[^\s\x1b\x07\"]{12,}", raw_all):
+        u = m.group(0).decode("utf-8", "replace")
+        print(f"RAWURL: {u[:140]}", flush=True)
+    print(f"TRANSCRIPT_BYTES: {len(raw_all)}", flush=True)
 
 # ---- landing watch (CLI keeps polling while alive) ----
 def snapshot():

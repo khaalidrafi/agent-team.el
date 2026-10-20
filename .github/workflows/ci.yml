@@ -1,24 +1,30 @@
 name: CI
 
 # Cloud CI is the Owner's P0: it is what keeps the team alive when the local
-# box goes off.  Five rules follow from that.  (1) CI must verify the same
-# things we verify locally -- ert suite AND byte-compile, not one without the
-# other.  (2) CI must never fail for a reason unrelated to the code: every
-# network-facing step is guarded, so a missing secret is reported and skipped
-# instead of failing the run.  (3) The team must RUN CONTINUOUSLY, IN TURNS
-# (Owner order 2026-10-20): the scheduled `turn` job rotates the real-agent
-# seats (model@agent pairs from agent-team/AGENT-TEAM-MEMBERS.org) through
-# one work segment per run, until the OBJECTIVE in agent-team/TEAM-CONTROL.org
-# is marked COMPLETE or the Owner flips #+KILL-SWITCH: ON.  (4) A real agent,
-# not a bare key: each seat's harness (OpenCode / Goose) is installed in the
-# runner and reaches the brain directly by its provider key from repo
-# secrets -- there is no @actions body (Owner order 2026-10-20).  (5) Lark
-# communication is PER-ROLE (Owner order 2026-10-20): there are NO generic CI
-# notifications -- each member writes its own DISPATCH/REPORT to the Lark
-# Agent Team group through its role's custom-bot webhook (repo secret
-# LARK_WEBHOOK_<ROLE>). The GoModel gateway is DOWN (Owner, 2026-10-20) and
-# is gone from this workflow entirely; the repo is PUBLIC (unlimited Linux
-# Actions minutes).
+# box goes off.  Rules: (1) CI must verify the same things we verify locally
+# -- ert suite AND byte-compile, not one without the other.  (2) CI must
+# never fail for a reason unrelated to the code: every network-facing step
+# is guarded, so a missing secret is reported and skipped instead of failing
+# the run.  (3) The team RUNS CONTINUOUSLY, IN TURNS (Owner order
+# 2026-10-20): the scheduled `turn` job rotates the real-agent seats
+# (model@agent pairs from agent-team/AGENT-TEAM-MEMBERS.org) through one
+# work segment per run, until the OBJECTIVE in agent-team/TEAM-CONTROL.org
+# is marked COMPLETE or the Owner flips #+KILL-SWITCH: ON.  (4) AGENTS ARE
+# PREINSTALLED IN A DOCKER CONTAINER (Owner order 2026-10-20 #hq: "Use
+# Docker containers with agents preinstalled. Don't install in CI. That's
+# a waste of time. You'll have to make agent configs, too, and reuse
+# them."): the `harness` job builds docker/harness/ (OpenCode + Goose +
+# baked configs, NO keys baked) and pushes ghcr.io/khaalidrafi/
+# agent-team-harness:latest; every turn runs its segment inside that image
+# (local rebuild hits the gha layer cache, ~seconds).  (5) A real agent,
+# not a bare key: each seat's brain is reached directly by its provider
+# key from repo secrets -- there is no @actions body (Owner order
+# 2026-10-20).  (6) REPORTS: the BOARD (agent-team/AGENT-TEAM-TODOS.org)
+# is the report channel for DEMO runs only (Owner order 2026-10-20 #hq);
+# REAL runs use the Lark group through PER-ROLE custom-bot webhooks
+# (LARK_WEBHOOK_<ROLE>) written by the members themselves.  The GoModel
+# gateway is DOWN (Owner, 2026-10-20) and gone from this workflow; the
+# repo is PUBLIC (unlimited Linux Actions minutes).
 
 on:
   push:
@@ -125,7 +131,8 @@ jobs:
             "https://api.z.ai/api/paas/v4/chat/completions" \
             "glm-4.7-flash" "$ZAI_API_KEY"
 
-          # QA fallback lane — nemotron-3.5-lightning:free
+          # Fallback lane — nemotron-3.5-lightning:free (Software rank-3 /
+          # Release rank-1 fallback; active goose lane during demo/01)
           probe "openrouter/nvidia/nemotron-3.5-lightning:free" \
             "https://openrouter.ai/api/v1/chat/completions" \
             "nvidia/nemotron-3.5-lightning:free" "$OPENROUTER_API_KEY"
@@ -134,13 +141,43 @@ jobs:
           echo "Law: a probe row is evidence of the RUNTIME, not of quality —" >> "$SUMMARY"
           echo "seat ranks live in agent-team/AGENT-TEAM-MEMBERS.org." >> "$SUMMARY"
 
+  # Build + publish the PREINSTALLED agent harness image (Owner order
+  # 2026-10-20 #hq). Agents and configs are baked; keys are NEVER baked.
+  # Layer cache (type=gha) makes rebuilds near-instant.
+  harness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: docker/harness
+          push: true
+          tags: |
+            ghcr.io/khaalidrafi/agent-team-harness:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   # ONE TURN OF WORK (Owner order 2026-10-20). Reads agent-team/TEAM-CONTROL.org:
-  #   #+KILL-SWITCH: ON        -> stop everything, say so in Lark, exit green.
-  #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, say so in Lark, exit green.
+  #   #+KILL-SWITCH: ON        -> stop everything, exit green.
+  #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, exit green.
   #   #+OBJECTIVE: empty       -> no work defined; suite stays green, skip.
-  #   otherwise                -> install the on-turn member's REAL agent
-  #                               harness, work one segment toward the
-  #                               objective, advance the rotation, commit.
+  #   otherwise                -> run the on-turn member's REAL agent
+  #                               (preinstalled in the harness container)
+  #                               for one segment toward the objective,
+  #                               advance the rotation, commit.
   # The turn NEVER merges to ai/main application code (merge gate is the
   # Lead's, on a green suite + verification pass) and NEVER fails the run on
   # a seat problem: a dead seat logs BLOCKED and the rotation advances.
@@ -148,7 +185,7 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: [test, probe]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     continue-on-error: true
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -157,6 +194,7 @@ jobs:
       # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
       # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
       # group through ITS role's bot. No generic CI notifications exist.
+      # DEMO runs (Owner order 2026-10-20 #hq) report on the BOARD instead.
       LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
       LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
       LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER: ${{ secrets.LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER }}
@@ -212,47 +250,14 @@ jobs:
           esac
           echo "$MSG" >> "$SUMMARY"
 
-      - name: Install agent harness (OpenCode)
-        if: steps.control.outputs.mode == 'work' && contains(fromJSON('["principal-engineer","quality-assurance-engineer"]'), steps.control.outputs.seat)
-        continue-on-error: true   # dead harness = BLOCKED + rotation advances, never a stalled pointer
+      - name: Build harness image (preinstalled agents — cached, no installs)
+        if: steps.control.outputs.mode == 'work'
         run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
-          # Explicit provider config: poolside/laguna-s-2.1:free is not in
-          # OpenCode's bundled model catalog — without this mapping the run
-          # dies with "Unexpected server error" (demo/01 turn 1 evidence).
-          mkdir -p "$HOME/.config/opencode"
-          cat > "$HOME/.config/opencode/opencode.json" <<'EOF'
-          {
-            "$schema": "https://opencode.ai/config.json",
-            "provider": {
-              "openrouter": {
-                "npm": "@openrouter/ai-sdk-provider",
-                "name": "OpenRouter",
-                "options": { "apiKey": "{env:OPENROUTER_API_KEY}" },
-                "models": {
-                  "poolside/laguna-s-2.1:free": { "name": "Laguna S 2.1 (free)" }
-                }
-              }
-            }
-          }
-          EOF
-          opencode --version || true
-
-      - name: Install agent harness (Goose)
-        if: steps.control.outputs.mode == 'work' && contains(fromJSON('["software-engineer","release-engineer"]'), steps.control.outputs.seat)
-        continue-on-error: true   # dead harness = BLOCKED + rotation advances, never a stalled pointer
-        run: |
-          # Direct tarball install: the download_cli.sh installer opens
-          # /dev/tty for interactive config and dies on CI runners with
-          # "No such device or address" (demo/01 turn 2 evidence).
-          mkdir -p "$HOME/.local/bin" /tmp/goose-dl
-          curl -fsSL -o /tmp/goose-dl/goose.tar.bz2 \
-            "https://github.com/block/goose/releases/download/stable/goose-x86_64-unknown-linux-gnu.tar.bz2"
-          tar -xjf /tmp/goose-dl/goose.tar.bz2 -C /tmp/goose-dl
-          install -m 0755 /tmp/goose-dl/goose "$HOME/.local/bin/goose"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          goose --version || true
+          docker buildx build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            -t agent-team-harness:local \
+            docker/harness
 
       - name: Prepare git identity
         if: steps.control.outputs.mode == 'work'
@@ -262,7 +267,7 @@ jobs:
           git remote set-url --push origin \
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
 
-      - name: Run the turn (one segment, headless agent)
+      - name: Run the turn (one segment, preinstalled agent in container)
         if: steps.control.outputs.mode == 'work'
         run: |
           SEAT="${{ steps.control.outputs.seat }}"
@@ -272,6 +277,7 @@ jobs:
           TOP=$(grep -E '^\*\* (TODO|PROGRESS|BLOCKED)' "$BOARD" | head -3 | sed 's/^\*\* //' || true)
           BRANCH="ai/turn-$(date -u +%Y%m%d-%H%M)"
           git checkout -b "$BRANCH"
+          echo "TURN_BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
           BRIEF="You are the on-turn member of the Agent Team, seat ${SEAT}.
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
@@ -288,67 +294,61 @@ jobs:
           4. Append a :LOGBOOK: note to the board item: what changed + evidence
              (file:line, commit sha). Never mark DONE (that is the Lead's gate).
           5. Commit your changes on this branch with message 'turn(${SEAT}): ...'.
-          6. REPORT TO LARK (Owner order: members write their own reports): POST
-             your REPORT to YOUR role's Lark custom-bot webhook in env
-             ROLE_LARK_WEBHOOK — only if it is non-empty. Format: JSON
-             {\"msg_type\":\"text\",\"content\":{\"text\":\"REPORT — <task-id>: <title>\\nFROM: <your role> — <your model@agent>\\nRESULT: DONE | PARTIAL | BLOCKED\\nEVIDENCE: <file:line / commit sha>\\nNEXT: <what remains>\"}}.
-             If ROLE_LARK_WEBHOOK is empty, skip silently and note it in the
-             board LOGBOOK. Never put credentials in the message body.
+          6. REPORT: DEMO runs (demo/01) — write your REPORT into the work the
+             objective asks for (the demo file). Real runs — POST your REPORT
+             to YOUR role's Lark custom-bot webhook in env ROLE_LARK_WEBHOOK
+             (JSON {\"msg_type\":\"text\",\"content\":{\"text\":\"REPORT — <task-id>: <title>\\nFROM: <role> — <model@agent>\\nRESULT: DONE | PARTIAL | BLOCKED\\nEVIDENCE: <file:line / commit sha>\\nNEXT: <what remains>\"}})
+             only if it is non-empty; if empty, skip silently and note it in
+             the board LOGBOOK. Never put credentials in any message body.
           7. Do NOT push to ai/main; leave the branch for the Lead's merge gate.
           Boundaries: no secrets in files or commits; no spend; no destructive
           actions; stay in scope of the chosen item."
 
-          # The on-turn member's own Lark bot (per-role webhook, Owner order).
-          case "$SEAT" in
-            principal-engineer)         export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_PRINCIPAL_ENGINEER" ;;
-            software-engineer)          export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_SOFTWARE_ENGINEER" ;;
-            quality-assurance-engineer) export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER" ;;
-            release-engineer)           export ROLE_LARK_WEBHOOK="$LARK_WEBHOOK_RELEASE_ENGINEER" ;;
-          esac
-
+          # Seat -> body command. Brains come from the baked configs; keys
+          # come from repo secrets via env. The harness image has BOTH
+          # bodies preinstalled (Owner order: containers, not CI installs).
+          cat > /tmp/turn-inside.sh <<'INNER'
+          #!/usr/bin/env bash
+          set +e
           case "$SEAT" in
             principal-engineer)
-              export OPENROUTER_API_KEY
-              opencode run --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF" \
-                && TURN_RESULT="opencode run OK" \
-                || TURN_RESULT="BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
+              opencode run --print-logs --model "openrouter/poolside/laguna-s-2.1:free" "$BRIEF" \
+                && echo "TURN_RESULT=opencode run OK" \
+                || echo "TURN_RESULT=BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
               ;;
             quality-assurance-engineer)
-              export ZAI_API_KEY
-              opencode run --model "zai/glm-4.7-flash" "$BRIEF" \
-                && TURN_RESULT="opencode run OK" \
-                || TURN_RESULT="BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
+              opencode run --print-logs --model "zai/glm-4.7-flash" "$BRIEF" \
+                && echo "TURN_RESULT=opencode run OK" \
+                || echo "TURN_RESULT=BLOCKED (opencode run failed — Release Engineer's next turn repairs the harness)"
               ;;
-            software-engineer)
-              # LANE SWITCH (demo/01 turn 2 evidence): Groq's qwen3.8-27b
-              # chat template rejects the `developer` role Goose sends
-              # (400 "Unexpected message role", provider req_01m5cqbghke9).
-              # Same brain via OpenRouter — roles normalized server-side.
-              export OPENROUTER_API_KEY
-              export GOOSE_PROVIDER="openrouter"
-              export GOOSE_MODEL="qwen/qwen3.8-27b"
+            software-engineer|release-engineer)
               goose run --no-session -t "$BRIEF" \
-                && TURN_RESULT="goose run OK (openrouter lane)" \
-                || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
-              ;;
-            release-engineer)
-              export OPENROUTER_API_KEY
-              export GOOSE_PROVIDER="openrouter"
-              export GOOSE_MODEL="qwen/qwen3.8-27b"
-              goose run --no-session -t "$BRIEF" \
-                && TURN_RESULT="goose run OK (openrouter lane)" \
-                || TURN_RESULT="BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
+                && echo "TURN_RESULT=goose run OK (lane: ${GOOSE_MODEL})" \
+                || echo "TURN_RESULT=BLOCKED (goose run failed — Release Engineer's next turn repairs the harness)"
               ;;
           esac
+          INNER
 
+          docker run --rm -i --user 1001:1001 \
+            -v "$PWD":/workspace -w /workspace \
+            -e SEAT -e BRIEF \
+            -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
+            agent-team-harness:local bash -s < /tmp/turn-inside.sh 2>&1 \
+            | tee /tmp/turn-out.txt
+          # The inner script's last TURN_RESULT line is the seat's verdict.
+          grep -o 'TURN_RESULT=.*' /tmp/turn-out.txt | tail -1 > /tmp/turn-result.txt
+          if [ ! -s /tmp/turn-result.txt ]; then
+            echo "TURN_RESULT=BLOCKED (container produced no verdict — read the log)" > /tmp/turn-result.txt
+          fi
+          cat /tmp/turn-result.txt >> "$GITHUB_ENV"
+
+          TURN_RESULT=$(sed 's/^TURN_RESULT=//' /tmp/turn-result.txt | tail -1)
           echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "objective: ${OBJECTIVE}" >> "$SUMMARY"
           echo "branch: ${BRANCH}" >> "$SUMMARY"
           echo "result: ${TURN_RESULT}" >> "$SUMMARY"
-          echo "TURN_RESULT=$TURN_RESULT" >> "$GITHUB_ENV"
           echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
-          echo "TURN_BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
       # The agent's branch is pushed for the Lead's merge gate; ONLY the
       # control-file pointer lands on ai/main, so an agent can never merge

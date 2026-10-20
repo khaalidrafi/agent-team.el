@@ -1,0 +1,15 @@
+# Baked Goose config — reused by every CI turn (Owner order 2026-10-20:
+# "make agent configs, too, and reuse them"). Workflow env vars override
+# these values per run; nothing secret is baked into the image.
+#
+# LANE NOTE (demo/01 evidence, 2026-10-20):
+# - HIRED brain groq/qwen3.8-27b: Groq's chat template rejects the
+#   `developer` role Goose sends (HTTP 400 "Unexpected message role",
+#   provider req_01m5cqbghke9x8c77r6gbk6zwk) — lane DOWN pending the
+#   Release Engineer's harness repair.
+# - Same brain via OpenRouter: paid-only credits on the repo key — lane DOWN.
+# - ACTIVE default lane: the rostered fallback
+#   openrouter/nvidia/nemotron-3.5-lightning:free
+#   (Software rank-3 / Release rank-1 fallback in AGENT-TEAM-MEMBERS.org).
+GOOSE_PROVIDER: openrouter
+GOOSE_MODEL: nvidia/nemotron-3.5-lightning:free

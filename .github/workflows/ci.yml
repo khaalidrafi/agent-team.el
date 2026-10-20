@@ -295,11 +295,11 @@ jobs:
         timeout-minutes: 14   # a hung harness fails THIS step, not the rotation
         run: |
           SEAT="${{ steps.control.outputs.seat }}"
-          # Read the objective FROM THE FILE, never by ${{ }} text
-          # substitution: an objective containing quotes/$/backticks must
-          # never be rendered into the script by the workflow template
-          # (mesh/01 turn 1-5: objective text with "quotes" broke bash
-          # parsing -> exit 127 before any agent ran).
+          # Read the objective FROM THE FILE, never by template substitution:
+          # an objective containing quotes/dollars/backticks must never be
+          # rendered into the script by the workflow template (mesh/01 turn
+          # 1-5: quoted objective text broke bash parsing -> exit 127 before
+          # any agent ran).
           OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1)
           BOARD=agent-team/AGENT-TEAM-TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"

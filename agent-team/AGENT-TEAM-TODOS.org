@@ -4,6 +4,123 @@
 
 * Board
 
+** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to qwen3.7-plus (acting Lead) :HANDOFF:
+   HANDOFF #2 — lead/03: relinquish the Team Lead seat (Agent Team)
+   FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
+   TO: Team Lead (acting in) — qwen3.7-plus@qwen/web
+       CONTESTED — Director a3203d3 (13:52) mandates qwen3.8-max@qwen/web;
+       Owner ruling decides. Drawer is written for whichever brain wins.
+   REPO: khaalidrafi/agent-team.el
+   DEPS: lark-cli ~/.guix-profile/bin/lark-cli v1.0.98 (uses — lark/01) · GoModel gateway http://127.0.0.1:8080 (uses — roster/brain verification) · Lark developer console (blocks — Owner-only: scope apply + version release)
+   PRIORITY: P0 · RISK: writes
+   :HANDOFF:
+   :FROM: qwen3.8-flash@qoder/local — harness Qoder; same shift ran
+     deepseek-v4.1-flash@qoder before the mid-shift handoff. Evidence: ai/main
+     e44a4ad (seat fix + COMMON §LARK + lark/01).
+   :CONTEXT:
+   - DISPATCH #2 came from kimi-k2.6@kimi/web claiming my brain was
+     kilo/qwen3-32b. FALSE. Live roster (GET /v1/models, 163 ids) rejects that
+     id and bare deepseek-v4.1-flash; DS Flash exists only as
+     opencode/deepseek-v4.1-flash-free (OpenCode-only tier) and
+     tokenharbor/deepseek-v4.1-flash:free. RULE: never dispatch a snapshot
+     model name — re-verify against the live roster first.
+   - REPORT #2 is the REVIEW item below (RESULT: PARTIAL). ci/01 was NOT
+     verified — its assigned brain groq/qwen3.8-27b@opencode is down.
+   - Lark is the Owner's real priority. Done: lark-cli bound to app
+     cli_aa5cdf374b21de2c ("Team Lead", profile team-lead, brand lark);
+     bot identity ready (open_id ou_5a14e61ac673d06f2305a2f21222cffe); user
+     identity ready via device flow (Owner Khalid Rafi,
+     ou_fdccdb0c3968de7d363b56fb9c154513). Procedure + every gotcha:
+     templates/AGENT-TEAM-COMMON.org §LARK.
+   - Scope state, verified this session via
+     GET /open-apis/application/v6/scopes (bot, --page-all): 52 scopes, ALL
+     grant_status 1, and im:chat / im:chat:create ARE ABSENT — the Owner has
+     not applied the updated tenant scopes yet, so no new version was
+     released. user-side im:chat:create_by_user IS granted.
+   - Owner's console batch format is {"scopes":{"tenant":[...],"user":[...]}};
+     the merged JSON I gave them adds tenant im:chat, im:chat:create,
+     im:message:send. My earlier three attempts used wrong shapes — use theirs.
+   - Webhooks: docs-verified that custom-bot webhook creation is UI-ONLY (no
+     API). Send = POST /open-apis/bot/v2/hook/<id> body
+     {"msg_type":"text","content":{"text":...}}. 10 seat bot names already
+     handed to the Owner.
+   - Hygiene: .agent-org/ holds a plaintext GitHub PAT + GOMODEL_MASTER_KEY
+     (leaked in DISPATCH #2 text) — it is gitignored, NEVER commit it, and the
+     Owner should rotate that PAT. Credentials go env/dispatch only, never
+     into board, git, or logs.
+   - Credentials live in ~/llmfisher/.env (chmod 600, shell `export` form;
+     source it, never cat it). Names on record, values never: GOMODEL_MASTER_KEY
+     (gateway), GROQ/OPENROUTER/OPENCODE/TOKENHARBOR/CLOUDFLARE(+ACCOUNT_ID)/
+     OLLAMA_CLOUD/GEMINI/ZAI/TYPESAFE/AA/BAI/GMI/NAVYAI keys, CF_TUNNEL_TOKEN.
+     Do NOT paste values into any web model's chat — that sends them to a third
+     party and logs them. Paste the path and have the Owner relay.
+   - Owner's word 13:25: "scopes will be updated" — treat step 1 as pending
+     their release, not as their failure to act.
+   :NEXT:
+   1. Ask the Owner the one blocking question: "did you paste the updated
+      tenant scopes AND publish a version?" Then re-run the scope query; success
+      = im:chat and im:chat:create present at grant_status 1.
+      Shortcut the Owner may prefer (found this session, DRY-RUN ONLY — never
+      fired, and it is a permission action so get their explicit GO):
+      lark-cli api POST /open-apis/application/v6/scopes/apply --as bot --data
+      '{"scope_info":[{"scope_name":"im:chat","scope_type":"tenant"},{"scope_name":"im:chat:create","scope_type":"tenant"},{"scope_name":"im:message:send","scope_type":"tenant"}]}'
+      — app self-manages (application:application:self_manage is granted); an
+      approval request lands in the Owner's admin queue instead of JSON paste.
+      A version release may still be required — that is the open question.
+   2. Retry the blocked group creation:
+      lark-cli im +chat-create --as bot --name "Agent Team" --description "khaalidrafi/agent-team.el — board relay & dispatch wake loop" --users ou_fdccdb0c3968de7d363b56fb9c154513 --set-bot-manager
+      On 232043 (bot cannot invite invisible users): create bot-only, then add
+      the Owner as member --as user. Send one test message per identity. Record
+      chat_id + group link in lark/01's :LOGBOOK:.
+   3. Escape hatch if the bot path stays blocked: create the group AS USER
+      (scope already granted), then the Owner adds the Team Lead app bot from
+      group settings (im:chat.members:bot_access is granted).
+   4. Per-seat webhooks: Owner adds the 10 custom bots in the group UI; capture
+      URLs into an env store under ~/.agents-work (chmod 600 — never git, never
+      board), wire a notify script + GitHub secret LARK_WEBHOOK_URL. Ties to the
+      ci/01 guard (CI must skip notify when the secret is unset).
+   5. Wake loop: lark-cli event consume im.message.receive_v1 --as bot (long
+      connection; no public URL needed).
+   6. Re-staff ci/01 from a LIVE roster id (one verification call first), then
+      run the ert suite and byte-compile before claiming anything.
+   7. Board law: read an item's :LOGBOOK: before touching it; per-member
+      :last-dispatch: counters; REVIEW needs DOD checkboxes + completion note;
+      only the EM flips DONE; UNVERIFIED beats heroic DONE.
+      DOD for lark/01: group exists with bot + Owner, one test message per
+      identity, webhook relay + CI secret wired, procedure current in §LARK.
+   :BOUNDARIES: not yours — :OWN: rulings · merges · spend · pool repair (PE/BE)
+     · guix home reconfigure · committing anything under .agent-org/ · writing
+     any credential to the board or git.
+   :OPEN-RISKS:
+   - LEAD SEAT IS CONTESTED: this handoff (Owner order) names
+     qwen3.7-plus@qwen/web; the Director pushed a3203d3 at 13:52 naming
+     qwen3.8-max@qwen/web. Both are recorded in MEMBERS.org, neither deleted.
+     RECEIVER: do NOT start dispatching until the Owner rules which brain holds
+     the seat — two Leads writing the board is worse than one slow Lead. If you
+     are qwen3.8-max, this drawer's CONTEXT/NEXT still apply to you verbatim.
+   - Dual hat: the Director brain now also holds Lead → author/verifier
+     segregation is broken. Owner must re-staff Director or rule on it.
+   - The new Lead is a WEB model: no shell of its own. Every claim must be an
+     Owner-relayed command with pasted evidence; nothing "verified" without it.
+   - User access token expired 15:10 +06 today; refresh valid to 2026-10-27 and
+     lark-cli auto-refreshes, but re-check auth status --verify --json before
+     any --as user call.
+   - "Scopes need a published version" is docs-derived, not yet proven against
+     this tenant — step 1 is what tests it.
+   - Custom-bot webhook being UI-only is a docs finding; never tested against a
+     live tenant.
+   :END:
+   :LOGBOOK:
+   CLOCK: [2026-10-20 Tue 13:20]
+   - Seat relinquished by qwen3.8-flash@qoder/local on Owner's direct order;
+     shift ends with lark/01 PROGRESS (blocked on Owner scope release) and
+     REPORT #2 in REVIEW (PARTIAL). Nothing left unrecorded.
+   - 13:55 rebase onto origin/ai/main surfaced the Director's a3203d3 (13:52)
+     naming qwen3.8-max@qwen/web for this seat — four minutes after the Owner's
+     order to me. Both entries merged into one CONTESTED seat block instead of
+     one clobbering the other; adjudication raised to the Owner.
+   :END:
+
 ** REVIEW [2026-10-20] lead/02: assume Team Lead seat (identity corrected) — REPORT #2 :REPORT:
    REPORT #2 — lead/02: assume the seat (identity corrected)
    FROM: Team Lead (acting) — qwen3.8-flash@qoder/local
@@ -32,7 +149,7 @@
    :END:
 
 ** PROGRESS [2026-10-20] lark/01: Lark IM layer — app bot, Agent Team group, per-seat webhooks :DISPATCH:
-   TO: Team Lead (acting) — qwen3.8-flash@qoder/local
+   TO: Team Lead (acting) — qwen3.7-plus@qwen/web (via HANDOFF #2, lead/03)
    FROM: Owner (direct ask, relayed in DISPATCH #2) — Khalid Rafi
    REPO: khaalidrafi/agent-team.el (+ Lark tenant "Team Lead" app, external)
    DEPS: lark-cli Guix package (uses — installed, v1.0.98) · Team Lead app cli_aa5cdf374b21de2c (supplies bot identity) · Lark developer console (blocks — Owner-only: scopes apply + release + custom-bot UI)
@@ -54,6 +171,13 @@
          Full procedure: templates/AGENT-TEAM-COMMON.org §LARK.
    - [ ] Group creation BLOCKED: app missing im:chat* scopes (error 99991672);
          14-scope list handed to Owner; retry on their "done".
+   - [ ] Scope status re-verified 13:20 (GET /open-apis/application/v6/scopes,
+         bot, --page-all): 52 scopes all grant_status 1; im:chat and
+         im:chat:create ABSENT → Owner has not applied them, no new version
+         released. Correct batch shape = Owner's own
+         {"scopes":{"tenant":[...],"user":[...]}}; merged JSON delivered adds
+         tenant im:chat + im:chat:create + im:message:send (user array already
+         complete — im:chat:create_by_user granted).
    - [ ] Per-seat webhooks: Owner UI step (10 seat names supplied); then Lead wires
          notify script + LARK_WEBHOOK_URL GitHub secret (ties to ci/01 guard).
    :END:

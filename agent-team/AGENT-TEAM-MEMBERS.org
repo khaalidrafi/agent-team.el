@@ -1,23 +1,43 @@
 #+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
-#+UPDATED: 2026-10-20 — Lead identity corrected (qwen3.8-flash@qoder acting; brain audit in seat entry)
+#+UPDATED: 2026-10-20 — Lead seat CONTESTED: Owner order → qwen3.7-plus@qwen/web (lead/03) vs Director a3203d3 → qwen3.8-max@qwen/web; Owner ruling pending
 
-* Team Lead — qwen3.8-max@qwen/web (ACTING, OUTAGE)
-  - :last-dispatch: 2
-  - duties: board owner · dispatches · verification · merge gates
-  - mode: WEB ONE-SHOT — Owner is the runtime (paste board in, paste decisions
-    out); the resident loop is suspended until pools recover
-  - fallbacks: 1. glm-5.3@zai/web
+* Team Lead — CONTESTED: qwen3.7-plus@qwen/web (Owner order) vs qwen3.8-max@qwen/web (Director a3203d3)
+  - :last-dispatch: 2 (HANDOFF #2 placed qwen3.7-plus here)
+  - CONFLICT 2026-10-20: the Owner ordered this out-going Lead to hand the seat
+    to qwen3.7-plus@qwen/web; four minutes later (13:52) the Director pushed
+    a3203d3 mandating qwen3.8-max@qwen/web. Both appointments are recorded,
+    neither is overwritten. OWNER RULING DECIDES — one brain holds the seat,
+    the other stands down. Do not run two Leads.
+  - mode (both candidates): WEB ONE-SHOT — Owner is the runtime (board pasted
+    in, decisions pasted out); every claim needs pasted evidence.
+    UNVERIFIED beats heroic DONE.
+  - duties: board owner · dispatches · verification · merge gates · Lark wake loop
+  - START HERE: lead/03 :HANDOFF: drawer on the board — CONTEXT/NEXT/BOUNDARIES/
+    OPEN-RISKS carry the whole shift; lark/01 is the live P0
+  - fallbacks: 1. the other qwen web brain (whichever loses the ruling)
                2. kimi-k2.6@kimi/web
-               3. (Owner judgment direct)
-  - restore: groq/qwen3.8-27b@opencode/local resumes when groq+opencode green
-    from the box (PE watch); web lead stands down
-  - outage 2026-10-20 13:50 +06: groq · opencode-free · cloudflare/@cf all
-    down; web lead mandated by Owner. Resident-local law resumes after.
+               3. DEGRADATION: Owner-summoned glm-5.3@zai/web
+  - out of seat: qwen3.8-flash@qoder/local (and deepseek-v4.1-flash@qoder for
+    the first half of that shift) — relieved by Owner order, work preserved in
+    lead/02 REPORT #2 + lead/03
+  - brain audit carried forward: dispatch #2 named kilo/qwen3-32b — gateway
+    rejected it (model_not_found). Live roster (GET /v1/models, 163 ids) is the
+    only authority; DS Flash exists only as
+    opencode/deepseek-v4.1-flash-free (OpenCode-only tier) and
+    tokenharbor/deepseek-v4.1-flash:free. Never dispatch a snapshot name.
+  - restore (Director's condition, kept): groq/qwen3.8-27b@opencode/local resumes
+    when groq+opencode are green from the box (PE watch); web lead stands down
+  - outage 2026-10-20 13:50 +06: groq · opencode-free · cloudflare/@cf all down;
+    web lead mandated. Resident-local law resumes after recovery.
+  - dual-hat RISK: qwen3.7-plus also holds the Director seat → author/verifier
+    segregation is broken until re-staffed (board lead/03 :OPEN-RISKS:)
 
-* Director of Engineering — qwen3.7-plus@qwen/web
+
+* Director of Engineering — VACANT (was qwen3.7-plus@qwen/web — dual-hatted as Lead 2026-10-20)
   - :last-dispatch: 1
   - duties: templates/ master prompt · TEAM UPDATEs · staffing adjudication · FR drafts · reviewer of last resort
+  - Owner action: re-staff or rule that one brain may hold both seats
   - fallbacks: 1. qwen3.8-max@qwen/web
                2. kimi-k2.6@kimi/web
                3. glm-5.3@zai/web

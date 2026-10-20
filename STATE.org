@@ -5,10 +5,29 @@
   - teamify: agent-team/ files + templates committed
 * IN-FLIGHT
   - DISPATCH 001: GLM elisp — Jev choice/score (branch ai/elisp-glm)
+  - lark/01: Lark IM layer — bot + user identities live, Agent Team group
+    BLOCKED on Owner: apply tenant scopes (im:chat, im:chat:create,
+    im:message:send) and publish a version. Then Lead runs the retry in the
+    board's lark/01.
+  - lead/03: Team Lead seat HANDOFF — qwen3.8-flash@qoder/local →
+    qwen3.7-plus@qwen/web (Owner order). Full context in the board's
+    :HANDOFF: drawer.
 * READY-FOR-HUMAN-REVIEW
+  - lead/02 REPORT #2 (seat assumption + identity correction) — commit e44a4ad
+  - LEAD SEAT CONTEST — Owner order (13:2x) named qwen3.7-plus@qwen/web; the
+    Director's commit a3203d3 (13:52) named qwen3.8-max@qwen/web. Both are on
+    the roster as one CONTESTED entry. Needs one ruling from you.
 * DEFERRED
 * BLOCKED
+  - ci/01: assigned brain groq/qwen3.8-27b@opencode is down — needs re-staff
+    from the live gateway roster
+  - pools 13:50 +06: groq · opencode-free · cloudflare/@cf all down (Director's
+    report) → resident loop suspended, web one-shot Lead mandated
 * TEAM-STAFFING
+  - Team Lead: CONTESTED — qwen3.7-plus@qwen/web (Owner order, lead/03 handoff)
+    vs qwen3.8-max@qwen/web (Director a3203d3) · out: qwen3.8-flash@qoder/local
+  - Director of Engineering: VACANT — was qwen3.7-plus@qwen/web, dual-hatted as
+    Lead (author/verifier segregation broken meanwhile)
 * HIRING-LOG
 * AUTONOMY
   AUTO

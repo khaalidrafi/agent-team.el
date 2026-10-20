@@ -41,9 +41,13 @@
 #                          #+ROTATION.
 # - #+STALL-COUNT: <n>  -> consecutive no-progress segments; +1 per
 #                          no-progress segment, reset to 0 when work lands.
-#                          At 4 the self-chain STOPS (stall guard) and the
-#                          Lead investigates. Progress = branch merged with
-#                          a green byte-compile gate and a non-BLOCKED result.
+#                          At 4 the chain shifts to BACKOFF (next dispatch
+#                          delayed 5 min) instead of halting — a dead or
+#                          overloaded provider lane recovers on its own and
+#                          the team keeps working (Owner law 2026-10-20:
+#                          "keep working ... until objective complete").
+#                          Progress = branch merged with a green
+#                          byte-compile gate and a non-BLOCKED result.
 # - An empty/placeholder #+OBJECTIVE means "no work defined": the job skips
 #   agent work, keeps the suite green, and the chain stops.
 #

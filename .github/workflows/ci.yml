@@ -469,10 +469,13 @@ jobs:
   #   2. Advance #+STALL-COUNT: +1 on a no-progress segment (dead seat,
   #      BLOCKED, conflict, gate red), reset to 0 when work lands.
   #   3. DISPATCH the next run itself while the objective is open and the
-  #      kill switch is OFF. The chain stops on: KILL-SWITCH ON,
-  #      OBJECTIVE-STATE COMPLETE, no objective, or 4 consecutive
-  #      no-progress segments (stall guard — the Lead investigates and
-  #      relights the chain with a control commit).
+  #      kill switch is OFF. The chain stops ONLY on: KILL-SWITCH ON,
+  #      OBJECTIVE-STATE COMPLETE, no objective. A no-progress streak
+  #      (stall >= 4: dead provider, transient overload) does NOT kill the
+  #      chain -- it shifts to BACKOFF (next dispatch delayed 5 min per
+  #      cycle, evidence keeps counting in #+STALL-COUNT) so a recovering
+  #      lane is picked up automatically and the team keeps working
+  #      (Owner law: keep working until the objective is complete).
   finalize:
     if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     needs: [turn]
@@ -553,10 +556,17 @@ jobs:
           if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
             DECISION="no-objective"
           fi
-          if [ "$NEW" -ge 4 ]; then DECISION="stall-guard-tripped"; fi
+          if [ "$NEW" -ge 4 ] && [ "$DECISION" = "dispatch" ]; then
+            DECISION="backoff-dispatch"   # slow-poll: transient dead lanes recover on their own
+          fi
           DISPATCH_CODE="n/a"
-          if [ "$DECISION" = "dispatch" ]; then
-            sleep 20   # let the control push settle; the concurrency group serializes anyway
+          if [ "$DECISION" = "dispatch" ] || [ "$DECISION" = "backoff-dispatch" ]; then
+            if [ "$DECISION" = "backoff-dispatch" ]; then
+              echo "backoff: lane dead ${NEW} segments straight — waiting 5 min before the next attempt" 
+              sleep 300
+            else
+              sleep 20   # let the control push settle; the concurrency group serializes anyway
+            fi
             DISPATCH_CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X POST \
               -H "Authorization: Bearer ${{ github.token }}" \
               -H "Accept: application/vnd.github+json" \
@@ -568,7 +578,7 @@ jobs:
           echo "" >> "$SUMMARY"
           echo "- merge: ${OUTCOME} (${{ steps.merge.outputs.branch }})" >> "$SUMMARY"
           echo "- byte-compile gate: ${GATE:-skipped}" >> "$SUMMARY"
-          echo "- stall count: ${NEW} (guard trips at 4)" >> "$SUMMARY"
+          echo "- stall count: ${NEW} (>=4 = 5-min backoff mode)" >> "$SUMMARY"
           echo "- chain decision: **${DECISION}** (dispatch HTTP ${DISPATCH_CODE})" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"

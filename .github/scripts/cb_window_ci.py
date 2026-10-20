@@ -16,7 +16,7 @@ Telegram-delivers it MID-WINDOW, and watches for the credential landing
 (sealed artifact; the repo is PUBLIC).
 """
 import base64, os, pty, re, select, fcntl, termios, struct, signal
-import tarfile, time, io
+import tarfile, time, io, json
 from pathlib import Path
 
 DUR = int(os.environ.get("CB_WINDOW_DUR", "780"))
@@ -42,6 +42,35 @@ env.update(TERM="xterm-256color", BROWSER="/tmp/fakebrowser",
            PATH="/tmp:" + env["PATH"])
 env.pop("CI", None)
 SHIM.write_text("")
+
+# v5 PRE-SEED TRUST (run 39487323008 post-mortem: ~8 Enters over 13 minutes
+# NEVER cleared the folder-trust dialog — pty keystrokes do not reach the
+# Ink TUI's dialog component on the runner). CodeBuddy is a Claude-Code
+# fork; the trust state lives in ~/.<cli>.json under
+# projects.<path>.hasTrustDialogAccepted. Seed it for /tmp BEFORE launch
+# so the dialog never renders and the CLI goes straight to the login URL.
+# Marker-driven Enters stay as a belt-and-braces fallback.
+CB_JASON = HOME / ".codebuddy.json"
+try:
+    seed = {}
+    if CB_JASON.exists():
+        seed = json.loads(CB_JASON.read_text() or "{}")
+    seed.setdefault("projects", {}).setdefault("/tmp", {})["hasTrustDialogAccepted"] = True
+    CB_JASON.write_text(json.dumps(seed))
+    print(f"TRUST_SEEDED: {CB_JASON} (projects./tmp.hasTrustDialogAccepted=true)", flush=True)
+except Exception as e:  # never block the window on seeding
+    print(f"TRUST_SEEDED: skipped ({e})", flush=True)
+for alt in (HOME / ".codebuddy" / "config.json", HOME / ".config" / "codebuddy" / "config.json"):
+    try:
+        alt.parent.mkdir(parents=True, exist_ok=True)
+        aseed = {}
+        if alt.exists():
+            aseed = json.loads(alt.read_text() or "{}")
+        aseed.setdefault("projects", {}).setdefault("/tmp", {})["hasTrustDialogAccepted"] = True
+        alt.write_text(json.dumps(aseed))
+        print(f"TRUST_SEEDED: {alt}", flush=True)
+    except Exception:
+        pass
 
 pid, fd = pty.fork()
 if pid == 0:

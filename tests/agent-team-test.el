@@ -152,9 +152,6 @@ PRIORITY: P1 · ORDER: 2")))
   EVIDENCE: grammar ok
 ")
          (parsed (agent-team-sessions--mailbox mail)))
-    (message "MAILBOX DEBUG: re=%S" agent-team-sessions--msg-re)
-    (message "MAILBOX DEBUG: first-match=%S" (string-match agent-team-sessions--msg-re mail 0))
-    (message "MAILBOX DEBUG: parsed=%S" parsed)
     (should (= (nth 0 parsed) 1))          ; one UNREAD
     (should (= (nth 1 parsed) 2))          ; two messages total
     (should (equal (nth 0 (nth 2 parsed)) "quality-assurance-engineer"))

@@ -71,6 +71,11 @@ RUN useradd -m -u 1001 agent
 #     Keys are env-interpolated at run time; nothing secret is baked. -------
 COPY opencode.json     /home/agent/.config/opencode/opencode.json
 COPY goose-config.yaml /home/agent/.config/goose/config.yaml
+COPY AGENTS.md         /home/agent/.config/opencode/AGENTS.md
+# Global AGENTS.md = agent law, CONFIGURED into memory (Owner 2026-10-21
+# 08:22Z: "configure the agent to load global AGENTS.md, automatically
+# loaded into memory") — OpenCode global rules path. Repo-root AGENTS.md
+# is additionally auto-discovered by OpenCode and Goose per session.
 RUN chown -R agent:agent /home/agent
 
 ENV HOME=/home/agent \

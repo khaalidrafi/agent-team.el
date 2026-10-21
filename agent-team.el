@@ -556,3 +556,68 @@ batch questions upstream per the batching law."
 (provide 'agent-team)
 
 ;;; agent-team.el ends here
+
+;;; Team-making prompt builder — Emacs assembles the prompt from templates/
+;;; (Owner 2026-10-21 08:22Z: "Emacs is supposed to build the prompt with
+;;; templates/*"). No PROMPT.org file: THIS command is the generator.
+
+(defvar agent-team--templates-dir
+  (file-name-as-directory
+   (expand-file-name
+    "templates"
+    (file-name-directory (or (locate-library "agent-team")
+                             load-file-name
+                             (buffer-file-name)))))
+  "Directory of the pkg-owned templates the team-making prompt is built
+from: TEAMIFY.org / BOOTSTRAP.org (mode layer) + COMMON.org (canonical
+manual, inlined at build time) + CANDIDATES.org (candidate seed).")
+
+(defun agent-team--template (name)
+  "Return the contents of templates/NAME, or an error marker if missing."
+  (let ((file (expand-file-name name agent-team--templates-dir)))
+    (if (file-exists-p file)
+        (with-temp-buffer (insert-file-contents file) (buffer-string))
+      (format "<<<MISSING TEMPLATE: %s>>>" file))))
+
+;;;###autoload
+(defun agent-team-teamify-prompt (&optional repo project not-touch pat fresh)
+  "Build the ONE team-making prompt from templates/ for REPO.
+Assembles: FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT) + the mode layer
+(templates/BOOTSTRAP.org for a FRESH project, templates/TEAMIFY.org for an
+existing one) + templates/COMMON.org (the canonical manual, inlined at
+build time from its canonical home — no per-repo copies drift). Puts the
+result in the *agent-team prompt* buffer AND the kill-ring, ready to paste
+into a fresh chat with the team's Lead. The PAT travels in the prompt only
+— never stored in files/commits/board (Owner order 2026-10-21)."
+  (interactive)
+  (unless repo
+    (setq repo (read-string "REPO (url; team-truth branch is ai/main): "))
+    (setq project (read-string "PROJECT (2-4 lines: what/state/done-today): "))
+    (setq not-touch (read-string "NOT-TOUCH (paths/ops; RET = none): "))
+    (setq pat (read-passwd "PAT (github_pat_, no rotation): "))
+    (setq fresh (y-or-n-p "FRESH project? (yes = BOOTSTRAP layer, no = TEAMIFY) ")))
+  (let* ((layer (agent-team--template (if fresh "BOOTSTRAP.org" "TEAMIFY.org")))
+         (manual (agent-team--template "COMMON.org"))
+         (prompt (concat
+                  "# TEAM-MAKING PROMPT — built by agent-team.el from templates/"
+                  " (" (if fresh "BOOTSTRAP" "TEAMIFY") " + COMMON) on "
+                  (format-time-string "%Y-%m-%d %H:%M UTC") "\n\n"
+                  "* FILL BLOCK (Director)\n"
+                  "- REPO: " repo " — team-truth branch: ai/main\n"
+                  "- PROJECT: " project "\n"
+                  "- NOT-TOUCH: " (if (or (null not-touch) (string-empty-p not-touch))
+                                      "none declared" not-touch) "\n"
+                  "- PAT: " pat "\n"
+                  "  (reuse the same token, no rotation; use immediately; NEVER\n"
+                  "  store in files/commits/board/logs)\n\n"
+                  layer "\n\n" manual "\n"))
+         (buffer (get-buffer-create "*agent-team prompt*")))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert prompt)
+      (org-mode)
+      (goto-char (point-min)))
+    (kill-new prompt)
+    (pop-to-buffer buffer)
+    (message "agent-team: prompt built (%d chars) — *agent-team prompt* + kill-ring; paste into the Lead's fresh chat"
+             (length prompt))))

@@ -670,7 +670,8 @@ sketch bytes are exactly what the teamify must produce."
                     "none" "<<<FILL>>>" nil)
                    (with-current-buffer "*agent-team prompt*"
                      (buffer-string))))
-         (p1 (string-match "^\\* PART 1 — " prompt))
+         (p1a (string-match "^\\* PART 1 — " prompt))
+         (p1 (1+ (string-match "\n" prompt p1a)))  ; skip the heading line
          (p2 (string-match "^\\* PART 2 — " prompt))
          (in-src nil)
          (leaks ()))

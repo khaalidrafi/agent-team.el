@@ -230,6 +230,12 @@ jobs:
       # CodeBuddy seat (Owner order 2026-10-21: auth on Lead box, cred ->
       # repo secrets). OAuth token from www.codebuddy.ai (Bearer JWT).
       CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
+      # GoModel lane via the Owner's llmfisher gateway (Owner order, LONG
+      # standing, re-issued 2026-10-21 08:25Z: "Use gomodel via
+      # khaalidrafi/llmfisher on your CI"). Jev = the chain's judgment
+      # layer. Health-gated: gateway down -> lane fallback law, never red.
+      GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
       # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
       # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
       # group through ITS role's bot. No generic CI notifications exist.
@@ -292,6 +298,23 @@ jobs:
             no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
           esac
           echo "$MSG" >> "$SUMMARY"
+
+      - name: GoModel lane health (llmfisher gateway — Jev judgment layer)
+        if: steps.control.outputs.mode == 'work'
+        run: |
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          # Owner gateway contract (agent-team.el agent-team-gateway-ping):
+          # GET / answers HTTP 404 when the ORIGIN is up; 530/000 = tunnel down.
+          CODE=$(curl -s -o /dev/null -m 20 -w '%{http_code}' \
+                  -H "Authorization: Bearer ${GOMODEL_MASTER_KEY}" \
+                  "${GOMODEL_GATEWAY_URL}/" || echo 000)
+          if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+            echo "GOMODEL_UP=true" >> "$GITHUB_ENV"
+            echo "gomodel lane: UP (gateway HTTP $CODE) — Jev available to this turn and finalize" >> "$SUMMARY"
+          else
+            echo "GOMODEL_UP=false" >> "$GITHUB_ENV"
+            echo "gomodel lane: DOWN (HTTP $CODE) — lane-fallback law active (turn proceeds on direct provider lanes; auto-reuses gomodel the moment the box answers)" >> "$SUMMARY"
+          fi
 
       - name: Build harness image (preinstalled agents — cached, no installs)
         if: steps.control.outputs.mode == 'work'
@@ -853,6 +876,44 @@ jobs:
           else
             git reset --hard origin/ai/main
             echo "gate=red-merge-undone" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Jev judgment (GoModel via llmfisher gateway — chain decision layer)
+        if: always()
+        env:
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
+        run: |
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          # Owner order (re-issued 2026-10-21 08:25Z): use gomodel via
+          # khaalidrafi/llmfisher on CI. Jev (model jev-1.13.0, POST
+          # /v1/systemone) is the chain's calibrated judgment layer — it
+          # weighs the stall state for the dispatch decision. Payload
+          # mirrors agent-team.el agent-team--jev-payload byte-for-byte.
+          CODE=$(curl -s -o /dev/null -m 20 -w '%{http_code}' \
+                  -H "Authorization: Bearer ${GOMODEL_MASTER_KEY}" \
+                  "${GOMODEL_GATEWAY_URL}/" || echo 000)
+          if [ "$CODE" != "404" ] && [ "$CODE" != "200" ]; then
+            echo "jev: gateway DOWN (HTTP $CODE) — local rules decided the chain step (lane-fallback law; gomodel auto-resumes when the box answers)" >> "$SUMMARY"
+            exit 0
+          fi
+          RESULT="${{ needs.turn.outputs.seg_result }}"
+          OUTCOME="${{ steps.merge.outputs.outcome }}"
+          STATE="stall state: segment result ${RESULT:-none}, merge outcome ${OUTCOME:-none}, CI chain deciding whether to dispatch the next turn now or back off."
+          BODY=$(jq -nc --arg s "$STATE" \
+            --arg q "Dispatch the next agent-team CI turn immediately (yes) or back off (no)?" \
+            '{state: $s, model: "jev-1.13.0", questions: {q: {type: "noul", instructions: $q}}}')
+          RESP=$(curl -s -m 90 -X POST \
+                  -H "Authorization: Bearer ${GOMODEL_MASTER_KEY}" \
+                  -H "Content-Type: application/json" \
+                  -d "$BODY" \
+                  "${GOMODEL_GATEWAY_URL}/v1/systemone" || echo '{}')
+          P=$(echo "$RESP" | jq -r '.answers.q.noul // empty' 2>/dev/null)
+          if [ -n "$P" ]; then
+            VERDICT=$(awk -v p="$P" 'BEGIN{print (p>=0.5) ? "yes" : "no"}')
+            echo "jev: ${P} -> ${VERDICT} (gomodel via llmfisher gateway, HTTP $CODE)" >> "$SUMMARY"
+          else
+            echo "jev: gateway answered but no noul in response — local rules decided (never block the chain on a judgment lane)" >> "$SUMMARY"
           fi
 
       - name: Stall accounting + dispatch the next run (self-chain)

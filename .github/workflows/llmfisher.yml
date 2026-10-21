@@ -61,8 +61,28 @@ jobs:
             ("OPENCODE_API_KEY",  "https://api.opencode.ai/v1",            None),
             ("CLOUDFLARE_API_KEY","https://api.cloudflare.com/client/v4",  None),
           ]
-          NO_BASE = ["GOMODEL_MASTER_KEY","AA_API_KEY","BAI_API_KEY","GMI_API_KEY",
+          NO_BASE = ["AA_API_KEY","BAI_API_KEY","GMI_API_KEY",
                      "NAVYAI_API_KEY","TOKENHARBOR_API_KEY","TYPESAFE_API_KEY"]
+          # GOMODEL has a base: the Owner's llmfisher gateway (Jev /
+          # systemone, model jev-1.13.0). Owner order 2026-10-21 08:25Z:
+          # use gomodel via khaalidrafi/llmfisher on CI.
+          GW = os.environ.get("GOMODEL_GATEWAY_URL", "https://ai.khalidrafi.tech")
+          gkey = os.environ.get("GOMODEL_MASTER_KEY", "")
+          if gkey:
+            code, _ = req(f"{GW}/", gkey)
+            up = code in (200, 404)   # 404 from GET / = origin answering (gateway-ping contract)
+            if up:
+              jcode, jbody = req(f"{GW}/v1/systemone", gkey, "POST",
+                                 {"state": "llmfisher --fresh census",
+                                  "model": "jev-1.13.0",
+                                  "questions": {"q": {"type": "noul",
+                                                      "instructions": "Census probe: answer path alive?"}}})
+              p = "?"
+              try: p = json.loads(jbody)["answers"]["q"]["noul"]
+              except Exception: pass
+              print(f"| GOMODEL_MASTER_KEY | {GW} gateway | HTTP {code} (up) | jev-1.13.0 | noul={p} | {'alive' if jcode==200 else 'systemone HTTP '+str(jcode)} |")
+            else:
+              print(f"| GOMODEL_MASTER_KEY | {GW} gateway | HTTP {code} | - | - | box off — lane down (CI uses lane-fallback; auto-resumes when up) |")
 
           def req(url, key, method="GET", body=None, hdrs=None):
             h = {"Authorization": f"Bearer {key}", **(hdrs or {})}
@@ -116,7 +136,8 @@ jobs:
             -e GROQ_API_KEY -e OPENROUTER_API_KEY -e ZAI_API_KEY \
             -e GEMINI_API_KEY -e OLLAMA_CLOUD_API_KEY -e OPENCODE_API_KEY \
             -e CLOUDFLARE_API_KEY \
-            -e GOMODEL_MASTER_KEY -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
+            -e GOMODEL_MASTER_KEY -e GOMODEL_GATEWAY_URL \
+            -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
             -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY -e TYPESAFE_API_KEY \
             python:3.12-alpine python /probe.py > /tmp/llmfisher/report.md
           cat /tmp/llmfisher/report.md
@@ -126,6 +147,6 @@ jobs:
             echo ""
             cat /tmp/llmfisher/report.md
             echo ""
-            echo "- gateway ai.khalidrafi.tech: HTTP 530 (box off) — GOMODEL_MASTER_KEY unusable until it is back"
+            echo "- gomodel: probed directly against the Owner's llmfisher gateway (row above) — CI chain holds a health-gated gomodel/Jev lane (ci.yml) that auto-resumes when the box answers"
             echo "- next: feed the alive models into ROSTER.org rank updates (Lead gate)"
           } >> "$GITHUB_STEP_SUMMARY"

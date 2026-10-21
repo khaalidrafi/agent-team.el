@@ -240,6 +240,12 @@
    - [X] generic Lark notify removed; per-role webhook wiring in ci.yml
    - [X] COMMON §LARK law added; §GATEWAY marked DOWN
    - [X] GoModel probe/deps removed from ci.yml
+   - [X] GoModel lane RESTORED to ci.yml (Owner re-order 2026-10-21 08:25Z
+     "use gomodel via khaalidrafi/llmfisher on your CI — given long ago"):
+     health-gated lane (GET / 404-contract) + Jev jev-1.13.0 judgment step
+     in finalize (/v1/systemone, payload mirrors agent-team--jev-payload);
+     down -> lane-fallback law, never red; llmfisher.yml census probes the
+     gateway row directly. Box 530 at wiring time — auto-resumes on boot.
    - [X] repo published (public, visibility confirmed via API)
    - [X] schedule raised to six turns/day
    - [ ] per-role bots exist + secrets set (Owner UI — pending)

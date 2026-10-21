@@ -992,7 +992,7 @@ jobs:
       # TELEGRAM_CHAT_ID, else the owner-locked learned id (tg_chat
       # output — it only ever carries the verified Owner id). SILENT until
       # the lock is activated by the Lead.
-      - name: Mirror chain verdict to Telegram (silent without secrets, deduped)
+      - name: Mirror chain verdict to Telegram (silent without secrets, deduped) — now with the GLM chat
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
@@ -1011,6 +1011,42 @@ jobs:
           CHAT="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}}"
           [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
           CTL=agent-team/TEAM-CONTROL.org
+          # GLM CHAT MIRROR (Owner 2026-10-21 #hq: "I can't see team chat
+          # on Telegram — it keeps sending FROM: team-lead msgs"): the
+          # segment's NEW TEAM-CHAT.org entries go to the Owner too, each
+          # block under its REAL :FROM: seat. Char-safe chunking under TG's
+          # 4096 cap; deduped via #+LAST-CHAT. Runs BEFORE the BLOCKED
+          # verdict cap so chat flows even when the verdict is throttled.
+          ADDED=""
+          BASE="${{ needs.turn.outputs.base_sha }}"
+          if [ -n "$BASE" ] && git cat-file -e "$BASE" 2>/dev/null; then
+            ADDED=$(git diff "$BASE" HEAD -- agent-team/TEAM-CHAT.org 2>/dev/null \
+              | grep '^+' | grep -v '^+++' | sed 's/^+//')
+          fi
+          CH=""
+          if [ -n "$ADDED" ]; then
+            CH=$(printf '%s' "$ADDED" | sha256sum | cut -c1-12)
+            LASTC=$(grep -oP '^\#\+LAST-CHAT:\s*\K[0-9a-f]+' "$CTL" | head -1)
+            if [ "$CH" != "$LASTC" ]; then
+              SEAT=$(printf '%s\n' "$ADDED" | grep -oP '^\s*:FROM:\s*\K.*' | head -1)
+              SEAT="${SEAT:-team-lead}"
+              export ADDED
+              python3 -c 'import os,sys; added=os.environ["ADDED"]; sys.stdout.write("\x1f".join(added[i:i+3800] for i in range(0, len(added), 3800)))' > /tmp/tg-chunks.txt
+              while IFS= read -r -d $'\x1f' CHUNK || [ -n "$CHUNK" ]; do
+                [ -n "$CHUNK" ] || continue
+                curl -sS -o /dev/null -w 'telegram chat mirror: HTTP %{http_code}\n' \
+                  "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+                  --data-urlencode "chat_id=${CHAT}" \
+                  --data-urlencode "text=$(printf 'FROM: %s\nTO: @owner\n\nteam chat — new this segment\n---\n%s' "$SEAT" "$CHUNK")" || true
+                CHUNK=""
+              done < /tmp/tg-chunks.txt
+              rm -f /tmp/tg-chunks.txt
+            else
+              echo "telegram chat mirror: already mirrored this segment — silent (dedupe)"
+            fi
+          else
+            echo "telegram chat mirror: no new chat entries this segment"
+          fi
           case "$SEG" in
             *BLOCKED*)
               # DEDUPE LAW v2 (Owner 2026-10-21 05:24Z: the same BLOCKED msg
@@ -1055,6 +1091,10 @@ jobs:
           write_markers() {
             grep -q '^#+LAST-BLOCKED-NOTIFY:' "$CTL" || printf '#+LAST-BLOCKED-NOTIFY: 0\n' >> "$CTL"
             sed -i "s|^#+LAST-VERDICT:.*|#+LAST-VERDICT: ${VH}|" "$CTL"
+            if [ -n "${CH:-}" ]; then
+              grep -q '^#+LAST-CHAT:' "$CTL" || printf '#+LAST-CHAT: 0\n' >> "$CTL"
+              sed -i "s|^#+LAST-CHAT:.*|#+LAST-CHAT: ${CH}|" "$CTL"
+            fi
             case "$SEG" in
               *BLOCKED*) sed -i "s|^#+LAST-BLOCKED-NOTIFY:.*|#+LAST-BLOCKED-NOTIFY: $(date +%s)|" "$CTL" ;;
             esac

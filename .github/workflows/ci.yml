@@ -322,8 +322,9 @@ jobs:
           docker buildx build --load \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
+            -f docker/harness/Dockerfile \
             -t agent-team-harness:local \
-            docker/harness
+            .
 
       - name: Prepare git identity
         if: steps.control.outputs.mode == 'work'

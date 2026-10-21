@@ -577,6 +577,11 @@ jobs:
                    OPENAI_HOST="https://openrouter.ai/api/v1" \
                    goose run --no-session -t "$BRIEF"; then
                 echo "TURN_RESULT=goose run OK (lane: openrouter/poolside@goose — credits landed)"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \
+                   OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+                   OPENAI_HOST="https://openrouter.ai/api/v1" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — promo hire 05:33Z)"
               elif codebuddy -p "$BRIEF"; then
                 echo "TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — poolside dead)"
               elif env HOME=/usr/local/lib/qoder-home \
@@ -603,6 +608,11 @@ jobs:
                    OPENAI_BASE_PATH="/api/paas/v4/chat/completions" \
                    goose run --no-session -t "$BRIEF"; then
                 echo "TURN_RESULT=goose run OK (lane: zai/glm-4.7-flash@goose)"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \
+                   OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+                   OPENAI_HOST="https://openrouter.ai/api/v1" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — OpenRouter promo hire 05:33Z)"
               elif goose run --no-session -t "$BRIEF"; then
                 echo "TURN_RESULT=goose run OK (lane: ${GOOSE_MODEL} — OpenRouter quota recovered)"
               elif codebuddy -p "$BRIEF"; then
@@ -634,6 +644,11 @@ jobs:
                    OPENAI_BASE_PATH="/api/paas/v4/chat/completions" \
                    goose run --no-session -t "$BRIEF"; then
                 echo "TURN_RESULT=goose run OK (acting lane: zai/glm-4.7-flash@goose — qoder CLI failed)"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \
+                   OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+                   OPENAI_HOST="https://openrouter.ai/api/v1" \
+                   goose run --no-session -t "$BRIEF"; then
+                echo "TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — promo hire 05:33Z)"
               elif codebuddy -p "$BRIEF"; then
                 echo "TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — qoder+zai dead)"
               else

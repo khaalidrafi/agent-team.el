@@ -19,7 +19,7 @@ The project does not exist yet — no repo, no commits. You create everything.
 ** CONTEXT PACK (filled by the Director)
 
 - repo name: <Owner approves> · host: <github>
-- PAT: {{PAT}} (use immediately, never store in files/commits)
+- PAT: the FILL BLOCK's PAT (use immediately, never store in files/commits)
 - roster: <initial members with roles>
 
 ** TASK

@@ -543,6 +543,33 @@ gets the chain's manual with every prompt, not just the team laws)."
     (should (string-match-p "khaalidrafi/testrepo" prompt))
     (should (string-match-p "TEAMIFY.org — existing project" prompt))))
 
+(ert-deftest agent-team-prompt-carries-candidates-seed ()
+  "The teamify prompt carries the CANDIDATES.org inventory as the SEED
+for agent-team/CANDIDATES.org (COMMON's MODELS + STAFFING laws point at
+that file — a fresh teamify must not dangle), the FILE TARGETS define
+it, and no raw {{SLOT}} token or wrong-repo path survives into the
+prompt (Owner 2026-10-21: read the templates well, then make the
+prompt)."
+  (let ((prompt (progn
+                  (agent-team-teamify-prompt
+                   "https://github.com/khaalidrafi/testrepo" "test"
+                   "none" "<<<FILL>>>" nil)
+                  (with-current-buffer "*agent-team prompt*"
+                    (buffer-string)))))
+    (should (string-match-p
+             "CANDIDATES.ORG — the candidate inventory" prompt))
+    (should (string-match-p
+             "CANDIDATES.org — ALL available model@platform options" prompt))
+    ;; the FILE TARGETS define the seed file (and the chat file)
+    (should (string-match-p "\\*\\* agent-team/CANDIDATES.org" prompt))
+    (should (string-match-p "\\*\\* agent-team/TEAM-CHAT.org" prompt))
+    ;; the state file lives in agent-team/, never agent-org/ (typo law)
+    (should (string-match-p "\\*\\* agent-team/STATE.org" prompt))
+    (should-not (string-match-p "agent-org/STATE" prompt))
+    ;; no raw slot tokens leak into a built prompt
+    (should-not (string-match-p "{{PAT}}" prompt))
+    (should-not (string-match-p "{{[A-Z_]+}}" prompt))))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

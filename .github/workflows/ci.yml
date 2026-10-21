@@ -450,7 +450,7 @@ jobs:
 
           BRIEF="You are the on-turn member of the Agent Team, seat ${SEAT}.
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
-          Law: agent-team/COMMON.org. Board: agent-team/TODOS.org.
+          Global law: AGENTS.md (read it FIRST). Law: templates/COMMON.org. Board: agent-team/TODOS.org.
           Roster: agent-team/MEMBERS.org. Repo facts: README.org, STATE.org.
           PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
           to each other — work, share reports, take each other's help, get

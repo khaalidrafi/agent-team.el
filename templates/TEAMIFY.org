@@ -21,7 +21,7 @@ project into a team project — adopt, don't rebuild.
 
 - this prompt is SELF-CONTAINED: every instruction you need is here — do
   not fetch any other repo to execute it. (The canonical manual lives in
-  khaalidrafi/agent-team.el agent-team/COMMON.org for reference and
+  khaalidrafi/agent-team.el templates/COMMON.org for reference and
   versioning; it is not a prerequisite.)
 ** TASK
 
@@ -30,7 +30,7 @@ project into a team project — adopt, don't rebuild.
 3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION, the
    AGENTS.md equivalent for this team: purpose, standing team laws, role
    scopes, conventions, and one pointer line to the canonical manual
-   (khaalidrafi/agent-team.el agent-team/COMMON.org) — NEVER embed
+   (khaalidrafi/agent-team.el templates/COMMON.org) — NEVER embed
    the manual (one canonical copy; per-repo copies drift). Plus TODOS,
    MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
    without the Owner.
@@ -100,5 +100,5 @@ the project, never rewrites it.
 * CONVENTIONS
   (commit style, branches, tooling, as a list)
 * MANUAL
-  - canonical manual: khaalidrafi/agent-team.el agent-team/COMMON.org
+  - canonical manual: khaalidrafi/agent-team.el templates/COMMON.org
   - NEVER embed the manual here (one canonical copy)

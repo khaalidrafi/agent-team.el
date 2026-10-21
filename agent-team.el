@@ -621,3 +621,264 @@ into a fresh chat with the team's Lead. The PAT travels in the prompt only
     (pop-to-buffer buffer)
     (message "agent-team: prompt built (%d chars) — *agent-team prompt* + kill-ring; paste into the Lead's fresh chat"
              (length prompt))))
+
+;;; Live team chat (TEAM-CHAT.org) --------------------------------------------
+;;;
+;;; Owner order 2026-10-21 09:16Z (#hq): "add a feature to view team chat
+;;; live on my Emacs on Android."  Zero dependencies — url.el + timers, no
+;;; git/curl/gh — so it runs on an Emacs 28+ on Android (Termux or the
+;;; native Android port) where a git binary may not exist.  It polls the
+;;; chat file over HTTPS and re-renders it as a read-only Org buffer that
+;;; follows the tail: the CI seats append `* MSG <from> -> @<to> :<kind>:'
+;;; headlines at EOF (union-merged), and this viewer shows them as they
+;;; land.  Public teamified repos need no credentials; a private repo is
+;;; served through the Contents API with `agent-team-chat-token'.
+
+(defcustom agent-team-chat-default-repo "khaalidrafi/agent-team.el"
+  "Default teamified repo whose chat `agent-team-watch-chat' shows."
+  :type 'string
+  :group 'agent-team)
+
+(defcustom agent-team-chat-default-branch "ai/main"
+  "Team-truth branch to read the chat from."
+  :type 'string
+  :group 'agent-team)
+
+(defcustom agent-team-chat-default-path "agent-team/TEAM-CHAT.org"
+  "Path of the chat file inside the repo (any board file works)."
+  :type 'string
+  :group 'agent-team)
+
+(defcustom agent-team-chat-interval 15
+  "Seconds between chat polls.  Android battery: raise it, the viewer
+still catches up on the next tick."
+  :type 'integer
+  :group 'agent-team)
+
+(defcustom agent-team-chat-token nil
+  "Optional PAT for PRIVATE teamified repos.  Public repos (the publish
+law: flipped public after the secret-leak audit) need no token — the raw
+file is anonymous-readable.  The token lives only in this variable at
+runtime; never write it into any file, board or commit."
+  :type '(choice (const :tag "anonymous (public repos)" nil)
+                 (string :tag "PAT"))
+  :group 'agent-team)
+
+(defface agent-team-chat-new-face
+  '((t :weight bold))
+  "Face for messages that arrived in the last chat update."
+  :group 'agent-team)
+
+(defvar-local agent-team-chat--repo nil
+  "Repo this chat buffer watches.")
+(defvar-local agent-team-chat--branch nil)
+(defvar-local agent-team-chat--path nil)
+(defvar-local agent-team-chat--timer nil
+  "The polling timer; cancelled by `agent-team-chat--teardown'.")
+(defvar-local agent-team-chat--busy nil
+  "Non-nil while a fetch is in flight (no overlapping polls).")
+(defvar-local agent-team-chat--content nil
+  "Previously rendered chat text — the append-only diff base.")
+(defvar-local agent-team-chat--last-fetch nil
+  "Time of the last successful render, as a float.")
+(defvar-local agent-team-chat--status "connecting"
+  "Human-readable fetch state shown in the header line.")
+(defvar-local agent-team-chat--errs 0
+  "Consecutive failed fetches.")
+
+(defvar agent-team-chat-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "g" 'agent-team-chat-refresh)
+    (define-key map "q" 'agent-team-chat-quit)
+    map)
+  "Keys for the live chat viewer: g refresh, q stop and close.")
+
+;;;###autoload
+(define-minor-mode agent-team-chat-live-mode
+  "Live team-chat viewer mode (on an org-mode buffer)."
+  :lighter " team-chat"
+  :keymap agent-team-chat-minor-mode-map)
+
+(defun agent-team-chat--url (repo branch path token)
+  "Return the fetch URL for REPO@BRANCH:PATH.
+Without TOKEN: raw.githubusercontent.com (anonymous, public repos).
+With TOKEN: the Contents API, which serves raw bytes for private repos
+via the Accept header set in `agent-team-chat--headers'."
+  (if token
+      (format "https://api.github.com/repos/%s/contents/%s?ref=%s"
+              repo path branch)
+    (format "https://raw.githubusercontent.com/%s/%s/%s"
+            repo branch path)))
+
+(defun agent-team-chat--headers (token)
+  "Headers for the chat fetch: only a UA, plus auth when TOKEN is set."
+  (append '(("User-Agent" . "agent-team.el (live team chat)"))
+          (when token
+            `(("Authorization" . ,(concat "Bearer " token))
+              ("Accept" . "application/vnd.github.raw+json")))))
+
+(defun agent-team-chat--msg-count (text)
+  "Count `* MSG' headlines in TEXT — the chat's message standard."
+  (let ((n 0) (pos 0))
+    (while (string-match "^\\* MSG " text pos)
+      (setq n (1+ n) pos (match-end 0)))
+    n))
+
+(defun agent-team-chat--render (buf text)
+  "Render TEXT (the chat file) into BUF, following the tail."
+  (with-current-buffer buf
+    (let* ((inhibit-read-only t)
+           (old agent-team-chat--content)
+           (was-empty (null old))
+           (follow (or was-empty (>= (point) (point-max))))
+           (grown (and old (> (length text) (length old))
+                       (string-prefix-p old text)))
+           (new-start (if grown (1+ (length old)) 1)))
+      (erase-buffer)
+      (insert text)
+      (org-mode)
+      (unless agent-team-chat-live-mode (agent-team-chat-live-mode 1))
+      (remove-overlays (point-min) (point-max) 'agent-team-chat-new t)
+      (when grown
+        (let ((ov (make-overlay new-start (point-max) nil t nil)))
+          (overlay-put ov 'agent-team-chat-new t)
+          (overlay-put ov 'face 'agent-team-chat-new-face)))
+      (setq buffer-read-only t
+            agent-team-chat--content text
+            agent-team-chat--last-fetch (float-time)
+            agent-team-chat--status "ok"
+            agent-team-chat--errs 0)
+      (setq header-line-format
+            (format " agent-team chat: %s@%s · %s every %ds · %d msgs · last %s · %s"
+                    agent-team-chat--repo agent-team-chat--branch
+                    (propertize "LIVE" 'face 'success)
+                    agent-team-chat-interval
+                    (agent-team-chat--msg-count text)
+                    (format-time-string "%H:%M:%S" agent-team-chat--last-fetch)
+                    agent-team-chat--status))
+      (if follow (goto-char (point-max)) (goto-char (point-min))))))
+
+(defun agent-team-chat--failed (buf why)
+  "Record a failed fetch for BUF; the view keeps the last good content."
+  (when (buffer-live-p buf)
+    (with-current-buffer buf
+      (setq agent-team-chat--busy nil
+            agent-team-chat--errs (1+ agent-team-chat--errs)
+            agent-team-chat--status
+            (if (> agent-team-chat--errs 1)
+                (format "%s (retry %d)" why agent-team-chat--errs)
+              why)))))
+
+(defun agent-team-chat--callback (status buf)
+  "url-retrieve callback: hand the raw file bytes to the renderer."
+  (let ((err (plist-get status :error)))
+    (if err
+        (agent-team-chat--failed buf "connection failed")
+      (goto-char (point-min))
+      (let ((code (and (boundp 'url-http-response-status)
+                       url-http-response-status)))
+        (cond
+         ((and code (/= code 200))
+          (agent-team-chat--failed
+           buf (if (eq code 404)
+                   "HTTP 404 — no chat at this repo@branch yet"
+                 (format "HTTP %s" code))))
+         (t
+          (re-search-forward "\r?\n\r?\n" nil t)
+          (agent-team-chat--render
+           buf (decode-coding-string
+                (buffer-substring-no-properties (point) (point-max))
+                'utf-8 t))))))
+    (kill-buffer (current-buffer))))
+
+(defun agent-team-chat--fetch (buf)
+  "Poll the chat file for BUF once (skipped while a fetch runs)."
+  (when (buffer-live-p buf)
+    (with-current-buffer buf
+      (unless agent-team-chat--busy
+        (setq agent-team-chat--busy t)
+        (condition-case err
+            (let ((url-request-extra-headers
+                   (agent-team-chat--headers agent-team-chat-token)))
+              (url-retrieve
+               (agent-team-chat--url agent-team-chat--repo
+                                     agent-team-chat--branch
+                                     agent-team-chat--path
+                                     agent-team-chat-token)
+               #'agent-team-chat--callback (list buf) t))
+          (error
+           (setq agent-team-chat--busy nil)
+           (agent-team-chat--failed
+            buf (format "fetch error: %s" (error-message-string err)))))))))
+
+(defun agent-team-chat--teardown ()
+  "Cancel the polling timer (runs from `kill-buffer-hook')."
+  (when agent-team-chat--timer
+    (cancel-timer agent-team-chat--timer)
+    (setq agent-team-chat--timer nil)))
+
+(defun agent-team-chat--tick (buf)
+  "Timer body: one poll while BUF lives and the mode is on."
+  (when (and (buffer-live-p buf)
+             (buffer-local-value 'agent-team-chat-live-mode buf))
+    (agent-team-chat--fetch buf)))
+
+;;;###autoload
+(defun agent-team-watch-chat (&optional repo branch path)
+  "View the team chat (TEAM-CHAT.org) LIVE in an Org buffer.
+Polls REPO@BRANCH:PATH every `agent-team-chat-interval' seconds and
+follows the tail so new `* MSG' headlines arrive as the seats append
+them.  Works on Android (Emacs 28+, no git needed).  Keys: `g' refresh,
+`q' stop and close.  Public repos need no PAT; private ones use
+`agent-team-chat-token'."
+  (interactive)
+  (unless repo
+    (setq repo (read-string (format "Repo (%s): "
+                                    agent-team-chat-default-repo)))
+    (when (string-empty-p repo) (setq repo agent-team-chat-default-repo)))
+  (unless branch
+    (setq branch (read-string (format "Branch (%s): "
+                                      agent-team-chat-default-branch)))
+    (when (string-empty-p branch)
+      (setq branch agent-team-chat-default-branch)))
+  (unless path
+    (setq path (read-string (format "Path (%s): "
+                                    agent-team-chat-default-path)))
+    (when (string-empty-p path) (setq path agent-team-chat-default-path)))
+  (let ((buf (get-buffer-create (format "*agent-team chat: %s*" repo))))
+    (with-current-buffer buf
+      (setq agent-team-chat--repo repo
+            agent-team-chat--branch branch
+            agent-team-chat--path path)
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (insert (format "watching %s@%s:%s every %ds …\n"
+                        repo branch path agent-team-chat-interval)))
+      (org-mode)
+      (unless agent-team-chat-live-mode (agent-team-chat-live-mode 1))
+      (add-hook 'kill-buffer-hook #'agent-team-chat--teardown nil t)
+      (agent-team-chat--fetch buf)
+      (unless agent-team-chat--timer
+        (setq agent-team-chat--timer
+              (run-at-time agent-team-chat-interval
+                           agent-team-chat-interval
+                           #'agent-team-chat--tick buf))))
+    (pop-to-buffer buf)
+    (message "agent-team chat: LIVE %s@%s:%s — g refresh, q stop"
+             repo branch path)))
+
+;;;###autoload
+(defun agent-team-chat-refresh ()
+  "Refresh the live chat buffer under point right now."
+  (interactive)
+  (agent-team-chat--fetch (current-buffer))
+  (message "agent-team chat: refresh requested"))
+
+;;;###autoload
+(defun agent-team-chat-quit ()
+  "Stop polling and close the live chat buffer."
+  (interactive)
+  (agent-team-chat--teardown)
+  (let ((buf (current-buffer)))
+    (quit-window nil (selected-window))
+    (kill-buffer buf)))

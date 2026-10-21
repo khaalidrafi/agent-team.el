@@ -23,8 +23,10 @@ name: CI
 # is the report channel for DEMO runs only (Owner order 2026-10-20 #hq);
 # REAL runs use the Lark group through PER-ROLE custom-bot webhooks
 # (LARK_WEBHOOK_<ROLE>) written by the members themselves.  The GoModel
-# gateway is DOWN (Owner, 2026-10-20) and gone from this workflow; the
-# repo is PUBLIC (unlimited Linux Actions minutes).
+# gateway rides as a HEALTH-GATED LANE (Owner order re-issued 2026-10-21
+# 08:25Z: "Use gomodel via khaalidrafi/llmfisher on your CI"): turn health
+# step + Jev judgment on finalize, lane-fallback law when the box is down.
+# The repo is PUBLIC (unlimited Linux Actions minutes).
 # (7) PEER MESH + SELF-CHAINING RUNS (Owner order 2026-10-20 #hq 14:52:
 # "agents talk to each other ... automatically send and receive messages
 # and keep working ... CI runs unlimited ... until objective complete to
@@ -99,8 +101,8 @@ jobs:
   # Seat-liveness heartbeat. One real completion per accountable API seat,
   # direct to the provider. Results land in the run summary; NOTHING here can
   # fail the workflow -- a dead seat is an operational fact to read in the
-  # summary, never a red run. GoModel gateway removed: DOWN (Owner,
-  # 2026-10-20); seats go DIRECT to providers with repo-secret keys only.
+  # summary, never a red run. The gomodel/Jev lane is health-gated in `turn`
+  # + `finalize` (08:25Z order); seats go DIRECT to providers here.
   probe:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: test

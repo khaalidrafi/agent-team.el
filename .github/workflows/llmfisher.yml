@@ -3,18 +3,31 @@ name: llmfisher fresh
 # Owner order (Telegram 19:16Z, recorded verbatim in TEAM-CHAT.org):
 #   "Run docker compose run --rm llmfisher --fresh to get working models.
 #    You need to provide API key env vars to the Docker. BE careful."
+# Owner order (#hq 2026-10-21 08:25Z, re-issued after being lost):
+#   "Use gomodel via khaalidrafi/llmfisher on your CI."
+# Owner order (#hq 2026-10-21 09:16Z): "Added to PAT list." — the fine-
+#   grained PAT now covers khaalidrafi/llmfisher (private), so THIS workflow
+#   runs the REAL llmfisher: the repo is cloned with the PAT (repo secret
+#   GH_PAT) and its own compose stack performs the census in the exact shape
+#   ordered — `docker compose run --rm llmfisher --fresh`.
 #
-# The llmfisher box (ai.khalidrafi.tech) is OFF (HTTP 530/CF1033 probed
-# 19:4xZ), and this sandbox has no docker — so the census runs HERE, in
-# the same shape he ordered: a --rm container receives the API keys ONLY
-# as env vars (nothing baked, nothing printed, nothing written to git),
-# probes every provider it is given, and reports WHICH models work.
-# Values never appear in logs — the summary carries key NAMES + HTTP
-# codes + model ids only. Keys without a known base URL get a row asking
-# for the base (no guessing against unknown endpoints).
+# Keys travel ONLY as env vars (env-var law): compose gets them via `-e`
+# passthrough into the one-shot container — nothing baked, nothing printed,
+# nothing written to git. Values never appear in logs; the census reports
+# key NAMES + HTTP codes + model ids only. Jev's credential is the one
+# TypeSafe key (JEV_API_KEY := TYPESAFE_API_KEY, the same interpolation the
+# repo's docker-compose.yml does at parse time).
+#
+# The gateway itself (enterpilot/gomodel, the Owner's box) stays a
+# HEALTH-GATED LANE in ci.yml; this job refreshes the working-models census
+# that feeds ROSTER.org rank updates (Lead gate).
 
 on:
   workflow_dispatch: {}
+  schedule:
+    # Fresh census every 6h, offset from the CI turn schedule (:17):
+    # free-tier model availability rots fast on OpenRouter/Groq.
+    - cron: '23 1,7,13,19 * * *'
 
 concurrency:
   group: llmfisher
@@ -23,11 +36,25 @@ concurrency:
 jobs:
   fresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
-      - name: docker compose run --rm llmfisher --fresh (census from env keys)
+      - name: Clone the real llmfisher (private; PAT from repo secret GH_PAT)
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "$GH_PAT" ]; then
+            echo "::error::GH_PAT not set in repo secrets — khaalidrafi/llmfisher is private and CI cannot clone the real census tool. Add the fine-grained PAT (llmfisher is already on its repo list, Owner 09:16Z) as secret GH_PAT."
+            exit 1
+          fi
+          git clone --depth 1 \
+            "https://x-access-token:${GH_PAT}@github.com/khaalidrafi/llmfisher" \
+            /tmp/llmfisher-src
+          git -C /tmp/llmfisher-src log --oneline -1
+          echo "LLMFISHER_SHA=$(git -C /tmp/llmfisher-src rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      - name: docker compose run --rm llmfisher --fresh (real census, keys = env only)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -37,7 +64,6 @@ jobs:
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
-          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
           AA_API_KEY: ${{ secrets.AA_API_KEY }}
           BAI_API_KEY: ${{ secrets.BAI_API_KEY }}
           GMI_API_KEY: ${{ secrets.GMI_API_KEY }}
@@ -45,41 +71,37 @@ jobs:
           TOKENHARBOR_API_KEY: ${{ secrets.TOKENHARBOR_API_KEY }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |
-          mkdir -p /tmp/llmfisher
-          cat > /tmp/llmfisher/probe.py <<'PROBE'
-          #!/usr/bin/env python3
-          """llmfisher --fresh: census of working provider models.
-          Keys arrive as env vars ONLY; values are never printed."""
-          import json, os, urllib.request, urllib.error
-
-          PROVIDERS = [
-            ("GROQ_API_KEY",      "https://api.groq.com/openai/v1",        "groq/qwen3.8-27b"),
-            ("OPENROUTER_API_KEY","https://openrouter.ai/api/v1",          "nvidia/nemotron-3.5-lightning:free"),
-            ("ZAI_API_KEY",       "https://api.z.ai/api/paas/v4",          "glm-4.7-flash"),
-            ("GEMINI_API_KEY",    "https://generativelanguage.googleapis.com/v1beta", "gemini-2.0-flash"),
-            ("OLLAMA_CLOUD_API_KEY","https://api.ollama.com/v1",           None),
-            ("OPENCODE_API_KEY",  "https://api.opencode.ai/v1",            None),
-            ("CLOUDFLARE_API_KEY","https://api.cloudflare.com/client/v4",  None),
-          ]
-          NO_BASE = ["AA_API_KEY","BAI_API_KEY","GMI_API_KEY",
-                     "NAVYAI_API_KEY","TOKENHARBOR_API_KEY","TYPESAFE_API_KEY"]
-          PROBE
-          docker run --rm \
-            -v /tmp/llmfisher/probe.py:/probe.py:ro \
+          cd /tmp/llmfisher-src
+          # compose guards: env_file target + the file-typed bind mount must
+          # exist or Docker creates a DIRECTORY named probe_cache.json.
+          touch .env probe_cache.json
+          # Jev credential = the one TypeSafe key (repo compose interpolates
+          # JEV_API_KEY=${TYPESAFE_API_KEY}; we pass it straight through so
+          # the secret never exists in a second file).
+          export JEV_API_KEY="${TYPESAFE_API_KEY}"
+          docker compose run --rm \
             -e GROQ_API_KEY -e OPENROUTER_API_KEY -e ZAI_API_KEY \
             -e GEMINI_API_KEY -e OLLAMA_CLOUD_API_KEY -e OPENCODE_API_KEY \
-            -e CLOUDFLARE_API_KEY \
-            -e GOMODEL_MASTER_KEY -e GOMODEL_GATEWAY_URL \
+            -e CLOUDFLARE_API_KEY -e CLOUDFLARE_ACCOUNT_ID \
             -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
-            -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY -e TYPESAFE_API_KEY \
-            python:3.12-alpine python /probe.py > /tmp/llmfisher/report.md
-          cat /tmp/llmfisher/report.md
-          { echo "## llmfisher --fresh — working-models census ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY \
+            -e TYPESAFE_API_KEY -e JEV_API_KEY \
+            llmfisher --fresh
+
+      - name: Census summary (names + counts only — no values)
+        if: always()
+        run: |
+          {
+            echo "## llmfisher --fresh — REAL census (khaalidrafi/llmfisher@${LLMFISHER_SHA:-unknown})"
             echo ""
-            echo "Keys travel as env vars into a --rm container; values are never printed. Raw table:"
+            echo "- shape ordered by the Owner: \`docker compose run --rm llmfisher --fresh\`, keys as env vars only"
+            echo "- key NAMES offered to the census: GROQ OPENROUTER ZAI GEMINI OLLAMA_CLOUD CLOUDFLARE OPENCODE AA BAI GMI NAVYAI TOKENHARBOR TYPESAFE/JEV"
             echo ""
-            cat /tmp/llmfisher/report.md
+            echo "Auto-written config.yaml header (what the gateway will serve):"
+            echo '```'
+            head -8 /tmp/llmfisher-src/config/config.yaml 2>/dev/null || echo "(config.yaml not written — sync failed; read the step log)"
+            echo '```'
             echo ""
-            echo "- gomodel: probed directly against the Owner's llmfisher gateway (row above) — CI chain holds a health-gated gomodel/Jev lane (ci.yml) that auto-resumes when the box answers"
+            echo "- gomodel gateway lane stays health-gated in ci.yml (Jev judgment on finalize); auto-resumes when ai.khalidrafi.tech answers"
             echo "- next: feed the alive models into ROSTER.org rank updates (Lead gate)"
           } >> "$GITHUB_STEP_SUMMARY"

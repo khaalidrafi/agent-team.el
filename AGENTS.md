@@ -15,6 +15,13 @@ commands, and the Owner's gateway client. The team ALSO runs on CI
 (.github/workflows/ci.yml): scheduled/dispatched turns rotate seats through
 real work segments and self-chain until the objective completes.
 
+## AGENTS.MD LAW (Owner 2026-10-21)
+- THIS file is the GLOBAL agent law: every coding agent (local or on CI)
+  reads it FIRST. The CI turn brief routes agents here explicitly
+  (ci.yml: "Global law: AGENTS.md").
+- WEB MODELS have no config surface: their FIRST dispatch carries this
+  file's content inline, ahead of the task body.
+
 ## File map (source-of-truth chain)
 
 - `agent-team/TEAM-CONTROL.org` — chain switches: `#+KILL-SWITCH`,
@@ -26,6 +33,12 @@ real work segments and self-chain until the objective completes.
   frozen archive; never write there).
 - `agent-team/MEMBERS.org` — roster + ranks + SECRET/SESSION
   law text.
+- `templates/` — pkg-owned templates the package renders the team-making
+  prompt from: PROMPT.org (THE ONE standing-orders prompt), COMMON.org
+  (canonical manual), TEAMIFY.org / BOOTSTRAP.org (mode layers),
+  CANDIDATES.org (candidate seed).
+- `agent-team/CANDIDATES.org` — SYMLINK to ../templates/CANDIDATES.org
+  (one canonical copy, Owner order 2026-10-21).
 - `STATE.org`, `README.org`, `AI-REVIEW.org` — cross-session state, facts,
   review queue.
 

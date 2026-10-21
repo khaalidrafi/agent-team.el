@@ -179,7 +179,9 @@ jobs:
           echo "objective=$OBJECTIVE" >> "$GITHUB_OUTPUT"
           # Seat pointer -> seat id. The case grammar is extensible: one
           # line per rotation entry ("model@body ... role" pointer forms).
+          case "$TURN" in
 {{ROTATION_CASE}}
+          esac
           echo "seat=$NEXT_SEAT" >> "$GITHUB_OUTPUT"
 
       - name: Stop notice (kill switch / complete / no objective)

@@ -513,8 +513,12 @@ TEAM-MAKING header as before."
       (setq prompt (with-current-buffer "*agent-team prompt*"
                      (buffer-string))))
     (let ((case-fold-search nil))   ; the law header is UPPERCASE — match it
-      (should (string-prefix-p
-               "* GLOBAL AGENTS.MD — the user's global law" prompt))
+      (should (string-prefix-p "#+TITLE: TEAM-MAKING PROMPT" prompt))
+      ;; the law block opens the CONTENT — it sits before HOW TO USE
+      (should (< (string-match "\\* GLOBAL AGENTS.MD — the user's global law"
+                              prompt)
+                 (string-match
+                  (regexp-quote "* HOW TO USE (Director)") prompt)))
       (should (string-match-p "be excellent to each other" prompt))
       (should (string-match-p "TEAM CI (how the chain runs" prompt)))
   ;; no variable → no law block, prompt starts at the header
@@ -526,7 +530,7 @@ TEAM-MAKING header as before."
     (setq prompt (with-current-buffer "*agent-team prompt*"
                    (buffer-string)))
     (let ((case-fold-search nil))
-      (should (string-prefix-p "# TEAM-MAKING PROMPT" prompt))
+      (should (string-prefix-p "#+TITLE: TEAM-MAKING PROMPT" prompt))
       (should-not (string-match-p "GLOBAL AGENTS\\.MD" prompt))))))
 
 (ert-deftest agent-team-team-ci-brief-in-prompt ()
@@ -541,7 +545,9 @@ gets the chain's manual with every prompt, not just the team laws)."
     (should (string-match-p "TEAM CI (how the chain runs" prompt))
     (should (string-match-p "SELF-DISPATCH while the objective is" prompt))
     (should (string-match-p "khaalidrafi/testrepo" prompt))
-    (should (string-match-p "TEAMIFY.org — existing project" prompt))))
+    (should (string-match-p
+             "PART 1 — TEAMIFY: the task (existing project, no team setup)"
+             prompt))))
 
 (ert-deftest agent-team-prompt-carries-candidates-seed ()
   "The teamify prompt carries the CANDIDATES.org inventory as the SEED
@@ -557,18 +563,130 @@ prompt)."
                   (with-current-buffer "*agent-team prompt*"
                     (buffer-string)))))
     (should (string-match-p
-             "CANDIDATES.ORG — the candidate inventory" prompt))
+             "PART 3 — CANDIDATES SEED" prompt))
     (should (string-match-p
              "CANDIDATES.org — ALL available model@platform options" prompt))
-    ;; the FILE TARGETS define the seed file (and the chat file)
-    (should (string-match-p "\\*\\* agent-team/CANDIDATES.org" prompt))
-    (should (string-match-p "\\*\\* agent-team/TEAM-CHAT.org" prompt))
+    ;; the FILE TARGETS define the seed file (and the chat file);
+    ;; TEAMIFY's own sections are demoted one level under PART 1, so the
+    ;; targets live at three stars
+    (should (string-match-p "\\*\\*\\* agent-team/CANDIDATES.org" prompt))
+    (should (string-match-p "\\*\\*\\* agent-team/TEAM-CHAT.org" prompt))
     ;; the state file lives in agent-team/, never agent-org/ (typo law)
-    (should (string-match-p "\\*\\* agent-team/STATE.org" prompt))
+    (should (string-match-p "\\*\\*\\* agent-team/STATE.org" prompt))
     (should-not (string-match-p "agent-org/STATE" prompt))
     ;; no raw slot tokens leak into a built prompt
     (should-not (string-match-p "{{PAT}}" prompt))
     (should-not (string-match-p "{{[A-Z_]+}}" prompt))))
+
+(ert-deftest agent-team-prompt-outline-is-well-ordered ()
+  "The assembled prompt is a well-ordered outline, not a raw
+concatenation: level-1 headings are exactly the six parts in order,
+the mode layer nests under PART 1 with no stray level-1 headings
+outside src blocks, src blocks are balanced, no template-file metadata
+header and no build timestamp survives into the prompt (Owner
+2026-10-21: \"Does it look well-ordered?\")."
+  (let* ((agent-team-global-agents-md nil)
+         (prompt (progn
+                   (agent-team-teamify-prompt
+                    "https://github.com/khaalidrafi/testrepo" "test"
+                    "none" "<<<FILL>>>" nil)
+                   (with-current-buffer "*agent-team prompt*"
+                     (buffer-string)))))
+    (let ((in-src nil) (tops ()))
+      (dolist (line (split-string prompt "\n"))
+        (cond ((string-match-p "^#[+]BEGIN_SRC" line) (setq in-src t))
+              ((string-match-p "^#[+]END_SRC" line) (setq in-src nil))
+              ((and (not in-src) (string-match-p "^\\* " line))
+               (push (substring line 0 (min 40 (length line))) tops))))
+      (setq tops (nreverse tops))
+      (should (equal (length tops) 6))
+      (should (string-prefix-p "* HOW TO USE (Director)" (nth 0 tops)))
+      (should (string-prefix-p "* FILL BLOCK (Director)" (nth 1 tops)))
+      (should (string-prefix-p "* TEAM CI (how the chain runs" (nth 2 tops)))
+      (should (string-prefix-p "* PART 1 — TEAMIFY: the task" (nth 3 tops)))
+      (should (string-prefix-p "* PART 2 — COMMON: the master law" (nth 4 tops)))
+      (should (string-prefix-p "* PART 3 — CANDIDATES SEED" (nth 5 tops))))
+    (with-temp-buffer
+      (insert prompt)
+      ;; src blocks balanced
+      (should (= (how-many "^#[+]BEGIN_SRC" (point-min) (point-max))
+                 (how-many "^#[+]END_SRC" (point-min) (point-max))))
+      ;; no template-file metadata headers outside src blocks
+      (let ((case-fold-search nil))
+        (should-not (string-match-p "^#\\+TITLE: TEAMIFY\\.org" prompt))
+        (should-not (string-match-p "^#\\+TITLE: COMMON\\.org" prompt))
+        (should-not (string-match-p "^#\\+HOME:" prompt))
+        (should-not (string-match-p "^#\\+RULE:" prompt))
+        ;; no build timestamp line — the old "# ... on 2026-10-21 13:36 UTC"
+        (should-not (string-match-p "built by agent-team.el from templates/ ("
+                                    prompt))))))
+
+(ert-deftest agent-team-prompt-common-section-order ()
+  "COMMON's sections appear in the canonical reading order under
+PART 2 — the board first, then resources, people, collaboration,
+messaging, execution, laws, and SETUP last as the session-boot coda."
+  (let* ((agent-team-global-agents-md nil)
+         (prompt (progn
+                   (agent-team-teamify-prompt
+                    "https://github.com/khaalidrafi/testrepo" "test"
+                    "none" "<<<FILL>>>" nil)
+                   (with-current-buffer "*agent-team prompt*"
+                     (buffer-string))))
+         (order '("** WORKFLOW ("
+                  "** MODELS"
+                  "** GATEWAY AUTH ("
+                  "** BRAINS AND BODIES"
+                  "** STAFFING ("
+                  "** HIRING PROTOCOL"
+                  "** ROLE ATTACHMENT ("
+                  "** TEAM LOOP ("
+                  "** JEV ("
+                  "** MESSAGE FORMAT SPEC ("
+                  "** MESSAGE STANDARD"
+                  "** TEAM CHAT ENTRY FORMAT ("
+                  "** LARK ("
+                  "** DISPATCH RULES"
+                  "** LAWS"
+                  "** MEMBER LAWS"
+                  "** OUTPUT RULE"
+                  "** HARD RULES"
+                  "** SETUP ("))
+         (last-pos -1))
+    (let ((case-fold-search nil))
+      (dolist (head order)
+        (let ((pos (string-match (regexp-quote head) prompt)))
+          (should pos)
+          (should (> pos last-pos))
+          (setq last-pos pos))))))
+
+(ert-deftest agent-team-prompt-sketches-stay-byte-level ()
+  "File-target sketches inside PART 1 live inside #+BEGIN_SRC org
+blocks: their own headings never leak into the prompt outline, and the
+sketch bytes are exactly what the teamify must produce."
+  (let* ((agent-team-global-agents-md nil)
+         (prompt (progn
+                   (agent-team-teamify-prompt
+                    "https://github.com/khaalidrafi/testrepo" "test"
+                    "none" "<<<FILL>>>" nil)
+                   (with-current-buffer "*agent-team prompt*"
+                     (buffer-string))))
+         (p1 (string-match "^\\* PART 1 — " prompt))
+         (p2 (string-match "^\\* PART 2 — " prompt))
+         (in-src nil)
+         (leaks ()))
+    (dolist (line (split-string (substring prompt p1 p2) "\n"))
+      (cond ((string-match-p "^#[+]BEGIN_SRC" line) (setq in-src t))
+            ((string-match-p "^#[+]END_SRC" line) (setq in-src nil))
+            ((and (not in-src) (string-match-p "^\\* " line))
+             (push line leaks))))
+    (should (null leaks))
+    ;; the TODOS.org sketch is byte-exact inside its src block
+    (should (string-match-p
+             "#\\+BEGIN_SRC org\n#\\+TITLE: TODOS.org — team board (single source of truth)\n#\\+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED\n\n\\* Board\n"
+             prompt))
+    ;; the chat sketch ends with a bare #+END_SRC on its own line
+    (should (string-match-p
+             "\\* MSG <from> -> @<to> :<kind>:\n#\\+END_SRC\n" prompt))))
 
 (provide 'agent-team-test)
 

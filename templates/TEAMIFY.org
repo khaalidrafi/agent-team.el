@@ -24,6 +24,7 @@ project into a team project — adopt, don't rebuild.
   not fetch any other repo to execute it. (The canonical manual lives in
   khaalidrafi/agent-team.el templates/COMMON.org for reference and
   versioning; it is not a prerequisite.)
+
 ** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
@@ -51,6 +52,9 @@ the project, never rewrites it.
 
 ** agent-team/TODOS.org
 
+File sketch (produce EXACTLY this skeleton):
+
+#+BEGIN_SRC org
 #+TITLE: TODOS.org — team board (single source of truth)
 #+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 
@@ -62,9 +66,13 @@ the project, never rewrites it.
   - BLOCKED + reason; :OWN: = owner ruling
   - REVIEW + completion note (invalid without)
   - BLOCKED never terminal; only the EM flips DONE
+#+END_SRC
 
 ** agent-team/MEMBERS.org
 
+File sketch (produce EXACTLY this skeleton):
+
+#+BEGIN_SRC org
 #+TITLE: MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
 
@@ -73,6 +81,7 @@ the project, never rewrites it.
   - duties: <what this member OWNS and is accountable for — specific,
     project-derived, not generic>
   - rank: (STAFFING — evidence or intern, with citation)
+#+END_SRC
 
 ** agent-team/CANDIDATES.org
 
@@ -87,6 +96,9 @@ CANDIDATES' evidence sections cite. Not in the teamify commit.
 
 ** agent-team/STATE.org
 
+File sketch (produce EXACTLY this skeleton):
+
+#+BEGIN_SRC org
 #+TITLE: STATE.org — cross-session state (Owner pastes back at session start)
 
 * DONE
@@ -98,9 +110,13 @@ CANDIDATES' evidence sections cite. Not in the teamify commit.
 * HIRING-LOG
 * AUTONOMY
   AUTO
+#+END_SRC
 
 ** agent-team/TEAM.md — the constitution; sections in this order:
 
+File sketch (produce EXACTLY this skeleton):
+
+#+BEGIN_SRC org
 #+TITLE: TEAM.md — <project> team constitution
 #+REPO: <repo>
 
@@ -115,17 +131,22 @@ CANDIDATES' evidence sections cite. Not in the teamify commit.
 * MANUAL
   - canonical manual: khaalidrafi/agent-team.el templates/COMMON.org
   - NEVER embed the manual here (one canonical copy)
+#+END_SRC
 
 ** agent-team/TEAM-CHAT.org
 
+File sketch (produce EXACTLY this skeleton):
+
+#+BEGIN_SRC org
 #+TITLE: TEAM-CHAT.org — team chat (append-only; union-merged in CI)
 
 * MSG <from> -> @<to> :<kind>:
+#+END_SRC
 
-  - seed the file ONLY when it does not exist yet — an existing chat is
-    history: append, never rewrite
-  - one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
-    (COMMON): clear language, well-structured with lists — a human
-    reads the Telegram mirror verbatim
-  - the exact header line drives the Telegram mirror and the live
-    viewer; never reformat another member's entry
+- seed the file ONLY when it does not exist yet — an existing chat is
+  history: append, never rewrite
+- one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
+  (COMMON): clear language, well-structured with lists — a human
+  reads the Telegram mirror verbatim
+- the exact header line drives the Telegram mirror and the live
+  viewer; never reformat another member's entry

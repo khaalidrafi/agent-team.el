@@ -15,12 +15,19 @@ commands, and the Owner's gateway client. The team ALSO runs on CI
 (.github/workflows/ci.yml): scheduled/dispatched turns rotate seats through
 real work segments and self-chain until the objective completes.
 
-## AGENTS.MD CONFIG (Owner 2026-10-21 08:22Z)
+## AGENTS.MD CONFIG (Owner 2026-10-21 08:22Z + 09:16Z "read docs for each agent")
 - THIS file is the GLOBAL agent law. Coding agents are CONFIGURED to load
-  it — never told to read it: the harness bakes it at the agent's global
-  config path (OpenCode ~/.config/opencode/AGENTS.md; Goose reads
-  AGENTS.md from the working directory natively) so it lands in memory
-  automatically. Web models get it inline in dispatch #1 (no config).
+  it — never told to read it: the harness bakes it at each agent's
+  VERIFIED global config path (docs checked 2026-10-21), so it lands in
+  memory automatically:
+  - OpenCode: ~/.config/opencode/AGENTS.md ("applied across all opencode
+    sessions", opencode.ai/docs/rules) + repo-root via instructions[]
+  - Goose: ~/.config/goose/.goosehints (global hints, goose config dir);
+    repo-root AGENTS.md read from CWD natively
+  - CodeBuddy: ~/.codebuddy/CODEBUDDY.md (user-level memory, "takes
+    effect in all projects"); repo-root AGENTS.md auto-fallback
+  - Qoder: no global path documented; repo-root AGENTS.md auto-recognized
+  Web models get it inline in dispatch #1 (no config).
 
 ## File map (source-of-truth chain)
 
@@ -33,10 +40,11 @@ real work segments and self-chain until the objective completes.
   frozen archive; never write there).
 - `agent-team/MEMBERS.org` — roster + ranks + SECRET/SESSION
   law text.
-- `templates/` — pkg-owned templates the package renders the team-making
-  prompt from: PROMPT.org (THE ONE standing-orders prompt), COMMON.org
-  (canonical manual), TEAMIFY.org / BOOTSTRAP.org (mode layers),
-  CANDIDATES.org (candidate seed).
+- `templates/` — pkg-owned templates the PACKAGE renders the team-making
+  prompt from (M-x agent-team-teamify-prompt — there is NO PROMPT.org
+  file; Owner 2026-10-21 08:22Z "WTH is PROMPT.org?"): TEAMIFY.org /
+  BOOTSTRAP.org (mode layers), COMMON.org (canonical manual, inlined at
+  build time), CANDIDATES.org (candidate seed).
 - `agent-team/CANDIDATES.org` — SYMLINK to ../templates/CANDIDATES.org
   (one canonical copy, Owner order 2026-10-21).
 - `STATE.org`, `README.org`, `AI-REVIEW.org` — cross-session state, facts,

@@ -235,6 +235,102 @@ PRIORITY: P1 · ORDER: 2")))
     (should (equal "  RESULT: DONE" (nth 7 lines)))
     (should (equal "  EVIDENCE: file:12" (nth 8 lines)))))
 
+;; --- live team chat viewer (Owner order 2026-10-21 09:16Z: view team chat
+;; live on Emacs on Android) — offline tests, no network. ---
+
+(ert-deftest agent-team-chat-url-builders ()
+  ;; public repo → anonymous raw URL (Android: no credentials needed)
+  (should (equal
+           (agent-team-chat--url "khaalidrafi/agent-team.el" "ai/main"
+                                 "agent-team/TEAM-CHAT.org" nil)
+           "https://raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/agent-team/TEAM-CHAT.org"))
+  ;; private repo → Contents API with the raw-media Accept + bearer
+  (should (equal
+           (agent-team-chat--url "o/r" "b" "p/a.org" "tok")
+           "https://api.github.com/repos/o/r/contents/p/a.org?ref=b"))
+  (should (equal (cdr (assoc "Authorization" (agent-team-chat--headers "tok")))
+                 "Bearer tok"))
+  (should (null (agent-team-chat--headers nil))))
+
+(ert-deftest agent-team-chat-msg-count ()
+  (should (= (agent-team-chat--msg-count
+              "#+TITLE: TEAM-CHAT.org
+* MSG lead -> @release-engineer :dispatch:      :msg:lead:release-engineer:dispatch:
+* MSG release-engineer -> @lead :report:        :msg:release-engineer:lead:report:
+* MSG lead -> @all :note:                       :msg:lead:all:note:")
+             3))
+  (should (= (agent-team-chat--msg-count "no messages yet") 0)))
+
+(ert-deftest agent-team-chat-render-follows-tail-and-highlights ()
+  (let ((buf (get-buffer-create " *agent-team chat render test*")))
+    (unwind-protect
+        (progn
+          (agent-team-chat--render
+           buf "* MSG a -> @b :note:  :msg:a:b:note:\n:PROPERTIES:\n:FROM: a\n:END:\n  hello\n")
+          (with-current-buffer buf
+            (should (derived-mode-p 'org-mode))
+            (should agent-team-chat-live-mode)
+            (should buffer-read-only)
+            (should (= (agent-team-chat--msg-count (buffer-string)) 1))
+            (should (= (point) (point-max)))     ; follows tail from empty
+            (should (string-match-p "ok" agent-team-chat--status)))
+          ;; append-only growth: tail gets the new face, point follows
+          (agent-team-chat--render
+           buf "* MSG a -> @b :note:  :msg:a:b:note:\n:PROPERTIES:\n:FROM: a\n:END:\n  hello\n* MSG c -> @d :report:  :msg:c:d:report:\n  RESULT: DONE\n")
+          (with-current-buffer buf
+            (should (= (agent-team-chat--msg-count (buffer-string)) 2))
+            (should (= (point) (point-max)))
+            (should (overlays-in 1 (point-max)))
+            ;; reader scrolled up: render must NOT yank them to the tail
+            (goto-char (point-min))
+            (agent-team-chat--render buf (buffer-string))
+            (should (= (point) (point-min)))))
+      (kill-buffer buf))))
+
+(ert-deftest agent-team-chat-non-growth-resets ()
+  ;; A union-merge reordering is not append-only: no new-face overlay, view
+  ;; stays sane (this is the fallback path, not the normal one).
+  (let ((buf (get-buffer-create " *agent-team chat reorder test*")))
+    (unwind-protect
+        (progn
+          (agent-team-chat--render buf "one\n")
+          (agent-team-chat--render buf "zero\none\n")
+          (with-current-buffer buf
+            (should (string-match-p "zero" (buffer-string)))
+            (should buffer-read-only)))
+      (kill-buffer buf))))
+
+(ert-deftest agent-team-chat-timer-lifecycle ()
+  (let ((buf (get-buffer-create " *agent-team chat timer test*")))
+    (unwind-protect
+        (progn
+          (with-current-buffer buf
+            (setq agent-team-chat--repo "o/r" agent-team-chat--branch "b"
+                  agent-team-chat--path "p" agent-team-chat--busy t)
+            (agent-team-chat-live-mode 1)
+            (setq agent-team-chat--timer
+                  (run-at-time 1000 1000 #'agent-team-chat--tick buf))
+            (should agent-team-chat--timer)
+            ;; teardown cancels and clears
+            (agent-team-chat--teardown)
+            (should (null agent-team-chat--timer)))
+          ;; tick on a dead buffer is a no-op, never an error
+          (kill-buffer buf)
+          (should (null (agent-team-chat--tick buf))))
+      (when (buffer-live-p buf) (kill-buffer buf)))))
+
+(ert-deftest agent-team-chat-failed-keeps-content ()
+  (let ((buf (get-buffer-create " *agent-team chat fail test*")))
+    (unwind-protect
+        (progn
+          (agent-team-chat--render buf "* MSG a -> @b :note:\n")
+          (agent-team-chat--failed buf "HTTP 404 — no chat at this repo@branch yet")
+          (with-current-buffer buf
+            (should (string-match-p "MSG a" (buffer-string))) ; last good kept
+            (should (= agent-team-chat--errs 1))
+            (should (null agent-team-chat--busy))))
+      (kill-buffer buf))))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

@@ -250,7 +250,10 @@ PRIORITY: P1 · ORDER: 2")))
            "https://api.github.com/repos/o/r/contents/p/a.org?ref=b"))
   (should (equal (cdr (assoc "Authorization" (agent-team-chat--headers "tok")))
                  "Bearer tok"))
-  (should (null (agent-team-chat--headers nil))))
+  ;; anonymous mode: NO auth headers — but a UA always rides along
+  (should (null (assoc "Authorization" (agent-team-chat--headers nil))))
+  (should (null (assoc "Accept" (agent-team-chat--headers nil))))
+  (should (assoc "User-Agent" (agent-team-chat--headers nil))))
 
 (ert-deftest agent-team-chat-msg-count ()
   (should (= (agent-team-chat--msg-count

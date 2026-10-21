@@ -579,6 +579,40 @@ manual, inlined at build time) + CANDIDATES.org (candidate seed).")
         (with-temp-buffer (insert-file-contents file) (buffer-string))
       (format "<<<MISSING TEMPLATE: %s>>>" file))))
 
+(defun agent-team--strip-template-header (text)
+  "Drop a template body's own file-metadata header: the leading
+#+KEY: value lines plus the blank line after them.  Those lines
+describe the template FILE (TITLE/HOME/RULE...), not the law — the
+assembled prompt carries part headings instead.  Body text is returned
+byte-identical."
+  (let ((lines (split-string text "\n")))
+    (while (and lines (string-prefix-p "#+" (car lines)))
+      (setq lines (cdr lines)))
+    (while (and lines (string-empty-p (car lines)))
+      (setq lines (cdr lines)))
+    (mapconcat #'identity lines "\n")))
+
+(defun agent-team--demote-headings (text)
+  "Demote every Org heading in TEXT by one level (prepend one star).
+Lines inside #+BEGIN_SRC/#+END_SRC blocks are never touched — the
+file-target sketches must stay byte-level."
+  (let ((in-src nil))
+    (mapconcat
+     (lambda (line)
+       (cond
+        ((string-match-p "\\`#[+]BEGIN_SRC" line) (setq in-src t) line)
+        ((string-match-p "\\`#[+]END_SRC" line) (setq in-src nil) line)
+        ((and (not in-src) (string-match-p "\\`\\*+ " line))
+         (concat "*" line))
+        (t line)))
+     (split-string text "\n") "\n")))
+
+(defun agent-team--seed-block ()
+  "The CANDIDATES.org template verbatim, newline-terminated — the seed
+ships inside one #+BEGIN_SRC org block in the assembled prompt."
+  (let ((seed (agent-team--template "CANDIDATES.org")))
+    (if (string-suffix-p "\n" seed) seed (concat seed "\n"))))
+
 ;;;###autoload
 (defun agent-team-teamify-prompt (&optional repo project not-touch pat fresh)
   "Build the ONE team-making prompt from templates/ for REPO.
@@ -610,6 +644,9 @@ the prompt only — never stored in files/commits/board (Owner order
                      (insert-file-contents agent-team-global-agents-md)
                      (buffer-string))))
          (prompt (concat
+                  "#+TITLE: TEAM-MAKING PROMPT — " repo "\n"
+                  "# Built by M-x agent-team-teamify-prompt from agent-team.el\n"
+                  "# templates/ — regenerate there, never hand-edit a built prompt.\n\n"
                   (if law
                       (concat
                        "* GLOBAL AGENTS.MD — the user's global law (pkg variable"
@@ -618,9 +655,14 @@ the prompt only — never stored in files/commits/board (Owner order
                        " config in CI\n\n"
                        law "\n\n")
                     "")
-                  "# TEAM-MAKING PROMPT — built by agent-team.el from templates/"
-                  " (" (if fresh "BOOTSTRAP" "TEAMIFY") " + COMMON + CANDIDATES) on "
-                  (format-time-string "%Y-%m-%d %H:%M UTC") "\n\n"
+                  "* HOW TO USE (Director)\n"
+                  "- ONE prompt for ONE fresh chat with the team's Lead — paste\n"
+                  "  it whole, in order; every section is load-bearing.\n"
+                  "- The only fill is the PAT in the FILL BLOCK below — fill it\n"
+                  "  before pasting; the prompt is then self-contained.\n"
+                  "- Mode: " (if fresh "BOOTSTRAP (fresh project)"
+                               "TEAMIFY (existing project, no team setup)") "\n"
+                  "- Regenerate with M-x agent-team-teamify-prompt; never hand-edit.\n\n"
                   "* FILL BLOCK (Director)\n"
                   "- REPO: " repo " — team-truth branch: ai/main\n"
                   "- PROJECT: " project "\n"
@@ -629,13 +671,23 @@ the prompt only — never stored in files/commits/board (Owner order
                   "- PAT: " pat "\n"
                   "  (reuse the same token, no rotation; use immediately; NEVER\n"
                   "  store in files/commits/board/logs)\n\n"
-                  agent-team--team-ci-brief "\n\n"
-                  layer "\n\n" manual "\n\n"
-                  "* CANDIDATES.ORG — the candidate inventory — the seed for\n"
-                  "agent-team/CANDIDATES.org: copy this section into the file\n"
-                  "VERBATIM (COMMON's MODELS + STAFFING laws point here; a fresh\n"
-                  "teamify must not dangle)\n\n"
-                  (agent-team--template "CANDIDATES.org") "\n"))
+                  agent-team--team-ci-brief "\n"
+                  "* PART 1 — " (if fresh "BOOTSTRAP" "TEAMIFY")
+                  ": the task (" (if fresh "fresh project"
+                                 "existing project, no team setup") ")\n\n"
+                  (agent-team--demote-headings
+                   (agent-team--strip-template-header layer)) "\n"
+                  "* PART 2 — COMMON: the master law (single source of truth;"
+                  " canonical copy: khaalidrafi/agent-team.el"
+                  " templates/COMMON.org; changes land there first, teams"
+                  " receive them via TEAM UPDATE)\n\n"
+                  (agent-team--strip-template-header manual) "\n"
+                  "* PART 3 — CANDIDATES SEED: copy the org block below VERBATIM"
+                  " into agent-team/CANDIDATES.org (COMMON's MODELS + STAFFING"
+                  " laws point there — a fresh teamify must not dangle)\n\n"
+                  "#+BEGIN_SRC org\n"
+                  (agent-team--seed-block)
+                  "#+END_SRC\n"))
          (buffer (get-buffer-create "*agent-team prompt*")))
     (with-current-buffer buffer
       (erase-buffer)

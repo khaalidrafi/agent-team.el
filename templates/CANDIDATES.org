@@ -58,10 +58,11 @@
   - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
     [free-tier expiry: none published]
 
-* Bodies — 2026 landscape (dsh · pi · cline — Owner order "Add dsh, pi and
-  cline", 2026-10-21; research digested from primary sources same day)
+* Bodies — 2026 landscape (dsh · pi · cline — Owner order 2026-10-21)
 
-  All three are BODIES (harnesses), not brains — pair per BRAINS AND BODIES.
+  Owner order: "Add dsh, pi and cline"; research digested from primary
+  sources the same day. All three are BODIES (harnesses), not brains — pair
+  per BRAINS AND BODIES.
   Until agent-org ships ACP support for them, run their CLIs directly
   (Owner order 2026-10-21).
 
@@ -417,10 +418,11 @@
     credits/5h), or (b) accept groq's 200K tokens/day as a capped primary with
     CI as the executor. Do not staff an unattended seat on a web free tier.
 
-* Free-lane census — 2026-10-21 (Owner order: "review all free tiers online,
-  look for new free tiers or offers; verify the 2000/day claim")
+* Free-lane census — 2026-10-21 (Owner-ordered review)
 
-  VERDICT FIRST: the "2000 requests/day" claim was the Qwen Code free OAuth
+  Owner order: "review all free tiers online, look for new free tiers or
+  offers; verify the 2000/day claim". VERDICT FIRST: the "2000
+  requests/day" claim was the Qwen Code free OAuth
   tier and it is DEAD — discontinued 2026-04-15 (qwenlm.github.io/qwen-code-
   docs auth page; QwenLM/qwen-code#3203). Re-verified 2026-10-21.
   Never staff on it.
@@ -477,3 +479,4 @@
   licence or pool, gets an INTERN role: one scoped task, one REPORT, then
   promotion or release. Five per round. Live list:
   agent-team/MEMBERS.org §INTERN POOL.
+

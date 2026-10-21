@@ -1,4 +1,4 @@
-#+TITLE: TEAMIFY.org — existing project, no team setup (add to COMMON.org)
+#+TITLE: TEAMIFY.org — existing project, no team setup
 #+ROLE: the TEAMIFY-specific layer; everything common lives in COMMON.org
 
 * WHEN TO USE
@@ -16,8 +16,9 @@ project into a team project — adopt, don't rebuild.
 
 ** CONTEXT PACK (filled by the Director)
 
-- repo: <URL> (branch ai/main) · PAT: {{PAT}} (use immediately, never store)
-- the project's purpose, in one line: <filled by Director>
+- repo: the FILL BLOCK's REPO (branch ai/main) · PAT: the FILL BLOCK's
+  PAT (use immediately, never store)
+- the project's purpose, in one line: the FILL BLOCK's PROJECT
 
 - this prompt is SELF-CONTAINED: every instruction you need is here — do
   not fetch any other repo to execute it. (The canonical manual lives in
@@ -29,14 +30,12 @@ project into a team project — adopt, don't rebuild.
 2. Pull; read what EXISTS: README, code, commit history, CI — and
    AGENTS.md only if the project happens to have one (the setup NEVER
    creates one; NEVER create or rewrite a repo-root AGENTS.md).
-3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION, this
-   team's law file standing in place of any AGENTS.md: purpose, standing
-   team laws, role
-   scopes, conventions, and one pointer line to the canonical manual
-   (khaalidrafi/agent-team.el templates/COMMON.org) — NEVER embed
-   the manual (one canonical copy; per-repo copies drift). Plus TODOS,
-   MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
-   without the Owner.
+3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION (purpose,
+   standing team laws, role scopes, conventions, and one pointer line to
+   the canonical manual, khaalidrafi/agent-team.el templates/COMMON.org —
+   NEVER embed the manual; one canonical copy, per-repo copies drift).
+   Plus TODOS, MEMBERS, CANDIDATES, STATE, TEAM-CHAT — commit on
+   ai/teamify, touching nothing else; no merge without the Owner.
 4. Then team mode: poll the board, STAFFING, first real dispatch.
 5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
 
@@ -75,7 +74,18 @@ the project, never rewrites it.
     project-derived, not generic>
   - rank: (STAFFING — evidence or intern, with citation)
 
-** agent-org/STATE.org
+** agent-team/CANDIDATES.org
+
+Copy the CANDIDATES.ORG inventory section of this prompt VERBATIM —
+this file is the seed; COMMON's MODELS + STAFFING laws point here.
+
+** agent-team/ROSTER.org
+
+Created by ROSTER DUTY at first staffing (COMMON STAFFING): the full
+live GET /v1/models dump with the proven-vs-refused split — the dump
+CANDIDATES' evidence sections cite. Not in the teamify commit.
+
+** agent-team/STATE.org
 
 #+TITLE: STATE.org — cross-session state (Owner pastes back at session start)
 
@@ -105,3 +115,17 @@ the project, never rewrites it.
 * MANUAL
   - canonical manual: khaalidrafi/agent-team.el templates/COMMON.org
   - NEVER embed the manual here (one canonical copy)
+
+** agent-team/TEAM-CHAT.org
+
+#+TITLE: TEAM-CHAT.org — team chat (append-only; union-merged in CI)
+
+* MSG <from> -> @<to> :<kind>:
+
+  - seed the file ONLY when it does not exist yet — an existing chat is
+    history: append, never rewrite
+  - one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
+    (COMMON): clear language, well-structured with lists — a human
+    reads the Telegram mirror verbatim
+  - the exact header line drives the Telegram mirror and the live
+    viewer; never reformat another member's entry

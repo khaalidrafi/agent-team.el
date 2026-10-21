@@ -588,10 +588,13 @@ Owner order 2026-10-21) + FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT)
 + the mode layer (templates/BOOTSTRAP.org for a FRESH project,
 templates/TEAMIFY.org for an existing one) + templates/COMMON.org (the
 canonical manual, inlined at build time from its canonical home — no
-per-repo copies drift). Puts the result in the *agent-team prompt*
-buffer AND the kill-ring, ready to paste into a fresh chat with the
-team's Lead. The PAT travels in the prompt only — never stored in
-files/commits/board (Owner order 2026-10-21)."
+per-repo copies drift) + templates/CANDIDATES.org (the candidate
+inventory as the SEED for agent-team/CANDIDATES.org — COMMON's MODELS
++ STAFFING laws point at that file, so the prompt must carry it). Puts
+the result in the *agent-team prompt* buffer AND the kill-ring, ready
+to paste into a fresh chat with the team's Lead. The PAT travels in
+the prompt only — never stored in files/commits/board (Owner order
+2026-10-21)."
   (interactive)
   (unless repo
     (setq repo (read-string "REPO (url; team-truth branch is ai/main): "))
@@ -616,7 +619,7 @@ files/commits/board (Owner order 2026-10-21)."
                        law "\n\n")
                     "")
                   "# TEAM-MAKING PROMPT — built by agent-team.el from templates/"
-                  " (" (if fresh "BOOTSTRAP" "TEAMIFY") " + COMMON) on "
+                  " (" (if fresh "BOOTSTRAP" "TEAMIFY") " + COMMON + CANDIDATES) on "
                   (format-time-string "%Y-%m-%d %H:%M UTC") "\n\n"
                   "* FILL BLOCK (Director)\n"
                   "- REPO: " repo " — team-truth branch: ai/main\n"
@@ -627,7 +630,12 @@ files/commits/board (Owner order 2026-10-21)."
                   "  (reuse the same token, no rotation; use immediately; NEVER\n"
                   "  store in files/commits/board/logs)\n\n"
                   agent-team--team-ci-brief "\n\n"
-                  layer "\n\n" manual "\n"))
+                  layer "\n\n" manual "\n\n"
+                  "* CANDIDATES.ORG — the candidate inventory — the seed for\n"
+                  "agent-team/CANDIDATES.org: copy this section into the file\n"
+                  "VERBATIM (COMMON's MODELS + STAFFING laws point here; a fresh\n"
+                  "teamify must not dangle)\n\n"
+                  (agent-team--template "CANDIDATES.org") "\n"))
          (buffer (get-buffer-create "*agent-team prompt*")))
     (with-current-buffer buffer
       (erase-buffer)

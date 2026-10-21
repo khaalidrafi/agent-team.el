@@ -334,6 +334,121 @@ PRIORITY: P1 · ORDER: 2")))
             (should (null agent-team-chat--busy))))
       (kill-buffer buf))))
 
+;;; One-command project setup (Owner order 2026-10-21 10:12Z) ----------------
+
+(ert-deftest agent-team-fill-slots-and-unfilled ()
+  (let* ((filled (agent-team--fill-slots
+                  "repo={{REPO}} cron='{{CRON}}' file={{WORKFLOW_FILE}}"
+                  '(("REPO" . "o/r") ("CRON" . "17 * * * *") ("WORKFLOW_FILE" . "agent-team.yml")))))
+    (should (string-match-p "repo=o/r" filled))
+    (should (string-match-p (regexp-quote "cron='17 * * * *'") filled))
+    (should (null (agent-team--unfilled-slots filled))))
+  ;; a missing slot stays visible, not silently dropped
+  (let ((part (agent-team--fill-slots "{{A}} {{B}}" '(("A" . "x")))))
+    (should (equal '("B") (agent-team--unfilled-slots part)))))
+
+(ert-deftest agent-team-template-slots-all-covered ()
+  "Every {{TOKEN}} in templates/agent-team.yml is fillable by
+`agent-team--default-slots' — the template and the defaults can never
+drift apart (this is the setup command's core invariant)."
+  (let* ((root (make-temp-file "at-tpl-" t))
+         (tpl (agent-team--template "agent-team.yml"))
+         (slots (agent-team--default-slots root "khaalidrafi/testrepo"))
+         (filled (agent-team--fill-slots tpl slots)))
+    (should (equal '() (agent-team--unfilled-slots filled)))
+    ;; the fill is project-aware: project name, repo slug, discord secret
+    (should (string-match-p "testrepo — CI agent-team chain" filled))
+    (should (string-match-p "khaalidrafi/testrepo" filled))
+    (should (string-match-p "DISCORD_WEBHOOK_TEAM_TESTREPO" filled))
+    ;; engine defaults ride inside: gomodel health step + Jev judgment
+    (should (string-match-p "GoModel lane health" filled))
+    (should (string-match-p "Jev judgment" filled))
+    (should (string-match-p "workflows/agent-team.yml/dispatches" filled))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-detect-gate-pytest ()
+  (let* ((root (make-temp-file "at-gate-" t))
+         (py (expand-file-name "pyproject.toml" root)))
+    (write-region "[project]\nname = \"x\"\n" nil py)
+    (let ((gate (agent-team--detect-gate root)))
+      (should (equal "pytest" (plist-get gate :name)))
+      (should (string-match-p "python -m pytest -q" (plist-get gate :run)))
+      (should (string-match-p "python -m pytest -q" (plist-get gate :cmd))))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-detect-gate-fallback-is-loud ()
+  (let* ((root (make-temp-file "at-gate2-" t))
+         (gate (agent-team--detect-gate root)))
+    (should (string-match-p "PLACEHOLDER" (plist-get gate :name)))
+    (should (string-match-p "exit 1" (plist-get gate :cmd)))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-repo-slug-parses-origin ()
+  (let* ((root (make-temp-file "at-slug-" t))
+         (default-directory root))
+    (call-process "git" nil nil nil "init" "-q" "-b" "ai/main" ".")
+    (call-process "git" nil nil nil "remote" "add" "origin"
+                  "https://github.com/khaalidrafi/admincraft.git")
+    (should (equal "khaalidrafi/admincraft" (agent-team--repo-slug root)))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-scaffold-writes-the-chain ()
+  (let* ((root (make-temp-file "at-scaf-" t))
+         (report (agent-team--scaffold-ci root "khaalidrafi/testrepo"))
+         (wf (expand-file-name ".github/workflows/agent-team.yml" root))
+         (agents (expand-file-name "AGENTS.md" root))
+         (sg (expand-file-name ".github/scripts/secret-guard.sh" root))
+         (oc (expand-file-name "docker/harness/opencode.json" root)))
+    ;; the chain lands, fully filled
+    (should (file-exists-p wf))
+    (let ((yml (with-temp-buffer (insert-file-contents wf) (buffer-string))))
+      (should (equal '() (agent-team--unfilled-slots yml)))
+      (should (string-match-p "khaalidrafi/testrepo" yml))
+      (should (string-match-p "secrets.GROQ_API_KEY" yml))
+      (should (string-match-p "TELEGRAM_OWNER_ID" yml)))
+    ;; stub + guard + pkg configs land; per-project Dockerfile scaffolds
+    (should (file-exists-p agents))
+    (should (file-exists-p sg))
+    (should (file-exists-p oc))
+    (should (file-exists-p (expand-file-name "docker/harness/Dockerfile" root)))
+    ;; report is (FILE . ACTION) pairs naming what was written
+    (should (>= (length report) 5))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-scaffold-never-clobbers-project-files ()
+  "AGENTS.md and the harness Dockerfile are per-project: setup writes
+them ONLY when missing — an existing project's law is never clobbered."
+  (let* ((root (make-temp-file "at-scaf2-" t))
+         (agents (expand-file-name "AGENTS.md" root))
+         (df (expand-file-name "docker/harness/Dockerfile" root)))
+    (make-directory (file-name-directory df) t)
+    (write-region "# the project's own law — DO NOT TOUCH\n" nil agents)
+    (write-region "FROM alpine\n" nil df)
+    (agent-team--scaffold-ci root "khaalidrafi/testrepo")
+    (should (string-match-p
+             "the project's own law"
+             (with-temp-buffer (insert-file-contents agents) (buffer-string))))
+    (should (string-match-p
+             "FROM alpine"
+             (with-temp-buffer (insert-file-contents df) (buffer-string))))
+    ;; but the workflow itself IS written when absent
+    (should (file-exists-p (expand-file-name ".github/workflows/agent-team.yml" root)))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-team-ci-brief-in-prompt ()
+  "The teamify prompt carries the TEAM CI operating block (the Owner
+gets the chain's manual with every prompt, not just the team laws)."
+  (let ((prompt (progn
+                  (agent-team-teamify-prompt
+                   "https://github.com/khaalidrafi/testrepo" "test"
+                   "none" "<<<FILL>>" nil)
+                  (with-current-buffer "*agent-team prompt*"
+                    (buffer-string)))))
+    (should (string-match-p "TEAM CI (how the chain runs" prompt))
+    (should (string-match-p "SELF-DISPATCH while the objective is" prompt))
+    (should (string-match-p "khaalidrafi/testrepo" prompt))
+    (should (string-match-p "TEAMIFY.org — existing project" prompt))))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

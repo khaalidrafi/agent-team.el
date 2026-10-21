@@ -69,8 +69,8 @@ RUN useradd -m -u 1001 agent
 
 # --- Baked agent configs (Owner: "make agent configs, too, and reuse them").
 #     Keys are env-interpolated at run time; nothing secret is baked. -------
-COPY opencode.json     /home/agent/.config/opencode/opencode.json
-COPY goose-config.yaml /home/agent/.config/goose/config.yaml
+COPY docker/harness/opencode.json     /home/agent/.config/opencode/opencode.json
+COPY docker/harness/goose-config.yaml /home/agent/.config/goose/config.yaml
 COPY AGENTS.md         /home/agent/.config/opencode/AGENTS.md
 # Global AGENTS.md = agent law, CONFIGURED into memory (Owner 2026-10-21
 # 08:22Z: "configure the agent to load global AGENTS.md, automatically

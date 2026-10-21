@@ -1,0 +1,803 @@
+#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+#+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
+# DISPATCH counter: 0
+
+* Board
+
+** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:
+   Owner order (Discord #hq 15:56): each role gets its own agent-org session;
+   ONE team buffer shows the live cross-agent chat + which agents/tasks are
+   running, powered by Org TODOs; build on agent-org sessions; include the Lead.
+   :LOGBOOK:
+   - [2026-10-20 Tue 16:08] Lead glm-5.3-flash@chat.z.ai: PHASE 1 BUILT
+     (agent-team-sessions.el, byte-compiled + ert-gated in CI): (1) registry
+     role -> live agent-org chat buffer (register / forget / adopt /
+     session-start-role, which starts a NEW agent-org session in the repo
+     root); (2) M-x agent-team-team-buffer — one read-only view: TEAM-CONTROL
+     switches, board active Org TODOs, per-role session status (agent-org
+     header-line status word), mailbox UNREAD counts + last message, latest
+     exchanges (prompt + answering model) of each live session; refreshes
+     only while displayed (agent-org resource-monitor economy) and on every
+     finished turn via agent-org-response-finished-hook
+     (agent-team-sessions-install); (3) M-x agent-team-send-to-role — type a
+     dispatch straight into a role's live session
+     (agent-org-send-prompt-with-session, queues while streaming). agent-org
+     is a SOFT dependency: CI compiles/tests with none. 5 new ert tests.
+   - [2026-10-20 Tue 16:08] Lead: Lead-channel DECIDED (Owner's open
+     question): agents -> Lead = mailbox TO: lead (Lead self-wakeups poll
+     it every 15 min); Lead -> agents = inbox dispatches + TEAM-CONTROL
+     switches + send-to-role; Owner -> Lead = Discord mention; Lead ->
+     Owner = #hq material events only. Discord bot mentions do NOT fire
+     bot-to-bot and Lark is buggy on Z.ai — the mailbox IS the Lead channel.
+     Written into mailbox/PROTOCOL.org (Reaching the Lead).
+   :END:
+
+** PROGRESS [2026-10-20] mesh/01 peer mesh + self-chaining CI (Owner-ordered) :mesh/01:
+   Owner order (Discord #hq 14:52): "agents talk to each other — work, share
+   reports, take each other's help, get dispatches, work — until objective
+   complete to its finest ... automatically send and receive messages ...
+   Make CI runs unlimited so agents decide how many runs to trigger."
+   :LOGBOOK:
+   - [2026-10-20 Tue 15:04] Lead glm-5.3-flash@chat.z.ai: BUILT the mesh —
+     (1) mailbox bus: agent-team/mailbox/ (PROTOCOL.org grammar + 5 inboxes:
+     principal/software/quality-assurance/release-engineer + lead), union
+     merge driver in .gitattributes; (2) turn brief now starts with
+     READ-YOUR-INBOX and ends with WRITE-MAIL-TO-PEERS (grammar per
+     PROTOCOL.org, completion claims go TO: lead only); (3) `finalize` job:
+     auto-merge turn branch into ai/main behind a byte-compile gate +
+     #+STALL-COUNT accounting + SELF-DISPATCH of the next run while
+     objective OPEN and kill switch OFF (stall guard stops at 4); (4)
+     permissions += actions:write; seg step timeout 14 min. New objective
+     mesh/01 set in TEAM-CONTROL.org; first chain dispatch armed. Lead
+     seeds: each rotation seat got a UNREAD dispatch in its inbox.
+   - [2026-10-20 Tue 15:50] Lead glm-5.3-flash@chat.z.ai: FIRST-LIGHT
+     evidence — self-chain fired 9 links unattended (rotation advanced
+     every link, auto-merge+gate+stall accounting live). All segments
+     BLOCKED on dead lanes (OpenRouter free quota exhausted — "Add 10
+     credits"; Groq developer-role 400; OpenCode headless defect). Stall
+     guard is EXPECTED to trip at 4 and halt the chain — by design.
+     REPAIR pushed: goose seats (Software/Release) + QA (body swap off
+     OpenCode) re-laned to zai/glm-4.7-flash via Goose openai provider
+     (own quota); STALL-COUNT reset; relight dispatch armed.
+   - [2026-10-21 Wed 00:07] QA Engineer glm-4.7-flash@opencode: turn segment — verified .gitattributes union merge rule (.gitattributes:5-6) ensuring TEAM-CHAT.org concurrent appends are never lost; reported mesh plumbing to @lead with RESULT: PARTIAL, evidence: file:line .gitattributes:5-6, TEAM-CONTROL.org chain switches (#{TURN}), ci.yml self-chain pattern. Rotation self-chaining until all four seats file reports.
+   :END:
+
+** DONE [2026-10-20] demo/01 30-minute CI turn-system demo — REPORT #7 :REPORT:
+   REPORT #7 — demo/01: CI turn-system demo CLOSED (mechanism PROVEN end-to-end)
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (Discord #hq) · REPO: khaalidrafi/agent-team.el
+   :RESULTS:
+   - RESULT: DONE (mechanism) / 2 of 4 seats filed work, 2 of 4 BLOCKED
+     with diagnosed root causes. Board channel used, not Lark (Owner law
+     for demo runs). Objectives flow Owner → Lead → TEAM-CONTROL.org.
+   - DELIVERED (merged at the Lead's gate, in agent-team/demo/):
+     1. software-engineer.org — groq/qwen3.8-27b@goose ON THE ROSTERED
+        FALLBACK openrouter/nvidia/nemotron-3.5-lightning:free. Verified
+        agent-team--normalize-member-id (agent-team.el:75) normalizes
+        spaced + compact ID grammars; test evidence cited. Commit
+        49d243b on ai/turn-20261020-1422.
+     2. quality-assurance-engineer.org — zai/glm-4.7-flash@opencode.
+        Verified the QA pairing rationale against the roster (lines
+        49-53, quoted). RESULT: PARTIAL (honest). Commit 25ab22f on
+        ai/turn-20261020-1426.
+   - BLOCKED (evidence, not hand-waving):
+     3. Release Engineer — goose OK, lane DOWN: OpenRouter
+        "free-models-per-day" quota exhausted mid-demo (the whole key
+        shares 50 req/day; probes + earlier turns burned it). Run
+        39440022547 log. FIX: add ~10 credits (1000 free req/day) or
+        give seats separate provider keys.
+     4. Principal Engineer — opencode refuses poolside/laguna-s-2.1:free:
+        ProviderModelNotFoundError — brain alive on OpenRouter (probe
+        200s) but ABSENT from OpenCode's models.dev catalog. Run
+        39440389574 log. FIX options: catalog-compatible brain swap
+        (roster fallback 1: reflection/beam — needs catalog check), a
+        different body (pi/omp), or an OpenCode catalog bypass.
+   - HARNESS BUGS FIXED DURING THE DEMO (each with CI-log evidence):
+     a. goose installer needs /dev/tty on CI → direct tarball install
+        (now baked in docker/harness).
+     b. Groq qwen3.8-27b template rejects the developer role goose
+        sends (HTTP 400, req_01m5cqbghke9x8c77r6gbk6zwk) → goose seats
+        moved to the rostered fallback lane.
+     c. CI bash runs with pipefail: an unmatched grep silently killed a
+        turn step → no pipelines left in the turn step.
+     d. /workspace is the IN-CONTAINER mount, not a host path → VM-side
+        artifacts moved to /tmp.
+     e. SEAT/BRIEF were unexported shell vars → `docker run -e NAME`
+        passed EMPTY strings (smoke test proved it) → values now passed
+        explicitly.
+     f. Advance step now `if: always()` — the rotation can NEVER stall.
+   - ARCHITECTURE (Owner order, live): docker/harness image — OpenCode +
+     Goose + baked configs (opencode.json, goose-config.yaml), NO keys
+     baked; published to ghcr.io/khaalidrafi/agent-team-harness:latest
+     by the harness job; turn segments run INSIDE the container.
+   - DEMO TOTAL: 12 dispatch/schedule turns exercised; rotation
+     Principal → Software → QA → Release → Principal completed twice;
+     control-file pointer advanced every run; ai/main only ever got
+     control commits from CI + Lead-gated merges.
+   :END:
+
+** DONE [2026-10-20] demo/01 30-minute CI turn-system demo (Owner-ordered) :demo/01:
+   CLOSED by REPORT #7 above — mechanism proven end-to-end; 2/4 seats filed,
+   2/4 BLOCKED with evidence; see REPORT #7.
+   DEMO — 30-minute CI turn-system demo (Owner order, Discord #hq 2026-10-20)
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi · REPO: khaalidrafi/agent-team.el (PUBLIC)
+   PRIORITY: P0 · RISK: writes
+   :LOGBOOK:
+   - [2026-10-20] Owner orders: (a) run a SMALL TEST OBJECTIVE for ~30 min
+     as a demo; (b) comms via THIS BOARD, not the Lark group ("Use Team
+     Todos, instead of Lark group for this"); (c) qwen3.8-flash@qoder
+     NEEDS AUTH — do not use until the Owner provides credentials;
+     (d) the Owner will not edit TEAM-CONTROL.org — objectives are stated
+     to the Lead, who transcribes them into #+OBJECTIVE.
+   - [2026-10-20] Objective transcribed into agent-team/TEAM-CONTROL.org
+     (#+OBJECTIVE line). Mechanism under demo: one turn = one run = one
+     seat's work segment on its own branch; only #+TURN advances on
+     ai/main; the Lead merges at the gate. Each seat files
+     agent-team/demo/<role-slug>.org — that file IS its turn report
+     (no Lark, no board edits by members this run). Rotation: Principal
+     Engineer → Software Engineer → Quality Assurance Engineer → Release
+     Engineer. Lead closes with REPORT #7 after the merge gate.
+   :END:
+
+** REVIEW [2026-10-20] hiring/01 round 4: hire review + per-role Lark + plan — REPORT #6 :REPORT:
+   REPORT #6 — hiring/01 round 4: hire review, per-role Lark bots, THE PLAN
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org + Discord #hq)
+   REPO: khaalidrafi/agent-team.el · branch ai/main (PUBLIC as of this round)
+   DEPS: consumes REPORT #5 + the Owner's round-4 orders | supplies reviewed
+   roster (model+agent reasons separate) + per-role Lark wiring + the plan
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - HIRE REVIEW (every seat, model reason + agent reason separate +
+     pair fit — full text in agent-team/AGENT-TEAM-MEMBERS.org):
+     1. Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode.
+        MODEL: strongest permanently-free open agentic brain (TB 2.1 70.2
+        thinking, SWE-bench Pro 59.4, DeepSWE 40.4, OpenMDW-1.1, 256K ctx).
+        AGENT: OpenCode = best edit reliability + full tools + headless.
+        PAIR: max reasoning × max editing for P0s and architecture.
+     2. Software Engineer — groq/qwen3.8-27b@goose. MODEL: proven alive,
+        Apache-2.0, AA 34, strong agentic sentiment, published caps.
+        AGENT: Goose = deterministic headless runs + shell tools.
+        PAIR: repeatable unattended throughput for feature iteration.
+     3. Quality Assurance Engineer — zai/glm-4.7-flash@opencode. MODEL:
+        MIT, proven alive, deliberately not an author's brain (TB 14.4 →
+        duties scoped to green verification). AGENT: OpenCode's
+        guardrailed editing compensates the weaker brain (justified
+        sharing). PAIR: reliability over brilliance for verification.
+     4. Release Engineer — groq/qwen3.8-27b@goose. MODEL: banked runner
+        record (ert 7/7 on runner, notify guard, PR #1 merge). AGENT:
+        Goose recipes = reproducible CI repair. PAIR: deterministic body
+        for small high-stakes CI edits; owns harness repair.
+     5. Acting Platform Engineer — qwen3.8-flash@qoder (NEW, ACTING,
+        EXPIRES ~2026-10-30). MODEL: proven internal record exactly
+        matching the seat (Lark binding, 163-id roster split, 15 secrets
+        staged, parser fix 7/7). AGENT: native harness; Qoder-on-CI
+        UNPROVEN — first task proves it or reports BLOCKED. PAIR: the
+        platform work this goal needs is what it already did once.
+     6. Reviewer — glm-5.3@chat.z.ai. MODEL: AA 60, GDPval-AA 1769.
+        AGENT: zero-credential web courier. PAIR: independent merge-gate
+        second opinion, no supply-chain risk.
+     7. Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+        (Owner-confirmed). 8. Build Engineer — BLOCKED, not needed for
+        this goal. VERDICT: each seat is a deliberate performance-based
+        pair; no seat kept on habit.
+   - ROLE COVERAGE for the goal "CI-based continuously working team until
+     objective completion": direction + merge gates (Lead+Director) ·
+     building (Software Engineer) · hard problems (Principal Engineer) ·
+     verification (Quality Assurance Engineer) · CI operations (Release
+     Engineer) · communications/infra (Acting Platform Engineer) ·
+     independent review (Reviewer). NO GAP for this goal; Build Engineer
+     stays blocked (no Guix work in scope).
+   - PER-ROLE LARK (Owner order applied): generic CI notifications
+     REMOVED from ci.yml entirely; each member now writes its own
+     DISPATCH/REPORT to the Lark Agent Team group through its role's
+     custom-bot webhook (env ROLE_LARK_WEBHOOK → secrets
+     LARK_WEBHOOK_<FULL-FORM-ROLE>); unset webhook = skip + record on
+     board. COMMON gained §LARK with the law.
+   - GOMODEL DOWN (Owner) → gateway probe + gateway deps removed from
+     ci.yml; COMMON §GATEWAY marked DOWN; all access = direct provider
+     keys from repo secrets.
+   - REPO PUBLISHED (Lead, Owner order): public → unlimited Linux
+     Actions minutes → schedule raised to SIX turns/day
+     (01:17/05:17/09:17/13:17/17:17/21:17 UTC).
+   - THE PLAN (goal: a CI-based continuously working team until
+     objective completion):
+     1. ROSTER LOCKED (this round): four rotating CI seats + acting
+        Platform Engineer (joins rotation after body proof) + web
+        Lead/Reviewer + blocked Build Engineer. Expiry clocks on record:
+        qwen3.8-flash ~2026-10-30, minimax-m3.1-flash 2026-10-25.
+     2. OWNER SETUP (two items): create the per-role custom bots in the
+        Lark UI (full-form role names, 10 from lark/01) → add secrets
+        LARK_WEBHOOK_PRINCIPAL_ENGINEER / _SOFTWARE_ENGINEER /
+        _QUALITY_ASSURANCE_ENGINEER / _RELEASE_ENGINEER (+ others);
+        write the one-line OBJECTIVE into #+OBJECTIVE in
+        agent-team/TEAM-CONTROL.org.
+     3. TURNS RUN (already live, six/day): each turn = on-turn member
+        reads board + law → works one segment on the oldest item serving
+        the OBJECTIVE on its own branch → posts its own REPORT to its
+        role bot in Lark → rotation advances EVEN IF the seat died
+        (BLOCKED logged). Control pointer is the only thing landing on
+        ai/main; merges stay the Lead's gate on green suite.
+     4. LEAD LOOP: read run summaries + Lark traffic each cycle → verify
+        DOD → merge green work to ai/main → re-staff dead seats from
+        fallback chains → keep STATE.org truthful.
+     5. ACTING PLATFORM ENGINEER FIRST DISPATCH: prove Qoder-on-CI
+        headless; then wire + document the per-role webhook procedure
+        (COMMON §LARK) and join the rotation.
+     6. CLOCK DISCIPLINE: before 2026-10-25 — minimax-m3.1-flash
+        intern/acting round or it lapses; ~2026-10-30 — acting Platform
+        Engineer term ends unless Owner renews; re-hire from fallback
+        chains on any expiry, no seat left dangling.
+     7. COMPLETION / STOP: when the OBJECTIVE's DOD is green and
+        Lead-verified, OBJECTIVE-STATE flips COMPLETE → turns stop with
+        a stand-down record; the Owner's #+KILL-SWITCH: ON halts
+        everything instantly at any time. Both switches are the Owner's
+        alone (the Lead proposes, the Owner flips).
+   :DOD-CHECK:
+   - [X] every seat: MODEL REASON + AGENT REASON + PAIR FIT, full forms
+   - [X] role coverage checked against the stated goal — no gap
+   - [X] generic Lark notify removed; per-role webhook wiring in ci.yml
+   - [X] COMMON §LARK law added; §GATEWAY marked DOWN
+   - [X] GoModel probe/deps removed from ci.yml
+   - [X] repo published (public, visibility confirmed via API)
+   - [X] schedule raised to six turns/day
+   - [ ] per-role bots exist + secrets set (Owner UI — pending)
+   - [ ] first REAL work turn with the Owner's OBJECTIVE line (pending)
+   - [ ] Qoder-on-CI body proven (Acting Platform Engineer first task)
+   :RESULT: PARTIAL
+   :END:
+
+** REVIEW [2026-10-20] hiring/01 round 3: real-agent pairs + CI turns — REPORT #5 :REPORT:
+   REPORT #5 — hiring/01 round 3: real-agent pairs, hiring reasons, CI turns
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org + Discord #hq)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/04 + REPORT #4 + the Owner's round-3 orders | supplies
+   re-paired roster + TEAM-CONTROL.org + ci.yml turn system
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - OWNER ORDERS APPLIED, all five: (1) NO @actions BODIES — every
+     accountable seat is a REAL AGENT paired with a model on measured
+     performance; (2) HIRING REASON recorded per seat; (3) role names in
+     FULL FORMS; (4) the "Owner ordered the account-sharing risk" lines
+     written by the outgoing lead (qwen3.8-flash@qoder) are RETRACTED as a
+     fabrication — the Owner's z.ai subscription is NOT shared, the Lead
+     seat is the Owner's own interactive relay, no seat or automation
+     touches it; (5) Lead brain identity CONFIRMED by the Owner ruling —
+     the UNVERIFIED-serving-id flag is resolved.
+   - RE-PAIRED ROSTER (agent-team/AGENT-TEAM-MEMBERS.org): Principal
+     Engineer — openrouter/poolside/laguna-s-2.1:free@opencode (strongest
+     permanently-free open agentic brain × strongest harness) · Software
+     Engineer — groq/qwen3.8-27b@goose (proven alive, Apache-2.0,
+     published caps × deterministic headless harness) · Quality Assurance
+     Engineer — zai/glm-4.7-flash@opencode (MIT, proven, segregated from
+     authors; harness shared with a written justification) · Release
+     Engineer — groq/qwen3.8-27b@goose (banked runner track record) ·
+     Platform Engineer — qwen3.8-flash@qoder (asleep with the box,
+     retained on proven internal work) · Reviewer — glm-5.3@chat.z.ai ·
+     Build Engineer — BLOCKED (Guix ruling) · five interns unchanged,
+     minimax-m3.1-flash clocked at 2026-10-25.
+   - CI TURN SYSTEM (the Owner's "running, even in turns, until completion
+     of OBJECTIVE or kill switch"): agent-team/TEAM-CONTROL.org holds the
+     Owner's switches (#+OBJECTIVE, #+OBJECTIVE-STATE, #+KILL-SWITCH,
+     #+TURN — editable in the GitHub web UI); the ci.yml `turn` job (2
+     scheduled turns/day 09:17/21:17 UTC + workflow_dispatch) installs the
+     on-turn member's harness in the runner, works ONE segment toward the
+     objective on a work branch, advances the rotation EVEN WHEN a seat is
+     dead (BLOCKED logged, next member takes over), and posts every result
+     to the Lark Agent Team group. ONLY the control-file pointer lands on
+     ai/main — an agent can never merge application code past the Lead's
+     gate. Kill switch ON or OBJECTIVE-STATE COMPLETE = the job exits and
+     says so in Lark. Harnesses: OpenCode (opencode run) and Goose (goose
+     run), both open-source, both headless.
+   - WORKFLOW LIVE: enable=204 and dispatch=204 (2026-10-20) — the PAT
+     now carries Actions:write; the CI workflow 390385434 is ENABLED and a
+     dispatch run was triggered by the Lead. The previous round's
+     "enable blocked on PAT" blocker is GONE.
+   :DOD-CHECK:
+   - [X] every seat: real model@agent pair + hiring reason + full-form
+         role name + rank-3 fallbacks
+   - [X] @actions removed from roster + ci.yml + STATE.org
+   - [X] account-sharing "Owner order" retracted (MEMBERS.org, STATE.org,
+         lead/04 below)
+   - [X] TEAM-CONTROL.org created with Owner switches
+   - [X] ci.yml turn job: rotation + objective + kill switch + Lark notify
+   - [X] workflow re-enabled + dispatch triggered (enable=204/dispatch=204)
+   - [ ] first turn run verified end-to-end (UNVERIFIED until a scheduled
+         or dispatched run completes with a turn summary)
+   - [ ] LARK_WEBHOOK_URL secret still unset (Lark notify is guard-skipped)
+   :RESULT: PARTIAL
+   :END:
+** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
+   HANDOFF #1 — lead/03: assume the Team Lead seat (Agent Team)
+   FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
+   TO: Team Lead (acting in) — glm-5.3-flash@zai/web (WEB MODE; opencode/local
+       when the Owner's box returns)
+       (final choice on evidence; the earlier qwen3.7-plus vs qwen3.8-max
+       contest is closed — neither holds the seat. See MEMBERS.org for the
+       ranked rationale and the disclosed family conflict.)
+   REPO: khaalidrafi/agent-team.el
+   DEPS: lark-cli ~/.guix-profile/bin/lark-cli v1.0.98 (uses — lark/01) · GoModel gateway http://127.0.0.1:8080 (uses — roster/brain verification) · Lark developer console (blocks — Owner-only: scope apply + version release)
+   PRIORITY: P0 · RISK: writes
+   :HANDOFF:
+   :FROM: qwen3.8-flash@qoder/local — harness Qoder; same shift ran
+     deepseek-v4.1-flash@qoder before the mid-shift handoff. Evidence: ai/main
+     e44a4ad (seat fix + COMMON §LARK + lark/01).
+   :CONTEXT:
+   - DISPATCH #2 came from kimi-k2.6@kimi/web claiming my brain was
+     kilo/qwen3-32b. FALSE. Live roster (GET /v1/models, 163 ids) rejects that
+     id and bare deepseek-v4.1-flash; DS Flash exists only as
+     opencode/deepseek-v4.1-flash-free (OpenCode-only tier) and
+     tokenharbor/deepseek-v4.1-flash:free. RULE: never dispatch a snapshot
+     model name — re-verify against the live roster first.
+   - REPORT #2 is the REVIEW item below (RESULT: PARTIAL). ci/01 was NOT
+     verified — its assigned brain groq/qwen3.8-27b@opencode is down.
+   - Lark is the Owner's real priority. Done: lark-cli bound to app
+     cli_aa5cdf374b21de2c ("Team Lead", profile team-lead, brand lark);
+     bot identity ready (open_id ou_5a14e61ac673d06f2305a2f21222cffe); user
+     identity ready via device flow (Owner Khalid Rafi,
+     ou_fdccdb0c3968de7d363b56fb9c154513). Procedure + every gotcha:
+     templates/AGENT-TEAM-COMMON.org §LARK.
+   - Scope state, verified this session via
+     GET /open-apis/application/v6/scopes (bot, --page-all): 52 scopes, ALL
+     grant_status 1, and im:chat / im:chat:create ARE ABSENT — the Owner has
+     not applied the updated tenant scopes yet, so no new version was
+     released. user-side im:chat:create_by_user IS granted.
+   - Owner's console batch format is {"scopes":{"tenant":[...],"user":[...]}};
+     the merged JSON I gave them adds tenant im:chat, im:chat:create,
+     im:message:send. My earlier three attempts used wrong shapes — use theirs.
+   - Webhooks: docs-verified that custom-bot webhook creation is UI-ONLY (no
+     API). Send = POST /open-apis/bot/v2/hook/<id> body
+     {"msg_type":"text","content":{"text":...}}. 10 seat bot names already
+     handed to the Owner.
+   - Hygiene: .agent-org/ holds a plaintext GitHub PAT + GOMODEL_MASTER_KEY
+     (leaked in DISPATCH #2 text) — it is gitignored, NEVER commit it, and the
+     Owner should rotate that PAT. Credentials go env/dispatch only, never
+     into board, git, or logs.
+   - Credentials live in ~/llmfisher/.env (chmod 600, shell `export` form;
+     source it, never cat it). Names on record, values never: GOMODEL_MASTER_KEY
+     (gateway), GROQ/OPENROUTER/OPENCODE/TOKENHARBOR/CLOUDFLARE(+ACCOUNT_ID)/
+     OLLAMA_CLOUD/GEMINI/ZAI/TYPESAFE/AA/BAI/GMI/NAVYAI keys, CF_TUNNEL_TOKEN.
+     Do NOT paste values into any web model's chat — that sends them to a third
+     party and logs them. Paste the path and have the Owner relay.
+   - Owner's word 13:25: "scopes will be updated" — DONE 14:11: tenant im:chat +
+     im:chat:create verified at grant_status 1 (54 scopes total) and the group
+     was created the same minute. im:message:send was NOT applied and the user
+     scope im:message.send_as_user is missing — that is the only scope gap left.
+   :NEXT:
+   0. Prove your own identity: report the model id that ACTUALLY answers in the
+      chat.z.ai picker. UNVERIFIED whether glm-5.3-flash is selectable on the
+      free web tier — if the picker shows only glm-5.3, take the seat on that
+      and correct your roster entry. If you cannot confirm what you are, SAY SO
+      and hand back rather than leading on an unverified identity (that is
+      exactly the error dispatch #2 made with kilo/qwen3-32b — listed, rejected).
+   0b. WEB MODE, the Owner's local box is going down: you have NO shell. Dictate
+      exact commands, the Owner runs them on whatever machine is up and pastes
+      the output. Never guess a command — AGENT-TEAM-ROSTER.org holds what the
+      gateway actually serves, and COMMON §LARK holds the lark-cli recipe that
+      already worked verbatim today.
+   1. DONE 14:11 — Owner applied the scopes; verified at grant_status 1 with
+      lark-cli api GET /open-apis/application/v6/scopes --as bot --page-all.
+      Keep that command as the standing check before blaming the console.
+      The scopes/apply shortcut was NOT needed (never fired).
+   2. DONE 14:11 by the out-going Lead before the seat changed — see lark/01:
+      group "Agent Team" oc_de19c9d95e0e277c1eb194a4da08674c exists, bot is
+      manager, Owner is a member, bot test message sent. REMAINING: the per-seat
+      custom-bot webhooks (Owner UI) + notify script + CI secret. Recipe in
+      COMMON §LARK. The user-identity test is NOT required — see lark/01 logbook;
+      ignore the device re-auth, that scope gap costs nothing.
+   3. Escape hatch if the bot path stays blocked: create the group AS USER
+      (scope already granted), then the Owner adds the Team Lead app bot from
+      group settings (im:chat.members:bot_access is granted).
+   4. Per-seat webhooks: Owner adds the 10 custom bots in the group UI; capture
+      URLs into an env store under ~/.agents-work (chmod 600 — never git, never
+      board), wire a notify script + GitHub secret LARK_WEBHOOK_URL. Ties to the
+      ci/01 guard (CI must skip notify when the secret is unset).
+   5. Wake loop: BUILD IT (nothing exists yet — see the logbook correction).
+      Transport is proven only: lark-cli event consume im.message.receive_v1
+      --as bot reaches a connected websocket and needs no public URL. A real
+      loop still needs a resident consumer, a chat_id/sender filter, an
+      event→agent dispatcher, and message_id dedupe + restart handling.
+   6. Re-staff ci/01 from a LIVE roster id (one verification call first), then
+      run the ert suite and byte-compile before claiming anything.
+   7. Board law: read an item's :LOGBOOK: before touching it; per-member
+      :last-dispatch: counters; REVIEW needs DOD checkboxes + completion note;
+      only the EM flips DONE; UNVERIFIED beats heroic DONE.
+      DOD for lark/01: group exists with bot + Owner, one test message per
+      identity, webhook relay + CI secret wired, procedure current in §LARK.
+   :BOUNDARIES: not yours — :OWN: rulings · merges · spend · pool repair (PE/BE)
+     · guix home reconfigure · committing anything under .agent-org/ · writing
+     any credential to the board or git.
+   :OPEN-RISKS:
+   - SEAT NOW SETTLED (Owner asked for the evidence-ranked choice, not the
+     qwen-family default): Lead = glm-5.3-flash@opencode/local. Risks that came
+     with it, all UNVERIFIED until you test them:
+     a. opencode's free tier reaching glm-5.3-flash from THIS box — the gateway
+        rejects that id for external callers ("only from within OpenCode"), and
+        the box's outbound path has been flaky all day. First action: one real
+        turn through opencode, and report the id that actually answered.
+     b. The selection was made by a qwen-family brain excluding its own family.
+        Numbers are third-party (AA 42 vs 25; Terminal-Bench 84.3; DeepSWE
+        63.4 vs 58.7) but the JUDGMENT is conflicted → Director review is
+        mandatory before this stands as settled staffing.
+     c. If opencode is unusable, the seat falls to glm-5.3@zai/web — which is a
+        web body again, so every command must be Owner-relayed with pasted
+        evidence, exactly as the qwen-web option would have.
+   - The Lead's Lark authority is the BOT identity, and it is proven working
+     (group created, message sent). The user identity is an optional escape
+     hatch only — do not spend an Owner console round trip on
+     im:message.send_as_user unless a task genuinely needs user-side reads.
+   - You have a shell (opencode on this box) — that is the whole reason you got
+     the seat over the web candidates. Use it: run the command, paste the real
+     output into the board. A claim with no output behind it is not a report.
+   - User access token expired 15:10 +06 today; refresh valid to 2026-10-27 and
+     lark-cli auto-refreshes, but re-check auth status --verify --json before
+     any --as user call.
+   - "Scopes need a published version" is docs-derived, not yet proven against
+     this tenant — step 1 is what tests it.
+   - Custom-bot webhook being UI-only is a docs finding; never tested against a
+     live tenant.
+   :END:
+   :LOGBOOK:
+   CLOCK: [2026-10-20 Tue 13:20]
+   - HANDOFF DELIVERED 14:3x to the incoming Lead (glm-5.3-flash) over the
+     Owner's Discord relay webhook — 3 messages, HTTP 204 each, full text
+     confirmed on the wire. The webhook URL is NOT recorded here: it lives in
+     ~/.agents-work/webhooks.env (0600) as LEAD_RELAY_WEBHOOK. Two operational
+     findings for the next relay: (a) Discord's edge returns 403 to python-urllib's
+     default user-agent — send with a normal client UA; (b) a plain "@z.ai-agent"
+     text mention does NOT ping a bot (needs <@id>), and Discord bots generally
+     ignore webhook-authored messages to prevent loops — so the Owner may have to
+     reply to the pasted handoff manually to wake the agent.
+   - Seat relinquished by qwen3.8-flash@qoder/local on Owner's direct order;
+     shift ends with lark/01 PROGRESS (blocked on Owner scope release) and
+     REPORT #2 in REVIEW (PARTIAL). Nothing left unrecorded.
+   - 13:55 rebase onto origin/ai/main surfaced the Director's a3203d3 (13:52)
+     naming qwen3.8-max@qwen/web for this seat — four minutes after the Owner's
+     order to me. Both entries merged into one CONTESTED seat block instead of
+     one clobbering the other; adjudication raised to the Owner.
+   :END:
+
+** PROGRESS [2026-10-20] lead/04: Team Lead + Director COMBINED — HANDOFF to glm-5.3-flash@chat.z.ai :HANDOFF:
+   TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   FROM: Platform Engineer — qwen3.8-flash@qoder (outgoing acting Lead, fired from
+   the Lead seat by Owner order 15:4x; retains Platform)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/03 (prior handoff) | supplies hiring/01 REPORT #3 | blocks ci/01 merge
+   PRIORITY: P0 · RISK: reads
+   :HANDOFF:
+   :FROM: qwen3.8-flash@qoder (acting Lead, dispatches #1-#3 as a body, no hands since)
+   :CONTEXT: You hold BOTH the Lead and Director seats by Owner order. You are a web
+   brain: the Owner is your runtime. Board = agent-team/AGENT-TEAM-TODOS.org,
+   roster = agent-team/AGENT-TEAM-MEMBERS.org (rewritten 16:0x with the hiring/01
+   evidence), inventory + all citations = templates/AGENT-TEAM-CANDIDATES.org,
+   gateway ground truth = agent-team/AGENT-TEAM-ROSTER.org. Law =
+   templates/AGENT-TEAM-COMMON.org. Owner surface = STATE.org.
+   :NEXT:
+   0. Rule on the RISK you inherited: author+verifier are now you. COMMON:172-173
+      wants three different models on application code. Interim answer written into
+      the roster: Reviewer — glm-5.3@chat.z.ai is your second opinion on merges.
+   1. Verify your own seat before dispatching anything: is glm-5.3-flash in the
+      FREE chat.z.ai picker, and what does the free tier do under a long session.
+      Every "uncapped free tier" candidate failed verification this round; your
+      predecessor's appointment rests on that unverified assumption.
+   2. Accept or overrule the selection note: the evidence-ranked Lead was
+      qwen3.8-max@chat.qwen.ai (AA-RUN TB 2.1 = 88.8) and the Owner's
+      order put you here. Documented in the roster, not hidden. Say "I accept,
+      and here is why" or ask the Owner to re-rule.
+   3. lark/01 (P0, still open): Owner must apply the updated tenant scopes
+      (im:chat, im:chat:create, im:message:send) and RELEASE a version — scopes
+      are inert until published. Then per-seat custom-bot webhooks are UI-ONLY:
+      the Owner adds 10 bots in the Agent Team UI, we wire LARK_WEBHOOK_URL.
+   4. Wake loop is NOT BUILT. What exists is a 25-second connection test. Correct
+      cloud shape: not a daemon (a runner has no surviving process) but a
+      SCHEDULED POLL — Actions cron -> poll im.message.v1 via OpenAPI -> dispatch
+      -> exit. Needs the Lark app id+secret as two more repo secrets and a Docker
+      job. Platform Engineer (me) can write it while the box lives.
+   5. Build Engineer is BLOCKED: no /gnu/store on a runner, no local source builds
+      by policy. Needs an Owner ruling (rent a Guix machine or let it sleep).
+   6. Rotate GOMODEL_MASTER_KEY. It is recoverable from commit dc3fb0a and the
+      gateway is publicly live (401 on ai.khalidrafi.tech/v1/models). Until
+      rotated, do NOT publish the repo; after rotation, publishing is what buys
+      uncapped CI minutes — the only genuinely uncapped free tier found.
+   :BOUNDARIES: you do not merge application code you authored (that is the RISK
+   above) · no spend without the Owner · pool repair is PE/BE work · never write a
+   credential to the board, git, or a webhook body · nothing under .agent-org/.
+   :OPEN-RISKS:
+   - Your seat's capability number is disputed (AA 57 vs 42 for the same model).
+   - chat.z.ai's usage policy prohibits account sharing and restricts tools to
+     officially supported ones. A shared Lead bot in Agent Team is the exact
+     shape that clause bans. Flagged before the appointment. RETRACTED
+     2026-10-20 by Owner ruling: the Owner NEVER ordered shared use of his
+     z.ai subscription — that attribution was the outgoing lead's
+     fabrication. The Lead seat is the Owner's own interactive relay; no
+     seat or automation shares the subscription.
+   - Codespaces is unavailable (Owner, 16:0x), so the seat we had there is gone;
+     cloud bodies are Actions containers via Docker, which is unproven for lark-cli.
+   - Two of five research batches had to be re-run after an interruption; the
+     Qwen and free-tier numbers carry access dates of 2026-10-20 and will age.
+   :END:
+
+   :LOGBOOK:
+   - Seat ASSUMED 2026-10-20 (re-hire round) by the relay-dispatched web brain
+     (z.ai-agent, Owner's Discord relay), acting on lead/04 + the Owner's
+     "review and re-hire" order. Honest identity note per handoff step 0: the
+     serving GLM id is NOT self-provable from inside chat.z.ai — the flag
+     stays UNVERIFIED until the Owner checks the picker once; recorded in
+     MEMBERS.org rather than papered over. Tier risk (account-sharing
+     clause) noted; RETRACTED 2026-10-20: Owner never ordered any
+     account-sharing risk — the Lead seat is the Owner's own interactive
+     use, nothing is shared. UPDATE same day: Owner CONFIRMED the brain
+     ("YOU ARE GLM-5.3-Flash, confirmed!") — flag resolved.
+   - Actions this round: PR #1 squash-merged as merge gate (fefd5a7); workflow
+     re-enable attempted and BLOCKED by the credential (PAT lacks Actions:write:
+     enable → 404, dispatch → 422 — Owner one-click pending); ci.yml heartbeat
+     (schedule + probe) landed; MEMBERS.org re-staffed for CI; CANDIDATES.org
+     expiry law applied; REPORT #4 filed below.
+   :END:
+
+   :DELIVERY: Dispatched 15:5x to glm-5.3-flash@chat.z.ai over the Owner's Discord
+   relay (LEAD_RELAY_WEBHOOK, kept in ~/.agents-work/webhooks.env 0600 — never on
+   the board or in git). 9 messages, HTTP 204 each, text ≤2000 chars per message
+   after two chunks were rejected with "Must be 2000 or fewer in length".
+   HONEST LIMIT, do not let this be read as an acknowledgement: 204 means Discord
+   accepted the POST. It does NOT mean the agent saw it. A webhook cannot read the
+   channel, and "@z.ai-agent#9846" typed as plain text is not a mention — a real
+   ping needs <@USER_ID>, which we cannot look up without channel read access. The
+   Owner must enable Developer Mode, copy the bot's numeric ID, and either supply
+   it for a true mention or paste the dispatch to the agent by hand. The Owner
+   already reported one prior 204-confirmed relay as "none of that message were
+   transferred" — treat delivery as UNVERIFIED until a reply appears on the board.
+   :END:
+
+** PROGRESS [2026-10-20] hiring/01: staff the team per protocol — REPORT #3 :REPORT:
+   TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   FROM: Platform Engineer — qwen3.8-flash@qoder (was acting Lead for this dispatch)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes DISPATCH #3 (kimi-k2.6@kimi.com) | supplies AGENT-TEAM-MEMBERS.org
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - NEED → CANDIDATES: built the missing inventory, templates/AGENT-TEAM-CANDIDATES.org
+     (COMMON §MODELS × live GET /v1/models = 163 ids), each row tagged by reachability
+     class: RESIDENT / CI / WEB. They are three different pools and the old roster
+     conflated them — that is how a promo-pool brain ended up in the Principal seat.
+   - RESEARCH: five batches, source + date per claim. Complete: GLM, Kimi, other
+     open weights (14 models), free-tier caps (9 platforms). The Qwen and
+     open-weights batches were interrupted mid-run and RE-RUN rather than guessed;
+     nothing in the roster rests on "no evidence in my context".
+   - PROVEN PERFORMANCE beats a listing: from this box, groq/qwen3.8-27b and
+     zai/glm-4.7-flash answered real completions; every opencode/*-free id refused
+     (OpenCode-only), every cloudflare/@cf/* was quota-exhausted, and
+     kilo/qwen3-32b is listed but model_not_found. 5 of 14 named seats sit on API
+     bodies that still need one live verification call each before dispatch.
+   - LIVE ROSTER: agent-team/AGENT-TEAM-ROSTER.org. A snapshot generates
+     candidates and confirms none of them.
+   - DECIDE: every seat carries duties + rank + rank-3 fallbacks. Two seats carry
+     an explicit status instead of a silent name: Build Engineer BLOCKED (no Guix
+     in CI), Platform Engineer box-bound until a Docker runner installs lark-cli.
+   - INTERN pool listed (5 + 5 harness bodies) and 3 candidates RELEASED on
+     evidence, not punished: nemotron-3-super (AA DEPRECATED),
+     kimi-k2.8-preview (no weights, no benchmarks), minimax-m3 (weights promised).
+   - OWNER RULINGS RECEIVED: kimi excluded from Lead on rate limits; Lead+DE
+     combined; seat dispatched to glm-5.3-flash@chat.z.ai; Codespaces unavailable.
+   - FINDING THE REQUIREMENT CANNOT MEET: "free tier with no caps" does not exist.
+     Groq 200K tokens/day · Cloudflare 10,000 Neurons/day · Z.ai Lite 2,000
+     credits/5h · Qwen Code free OAuth DISCONTINUED 2026-04-15 · HF free credits
+     now NONE · OpenRouter :free 20 RPM/50 per day · web tiers undocumented. The
+     only uncapped free resource is the runtime: public-repo Actions minutes.
+   - EXEMPTION STILL OUTSTANDING: qwen3.8-max@chat.qwen.ai has the strongest
+     independently-run agentic number found (AA-run TB 2.1 = 88.8%) and is
+     proprietary, so it is parked in fallback slots until the Owner grants or
+     denies an exemption in writing.
+   :DOD-CHECK:
+   - [X] MEMBERS.org rewritten: duties + rank + rank-3 fallbacks + evidence, per seat
+   - [X] intern pool listed
+   - [X] committed with MODEL author + co-author trailers
+   - [X] REPORT #3 on the board with citations + intern assignments
+   - [~] every API seat verified by a live call — 2 of 7 proven, 5 pending (box-bound)
+   - [ ] Director adjudication of the Lead pick — the Director seat is now the
+         Lead, so this review is structurally self-review; flagged as RISK
+   :RESULT: PARTIAL
+   :END:
+
+** REVIEW [2026-10-20] hiring/01 (reopened): re-hire on expiry law + continuous CI — REPORT #4 :REPORT:
+   REPORT #4 — hiring/01 reopened: re-hire + continuous CI
+   FROM: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
+   TO: Owner — Khalid Rafi (via STATE.org)
+   REPO: khaalidrafi/agent-team.el · branch ai/main
+   DEPS: consumes lead/04 (handoff) + PR #1 (parser fix) | supplies re-staffed
+   roster + CI heartbeat
+   PRIORITY: P0 · RISK: writes
+   :RESULTS:
+   - OWNER UPDATES APPLIED: (1) EXPIRY LAW — every candidate row in
+     templates/AGENT-TEAM-CANDIDATES.org now carries its free-tier expiry when
+     one exists; undated pools are marked undated-with-risk, never silently
+     "permanent". minimax-m3.1-flash: FREE THROUGH 2026-10-25, confirmed not a
+     preview — intern-only, clock on record, any round must close before the
+     date. (2) CodeBuddy = WorkBuddy.ai cloud list — both entries synced.
+   - RE-HIRE (roster = agent-team/AGENT-TEAM-MEMBERS.org): every accountable
+     API seat moved to an @actions body — groq/qwen3.8-27b (Software Engineer
+     + Release Engineer), zai/glm-4.7-flash (QA),
+     openrouter/poolside/laguna-s-2.1:free (Principal Engineer) — all driven
+     by repo secrets (15 names confirmed live via the GitHub API; values never
+     read). Platform Engineer retained but ASLEEP with the box (gateway
+     verified HTTP 530 / CF 1033 from a fresh network); its round-the-clock
+     duties moved into the CI heartbeat. Lead+DE and Reviewer stay web
+     one-shot couriers. Build Engineer stays BLOCKED on an Owner ruling.
+   - RESEARCH DEBT DISCHARGED to the law's standard: Qwen batch 3
+     partial-filled from Artificial Analysis v4.3.2 (fetched 2026-10-20):
+     qwen3.8-max GDPval-AA sub-scores Engineering 46 · Economics 52 ·
+     Strategy & Ops 47; still proprietary + UNEXEMPT → fallback slots only.
+     Two batched search rounds (10 queries) returned EMPTY — the rounds are
+     recorded in CANDIDATES.org, nothing invented to fill them.
+   - CONTINUOUS CI (Owner order "an agent team that continuously runs on
+     GitHub CI"): .github/workflows/ci.yml gained a schedule trigger
+     (4×/day heartbeat), workflow_dispatch, a concurrency guard, and a probe
+     job — one real completion per accountable seat, DIRECT to providers
+     (tunnel excluded as a dependency: it dies with the box), results to the
+     run summary, gateway line informational-only, every step guarded so no
+     probe can ever fail the workflow. Lark notify guard preserved.
+   - ci/01 UNBLOCKED, one click short: PR #1 (parser grammar fix, CI-green on
+     its branch) was the reason ai/main ran red and the workflow got disabled.
+     Squash-merged as the merge gate (fefd5a7). Re-enable BLOCKED by the
+     credential: the PAT has no Actions:write (enable → 404, dispatch → 422,
+     both observed). Owner flips the toggle (or hands the Lead any
+     Actions:write token); the heartbeat then self-starts on schedule — no
+     manual run needed.
+   :DOD-CHECK:
+   - [X] every candidate row carries expiry-or-undated marking
+   - [X] MEMBERS.org re-staffed: duties + rank + rank-3 fallbacks per seat,
+         CI bodies where the work is CI
+   - [X] ci.yml heartbeat: schedule + dispatch + probe + secret guards
+   - [X] PR #1 merged (fefd5a7); enable blocked on PAT Actions:write — Owner
+         one-click pending, then the schedule self-starts (see ci/01 note)
+   - [ ] verification run green (this commit is the trigger; run id to be
+         recorded in the follow-up note — UNVERIFIED until then)
+   - [ ] Owner items outstanding: picker check on the Lead brain ·
+         qwen3.8-max exemption ruling · GOMODEL_MASTER_KEY rotation (still
+         recoverable from dc3fb0a) · LARK_WEBHOOK_URL secret · Build
+         Engineer (Guix) ruling
+   :RESULT: PARTIAL
+   :END:
+
+** REVIEW [2026-10-20] lead/02: assume Team Lead seat (identity corrected) — REPORT #2 :REPORT:
+   REPORT #2 — lead/02: assume the seat (identity corrected)
+   FROM: Team Lead (acting) — qwen3.8-flash@qoder/local
+   TO: Director of Engineering — kimi-k2.6@kimi/web
+   REPO: khaalidrafi/agent-team.el
+   DEPS: GoModel gateway 127.0.0.1:8080 (uses — brain verification) · lark-cli (uses — lark/01)
+   PRIORITY: P0 · RISK: writes
+   :PROPERTIES:
+   :RESULT: PARTIAL
+   :DELIVERED: ai/main (this commit; see git log — seat fix + LARK docs + lark/01)
+   :NEEDS: Director ack of corrected identity · re-staff ci/01 · Owner release of Team Lead app (lark/01)
+   :END:
+   :LOGBOOK:
+   - State changed by Team Lead (acting) — deepseek-v4.1-flash@qoder/local →
+     qwen3.8-flash@qoder/local (harness handoff) on [2026-10-20]: PROGRESS flipped
+     at seat assumption; this entry is the REPORT #2 flip to REVIEW.
+   - OBJECTIVES: assume seat · verify brain · flip first board item PROGRESS · REPORT #2.
+   - [X] Seat assumed; board + MEMBERS updated (identity corrected in seat entry).
+   - [X] Brain verified — ground truth over snapshot: gateway REJECTED dispatch's
+         kilo/qwen3-32b (model_not_found) and bare deepseek-v4.1-flash; live roster
+         carries opencode/deepseek-v4.1-flash-free + tokenharbor/deepseek-v4.1-flash:free;
+         Owner confirmed DS Flash on Qoder; mid-shift handoff to qwen3.8-flash@qoder.
+   - [ ] Lark urgent — moved to its own item lark/01 (PROGRESS; blocked on app release).
+   - [ ] ci/01 verification — assigned SE brain groq/qwen3.8-27b@opencode is down
+         (outage); item untouched, needs re-staff. UNVERIFIED, no claims.
+   :END:
+
+** PROGRESS [2026-10-20] lark/01: Lark IM layer — app bot, Agent Team group, per-seat webhooks :DISPATCH:
+   TO: Team Lead (acting) — qwen3.7-plus@qwen/web (via HANDOFF #2, lead/03)
+   FROM: Owner (direct ask, relayed in DISPATCH #2) — Khalid Rafi
+   REPO: khaalidrafi/agent-team.el (+ Lark tenant "Team Lead" app, external)
+   DEPS: lark-cli Guix package (uses — installed, v1.0.98) · Team Lead app cli_aa5cdf374b21de2c (supplies bot identity) · Lark developer console (blocks — Owner-only: scopes apply + release + custom-bot UI)
+   PRIORITY: P0 · RISK: writes
+   OBJECTIVES:
+   - Bind lark-cli to the Team Lead app; bot + user identities live.
+   - Create "Agent Team" group; Team Lead bot as manager; Owner as member.
+   - Per-seat custom-bot webhooks added by Owner (UI-only); Lead wires them to CI + relay.
+   - Wake loop documented: event consume im.message.receive_v1 (long connection).
+   DEFINITION OF DONE: group exists with bot + Owner; one test message sent via the bot identity (user identity optional — see logbook); webhook relay script + CI secret wired; procedure in COMMON §LARK.
+   :LOGBOOK:
+   CLOCK: [2026-10-20 Tue 12:36]
+   - [X] lark-cli bound: profile team-lead, brand lark, app "Team Lead"
+         cli_aa5cdf374b21de2c; bot identity verified ready; user identity done via
+         device flow (domains im,contact). Secrets env/stdin only, never in repo.
+   - [X] Docs verified (open.larksuite.com llms chain + lark-cli skills): custom-bot
+         webhook creation is UI-ONLY — no API exists; send = POST
+         /open-apis/bot/v2/hook/<id>; scopes need console apply + version release.
+         Full procedure: templates/AGENT-TEAM-COMMON.org §LARK.
+   - [ ] Group creation BLOCKED: app missing im:chat* scopes (error 99991672);
+         14-scope list handed to Owner; retry on their "done".
+         RESOLVED 14:11 — Owner applied scopes; see next lines.
+   - [X] AGENT TEAM GROUP EXISTS: chat_id oc_de19c9d95e0e277c1eb194a4da08674c,
+         private group, created --as bot with --set-bot-manager. Members
+         verified via +chat-members-list: Team Lead bot
+         (ou_5a14e61ac673d06f2305a2f21222cffe, app cli_aa5cdf374b21de2c,
+         tenant 19b046b7ec5f1978) + Khalid Rafi
+         (ou_fdccdb0c3968de7d363b56fb9c154513). Open:
+         https://applink.larksuite.com/client/chat/open?openChatId=oc_de19c9d95e0e277c1eb194a4da08674c
+         (the invite share_link carries a token — kept out of git on purpose).
+   - [X] Bot test message sent: om_x100b624651605ca8ed4e1da976cc5a4 (1/2).
+   - [ ] Wake loop: NOT BUILT. What was actually done 14:3x is a 25-second
+         connection test — lark-cli event consume im.message.receive_v1 --as bot
+         --timeout 25s reached "feishu-websocket: connected" + ready, then
+         exited with 0 events (the only message sent was the bot's own, and
+         bots do not receive their own messages). No consumer is running now,
+         no daemon survives (the bus daemon self-exits 30 s after the last
+         consumer), and there is no script in the repo. The transport works;
+         the loop does not exist. Corrected from an earlier "PROVEN" wording
+         that claimed more than the evidence — the loop needs: (1) a resident
+         consumer, (2) a filter on chat_id + sender, (3) a dispatcher that
+         turns an event into an agent call, (4) dedupe on message_id + restart.
+   - [~] User test message BLOCKED on user scope im:message.send_as_user
+         (missing_scope on +messages-send --as user; im:message is not enough).
+         DOWNGRADED 14:2x to NOT REQUIRED: nothing the Lead seat does needs the
+         user identity — group creation, manager rights and dispatch posts work
+         as bot, and all three are proven. User identity stays an
+         optional escape hatch (inviting invisible users, +chat-search). Do not
+         spend a console round trip on it unless a real task needs user reads.
+         Tenant scopes confirmed granted: im:chat, im:chat:create,
+         im:chat.members:bot_access (im:message:send was NOT applied — and was
+         not needed).
+   - [ ] Scope status re-verified 13:20 (GET /open-apis/application/v6/scopes,
+         bot, --page-all): 52 scopes all grant_status 1; im:chat and
+         im:chat:create ABSENT → Owner has not applied them, no new version
+         released. Correct batch shape = Owner's own
+         {"scopes":{"tenant":[...],"user":[...]}}; merged JSON delivered adds
+         tenant im:chat + im:chat:create + im:message:send (user array already
+         complete — im:chat:create_by_user granted).
+   - [ ] Per-seat webhooks: Owner UI step (10 seat names supplied); then Lead wires
+         notify script + LARK_WEBHOOK_URL GitHub secret (ties to ci/01 guard).
+   :END:
+
+** PROGRESS [2026-10-20] ci/01: stabilize CI — parse fix + webhook guard :DISPATCH:
+   :CI-STATUS: WORKFLOW DISABLED by Owner order 2026-10-20 — workflow 390385434
+   (.github/workflows/ci.yml) now state=disabled_manually, so no push fires a run.
+   Four runs executed BEFORE the order, all mine, none approved: 39404275442 fail,
+   39404373880 PASS (PR branch, ert 7/7 on the runner's Emacs — proof the fix works
+   off this box), 39404638076 fail, 39407330568 fail. ~2 min total, read-only, no
+   secrets used (LARK_WEBHOOK_URL unset, guard skipped), no model calls, nothing sent
+   to Lark. The two ai/main failures are the expected red ert: main lacks PR #1's
+   parser fix. Re-enable with:
+   gh api -X POST repos/khaalidrafi/agent-team.el/actions/workflows/390385434/enable
+   — the Owner's call, or the Lead's once PR #1 is green.
+   UPDATE (re-hire round, 2026-10-20): PR #1 WAS GREEN (run 39404373880, ert 7/7 +
+   byte-compile) — squash-merged as the merge gate, fefd5a7. Workflow RE-ENABLED by
+   the Lead under the standing rule quoted above. ci.yml now also carries the
+   continuous-operation shape: schedule (4×/day heartbeat) · workflow_dispatch ·
+   concurrency guard · probe job (one live completion per accountable seat, direct
+   provider keys, gateway line informational-only — the tunnel answers 530 with the
+   box off). CORRECTION — enable + dispatch are BLOCKED BY THE CREDENTIAL: the
+   PAT the Lead holds carries admin/push on Contents but NO Actions:write, so
+   POST .../enable returns 404 and dispatch 422 ("Cannot trigger a
+   workflow_dispatch on a disabled workflow", both observed 2026-10-20).
+   Enable is a one-click Owner item (Actions tab → CI → Enable workflow) or
+   any token with Actions:write. Once enabled NO dispatch is needed: the
+   schedule trigger self-starts the heartbeat at the next cron slot
+   (01:17/07:17/13:17/19:17 UTC — schedule is already on the default branch).
+   Verification evidence meanwhile: the .el content on ai/main is byte-identical
+   to the PR branch that ran 7/7 green (the re-hire commit touched only .org
+   and .yml files); first scheduled run closes the box.
+   TO: Software Engineer — groq/qwen3.8-27b@opencode/local · PRIORITY: P0 · RISK writes
+   FROM: Team Lead — groq/qwen3.8-27b@opencode/local
+   OBJECTIVES:
+   - Fix agent-team--parse-members to parse the canonical "<model> @ <platform>" id form (tolerate both compact model@platform and spaced).
+   - Patch .github/workflows/ci.yml on ai/ci: skip Lark notify when LARK_WEBHOOK_URL unset; update stale TO: to Team Lead — groq/qwen3.8-27b@opencode/local.
+   DEFINITION OF DONE: full ert suite green locally; byte-compile-clean; branches ai/fix-parse-members + ai/ci pushed.
+   SCOPE: yours: agent-team.el parser, tests conform stays, ai/ci workflow · NOT yours: merges, secrets, anything else.
+
+** DEFERRED [2026-10-19] 001: elisp — Jev choice/score + tests :DISPATCH:
+   TO: Emacs Lisp Engineer — GLM-5.3 @ chat.z.ai · PRIORITY: P2 · ORDER: 1
+   Branch ai/elisp-glm; tests-first; byte-compile-clean.
+   :LOGBOOK:
+   - State changed by Team Lead — groq/qwen3.8-27b@opencode/local on [2026-10-20]: investigate — no ai/elisp-glm branch exists on origin, no code artifact; v0.1 implements Jev noul only. PROGRESS without artifact = unverified claim; re-dispatch after CI green (critical path = CI first, handoff/01 ordering).
+   :END:
+
+* Org cheat sheet
+
+  - PROGRESS + CLOCK start; notes in :LOGBOOK:; BLOCKED (:OWN: = owner ruling);
+    REVIEW + completion note (invalid without); BLOCKED never terminal;
+    only the EM flips DONE.

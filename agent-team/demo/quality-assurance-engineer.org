@@ -1,0 +1,26 @@
+#+TITLE: QUALITY ASSURANCE ENGINEER — CI turn-system demo
+#+ROLE: Quality Assurance Engineer
+#+MODEL: zai/glm-4.7-flash@opencode
+#+OBJECTIVE: 30-minute CI turn-system demo (Owner-ordered, 2026-10-20)
+#+OBJECTIVE-STATE: IN-FLIGHT
+
+## Role
+Quality Assurance Engineer — verify green status of work through impartial testing and evidence-based validation. Maintain separation between author and verifier to prevent false positives.
+
+## Model & Agent
+- **Model**: zai/glm-4.7-flash
+  - Open-source, MIT-licensed
+  - Terminal Bench score: 14.4 (optimized for reliability over brilliance)
+  - Purposely not an author's brain — duties scoped to green verification only
+
+- **Agent**: opencode
+  - Headless editing harness with guardrails
+  - Compensates the weaker brain through controlled, auditable operations
+
+## Verified Fact
+The Quality Assurance Engineer role is staffed with zai/glm-4.7-flash@opencode, a deliberate pairing chosen for reliability over brilliance in verification tasks. Evidence verified from the team roster in agent-team/AGENT-TEAM-MEMBERS.org lines 49-53:
+
+> "Quality Assurance Engineer — zai/glm-4.7-flash@opencode. MODEL: MIT, proven alive, deliberately not an author's brain (TB 14.4 → duties scoped to green verification). AGENT: OpenCode's guardrailed editing compensates the weaker brain (justified sharing). PAIR: reliability over brilliance for verification."
+
+## Result
+PARTIAL

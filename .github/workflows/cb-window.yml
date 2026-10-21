@@ -1,0 +1,72 @@
+name: CodeBuddy Auth Window
+
+# CodeBuddy OAuth WINDOW — separate workflow so it NEVER queues behind
+# (or gets cancelled by) the ci.yml chain's concurrency group: the Owner
+# is waiting for the login link MID-WINDOW, and every chain self-dispatch
+# otherwise cannibalizes older pending runs in ci-${{ github.ref }}
+# (evidence: runs 39479883204 / 39480371279 / 39480357418).
+#
+# What it does (Owner "Done." 18:27Z: his browser approval landed AFTER
+# the Lead's local CLI poll window closed — the token grant attaches to
+# the LIVE CLI instance that generated the login URL):
+#   1. pty-drive `codebuddy` through the Intl login on the runner.
+#   2. Telegram the FRESH login link to the Owner's locked chat — the
+#      bot token lives HERE (repo secrets), not on the Lead's box.
+#   3. Keep the CLI polling ~13 min.
+#   4. On landing: upload the credential tree as a LIBSODIUM-SEALED
+#      artifact (repo is PUBLIC — ciphertext-only; the Lead's private
+#      key never leaves his box), 1-day retention.
+# The one-off npm/pip install is Lead ops, NOT a turn seat — the
+# "agents preinstalled in Docker" law for turn jobs is untouched.
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: cb-window
+  cancel-in-progress: true
+
+jobs:
+  window:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Open the CodeBuddy login window (pty-driven, TG-delivered)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
+          # Lead's seal PUBLIC key (private counterpart is NOT in the repo)
+          CB_SEAL_PUBKEY: 'VfVI1oQWk7+4dIPKjBg9IGrHeKM1VURYg/mUCrJ2YSg='
+          CB_WINDOW_DUR: '780'
+          CB_TUI_DUR: '120'
+          # 13-minute landing window (v1 shipped 180s — Owner was promised
+          # ~13 min and got 3; run 39481111876 evidence)
+          CB_URL_WAIT: '150'
+        run: |
+          npm install -g @tencent-ai/codebuddy-code > /dev/null 2>&1
+          codebuddy --version
+          python3 -m pip install --quiet pynacl
+          python3 .github/scripts/cb_window_ci.py
+
+      # v1 bug: the sealed file was a DOTFILE and v4 defaults
+      # include-hidden-files:false -> "No files were found" (run 39481111876
+      # evidence). Non-hidden name + explicit include flag.
+      - name: Upload raw transcript (post-mortem, 1-day)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cb-transcript
+          path: cb-transcript.txt
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - name: Upload sealed credential artifact (1-day retention)
+        if: always() && hashFiles('cb-creds-sealed.bin') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: cb-creds-sealed
+          path: cb-creds-sealed.bin
+          include-hidden-files: true
+          retention-days: 1

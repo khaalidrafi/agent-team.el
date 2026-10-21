@@ -44,7 +44,11 @@ real work segments and self-chain until the objective completes.
   prompt from (M-x agent-team-teamify-prompt — there is NO PROMPT.org
   file; Owner 2026-10-21 08:22Z "WTH is PROMPT.org?"): TEAMIFY.org /
   BOOTSTRAP.org (mode layers), COMMON.org (canonical manual, inlined at
-  build time), CANDIDATES.org (candidate seed).
+  build time), CANDIDATES.org (candidate seed), and agent-team.yml — the
+  PROJECT CI CHAIN TEMPLATE that M-x agent-team-setup-project fills
+  ({{SLOT}} tokens) into a target repo's .github/workflows/agent-team.yml
+  (Owner 2026-10-21 10:12Z: one command makes the setup in a project and
+  provides the teamify prompt).
 - `agent-team/CANDIDATES.org` — SYMLINK to ../templates/CANDIDATES.org
   (one canonical copy, Owner order 2026-10-21).
 - `STATE.org`, `README.org`, `AI-REVIEW.org` — cross-session state, facts,

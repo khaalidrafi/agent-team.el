@@ -610,6 +610,7 @@ into a fresh chat with the team's Lead. The PAT travels in the prompt only
                   "- PAT: " pat "\n"
                   "  (reuse the same token, no rotation; use immediately; NEVER\n"
                   "  store in files/commits/board/logs)\n\n"
+                  agent-team--team-ci-brief "\n\n"
                   layer "\n\n" manual "\n"))
          (buffer (get-buffer-create "*agent-team prompt*")))
     (with-current-buffer buffer
@@ -882,3 +883,532 @@ them.  Works on Android (Emacs 28+, no git needed).  Keys: `g' refresh,
   (let ((buf (current-buffer)))
     (quit-window nil (selected-window))
     (kill-buffer buf)))
+
+;;; One-command project setup (CI chain + teamify prompt) ---------------------
+;;;
+;;; Owner order 2026-10-21 10:12Z (#hq): "The CI based agent team setup
+;;; should be reusable in the Emacs pkg agent-team.el. With one command,
+;;; the setup will be made in a project and the prompt will be provided to
+;;; the user."  ONE command = `agent-team-setup-project': it scaffolds the
+;;; CI chain (.github/workflows/agent-team.yml from templates/agent-team.yml,
+;;; harness agent configs, the secret guard, an AGENTS.md stub when the
+;;; project has none) and then builds the teamify prompt (mode layer +
+;;; templates/COMMON.org) with the project's REPO prefilled.  Existing
+;;; files are never clobbered silently — adoption is the EM's call, same
+;;; law as `agent-team-init'.
+
+(defconst agent-team--slot-rx "{{\\([A-Z_]+\\)}}"
+  "Slot token shape in templates/agent-team.yml: {{NAME}}, caps + underscore.")
+
+(defun agent-team--fill-slots (template slots)
+  "Fill {{NAME}} slot tokens in TEMPLATE from the SLOT alist.
+Plain string replacement, every token exactly once per occurrence;
+unknown/missing tokens stay visible for `agent-team--unfilled-slots'."
+  (let ((out template))
+    (dolist (pair slots out)
+      (setq out (string-replace (concat "{{" (car pair) "}}")
+                                (or (cdr pair) "") out)))))
+
+(defun agent-team--unfilled-slots (text)
+  "List leftover {{NAME}} tokens in TEXT (empty list = fully filled)."
+  (let ((pos 0) out)
+    (while (string-match agent-team--slot-rx text pos)
+      (push (match-string 1 text) out)
+      (setq pos (match-end 0)))
+    (nreverse out)))
+
+(defun agent-team--pkg-file (relpath)
+  "Absolute path of a file packaged with this library (RELPATH from the
+pkg root), or nil when the file is not installed (single-file installs
+carry only the .el + templates/)."
+  (let* ((lib (or (locate-library "agent-team") load-file-name))
+         (dir (and lib (file-name-directory (expand-file-name lib)))))
+    (when dir
+      (let ((f (expand-file-name relpath dir)))
+        (and (file-exists-p f) f)))))
+
+(defun agent-team--repo-slug (&optional root)
+  "OWNER/REPO from the origin remote of the git repo at ROOT (nil if none)."
+  (let* ((default-directory (file-name-as-directory
+                             (or root (agent-team--root))))
+         (url (string-trim
+               (or (car (ignore-errors
+                          (process-lines "git" "remote" "get-url" "origin")))
+                   ""))))
+    (when (string-match "\\([^/:]+\\)/\\([^/]+?\\)\\(?:\\.git\\)?\\'" url)
+      (concat (match-string 1 url) "/" (match-string 2 url)))))
+
+(defun agent-team--detect-gate (&optional root)
+  "Detect the project's landing gate at ROOT.
+Returns a plist (:name :setup :run :install :cmd): the gate NAME, the
+extra TEST-JOB steps (:setup, step blocks), the gate run body (:run, for
+the test job), dependency install lines (:install, for the finalize
+gate), and the single gate command (:cmd, called by finalize's
+race-proof loop).  Detection order: pytest -> npm -> make -> Elisp (this
+package's own shape) -> loud placeholder the Lead must fill."
+  (let* ((root (file-name-as-directory (or root (agent-team--root))))
+         (has (lambda (f) (file-exists-p (expand-file-name f root)))))
+    (cond
+     ((or (funcall has "pytest.ini") (funcall has "pyproject.toml")
+          (funcall has "setup.cfg"))
+      (list :name "pytest"
+            :setup (concat
+                    "      - uses: actions/setup-python@v5\n"
+                    "        with:\n"
+                    "          python-version: '3.12'\n"
+                    "          cache: pip\n"
+                    (when (funcall has "requirements.txt")
+                      "      - name: Install project deps\n        run: pip install -r requirements.txt pytest\n")
+                    (when (or (funcall has "pyproject.toml") (funcall has "setup.py"))
+                      "      - name: Install project\n        run: pip install -e .\n"))
+            :run "          python -m pytest -q"
+            :install (concat
+                      (when (funcall has "requirements.txt")
+                        "          pip install -r requirements.txt pytest\n")
+                      (when (or (funcall has "pyproject.toml") (funcall has "setup.py"))
+                        "          pip install -e .\n"))
+            :cmd "python -m pytest -q"))
+     ((funcall has "package.json")
+      (list :name "npm test"
+            :setup ""
+            :run "          npm ci --silent\n          npm test --silent"
+            :install "          npm ci --silent\n"
+            :cmd "npm test --silent"))
+     ((funcall has "Makefile")
+      (list :name "make test"
+            :setup ""
+            :run "          make test"
+            :install ""
+            :cmd "make test"))
+     ((funcall has "agent-team.el")
+      (list :name "byte-compile + ert"
+            :setup (concat
+                    "      - name: Install Emacs\n"
+                    "        run: sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox\n")
+            :run (concat
+                  "          emacs -Q --batch -L . --eval \"(unless (byte-compile-file \\\"agent-team.el\\\") (kill-emacs 1))\"\n"
+                  "          emacs -Q --batch -L . -L tests -l tests/agent-team-test.el --eval '(ert-run-tests-batch-and-exit \\\"agent-team\\\")'")
+            :install "          sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox\n"
+            :cmd "emacs -Q --batch -L . --eval \"(unless (byte-compile-file \\\"agent-team.el\\\") (kill-emacs 1))\""))
+     (t
+      (list :name "PLACEHOLDER — the Lead defines this project's gate"
+            :setup ""
+            :run "          echo \"agent-team setup: no gate detected — define the landing gate (tests) for this project\" && exit 1"
+            :install ""
+            :cmd "echo \"agent-team setup: no gate detected — define the landing gate for this project\" && exit 1")))))
+
+(defconst agent-team--seat-env-default
+  "      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      QODER_PERSONAL_ACCESS_TOKEN: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
+      CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
+      GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
+      LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
+      LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
+      LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER: ${{ secrets.LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER }}
+      LARK_WEBHOOK_RELEASE_ENGINEER: ${{ secrets.LARK_WEBHOOK_RELEASE_ENGINEER }}"
+  "Turn-job env block ({{SEAT_ENV}} default): repo secrets ride as env-var
+NAMES only — values live in each repo's secret store, never copied.")
+
+(defconst agent-team--rotation-default
+  "            openrouter/poolside/laguna-s-2.1:free@opencode*) NEXT_SEAT=principal-engineer ;;
+            groq/qwen3.8-27b@goose*Software*)                NEXT_SEAT=software-engineer ;;
+            zai/glm-4.7-flash@opencode*)                     NEXT_SEAT=quality-assurance-engineer ;;
+            groq/qwen3.8-27b@goose*Release*)                 NEXT_SEAT=release-engineer ;;
+            qwen3.8-flash@qoder*)                            NEXT_SEAT=platform-engineer ;;
+            *)                                               NEXT_SEAT=principal-engineer ;;"
+  "Rotation case ({{ROTATION_CASE}} default): the engine's proven five-seat
+round.  Re-run setup with overrides when this team's MEMBERS.org differs.")
+
+(defconst agent-team--next-map-default
+  "            principal-engineer)          NEXT=\"groq/qwen3.8-27b@goose (Software Engineer)\" ;;
+            software-engineer)           NEXT=\"zai/glm-4.7-flash@opencode (Quality Assurance Engineer)\" ;;
+            quality-assurance-engineer)  NEXT=\"groq/qwen3.8-27b@goose (Release Engineer)\" ;;
+            release-engineer)            NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;
+            platform-engineer)           NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;
+            *)                           NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;"
+  "Rotation advance map ({{NEXT_MAP}} default): seat -> next #+TURN pointer.")
+
+(defconst agent-team--segment-runner-default
+  "            principal-engineer)
+              # OpenCode body + poolside: OpenCode cannot host the model
+              # (absent from its models.dev catalog — demo/01 evidence) and
+              # OpenRouter's free quota is exhausted. Attempt order:
+              # 1. opencode (in case the catalog/defect is repaired);
+              # 2. goose via OpenRouter poolside — SELF-HEALS the moment the
+              #    Owner adds ~10 credits (harness/01 item 1/2); OpenRouter
+              #    normalizes Goose's developer role server-side (demo/01
+              #    evidence: qwen3.8-27b worked via OpenRouter, Groq didn't).
+              if opencode run --print-logs --model \"openrouter/poolside/laguna-s-2.1:free\" \"$BRIEF\"; then
+                echo \"TURN_RESULT=opencode run OK\"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=\"poolside/laguna-s-2.1:free\" \\
+                   OPENAI_API_KEY=\"$OPENROUTER_API_KEY\" \\
+                   OPENAI_HOST=\"https://openrouter.ai/api/v1\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: openrouter/poolside@goose — credits landed)\"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \\
+                   OPENAI_API_KEY=\"$OPENROUTER_API_KEY\" \\
+                   OPENAI_HOST=\"https://openrouter.ai/api/v1\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — promo hire 05:33Z)\"
+              elif codebuddy -p \"$BRIEF\"; then
+                echo \"TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — poolside dead)\"
+              elif env HOME=/usr/local/lib/qoder-home \\
+                   qoder -p \"$BRIEF\" --output-format json \\
+                   --permission-mode accept_edits --max-turns 100; then
+                echo \"TURN_RESULT=qoder run OK (lane: fallback qwen3.8@qoder — poolside dead)\"
+              else
+                echo \"TURN_RESULT=BLOCKED (poolside dead on opencode+goose, fallbacks codebuddy+qoder dead too — harness/01)\"
+              fi
+              ;;
+            quality-assurance-engineer|software-engineer|release-engineer)
+              # LANE (mesh/01 repair, Lead, 2026-10-20 15:45Z): every lane on
+              # the hired/fallback brains is dead — Groq rejects the
+              # `developer` role Goose sends (400, req_01m5cqbghke9),
+              # OpenRouter free-models-per-day exhausted, OpenCode body
+              # headless-defective. The ONE live lane with its own quota:
+              # ZAI glm-4.7-flash — same OpenAI-compatible schema. Goose goes
+              # through its openai provider with OPENAI_HOST pointed at ZAI.
+              # Fallback: the rostered nemotron lane (in case OpenRouter
+              # quota resets).
+              if env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \\
+                   OPENAI_API_KEY=\"$ZAI_API_KEY\" \\
+                   OPENAI_HOST=\"https://api.z.ai\" \\
+                   OPENAI_BASE_PATH=\"/api/paas/v4/chat/completions\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: zai/glm-4.7-flash@goose)\"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \\
+                   OPENAI_API_KEY=\"$OPENROUTER_API_KEY\" \\
+                   OPENAI_HOST=\"https://openrouter.ai/api/v1\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — OpenRouter promo hire 05:33Z)\"
+              elif goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: ${GOOSE_MODEL} — OpenRouter quota recovered)\"
+              elif codebuddy -p \"$BRIEF\"; then
+                echo \"TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — zai+openrouter dead)\"
+              elif env HOME=/usr/local/lib/qoder-home \\
+                   qoder -p \"$BRIEF\" --output-format json \\
+                   --permission-mode accept_edits --max-turns 100; then
+                echo \"TURN_RESULT=qoder run OK (lane: fallback qwen3.8@qoder — zai+openrouter dead)\"
+              else
+                echo \"TURN_RESULT=BLOCKED (all rostered lanes dead: zai+openrouter+codebuddy+qoder — harness/01)\"
+              fi
+              ;;
+            platform-engineer)
+              # Acting Platform Engineer qwen3.8-flash@qoder — Qoder-on-CI
+              # PROOF lane (AUTH-READY 2026-10-21: PAT -> repo secret
+              # QODER_PERSONAL_ACCESS_TOKEN; the CLI auto-detects CI, no
+              # browser). HOME is pinned to the install dir: the `qoder`
+              # launcher resolves its CLI under ITS HOME (proof run
+              # 39467719908 failed with the default /home/agent).
+              # Fallback lane per roster: zai/glm-4.7-flash@goose (acting).
+              if env HOME=/usr/local/lib/qoder-home \\
+                   qoder -p \"$BRIEF\" --output-format json \\
+                   --permission-mode accept_edits --max-turns 100; then
+                echo \"TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — body PROVEN on CI)\"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \\
+                   OPENAI_API_KEY=\"$ZAI_API_KEY\" \\
+                   OPENAI_HOST=\"https://api.z.ai\" \\
+                   OPENAI_BASE_PATH=\"/api/paas/v4/chat/completions\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (acting lane: zai/glm-4.7-flash@goose — qoder CLI failed)\"
+              elif env GOOSE_PROVIDER=openai GOOSE_MODEL=minimax/minimax-m3.1-flash:free \\
+                   OPENAI_API_KEY=\"$OPENROUTER_API_KEY\" \\
+                   OPENAI_HOST=\"https://openrouter.ai/api/v1\" \\
+                   goose run --no-session -t \"$BRIEF\"; then
+                echo \"TURN_RESULT=goose run OK (lane: minimax-m3.1-flash:free@goose — promo hire 05:33Z)\"
+              elif codebuddy -p \"$BRIEF\"; then
+                echo \"TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — qoder+zai dead)\"
+              else
+                echo \"TURN_RESULT=BLOCKED (qoder+zai+codebuddy all failed — harness/01)\"
+              fi
+              ;;"
+  "Seat -> body lane map ({{SEGMENT_RUNNER}} default): the engine's proven
+attempt-order lanes incl. the minimax-m3.1-flash:free relief lane.
+Override when this team's harness bakes different bodies.")
+
+(defconst agent-team--team-ci-brief
+  "* TEAM CI (how the chain runs — read before the first dispatch)
+
+- the chain lives in .github/workflows/agent-team.yml (Lead-owned):
+  test (landing gate) -> probe (seat liveness, never gates) -> turn
+  (Telegram ingest owner-locked -> session restore -> ONE agent segment
+  in the preinstalled harness container -> session scrub+upload -> branch
+  push + rotation advance) -> finalize (auto-merge behind the gate -> Jev
+  judgment -> stall accounting -> SELF-DISPATCH while the objective is
+  open and KILL-SWITCH is OFF)
+- control file agent-team/TEAM-CONTROL.org drives everything:
+  #+OBJECTIVE / #+OBJECTIVE-STATE (OPEN|COMPLETE) / #+TURN (rotation
+  pointer) / #+KILL-SWITCH (ON|OFF) / #+STALL-COUNT (>=4 -> 5-min backoff)
+- the team decides how many runs the objective takes; the chain stops
+  ONLY on kill switch, objective complete, or tests red; a no-progress
+  streak shifts to backoff, never to failure
+- GoModel gateway (Jev judgment layer, khaalidrafi/llmfisher) rides as a
+  HEALTH-GATED lane: turn health step + finalize judgment; DOWN ->
+  lane-fallback law, never red
+- every verdict mirrors to the Owner's Telegram (owner-locked, deduped)
+  and the project's Discord channel webhook; the segment's GLM chat
+  entries diff into Discord per run
+- seats work in ai/turn-* branches; finalize auto-merges behind the
+  landing gate (red work never lands); agent-team/TEAM-CHAT.org is
+  union-merged (.gitattributes) so concurrent appends never conflict
+- Lead-owned files (seats never edit them): .github/workflows/*,
+  agent-team/TEAM-CONTROL.org, .gitattributes, .github/scripts/*
+- repo secrets (write-only; values never copied across repos; names
+  only travel per the ENV-VAR LAW): QODER_PERSONAL_ACCESS_TOKEN ·
+  ZAI_API_KEY · OPENROUTER_API_KEY · GROQ_API_KEY ·
+  CODEBUDDY_AUTH_TOKEN · GOMODEL_MASTER_KEY · TELEGRAM_BOT_TOKEN ·
+  TELEGRAM_OWNER_ID · DISCORD_WEBHOOK_<PROJECT> · LARK_WEBHOOK_<ROLE>
+  (missing keys skip their lane gracefully; a missing SEAT key blocks
+  that seat, the rotation advances, the run stays green)
+"
+  "The TEAM CI block added to every teamify prompt the pkg builds — the
+prompt carries the chain's operating manual, not just the team laws.")
+
+(defun agent-team--default-slots (&optional root repo)
+  "Slot values for templates/agent-team.yml at ROOT (slug REPO).
+Every template token MUST be covered here — this function is the single
+place a token is allowed to be defined.  Gate blocks come from
+`agent-team--detect-gate'; rotation/segment blocks come from the engine
+default constants."
+  (let* ((slug (or repo (agent-team--repo-slug root) "OWNER/REPO"))
+         (project (or (nth 1 (split-string slug "/")) slug))
+         (gate (agent-team--detect-gate root)))
+    (list
+     (cons "PROJECT" project)
+     (cons "REPO" slug)
+     (cons "WORKFLOW_FILE" "agent-team.yml")
+     (cons "CRON" "17 1,5,9,13,17,21 * * *")   ; engine default: 6 turns/day; the self-chain owns pacing
+     (cons "GATE_NAME" (plist-get gate :name))
+     (cons "GATE_SETUP" (plist-get gate :setup))
+     (cons "GATE_CMD" (plist-get gate :run))
+     (cons "GATE_INSTALL" (plist-get gate :install))
+     (cons "GATE_SH" (plist-get gate :cmd))
+     (cons "SEAT_ENV" agent-team--seat-env-default)
+     (cons "DOCKER_RUN_ENV"
+           "-e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN")
+     (cons "HARNESS_TAG" "agent-team-harness")
+     (cons "DISCORD_SECRET" (upcase (concat "DISCORD_WEBHOOK_TEAM_" project)))
+     (cons "FROM_ID" (concat "team-lead (glm-5.3-flash, Agent Team @" slug ")"))
+     (cons "ROTATION_CASE" agent-team--rotation-default)
+     (cons "NEXT_MAP" agent-team--next-map-default)
+     (cons "SEGMENT_RUNNER" agent-team--segment-runner-default)
+     (cons "SEGMENT_PRE"
+           "          # (no project prep — add this project's pre-segment setup here)")
+     (cons "TOP_GREP" "'^\\*+ (TODO|PROGRESS|BLOCKED|ONGOING|PENDING|WAIT)'")
+     (cons "HANDLES"
+           "@principal-engineer @software-engineer @quality-assurance-engineer @release-engineer @lead @owner")
+     (cons "REPO_CONTEXT" "README*, STATE.org")
+     (cons "WORK_ORDER"
+           "          WORK ORDER: none pinned — the TEAM OBJECTIVE and the oldest-open-board-item rule decide; a pinned Owner order would appear here."))))
+
+(defvar agent-team--harness-dockerfile-scaffold
+  "# agent-team-harness — CI turn container with agent bodies PREINSTALLED
+# (Owner order 2026-10-20 #hq: \"Use Docker containers with agents
+# preinstalled. Don't install in CI. That's a waste of time. You'll have
+# to make agent configs, too, and reuse them.\").  Secrets are NEVER
+# baked: provider keys are injected per run as env vars from repo secrets.
+# The PROJECT DEPS block below is this project's to fill — everything
+# else is the pkg's proven recipe (re-scaffold with M-x
+# agent-team-setup-project to adopt recipe updates).
+
+FROM debian:stable-slim
+
+RUN apt-get update -qq \\
+ && apt-get install -y -qq --no-install-recommends \\
+      git curl ca-certificates bzip2 jq procps nodejs npm \\
+ && rm -rf /var/lib/apt/lists/*
+
+# --- OpenCode body (preinstalled once, reused every turn) -------------------
+RUN export HOME=/usr/local/lib/opencode-home \\
+ && curl -fsSL https://opencode.ai/install | bash \\
+ && chmod -R a+rX /usr/local/lib/opencode-home \\
+ && ln -sf /usr/local/lib/opencode-home/.opencode/bin/opencode /usr/local/bin/opencode
+
+# --- Goose body (direct tarball: the download_cli.sh installer opens
+#     /dev/tty and dies on headless runners — demo/01 turn 2 evidence) ------
+RUN mkdir -p /tmp/goose-dl \\
+ && curl -fsSL -o /tmp/goose-dl/goose.tar.bz2 \\
+      https://github.com/block/goose/releases/download/stable/goose-x86_64-unknown-linux-gnu.tar.bz2 \\
+ && tar -xjf /tmp/goose-dl/goose.tar.bz2 -C /tmp/goose-dl \\
+ && install -m 0755 /tmp/goose-dl/goose /usr/local/bin/goose \\
+ && rm -rf /tmp/goose-dl
+
+# --- CodeBuddy body (baked and DORMANT until an account credential
+#     exists; headless needs -y in -p mode for tool use) --------------------
+RUN npm install -g @tencent-ai/codebuddy-code \\
+ && timeout 60 codebuddy --version
+
+### PROJECT DEPS (fill: this project's runtime deps for the landing gate)
+# RUN pip install --no-cache-dir pytest
+# RUN npm --prefix app ci
+
+# --- Non-root run user (matches the Actions runner uid 1001) ---------------
+RUN useradd -m -u 1001 agent
+
+# --- Baked agent configs (Owner: \"make agent configs, too, and reuse them\").
+#     Keys are env-interpolated at run time; nothing secret is baked.
+#     Global AGENTS.md = agent law, CONFIGURED into memory (verified per
+#     agent docs 2026-10-21: OpenCode ~/.config/opencode/AGENTS.md,
+#     Goose ~/.config/goose/.goosehints + repo-root AGENTS.md,
+#     CodeBuddy ~/.codebuddy/CODEBUDDY.md, Qoder repo-root AGENTS.md). --
+COPY docker/harness/opencode.json     /home/agent/.config/opencode/opencode.json
+COPY docker/harness/goose-config.yaml /home/agent/.config/goose/config.yaml
+COPY AGENTS.md /home/agent/.config/opencode/AGENTS.md
+COPY AGENTS.md /home/agent/.config/goose/.goosehints
+COPY AGENTS.md /home/agent/.codebuddy/CODEBUDDY.md
+RUN chown -R agent:agent /home/agent
+
+ENV HOME=/home/agent \\
+    GOOSE_PROVIDER=openrouter \\
+    GOOSE_MODEL=nvidia/nemotron-3.5-lightning:free
+"
+  "Fresh-project harness Dockerfile scaffold: the pkg's proven body recipe
++ baked agent configs, with a marked PROJECT DEPS region.")
+
+(defvar agent-team--agents-md-stub
+  "# AGENTS.md — global agent law
+
+(Stub written by agent-team-setup-project — replace with this project's
+real agent law.  The CI harness CONFIGURES this file into every agent's
+memory: OpenCode ~/.config/opencode/AGENTS.md, Goose
+~/.config/goose/.goosehints, CodeBuddy ~/.codebuddy/CODEBUDDY.md.)
+
+* LAW
+- the board (agent-team/TODOS.org) is the single source of truth
+- credentials travel as ENV VAR NAMES only — never values
+- canonical team manual: khaalidrafi/agent-team.el templates/COMMON.org
+"
+  "AGENTS.md stub for projects that have none — the harness COPY fails
+the build without it, so setup guarantees its existence.")
+
+(defun agent-team--scaffold-ci (root repo &optional force)
+  "Scaffold the agent-team CI chain into the git repo at ROOT (slug REPO).
+Writes/refreshes .github/workflows/agent-team.yml (from the pkg template
+with `agent-team--default-slots'), copies the packaged harness agent
+configs + secret guard, and writes a harness Dockerfile / AGENTS.md stub
+ONLY when missing (per-project files are never clobbered).  FORCE
+refreshes the workflow and the pkg-owned configs even when present.
+Returns the list of (FILE . ACTION) pairs."
+  (let* ((root (file-name-as-directory (expand-file-name root)))
+         (slots (agent-team--default-slots root repo))
+         (tpl (agent-team--template "agent-team.yml"))
+         (filled (agent-team--fill-slots tpl slots))
+         (left (agent-team--unfilled-slots filled))
+         (wf-dir (expand-file-name ".github/workflows/" root))
+         (wf (expand-file-name "agent-team.yml" wf-dir))
+         (sg-src (agent-team--pkg-file ".github/scripts/secret-guard.sh"))
+         (sg-dir (expand-file-name ".github/scripts/" root))
+         (sg (expand-file-name "secret-guard.sh" sg-dir))
+         (hdir (expand-file-name "docker/harness/" root))
+         (out '()))
+    (when left
+      (error "agent-team: template slots unfilled: %s" (string-join left ", ")))
+    (make-directory wf-dir t)
+    (make-directory hdir t)
+    (when sg-src (make-directory sg-dir t))
+    (dolist (spec (list
+                   (cons wf (lambda ()
+                              (when (and (file-exists-p wf) (not force))
+                                (unless (y-or-n-p
+                                         (format "agent-team: %s exists — refresh it? "
+                                                 (file-relative-name wf root)))
+                                  (user-error "agent-team: setup aborted — %s kept" wf)))
+                              (write-region filled nil wf)
+                              (list wf "filled from templates/agent-team.yml")))
+                   (cons (expand-file-name "opencode.json" hdir)
+                         (lambda ()
+                          (let ((src (agent-team--pkg-file "docker/harness/opencode.json")))
+                            (when (and src (or force (not (file-exists-p
+                                                          (expand-file-name "opencode.json" hdir)))))
+                              (copy-file src (expand-file-name "opencode.json" hdir) t)
+                              (list (expand-file-name "opencode.json" hdir) "copied from pkg")))))
+                   (cons (expand-file-name "goose-config.yaml" hdir)
+                         (lambda ()
+                          (let ((src (agent-team--pkg-file "docker/harness/goose-config.yaml")))
+                            (when (and src (or force (not (file-exists-p
+                                                          (expand-file-name "goose-config.yaml" hdir)))))
+                              (copy-file src (expand-file-name "goose-config.yaml" hdir) t)
+                              (list (expand-file-name "goose-config.yaml" hdir) "copied from pkg")))))
+                   (cons (expand-file-name "Dockerfile" hdir)
+                         (lambda ()
+                          (let ((dst (expand-file-name "Dockerfile" hdir)))
+                            (when (not (file-exists-p dst))
+                              (write-region agent-team--harness-dockerfile-scaffold nil dst)
+                              (list dst "scaffolded (PROJECT DEPS region to fill)")))))
+                   (cons (expand-file-name "AGENTS.md" root)
+                         (lambda ()
+                          (let ((dst (expand-file-name "AGENTS.md" root)))
+                            (when (not (file-exists-p dst))
+                              (write-region agent-team--agents-md-stub nil dst)
+                              (list dst "stub written (replace with the project's law)")))))
+                   (cons sg
+                         (lambda ()
+                          (when (and sg-src (or force (not (file-exists-p sg))))
+                            (copy-file sg-src sg t)
+                            (list sg "copied from pkg"))))))
+      (pcase-let* ((`(,target . ,thunk) spec)
+                   (res (funcall thunk)))
+        (when res (push res out))))
+    (nreverse out)))
+
+;;;###autoload
+(defun agent-team-setup-project (&optional root repo not-touch pat)
+  "ONE command: make the agent-team CI setup in a project and provide
+the teamify prompt (Owner order 2026-10-21 10:12Z).
+
+In the git repo at ROOT this scaffolds the CI chain
+(.github/workflows/agent-team.yml from templates/agent-team.yml —
+landing gate auto-detected, engine rotation + lane defaults, GoModel
+health-gated lane + Jev judgment, TG owner-lock + dedupe, Discord
+mirror), the harness agent configs (opencode.json, goose-config.yaml),
+the secret guard, an AGENTS.md stub when the project has none, and a
+harness Dockerfile when it has none.  Then it builds the teamify prompt
+from templates/ (TEAMIFY layer + COMMON.org manual + the TEAM CI block)
+into *agent-team prompt* + kill-ring, ready to paste into the team
+Lead's fresh chat.  Existing files are never clobbered silently; the
+workflow refresh is asked for by name (adoption is the EM's call)."
+  (interactive)
+  (unless root
+    (setq root (read-directory-name "Project root: " (agent-team--root))))
+  (setq root (directory-file-name (expand-file-name root)))
+  (unless repo
+    (setq repo (read-string
+                (format "Repo slug (%s): "
+                        (or (agent-team--repo-slug root) "owner/repo"))))
+    (when (string-empty-p repo)
+      (setq repo (or (agent-team--repo-slug root)
+                     (user-error "agent-team: no origin remote and no slug given")))))
+  (unless not-touch
+    (setq not-touch
+          (read-string
+           "NOT-TOUCH (paths/ops the team must never touch; RET = lead-owned defaults): "))
+    (when (string-empty-p not-touch)
+      (setq not-touch
+            ".github/workflows/*, .github/scripts/*, agent-team/TEAM-CONTROL.org (lead-owned)")))
+  (unless pat
+    (setq pat (read-passwd "PAT (github_pat_ scoped to this repo; RET = leave a FILL slot): "))
+    (when (string-empty-p pat) (setq pat nil)))
+  (let* ((project (or (nth 1 (split-string repo "/")) repo))
+         (report (agent-team--scaffold-ci root repo))
+         (lines (mapcar (lambda (r)
+                          (format "- %s: %s"
+                                  (file-relative-name (car r) root)
+                                  (cadr r)))
+                        report)))
+    (agent-team-teamify-prompt
+     (concat "https://github.com/" repo)
+     (concat project " — CI agent-team chain scaffolded by
+agent-team.el (agent-team.yml + harness configs + secret guard are in
+place; the team files under agent-team/ are to be (re)generated per
+FILE TARGETS below). Re-scaffold command: M-x agent-team-setup-project.")
+     not-touch
+     (or pat "<<<FILL — paste the fine-grained PAT scoped to this repo>>>")
+     nil)
+    (with-current-buffer "*agent-team prompt*"
+      (goto-char (point-max)))
+    (message "agent-team setup: %d file(s) in %s — prompt built; paste into the Lead's fresh chat"
+             (length lines) (abbreviate-file-name root))
+    lines))

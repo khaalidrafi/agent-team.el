@@ -396,7 +396,6 @@ drift apart (this is the setup command's core invariant)."
   (let* ((root (make-temp-file "at-scaf-" t))
          (report (agent-team--scaffold-ci root "khaalidrafi/testrepo"))
          (wf (expand-file-name ".github/workflows/agent-team.yml" root))
-         (law (expand-file-name "docker/harness/AGENT-LAW.md" root))
          (sg (expand-file-name ".github/scripts/secret-guard.sh" root))
          (oc (expand-file-name "docker/harness/opencode.json" root)))
     ;; the chain lands, fully filled
@@ -406,10 +405,11 @@ drift apart (this is the setup command's core invariant)."
       (should (string-match-p "khaalidrafi/testrepo" yml))
       (should (string-match-p "secrets.GROQ_API_KEY" yml))
       (should (string-match-p "TELEGRAM_OWNER_ID" yml)))
-    ;; law bake file + guard + pkg configs land; per-project Dockerfile
-    ;; scaffolds — and NO repo-root AGENTS.md is ever created
-    (should (file-exists-p law))
+    ;; guard + pkg configs land; the Dockerfile scaffolds — and NO
+    ;; AGENTS.md (repo root OR harness law invention) is ever created
     (should-not (file-exists-p (expand-file-name "AGENTS.md" root)))
+    (should-not (file-exists-p
+                 (expand-file-name "docker/harness/AGENT-LAW.md" root)))
     (should (file-exists-p sg))
     (should (file-exists-p oc))
     (should (file-exists-p (expand-file-name "docker/harness/Dockerfile" root)))
@@ -420,9 +420,9 @@ drift apart (this is the setup command's core invariant)."
 (ert-deftest agent-team-scaffold-never-clobbers-project-files ()
   "The harness Dockerfile is per-project: setup writes it ONLY when
 missing — an existing project's file is never clobbered.  And NO
-repo-root AGENTS.md is ever created (Owner 2026-10-21: a project
-AGENTS.md must not be made; the global law bakes from
-docker/harness/AGENT-LAW.md instead)."
+AGENTS.md is ever created or rewritten: a repo's own repo-root AGENTS.md
+stays untouched (Owner 2026-10-21 revert order — it IS the CI law bake
+source), and no AGENT-LAW.md invention exists."
   (let* ((root (make-temp-file "at-scaf2-" t))
          (agents (expand-file-name "AGENTS.md" root))
          (df (expand-file-name "docker/harness/Dockerfile" root)))
@@ -439,13 +439,93 @@ docker/harness/AGENT-LAW.md instead)."
     ;; but the workflow itself IS written when absent
     (should (file-exists-p (expand-file-name ".github/workflows/agent-team.yml" root)))
     (delete-directory root t))
-  ;; a project with NO AGENTS.md stays without one — the law bake file
-  ;; carries the global law instead
+  ;; a project with NO AGENTS.md and NO variable stays without one —
+  ;; no AGENT-LAW.md invention either (Owner: "No need for a AGENT-LAW.md")
   (let* ((root (make-temp-file "at-scaf3-" t)))
     (agent-team--scaffold-ci root "khaalidrafi/testrepo")
     (should-not (file-exists-p (expand-file-name "AGENTS.md" root)))
-    (should (file-exists-p (expand-file-name "docker/harness/AGENT-LAW.md" root)))
+    (should-not (file-exists-p
+                 (expand-file-name "docker/harness/AGENT-LAW.md" root)))
+    ;; the Dockerfile scaffold points the user at the variable instead
+    (should (string-match-p
+             "agent-team-global-agents-md"
+             (with-temp-buffer
+               (insert-file-contents
+                (expand-file-name "docker/harness/Dockerfile" root))
+               (buffer-string))))
     (delete-directory root t)))
+
+(ert-deftest agent-team-scaffold-transports-user-global-law ()
+  "With `agent-team-global-agents-md' pointed at the USER's global
+AGENTS.md: a project without its own gets the file transported
+byte-identical (docker/harness/AGENTS.md) and a Dockerfile that bakes
+it into the verified global config paths; a project WITH its own
+AGENTS.md keeps its own file as the bake source and nothing is
+transported (Owner 2026-10-21: the user's global law via a variable)."
+  (let* ((userlaw (make-temp-file "user-agents-md-"))
+         (root (make-temp-file "at-scaf4-" t))
+         (law-dst (expand-file-name "docker/harness/AGENTS.md" root))
+         (df (expand-file-name "docker/harness/Dockerfile" root)))
+    (write-region "# the USER's global law — byte-identical transport only\n"
+                  nil userlaw)
+    (let ((agent-team-global-agents-md userlaw))
+      (agent-team--scaffold-ci root "khaalidrafi/testrepo"))
+    (should (file-exists-p law-dst))
+    (should (string-match-p
+             "byte-identical transport only"
+             (with-temp-buffer (insert-file-contents law-dst) (buffer-string))))
+    (should (string-match-p
+             "COPY docker/harness/AGENTS.md /home/agent/.config/opencode/AGENTS.md"
+             (with-temp-buffer (insert-file-contents df) (buffer-string))))
+    ;; byte-identical: same size, same content
+    (should (= (nth 7 (file-attributes userlaw))
+               (nth 7 (file-attributes law-dst))))
+    (delete-directory root t))
+  ;; a project WITH its own AGENTS.md wins: no transport, repo-root bake
+  (let* ((userlaw (make-temp-file "user-agents-md-"))
+         (root (make-temp-file "at-scaf5-" t))
+         (df (expand-file-name "docker/harness/Dockerfile" root)))
+    (write-region "# user global law (must NOT be transported here)\n" nil userlaw)
+    (write-region "# the project's own AGENTS.md\n"
+                  nil (expand-file-name "AGENTS.md" root))
+    (let ((agent-team-global-agents-md userlaw))
+      (agent-team--scaffold-ci root "khaalidrafi/testrepo"))
+    (should-not (file-exists-p
+                 (expand-file-name "docker/harness/AGENTS.md" root)))
+    (should (string-match-p
+             "COPY AGENTS.md /home/agent/.config/opencode/AGENTS.md"
+             (with-temp-buffer (insert-file-contents df) (buffer-string))))
+    (delete-directory root t)))
+
+(ert-deftest agent-team-prompt-begins-with-global-law ()
+  "The teamify prompt BEGINS with the user's global AGENTS.md when the
+variable points at it (web chats start under the user's own global law,
+Owner 2026-10-21); without the variable the prompt starts at the
+TEAM-MAKING header as before."
+  (let* ((userlaw (make-temp-file "user-agents-md-"))
+         prompt)
+    (write-region "# USER GLOBAL LAW\n- be excellent to each other\n"
+                  nil userlaw)
+    (let ((agent-team-global-agents-md userlaw))
+      (agent-team-teamify-prompt
+       "https://github.com/khaalidrafi/testrepo" "test"
+       "none" "<<<FILL>>>" nil)
+      (setq prompt (with-current-buffer "*agent-team prompt*"
+                     (buffer-string))))
+    (should (string-prefix-p
+             "* GLOBAL AGENTS.MD — the user's global law" prompt))
+    (should (string-match-p "be excellent to each other" prompt))
+    (should (string-match-p "TEAM CI (how the chain runs" prompt)))
+  ;; no variable → no law block, prompt starts at the header
+  (let ((agent-team-global-agents-md nil)
+        prompt)
+    (agent-team-teamify-prompt
+     "https://github.com/khaalidrafi/testrepo" "test"
+     "none" "<<<FILL>>>" nil)
+    (setq prompt (with-current-buffer "*agent-team prompt*"
+                   (buffer-string)))
+    (should (string-prefix-p "# TEAM-MAKING PROMPT" prompt))
+    (should-not (string-match-p "GLOBAL AGENTS.MD" prompt))))
 
 (ert-deftest agent-team-team-ci-brief-in-prompt ()
   "The teamify prompt carries the TEAM CI operating block (the Owner

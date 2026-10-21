@@ -582,13 +582,16 @@ manual, inlined at build time) + CANDIDATES.org (candidate seed).")
 ;;;###autoload
 (defun agent-team-teamify-prompt (&optional repo project not-touch pat fresh)
   "Build the ONE team-making prompt from templates/ for REPO.
-Assembles: FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT) + the mode layer
-(templates/BOOTSTRAP.org for a FRESH project, templates/TEAMIFY.org for an
-existing one) + templates/COMMON.org (the canonical manual, inlined at
-build time from its canonical home — no per-repo copies drift). Puts the
-result in the *agent-team prompt* buffer AND the kill-ring, ready to paste
-into a fresh chat with the team's Lead. The PAT travels in the prompt only
-— never stored in files/commits/board (Owner order 2026-10-21)."
+Assembles: the USER's global AGENTS.md (when `agent-team-global-agents-md'
+points at a real file — the chat BEGINS under the user's global law,
+Owner order 2026-10-21) + FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT)
++ the mode layer (templates/BOOTSTRAP.org for a FRESH project,
+templates/TEAMIFY.org for an existing one) + templates/COMMON.org (the
+canonical manual, inlined at build time from its canonical home — no
+per-repo copies drift). Puts the result in the *agent-team prompt*
+buffer AND the kill-ring, ready to paste into a fresh chat with the
+team's Lead. The PAT travels in the prompt only — never stored in
+files/commits/board (Owner order 2026-10-21)."
   (interactive)
   (unless repo
     (setq repo (read-string "REPO (url; team-truth branch is ai/main): "))
@@ -598,7 +601,20 @@ into a fresh chat with the team's Lead. The PAT travels in the prompt only
     (setq fresh (y-or-n-p "FRESH project? (yes = BOOTSTRAP layer, no = TEAMIFY) ")))
   (let* ((layer (agent-team--template (if fresh "BOOTSTRAP.org" "TEAMIFY.org")))
          (manual (agent-team--template "COMMON.org"))
+         (law (and agent-team-global-agents-md
+                   (file-exists-p agent-team-global-agents-md)
+                   (with-temp-buffer
+                     (insert-file-contents agent-team-global-agents-md)
+                     (buffer-string))))
          (prompt (concat
+                  (if law
+                      (concat
+                       "* GLOBAL AGENTS.MD — the user's global law (pkg variable"
+                       " `agent-team-global-agents-md'); this chat BEGINS under"
+                       " it, and the same file bakes into every agent's global"
+                       " config in CI\n\n"
+                       law "\n\n")
+                    "")
                   "# TEAM-MAKING PROMPT — built by agent-team.el from templates/"
                   " (" (if fresh "BOOTSTRAP" "TEAMIFY") " + COMMON) on "
                   (format-time-string "%Y-%m-%d %H:%M UTC") "\n\n"
@@ -891,12 +907,35 @@ them.  Works on Android (Emacs 28+, no git needed).  Keys: `g' refresh,
 ;;; the setup will be made in a project and the prompt will be provided to
 ;;; the user."  ONE command = `agent-team-setup-project': it scaffolds the
 ;;; CI chain (.github/workflows/agent-team.yml from templates/agent-team.yml,
-;;; harness agent configs, the secret guard, the global-law bake file
-;;; docker/harness/AGENT-LAW.md — it NEVER creates a repo-root AGENTS.md)
-;;; and then builds the teamify prompt (mode layer +
-;;; templates/COMMON.org) with the project's REPO prefilled.  Existing
-;;; files are never clobbered silently — adoption is the EM's call, same
-;;; law as `agent-team-init'.
+;;; harness agent configs, the secret guard, the harness Dockerfile) and
+;;; then builds the teamify prompt (mode layer + templates/COMMON.org)
+;;; with the project's REPO prefilled.  Existing files are never clobbered
+;;; silently — adoption is the EM's call, same law as `agent-team-init'.
+;;;
+;;; GLOBAL AGENTS.MD LAW (Owner order 2026-10-21 ~12:44Z, superseding the
+;;; AGENT-LAW.md invention): the setup NEVER creates or generates any
+;;; AGENTS.md — a project's own repo-root AGENTS.md is left untouched and
+;;; is what the harness bakes.  When the project has none, the USER points
+;;; `agent-team-global-agents-md' at THEIR global AGENTS.md path: the
+;;; setup transports that file byte-identical (docker/harness/AGENTS.md)
+;;; for the CI bake, and the teamify prompt BEGINS with its content so a
+;;; fresh web chat starts under the user's own global law.
+
+(defcustom agent-team-global-agents-md nil
+  "Path to YOUR global AGENTS.md — used in CI and at web-chat beginning
+(Owner order 2026-10-21 ~12:44Z).  When the target project has no
+repo-root AGENTS.md of its own, the setup transports THIS file
+byte-identical into the harness bake (docker/harness/AGENTS.md; the
+Dockerfile COPYs it into each agent's verified global config path:
+OpenCode ~/.config/opencode/AGENTS.md, Goose ~/.config/goose/.goosehints,
+CodeBuddy ~/.codebuddy/CODEBUDDY.md) and embeds its content at the TOP of
+every teamify prompt, so fresh web chats begin under your global law.
+The file is NEVER generated, rewritten or invented by the setup — you
+own it; the setup only copies it.  nil = no law transport (the Dockerfile
+scaffold then omits the bake COPY lines)."
+  :type '(choice (const :tag "none" nil)
+                 (file :tag "global AGENTS.md path"))
+  :group 'agent-team)
 
 (defconst agent-team--slot-rx "{{\\([A-Z_]+\\)}}"
   "Slot token shape in templates/agent-team.yml: {{NAME}}, caps + underscore.")
@@ -1154,10 +1193,15 @@ Override when this team's harness bakes different bodies.")
   entries diff into BOTH per run — the Owner reads the real team chat
   (each message under its actual :FROM: seat) on Telegram, not just the
   lead's verdicts
-- NO repo-root AGENTS.md is ever created in the project (Owner
-  2026-10-21: \"It shouldn't be made!\"): the global law bakes from
-  docker/harness/AGENT-LAW.md into each agent's global config at image
-  build; in-repo law lives in agent-team/TEAM-CONTROL.org + TEAM.md
+- NO AGENTS.md is ever created or generated by the setup (Owner
+  2026-10-21: \"It shouldn't be made!\"); a repo's own repo-root
+  AGENTS.md is left untouched and is the CI global-law bake source;
+  when a project has none, the USER's global AGENTS.md
+  (pkg variable `agent-team-global-agents-md') is transported
+  byte-identical (docker/harness/AGENTS.md) and baked into each agent's
+  global config at image build — the same user file also opens the
+  teamify prompt, so web chats BEGIN under their global law; in-repo
+  team law lives in agent-team/TEAM-CONTROL.org + TEAM.md
 - seats work in ai/turn-* branches; finalize auto-merges behind the
   landing gate (red work never lands); agent-team/TEAM-CHAT.org is
   union-merged (.gitattributes) so concurrent appends never conflict
@@ -1211,8 +1255,40 @@ default constants."
      (cons "WORK_ORDER"
            "          WORK ORDER: none pinned — the TEAM OBJECTIVE and the oldest-open-board-item rule decide; a pinned Owner order would appear here."))))
 
-(defvar agent-team--harness-dockerfile-scaffold
-  "# agent-team-harness — CI turn container with agent bodies PREINSTALLED
+(defun agent-team--harness-dockerfile-scaffold (law-src)
+  "The fresh-project harness Dockerfile scaffold text; LAW-SRC names the
+global-law bake source for the COPY lines: \"AGENTS.md\" (the project's
+own repo-root file, present and untouched), \"docker/harness/AGENTS.md\"
+(the USER's global AGENTS.md transported via `agent-team-global-agents-md'),
+or nil (no law bake yet — the scaffold points the user at the variable)."
+  (let ((law-copy
+         (pcase law-src
+           ("AGENTS.md"
+            "#     Global agent law = the PROJECT's own repo-root AGENTS.md
+#     (present — the setup never touches it): baked into each agent's
+#     VERIFIED global config path (docs checked 2026-10-21: OpenCode
+#     ~/.config/opencode/AGENTS.md, Goose ~/.config/goose/.goosehints,
+#     CodeBuddy ~/.codebuddy/CODEBUDDY.md; Qoder reads the repo root).
+COPY AGENTS.md /home/agent/.config/opencode/AGENTS.md
+COPY AGENTS.md /home/agent/.config/goose/.goosehints
+COPY AGENTS.md /home/agent/.codebuddy/CODEBUDDY.md")
+           ("docker/harness/AGENTS.md"
+            "#     Global agent law = the USER's global AGENTS.md, pointed at
+#     by the pkg variable `agent-team-global-agents-md' and transported
+#     here byte-identical (a COPY of the user's file — never generated).
+#     Baked into each agent's VERIFIED global config path (docs checked
+#     2026-10-21: OpenCode ~/.config/opencode/AGENTS.md, Goose
+#     ~/.config/goose/.goosehints, CodeBuddy ~/.codebuddy/CODEBUDDY.md).
+COPY docker/harness/AGENTS.md /home/agent/.config/opencode/AGENTS.md
+COPY docker/harness/AGENTS.md /home/agent/.config/goose/.goosehints
+COPY docker/harness/AGENTS.md /home/agent/.codebuddy/CODEBUDDY.md")
+           (_
+            "#     Global agent law: NONE baked yet — point the pkg variable
+#     `agent-team-global-agents-md' at your global AGENTS.md and re-run
+#     M-x agent-team-setup-project; the setup will transport your file
+#     here (docker/harness/AGENTS.md) and the bake COPY lines appear at
+#     the verified global paths (OpenCode/Goose/CodeBuddy)."))))
+    (concat "# agent-team-harness — CI turn container with agent bodies PREINSTALLED
 # (Owner order 2026-10-20 #hq: \"Use Docker containers with agents
 # preinstalled. Don't install in CI. That's a waste of time. You'll have
 # to make agent configs, too, and reuse them.\").  Secrets are NEVER
@@ -1257,54 +1333,34 @@ RUN useradd -m -u 1001 agent
 
 # --- Baked agent configs (Owner: \"make agent configs, too, and reuse them\").
 #     Keys are env-interpolated at run time; nothing secret is baked.
-#     Global agent law = CONFIGURED into memory (verified per agent docs
-#     2026-10-21: OpenCode ~/.config/opencode/AGENTS.md, Goose
-#     ~/.config/goose/.goosehints, CodeBuddy ~/.codebuddy/CODEBUDDY.md).
-#     Bake source = docker/harness/AGENT-LAW.md — the setup NEVER creates
-#     a repo-root AGENTS.md (Owner 2026-10-21: \"It shouldn't be made!\"). --
+"
+            law-copy "
 COPY docker/harness/opencode.json     /home/agent/.config/opencode/opencode.json
 COPY docker/harness/goose-config.yaml /home/agent/.config/goose/config.yaml
-COPY docker/harness/AGENT-LAW.md /home/agent/.config/opencode/AGENTS.md
-COPY docker/harness/AGENT-LAW.md /home/agent/.config/goose/.goosehints
-COPY docker/harness/AGENT-LAW.md /home/agent/.codebuddy/CODEBUDDY.md
 RUN chown -R agent:agent /home/agent
 
 ENV HOME=/home/agent \\
     GOOSE_PROVIDER=openrouter \\
     GOOSE_MODEL=nvidia/nemotron-3.5-lightning:free
-"
-  "Fresh-project harness Dockerfile scaffold: the pkg's proven body recipe
-+ baked agent configs, with a marked PROJECT DEPS region.")
+")))
 
-(defvar agent-team--agent-law-md
-  "# AGENT-LAW.md — global agent law (harness bake source)
-
-(NOT a repo-root AGENTS.md — the setup never creates one, Owner order
-2026-10-21: a project-specific AGENTS.md must not be made.  This file
-lives in docker/harness/ and the harness COPYs it into each agent's
-GLOBAL config at image build: OpenCode ~/.config/opencode/AGENTS.md,
-Goose ~/.config/goose/.goosehints, CodeBuddy ~/.codebuddy/CODEBUDDY.md.)
-
-* LAW
-- the board (agent-team/TODOS.org) is the single source of truth
-- credentials travel as ENV VAR NAMES only — never values
-- in-repo team law: agent-team/TEAM-CONTROL.org + agent-team/TEAM.md
-- canonical team manual: khaalidrafi/agent-team.el templates/COMMON.org
-"
-  "Global-law bake source written to docker/harness/AGENT-LAW.md — the
-harness COPYs it into each agent's global config.  The setup NEVER
-writes a repo-root AGENTS.md (Owner 2026-10-21: project-specific
-AGENTS.md files must not be made).")
+;; agent-team--agent-law-md REMOVED 2026-10-21 (Owner: "No need for a
+;; AGENT-LAW.md.") — no law file is ever invented; the CI bake source is
+;; the project's own repo-root AGENTS.md, or the USER's global AGENTS.md
+;; transported byte-identical via `agent-team-global-agents-md'.
 
 (defun agent-team--scaffold-ci (root repo &optional force)
   "Scaffold the agent-team CI chain into the git repo at ROOT (slug REPO).
 Writes/refreshes .github/workflows/agent-team.yml (from the pkg template
 with `agent-team--default-slots'), copies the packaged harness agent
-configs + secret guard, and writes a harness Dockerfile / the global-law
-bake file (docker/harness/AGENT-LAW.md — NEVER a repo-root AGENTS.md)
-ONLY when missing (per-project files are never clobbered).  FORCE
-refreshes the workflow and the pkg-owned configs even when present.
-Returns the list of (FILE . ACTION) pairs."
+configs + secret guard, and writes a harness Dockerfile ONLY when
+missing (per-project files are never clobbered).  NO AGENTS.md is ever
+created or generated (Owner 2026-10-21): the CI global-law bake source
+is the project's own repo-root AGENTS.md when it exists; otherwise the
+USER's global AGENTS.md (`agent-team-global-agents-md') is transported
+byte-identical to docker/harness/AGENTS.md.  FORCE refreshes the
+workflow and the pkg-owned configs even when present.  Returns the list
+of (FILE . ACTION) pairs."
   (let* ((root (file-name-as-directory (expand-file-name root)))
          (slots (agent-team--default-slots root repo))
          (tpl (agent-team--template "agent-team.yml"))
@@ -1316,6 +1372,13 @@ Returns the list of (FILE . ACTION) pairs."
          (sg-dir (expand-file-name ".github/scripts/" root))
          (sg (expand-file-name "secret-guard.sh" sg-dir))
          (hdir (expand-file-name "docker/harness/" root))
+         (law-src (cond
+                   ((file-exists-p (expand-file-name "AGENTS.md" root))
+                    "AGENTS.md")
+                   ((and agent-team-global-agents-md
+                         (file-exists-p agent-team-global-agents-md))
+                    "docker/harness/AGENTS.md")
+                   (t nil)))
          (out '()))
     (when left
       (error "agent-team: template slots unfilled: %s" (string-join left ", ")))
@@ -1349,14 +1412,24 @@ Returns the list of (FILE . ACTION) pairs."
                          (lambda ()
                           (let ((dst (expand-file-name "Dockerfile" hdir)))
                             (when (not (file-exists-p dst))
-                              (write-region agent-team--harness-dockerfile-scaffold nil dst)
-                              (list dst "scaffolded (PROJECT DEPS region to fill)")))))
-                   (cons (expand-file-name "AGENT-LAW.md" hdir)
+                              (write-region
+                               (agent-team--harness-dockerfile-scaffold law-src)
+                               nil dst)
+                              (list dst
+                                    (concat "scaffolded (PROJECT DEPS region to fill; law bake: "
+                                            (or law-src "none yet — point agent-team-global-agents-md")
+                                            ")"))))))
+                   (cons (expand-file-name "AGENTS.md" hdir)
                          (lambda ()
-                          (let ((dst (expand-file-name "AGENT-LAW.md" hdir)))
-                            (when (not (file-exists-p dst))
-                              (write-region agent-team--agent-law-md nil dst)
-                              (list dst "global-law bake file written (no repo-root AGENTS.md is ever created)")))))
+                          ;; law TRANSPORT (never generation): the user's
+                          ;; global AGENTS.md copied byte-identical — and
+                          ;; re-copied on every setup so it stays in sync
+                          (when (equal law-src "docker/harness/AGENTS.md")
+                            (copy-file agent-team-global-agents-md
+                                       (expand-file-name "AGENTS.md" hdir) t)
+                            (list (expand-file-name "AGENTS.md" hdir)
+                                  (concat "your global AGENTS.md transported byte-identical ("
+                                          agent-team-global-agents-md ")")))))
                    (cons sg
                          (lambda ()
                           (when (and sg-src (or force (not (file-exists-p sg))))
@@ -1377,13 +1450,15 @@ In the git repo at ROOT this scaffolds the CI chain
 landing gate auto-detected, engine rotation + lane defaults, GoModel
 health-gated lane + Jev judgment, TG owner-lock + dedupe, Discord
 mirror), the harness agent configs (opencode.json, goose-config.yaml),
-the secret guard, the global-law bake file (docker/harness/AGENT-LAW.md —
-it never creates a repo-root AGENTS.md, Owner 2026-10-21), and a
-harness Dockerfile when it has none.  Then it builds the teamify prompt
-from templates/ (TEAMIFY layer + COMMON.org manual + the TEAM CI block)
-into *agent-team prompt* + kill-ring, ready to paste into the team
-Lead's fresh chat.  Existing files are never clobbered silently; the
-workflow refresh is asked for by name (adoption is the EM's call)."
+the secret guard, and a harness Dockerfile when it has none (NO
+AGENTS.md is ever created — the CI law bake uses the project's own
+repo-root AGENTS.md when present, else your global AGENTS.md from
+`agent-team-global-agents-md', Owner 2026-10-21).  Then it builds the
+teamify prompt from templates/ (your global AGENTS.md at the top +
+TEAMIFY layer + COMMON.org manual + the TEAM CI block) into *agent-team
+prompt* + kill-ring, ready to paste into the team Lead's fresh chat.
+Existing files are never clobbered silently; the workflow refresh is
+asked for by name (adoption is the EM's call)."
   (interactive)
   (unless root
     (setq root (read-directory-name "Project root: " (agent-team--root))))

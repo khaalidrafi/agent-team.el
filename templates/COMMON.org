@@ -274,6 +274,22 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   criteria, context before instructions, named files over "it"/"that", bounded
   scope, no buried conditions
 
+** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
+
+Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
+(the Owner reads the chat mirrored to Telegram verbatim) — Owner's words:
+clear enough language, well-structured with lists:
+
+- clear enough language: plain, direct, complete sentences — no cryptic
+  shorthand, no inside jargon, no raw log/JSON dumps (point at file:line
+  or a sha instead)
+- well-structured with lists: a one-line lead (what this entry is about),
+  then bullets/numbered lists — state → evidence → next step; NEVER a
+  prose wall
+- one topic per entry; a new topic = a new entry
+- keep the header exact (FROM seat, @target, :kind:) — it drives the
+  Telegram mirror and the live viewer
+
 ** MESSAGE STANDARD
 
 - DISPATCH (task brief; EM → member; new hires get INTRO: first) —

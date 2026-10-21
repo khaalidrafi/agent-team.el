@@ -18,7 +18,7 @@ Quality Assurance Engineer — verify green status of work through impartial tes
   - Compensates the weaker brain through controlled, auditable operations
 
 ## Verified Fact
-The Quality Assurance Engineer role is staffed with zai/glm-4.7-flash@opencode, a deliberate pairing chosen for reliability over brilliance in verification tasks. Evidence verified from the team roster in agent-team/AGENT-TEAM-MEMBERS.org lines 49-53:
+The Quality Assurance Engineer role is staffed with zai/glm-4.7-flash@opencode, a deliberate pairing chosen for reliability over brilliance in verification tasks. Evidence verified from the team roster in agent-team/MEMBERS.org lines 49-53:
 
 > "Quality Assurance Engineer — zai/glm-4.7-flash@opencode. MODEL: MIT, proven alive, deliberately not an author's brain (TB 14.4 → duties scoped to green verification). AGENT: OpenCode's guardrailed editing compensates the weaker brain (justified sharing). PAIR: reliability over brilliance for verification."
 

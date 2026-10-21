@@ -1,5 +1,5 @@
-#+TITLE: AGENT-TEAM-TEAMIFY.org — existing project, no team setup (add to AGENT-TEAM-COMMON.org)
-#+ROLE: the TEAMIFY-specific layer; everything common lives in AGENT-TEAM-COMMON.org
+#+TITLE: TEAMIFY.org — existing project, no team setup (add to COMMON.org)
+#+ROLE: the TEAMIFY-specific layer; everything common lives in COMMON.org
 
 * WHEN TO USE
 
@@ -21,16 +21,16 @@ project into a team project — adopt, don't rebuild.
 
 - this prompt is SELF-CONTAINED: every instruction you need is here — do
   not fetch any other repo to execute it. (The canonical manual lives in
-  khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org for reference and
+  khaalidrafi/agent-team.el agent-team/COMMON.org for reference and
   versioning; it is not a prerequisite.)
 ** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
 2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
-3. TEAMIFY: write agent-team/AGENT-TEAM.md — the team CONSTITUTION, the
+3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION, the
    AGENTS.md equivalent for this team: purpose, standing team laws, role
    scopes, conventions, and one pointer line to the canonical manual
-   (khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org) — NEVER embed
+   (khaalidrafi/agent-team.el agent-team/COMMON.org) — NEVER embed
    the manual (one canonical copy; per-repo copies drift). Plus TODOS,
    MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
    without the Owner.
@@ -47,9 +47,9 @@ the project, never rewrites it.
 
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 
-** agent-team/AGENT-TEAM-TODOS.org
+** agent-team/TODOS.org
 
-#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+#+TITLE: TODOS.org — team board (single source of truth)
 #+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 
 * Board
@@ -61,9 +61,9 @@ the project, never rewrites it.
   - REVIEW + completion note (invalid without)
   - BLOCKED never terminal; only the EM flips DONE
 
-** agent-team/AGENT-TEAM-MEMBERS.org
+** agent-team/MEMBERS.org
 
-#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+#+TITLE: MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: API roster authority = GET /v1/models on the gateway
 
 * <ROLE> — <model@platform>
@@ -86,9 +86,9 @@ the project, never rewrites it.
 * AUTONOMY
   AUTO
 
-** agent-team/AGENT-TEAM.md — the constitution; sections in this order:
+** agent-team/TEAM.md — the constitution; sections in this order:
 
-#+TITLE: AGENT-TEAM.md — <project> team constitution
+#+TITLE: TEAM.md — <project> team constitution
 #+REPO: <repo>
 
 * PURPOSE
@@ -100,5 +100,5 @@ the project, never rewrites it.
 * CONVENTIONS
   (commit style, branches, tooling, as a list)
 * MANUAL
-  - canonical manual: khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org
+  - canonical manual: khaalidrafi/agent-team.el agent-team/COMMON.org
   - NEVER embed the manual here (one canonical copy)

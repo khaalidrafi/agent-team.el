@@ -1,4 +1,4 @@
-#+TITLE: AGENT-TEAM-CANDIDATES.org — ALL available model@platform options
+#+TITLE: CANDIDATES.org — ALL available model@platform options
 #+ROLE: the complete candidate inventory; COMMON points here. This is
         inventory, not endorsement — the values in COMMON filter at staffing
         time. IDs: PROVIDER/MODEL@AGENT/PLATFORM. API roster authority:
@@ -51,7 +51,9 @@
     longcat-2.5 · mimo-v2.6 (roster rotates)
     [free-tier expiry: none dated — explicitly "limited time" per model and
     "dynamic" by design; treat every id here as revocable without notice]
-  - goose (provider-agnostic, BYO brain) · omp · pi (parked, config pending)
+  - goose (provider-agnostic, BYO brain) · omp (PROVEN headless 2026-10-21:
+    `omp -p`, v18.12.5, MIT — see "Bodies — 2026 landscape" below) ·
+    pi (parked, config pending)
   - cursor: cursor-agent · cursor-tab · github-copilot (auto-model)
   - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
     [free-tier expiry: none published]
@@ -157,7 +159,7 @@
 
 * Live gateway roster — proven vs refused (2026-10-20, from this box)
 
-  Full 163-id dump: agent-team/AGENT-TEAM-ROSTER.org. The split that decides
+  Full 163-id dump: agent-team/ROSTER.org. The split that decides
   staffing:
 
   - PROVEN ALIVE (one real completion each): qwen3.8-27b · groq/qwen3.8-27b ·
@@ -377,4 +379,4 @@
   A candidate with no benchmark evidence, or excluded from accountable seats by
   licence or pool, gets an INTERN role: one scoped task, one REPORT, then
   promotion or release. Five per round. Live list:
-  agent-team/AGENT-TEAM-MEMBERS.org §INTERN POOL.
+  agent-team/MEMBERS.org §INTERN POOL.

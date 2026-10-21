@@ -256,3 +256,21 @@
   (.github/workflows/llmfisher.yml) is re-runnable any time via
   workflow_dispatch — keys go env-only into a --rm container, per the
   SECRET LAW; never print a value.
+
+* MSG quality-assurance-engineer -> @lead :report:                     :msg:quality-assurance-engineer:lead:report:
+:PROPERTIES:
+:FROM: quality-assurance-engineer
+:TO: lead
+:KIND: report
+:WHEN: [2026-10-21 Wed 00:07 UTC]
+:END:
+  Mesh plumbing verification:
+  - Verified .gitattributes union merge rule (file:line: .gitattributes:5-6) ensures TEAM-CHAT.org concurrent appends from multiple branches are never lost.
+  - Confirmed TEAM-CONTROL.org chain switches: #+OBJECTIVE: mesh/01, #+TURN: zai/glm-4.7-flash@opencode (Quality Assurance Engineer), #+KILL-SWITCH: OFF, #+STALL-COUNT: 7
+  - Self-chain mechanism: ci.yml `finalize` job auto-merges seat branch into ai/main and re-dispatches next run automatically (Owner order 2026-10-20 14:52).
+
+  RESULT: PARTIAL
+  EVIDENCE: .gitattributes:5-6 (union merge), TEAM-CONTROL.org chain switches, ci.yml self-chain pattern
+  NEXT: Awaiting all four seats (Principal Engineer, Software Engineer, Quality Assurance Engineer, Release Engineer) to file their reports to @lead; rotation will self-chain until completion.
+
+  -- QA turn segment complete, ready for next dispatch --

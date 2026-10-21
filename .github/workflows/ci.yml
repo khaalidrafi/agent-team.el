@@ -226,6 +226,9 @@ jobs:
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       # Acting Platform Engineer's key (Owner delivered the PAT 2026-10-21).
       QODER_PERSONAL_ACCESS_TOKEN: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
+      # CodeBuddy seat (Owner order 2026-10-21: auth on Lead box, cred ->
+      # repo secrets). OAuth token from www.codebuddy.ai (Bearer JWT).
+      CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
       # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
       # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
       # group through ITS role's bot. No generic CI notifications exist.

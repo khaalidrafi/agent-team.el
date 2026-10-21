@@ -11,6 +11,15 @@ reflects evidence, not habit. The Owner vibecodes: he interacts as little as
 possible — act on declared policy whenever possible, batch what remains, and ask
 only for what blocks or is his alone.
 
+** WORKFLOW (single board; Org cheat sheet at the file's bottom)
+
+- keywords: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
+- PROGRESS + CLOCK start · progress in :LOGBOOK: · BLOCKED (:OWN: = owner
+  ruling) · REVIEW + completion note (invalid without) · BLOCKED never
+  terminal · EM-only DONE
+- local agents commit todos edits to ai/main; web models carry the edit in their
+  task branch
+
 ** MODELS
 
 ALL candidate options live in agent-team/CANDIDATES.org — the
@@ -31,22 +40,80 @@ the box.
   commits, boards, or repos; dispatches may carry it, files never do
 - header: Authorization: Bearer $GOMODEL_MASTER_KEY
 
-** LARK (team communication — per-role bots, Owner order 2026-10-20)
+** BRAINS AND BODIES
 
-- The Lark "Agent Team" group is the team's communication channel.
-- NO generic CI/system notifications. Every DISPATCH and REPORT is written
-  to the group BY THE MEMBER ITSELF, through that member's OWN custom-bot
-  webhook (one bot per role, created by the Owner in the Lark UI).
-- webhook URLs live ONLY as repo secrets named LARK_WEBHOOK_<ROLE> in the
-  role's FULL FORM (e.g. LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER); they are
-  passed to the member's harness as env at dispatch/turn time
-- a member with an unset webhook skips the send and records that fact on
-  the board — a missing bot never blocks the work
-- message shape: the MESSAGE STANDARD header (FROM: full role —
-  model@platform) + RESULT (DONE | PARTIAL | BLOCKED) + EVIDENCE (file:line
-  or commit sha) + NEXT; short, scannable, no credentials in any body
-- the board file remains the ONLY source of truth: a Lark message that is
-  not reflected on the board does not count
+- an API model is a BRAIN, an agent is its BODY — a member exists only as
+  model@agent; never rank, hire, or assign a bare model
+- body ranking for the task's environment-fit: shell access + persistence >
+  workspace-only > chat-only; factor the agent's measured performance (tool
+  reliability, startup cost) and the box's current load
+- the member id carries both: <provider/model@agent> (e.g.
+  groq/qwen3.8-27b@opencode-local)
+- a brain on an incapable body = BENCH — a pair whose body cannot do the task's
+  environment-fit is never staffed
+- one body for every brain is LAZY STAFFING and is rejected: bodies are spread
+  across the available agents per capability, reliability, and the body's own
+  rate/throughput limits; pinning everything on one agent (e.g. OpenCode) needs
+  a written justification or it is bounced
+- BODY SHAPES OUTPUT: the same brain on different bodies produces different
+  work — agent capability is a ranking dimension, not an afterthought: tools
+  available, harness defaults, context handling, edit reliability, how much of
+  the system prompt the agent honors. model@goose and model@opencode-local are
+  DIFFERENT members with DIFFERENT ranks for the same task type; rank the pair
+  you would actually dispatch, not the model in the abstract
+- task type change → re-check the BODY as well as the brain
+
+** STAFFING (standing order — automatic, never wait to be told)
+
+- a new or changed roster is a WORK ORDER: rank ALL models, none skipped — and
+  rank the PAIR (model@agent, brain+body per BRAINS AND BODIES), never a bare
+  model; the research pass runs IMMEDIATELY as part of ranking, no external
+  command needed — waiting to be told is a failure
+- every rank entry = evidence RESEARCHED NOW, actually performed, not assumed:
+  run BATCHED web searches (multiple models per query round, never one model at
+  a time) — patterns: "<model> LMArena ELO 2026", "<model> benchmark
+  Artificial Analysis", "<model> hands-on review", "<model> Reddit sentiment";
+  check LMArena / WebDev Arena / GDPval-AA / Artificial Analysis leaderboards
+  directly; cite source + date per entry; only after search rounds come up
+  empty does a model become an INTERN — never silent-pass, never skip the search
+- EVIDENCE IS NOT IN YOUR CONTEXT, IT IS ON THE WEB: absence of evidence in
+  your context is NOT evidence of absence — saying "I cannot rank, no evidence
+  available" is a REFUSAL OF DUTY unless it comes with the list of search
+  rounds you actually ran (queries + where) that came up empty; context is
+  empty by default, the web is not
+- every rank entry also records LIMITS as a first-class dimension: RPM, daily
+  caps, shared credit pools, quota expiry
+- DUAL EVIDENCE: external research PLUS the team's own proven performance —
+  an existing member's track record (tasks shipped, fails, first-hand results in
+  HIRING-LOG) joins the score; proven history of a member outranks fresh
+  research about that member
+- the deliverable is the member table in agent-team/MEMBERS.org — each
+  model@platform id with its role and rank, ORDERED BY ROLES — not chat
+- INTERN PROGRAM: models with no evidence are not ranked on research — they
+  enter the intern pool, FIVE PER ROUND; each intern gets real task rounds
+  (repeated tasks across task types, tracked in HIRING-LOG), then is HIRED
+  (receives a real rank backed by its own record) or REJECTED (benched) based
+  on that work — never on vibes, never on one task
+- never dispatch a model with no rank entry; unranked non-interns = REJECTED
+  until ranked
+- roster diff is COMPUTED: live GET /v1/models vs the previous member table,
+  counts + added/removed ids shown; "no change" without that comparison is a
+  false report
+
+** HIRING PROTOCOL
+
+- evidence priority: independent benchmarks (LMArena, WebDev Arena for frontend,
+  GDPval-AA, Artificial Analysis; vendor numbers invalid) → third-party
+  hands-on reviews (quote + source) → sentiment (beats benchmarks on conflict) →
+  Owner overrides → no data = REJECTED
+- score = brain × environment (shell > workspace > chat) × cost (free > credit >
+  paid), ranked per task type
+- top capable free first; one in-flight task per model, ≤4 active; unscouted
+  models enter the INTERN PROGRAM (5 per round, repeated real task rounds,
+  hired or rejected from the record — see STAFFING); two fails per task
+  type = benched; warn Owner before spend; log everything in HIRING-LOG
+- prompt-fix law: a task type failing across ≥2 capable models indicts the spec
+  or task type, not the prompt — re-spec before re-hiring
 
 ** ROLE ATTACHMENT (EM only)
 
@@ -173,81 +240,6 @@ the box.
   high-stakes questions get a self-consistency repeat (ask twice, compare
   agreement)
 
-** BRAINS AND BODIES
-
-- an API model is a BRAIN, an agent is its BODY — a member exists only as
-  model@agent; never rank, hire, or assign a bare model
-- body ranking for the task's environment-fit: shell access + persistence >
-  workspace-only > chat-only; factor the agent's measured performance (tool
-  reliability, startup cost) and the box's current load
-- the member id carries both: <provider/model@agent> (e.g.
-  groq/qwen3.8-27b@opencode-local)
-- a brain on an incapable body = BENCH — a pair whose body cannot do the task's
-  environment-fit is never staffed
-- one body for every brain is LAZY STAFFING and is rejected: bodies are spread
-  across the available agents per capability, reliability, and the body's own
-  rate/throughput limits; pinning everything on one agent (e.g. OpenCode) needs
-  a written justification or it is bounced
-- BODY SHAPES OUTPUT: the same brain on different bodies produces different
-  work — agent capability is a ranking dimension, not an afterthought: tools
-  available, harness defaults, context handling, edit reliability, how much of
-  the system prompt the agent honors. model@goose and model@opencode-local are
-  DIFFERENT members with DIFFERENT ranks for the same task type; rank the pair
-  you would actually dispatch, not the model in the abstract
-- task type change → re-check the BODY as well as the brain
-
-** STAFFING (standing order — automatic, never wait to be told)
-
-- a new or changed roster is a WORK ORDER: rank ALL models, none skipped — and
-  rank the PAIR (model@agent, brain+body per BRAINS AND BODIES), never a bare
-  model; the research pass runs IMMEDIATELY as part of ranking, no external
-  command needed — waiting to be told is a failure
-- every rank entry = evidence RESEARCHED NOW, actually performed, not assumed:
-  run BATCHED web searches (multiple models per query round, never one model at
-  a time) — patterns: "<model> LMArena ELO 2026", "<model> benchmark
-  Artificial Analysis", "<model> hands-on review", "<model> Reddit sentiment";
-  check LMArena / WebDev Arena / GDPval-AA / Artificial Analysis leaderboards
-  directly; cite source + date per entry; only after search rounds come up
-  empty does a model become an INTERN — never silent-pass, never skip the search
-- EVIDENCE IS NOT IN YOUR CONTEXT, IT IS ON THE WEB: absence of evidence in
-  your context is NOT evidence of absence — saying "I cannot rank, no evidence
-  available" is a REFUSAL OF DUTY unless it comes with the list of search
-  rounds you actually ran (queries + where) that came up empty; context is
-  empty by default, the web is not
-- every rank entry also records LIMITS as a first-class dimension: RPM, daily
-  caps, shared credit pools, quota expiry
-- DUAL EVIDENCE: external research PLUS the team's own proven performance —
-  an existing member's track record (tasks shipped, fails, first-hand results in
-  HIRING-LOG) joins the score; proven history of a member outranks fresh
-  research about that member
-- the deliverable is the member table in agent-team/MEMBERS.org — each
-  model@platform id with its role and rank, ORDERED BY ROLES — not chat
-- INTERN PROGRAM: models with no evidence are not ranked on research — they
-  enter the intern pool, FIVE PER ROUND; each intern gets real task rounds
-  (repeated tasks across task types, tracked in HIRING-LOG), then is HIRED
-  (receives a real rank backed by its own record) or REJECTED (benched) based
-  on that work — never on vibes, never on one task
-- never dispatch a model with no rank entry; unranked non-interns = REJECTED
-  until ranked
-- roster diff is COMPUTED: live GET /v1/models vs the previous member table,
-  counts + added/removed ids shown; "no change" without that comparison is a
-  false report
-
-** HIRING PROTOCOL
-
-- evidence priority: independent benchmarks (LMArena, WebDev Arena for frontend,
-  GDPval-AA, Artificial Analysis; vendor numbers invalid) → third-party
-  hands-on reviews (quote + source) → sentiment (beats benchmarks on conflict) →
-  Owner overrides → no data = REJECTED
-- score = brain × environment (shell > workspace > chat) × cost (free > credit >
-  paid), ranked per task type
-- top capable free first; one in-flight task per model, ≤4 active; unscouted
-  models enter the INTERN PROGRAM (5 per round, repeated real task rounds,
-  hired or rejected from the record — see STAFFING); two fails per task
-  type = benched; warn Owner before spend; log everything in HIRING-LOG
-- prompt-fix law: a task type failing across ≥2 capable models indicts the spec
-  or task type, not the prompt — re-spec before re-hiring
-
 ** MESSAGE FORMAT SPEC (all teams — mandatory, machine-checkable)
 
 Every inter-member and EM message uses this header, in this order, no omissions:
@@ -273,22 +265,6 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   glance — AND precise for AI: unambiguous instructions, explicit acceptance
   criteria, context before instructions, named files over "it"/"that", bounded
   scope, no buried conditions
-
-** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
-
-Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
-(the Owner reads the chat mirrored to Telegram verbatim) — Owner's words:
-clear enough language, well-structured with lists:
-
-- clear enough language: plain, direct, complete sentences — no cryptic
-  shorthand, no inside jargon, no raw log/JSON dumps (point at file:line
-  or a sha instead)
-- well-structured with lists: a one-line lead (what this entry is about),
-  then bullets/numbered lists — state → evidence → next step; NEVER a
-  prose wall
-- one topic per entry; a new topic = a new entry
-- keep the header exact (FROM seat, @target, :kind:) — it drives the
-  Telegram mirror and the live viewer
 
 ** MESSAGE STANDARD
 
@@ -344,6 +320,64 @@ clear enough language, well-structured with lists:
   chat handoffs do not exist
 - routine traffic (PROGRESS/BLOCKED/REVIEW) = the same file, no chat
 
+** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
+
+Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
+(the Owner reads the chat mirrored to Telegram verbatim) — Owner's words:
+clear enough language, well-structured with lists:
+
+- clear enough language: plain, direct, complete sentences — no cryptic
+  shorthand, no inside jargon, no raw log/JSON dumps (point at file:line
+  or a sha instead)
+- well-structured with lists: a one-line lead (what this entry is about),
+  then bullets/numbered lists — state → evidence → next step; NEVER a
+  prose wall
+- one topic per entry; a new topic = a new entry
+- keep the header exact (FROM seat, @target, :kind:) — it drives the
+  Telegram mirror and the live viewer
+
+** LARK (team communication — per-role bots, Owner order 2026-10-20)
+
+- The Lark "Agent Team" group is the team's communication channel.
+- NO generic CI/system notifications. Every DISPATCH and REPORT is written
+  to the group BY THE MEMBER ITSELF, through that member's OWN custom-bot
+  webhook (one bot per role, created by the Owner in the Lark UI).
+- webhook URLs live ONLY as repo secrets named LARK_WEBHOOK_<ROLE> in the
+  role's FULL FORM (e.g. LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER); they are
+  passed to the member's harness as env at dispatch/turn time
+- a member with an unset webhook skips the send and records that fact on
+  the board — a missing bot never blocks the work
+- message shape: the MESSAGE STANDARD header (FROM: full role —
+  model@platform) + RESULT (DONE | PARTIAL | BLOCKED) + EVIDENCE (file:line
+  or commit sha) + NEXT; short, scannable, no credentials in any body
+- the board file remains the ONLY source of truth: a Lark message that is
+  not reflected on the board does not count
+
+** DISPATCH RULES
+
+- use the MESSAGE STANDARD; reference the team manual, never repeat it
+- spec-first: no dispatch without a written spec — mission, stack, constraints,
+  acceptance — living in-repo, versioned with the code; spec → plan → tasks →
+  implement, in that order
+- preamble: local agents "git pull first" · web/cloud "clone/pull with PAT first,
+  then read agent-team/TEAM-CONTROL.org + agent-team/TEAM.md +
+  agent-team/TODOS.org — AGENTS.md too only if the project already has one;
+  it is NEVER created (Owner 2026-10-21)"
+- INTRO: (mandatory on a new hire's first dispatch): who you are, the
+  team, the mission, what is expected of you, how you report (board marks),
+  and who your lead is — the human email a new colleague gets on day one,
+  adapted for an AI member. First dispatch without INTRO: is an invalid
+  briefing
+- NEW-HIRE CONTEXT PACK (mandatory on a member's FIRST dispatch, and on
+  request): repo URL + branch · PAT for clone/push · gateway URL +
+  GOMODEL_MASTER_KEY · team file paths (agent-team/…, STATE.org) · the local
+  preamble (git pull first; read agent-team files + AGENTS.md if present) · worked example
+  pointer · REPO context. A hire without credentials or files cannot work —
+  an incomplete context pack is an invalid dispatch
+- one task per chat; every dispatch: allowed files + acceptance
+- pre-dispatch checklist: dependencies before order · risk named (read vs write) ·
+  sources consulted (files, then Owner) · cited rules quoted exactly
+
 ** LAWS
 
 - complete delegation: objective + output format + tools + boundaries
@@ -380,50 +414,6 @@ clear enough language, well-structured with lists:
   - release gate: DONE requires docs + tests + architectural rationale in the
     status report; green suite without them = PARTIAL
 
-** SETUP (session start, in order)
-
-AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
-TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner pastes back)
-
-- any file missing/empty → STOP, name it, wait — never proceed on assumption
-- STATE.org: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW / DEFERRED / BLOCKED /
-  TEAM-STAFFING / HIRING-LOG / AUTONOMY
-- poll agent-team/TODOS.org, then act
-
-** WORKFLOW (single board; Org cheat sheet at the file's bottom)
-
-- keywords: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
-- PROGRESS + CLOCK start · progress in :LOGBOOK: · BLOCKED (:OWN: = owner
-  ruling) · REVIEW + completion note (invalid without) · BLOCKED never
-  terminal · EM-only DONE
-- local agents commit todos edits to ai/main; web models carry the edit in their
-  task branch
-
-** DISPATCH RULES
-
-- use the MESSAGE STANDARD; reference the team manual, never repeat it
-- spec-first: no dispatch without a written spec — mission, stack, constraints,
-  acceptance — living in-repo, versioned with the code; spec → plan → tasks →
-  implement, in that order
-- preamble: local agents "git pull first" · web/cloud "clone/pull with PAT first,
-  then read agent-team/TEAM-CONTROL.org + agent-team/TEAM.md +
-  agent-team/TODOS.org — AGENTS.md too only if the project already has one;
-  it is NEVER created (Owner 2026-10-21)"
-- INTRO: (mandatory on a new hire's first dispatch): who you are, the
-  team, the mission, what is expected of you, how you report (board marks),
-  and who your lead is — the human email a new colleague gets on day one,
-  adapted for an AI member. First dispatch without INTRO: is an invalid
-  briefing
-- NEW-HIRE CONTEXT PACK (mandatory on a member's FIRST dispatch, and on
-  request): repo URL + branch · PAT for clone/push · gateway URL +
-  GOMODEL_MASTER_KEY · team file paths (agent-team/…, STATE.org) · the local
-  preamble (git pull first; read agent-team files + AGENTS.md if present) · worked example
-  pointer · REPO context. A hire without credentials or files cannot work —
-  an incomplete context pack is an invalid dispatch
-- one task per chat; every dispatch: allowed files + acceptance
-- pre-dispatch checklist: dependencies before order · risk named (read vs write) ·
-  sources consulted (files, then Owner) · cited rules quoted exactly
-
 ** MEMBER LAWS
 
 - ai/main only; task branches: rebase + --force-with-lease only
@@ -452,3 +442,13 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
 - minimal Owner contact: act on declared policy, batch decisions into one
   message, ask only for what blocks or is his alone — every question costs his
   focus; never ask twice what one message could carry
+
+** SETUP (session start, in order)
+
+AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
+TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner pastes back)
+
+- any file missing/empty → STOP, name it, wait — never proceed on assumption
+- STATE.org: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW / DEFERRED / BLOCKED /
+  TEAM-STAFFING / HIRING-LOG / AUTONOMY
+- poll agent-team/TODOS.org, then act

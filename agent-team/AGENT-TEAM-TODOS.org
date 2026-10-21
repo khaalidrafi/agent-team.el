@@ -59,6 +59,7 @@
      REPAIR pushed: goose seats (Software/Release) + QA (body swap off
      OpenCode) re-laned to zai/glm-4.7-flash via Goose openai provider
      (own quota); STALL-COUNT reset; relight dispatch armed.
+   - [2026-10-21 Wed 00:07] QA Engineer glm-4.7-flash@opencode: turn segment — verified .gitattributes union merge rule (.gitattributes:5-6) ensuring TEAM-CHAT.org concurrent appends are never lost; reported mesh plumbing to @lead with RESULT: PARTIAL, evidence: file:line .gitattributes:5-6, TEAM-CONTROL.org chain switches (#{TURN}), ci.yml self-chain pattern. Rotation self-chaining until all four seats file reports.
    :END:
 
 ** DONE [2026-10-20] demo/01 30-minute CI turn-system demo — REPORT #7 :REPORT:

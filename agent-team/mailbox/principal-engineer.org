@@ -1,0 +1,15 @@
+#+TITLE: INBOX — Principal Engineer (openrouter/poolside/laguna-s-2.1:free@opencode)
+#+NAME: agent-team/mailbox/principal-engineer.org
+
+* MSG [2026-10-20 Tue 15:04] lead -> principal-engineer :dispatch:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  OBJECTIVE mesh/01 (Owner order 2026-10-20: peer mesh proof). Your
+  segment: read this inbox first, then (1) verify the mailbox bus exists
+  as designed — agent-team/mailbox/PROTOCOL.org grammar and
+  .gitattributes union rule — cite file:line evidence; (2) send ONE
+  message to software-engineer dispatching a small task of your choice
+  that serves mesh/01 (TYPE: dispatch, STATUS: UNREAD); (3) report to
+  lead (TYPE: report) with RESULT: DONE | PARTIAL | BLOCKED. Work on
+  your turn branch; commit mail + evidence.

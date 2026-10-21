@@ -1,0 +1,131 @@
+name: llmfisher fresh
+
+# Owner order (Telegram 19:16Z, recorded verbatim in TEAM-CHAT.org):
+#   "Run docker compose run --rm llmfisher --fresh to get working models.
+#    You need to provide API key env vars to the Docker. BE careful."
+#
+# The llmfisher box (ai.khalidrafi.tech) is OFF (HTTP 530/CF1033 probed
+# 19:4xZ), and this sandbox has no docker — so the census runs HERE, in
+# the same shape he ordered: a --rm container receives the API keys ONLY
+# as env vars (nothing baked, nothing printed, nothing written to git),
+# probes every provider it is given, and reports WHICH models work.
+# Values never appear in logs — the summary carries key NAMES + HTTP
+# codes + model ids only. Keys without a known base URL get a row asking
+# for the base (no guessing against unknown endpoints).
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: llmfisher
+  cancel-in-progress: true
+
+jobs:
+  fresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: docker compose run --rm llmfisher --fresh (census from env keys)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OLLAMA_CLOUD_API_KEY: ${{ secrets.OLLAMA_CLOUD_API_KEY }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          AA_API_KEY: ${{ secrets.AA_API_KEY }}
+          BAI_API_KEY: ${{ secrets.BAI_API_KEY }}
+          GMI_API_KEY: ${{ secrets.GMI_API_KEY }}
+          NAVYAI_API_KEY: ${{ secrets.NAVYAI_API_KEY }}
+          TOKENHARBOR_API_KEY: ${{ secrets.TOKENHARBOR_API_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: |
+          mkdir -p /tmp/llmfisher
+          cat > /tmp/llmfisher/probe.py <<'PROBE'
+          #!/usr/bin/env python3
+          """llmfisher --fresh: census of working provider models.
+          Keys arrive as env vars ONLY; values are never printed."""
+          import json, os, urllib.request, urllib.error
+
+          PROVIDERS = [
+            ("GROQ_API_KEY",      "https://api.groq.com/openai/v1",        "groq/qwen3.8-27b"),
+            ("OPENROUTER_API_KEY","https://openrouter.ai/api/v1",          "nvidia/nemotron-3.5-lightning:free"),
+            ("ZAI_API_KEY",       "https://api.z.ai/api/paas/v4",          "glm-4.7-flash"),
+            ("GEMINI_API_KEY",    "https://generativelanguage.googleapis.com/v1beta", "gemini-2.0-flash"),
+            ("OLLAMA_CLOUD_API_KEY","https://api.ollama.com/v1",           None),
+            ("OPENCODE_API_KEY",  "https://api.opencode.ai/v1",            None),
+            ("CLOUDFLARE_API_KEY","https://api.cloudflare.com/client/v4",  None),
+          ]
+          NO_BASE = ["GOMODEL_MASTER_KEY","AA_API_KEY","BAI_API_KEY","GMI_API_KEY",
+                     "NAVYAI_API_KEY","TOKENHARBOR_API_KEY","TYPESAFE_API_KEY"]
+
+          def req(url, key, method="GET", body=None, hdrs=None):
+            h = {"Authorization": f"Bearer {key}", **(hdrs or {})}
+            data = json.dumps(body).encode() if body else None
+            if body: h["Content-Type"] = "application/json"
+            r = urllib.request.Request(url, data=data, headers=h, method=method)
+            try:
+              with urllib.request.urlopen(r, timeout=30) as resp:
+                return resp.status, resp.read()[:400000]
+            except urllib.error.HTTPError as e:
+              return e.code, e.read()[:4000]
+            except Exception as e:
+              return 0, str(e).encode()
+
+          print("| key (name only) | /models | models | sample model | HTTP | verdict |")
+          print("|---|---|---|---|---|---|")
+          for name, base, sample in PROVIDERS:
+            key = os.environ.get(name, "")
+            if not key:
+              print(f"| {name} | - | - | - | - | SKIP (not in repo secrets) |")
+              continue
+            hdrs = {"x-goog-api-key": key} if name == "GEMINI_API_KEY" else None
+            if name == "GEMINI_API_KEY":
+              h = dict(hdrs); h.pop("Authorization", None); hdrs = h
+            code, body = req(f"{base}/models", key, hdrs=hdrs)
+            n = "?"
+            try:
+              j = json.loads(body)
+              n = len(j.get("data", j.get("models", [])))
+            except Exception:
+              pass
+            verdict, scode = "models listed", ""
+            if sample and code in (200,):
+              scode, _ = req(f"{base}/chat/completions", key, "POST",
+                             {"model": sample, "messages":[{"role":"user","content":"Reply with the single word: alive"}],"max_tokens":8},
+                             hdrs=hdrs)
+              verdict = "alive" if scode == 200 else f"model HTTP {scode}"
+            elif code == 401:
+              verdict = "key rejected (401)"
+            elif code == 429:
+              verdict = "rate-limited (429) — key works, quota spent"
+            elif code == 0:
+              verdict = "endpoint unreachable"
+            print(f"| {name} | HTTP {code} | {n} | {sample or '-'} | {scode or '-'} | {verdict} |")
+          for name in NO_BASE:
+            if os.environ.get(name):
+              print(f"| {name} | ? | ? | - | - | base URL unknown — needs Owner hint (no blind probing) |")
+          PROBE
+          docker run --rm \
+            -v /tmp/llmfisher/probe.py:/probe.py:ro \
+            -e GROQ_API_KEY -e OPENROUTER_API_KEY -e ZAI_API_KEY \
+            -e GEMINI_API_KEY -e OLLAMA_CLOUD_API_KEY -e OPENCODE_API_KEY \
+            -e CLOUDFLARE_API_KEY \
+            -e GOMODEL_MASTER_KEY -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
+            -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY -e TYPESAFE_API_KEY \
+            python:3.12-alpine python /probe.py > /tmp/llmfisher/report.md
+          cat /tmp/llmfisher/report.md
+          { echo "## llmfisher --fresh — working-models census ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            echo ""
+            echo "Keys travel as env vars into a --rm container; values are never printed. Raw table:"
+            echo ""
+            cat /tmp/llmfisher/report.md
+            echo ""
+            echo "- gateway ai.khalidrafi.tech: HTTP 530 (box off) — GOMODEL_MASTER_KEY unusable until it is back"
+            echo "- next: feed the alive models into AGENT-TEAM-ROSTER.org rank updates (Lead gate)"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,139 @@
+#+TITLE: TEAM-CONTROL.org — CI turn control (the Owner's switches)
+#+ROLE: read by .github/workflows/ci.yml `turn` job every scheduled run.
+        OBJECTIVE FLOW (Owner order 2026-10-20): the Owner does NOT edit
+        this file — he states the objective to the Team Lead (Discord #hq)
+        and the LEAD transcribes it into #+OBJECTIVE verbatim in intent.
+        One line per switch, do not reformat the keywords.
+
+#+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"; channel migrated to ONE chat file per Owner order 2026-10-20 16:55 #hq): every rotation seat proves the mesh — on its turn it (1) FIRST scans the tail of the team chat agent-team/TEAM-CHAT.org and acts on every @ping addressed to it (or @all) that it has not answered, (2) verifies ONE fact about the mesh plumbing (TEAM-CHAT.org law header, .gitattributes union rule, TEAM-CONTROL chain switches, ci.yml self-chain) with file:line evidence, (3) appends at least one peer message to the chat (dispatch, report, request, or a direct @ping to a peer — no mailbox), (4) reports @lead in the chat with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
+#+OBJECTIVE-STATE: OPEN
+#+KILL-SWITCH: OFF
+#+TURN: openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)
+#+STALL-COUNT: 4
+#+CHANNEL: agent-team/TEAM-CHAT.org (single-buffer team chat, direct @pings —
+           mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
+           brief now scans the chat tail instead of inboxes)
+
+:LOGBOOK:
+- [2026-10-21 Thu 02:45 +08] Lead glm-5.3-flash: Owner security order
+  (#hq 18:27Z) — (1) FULL-REPO SECRET AUDIT: 162 commits + working tree,
+  credential-shape scan (Qoder PAT / TG token / GH PATs / sk- / bearer /
+  x-access-token): ZERO leaks, TEAM-CHAT.org clean — nothing to rotate
+  on evidence. (2) SECRET LAW: credentials travel ONLY as ENV VAR NAMES
+  between members ("ask another agent to look into the PAT env", reads
+  its own env via (getenv "NAME")); all PATs already repo secrets —
+  values never in chat/files/commits. (3) SECRET GUARD shipped
+  (.github/scripts/secret-guard.sh): redacts leaked values BEFORE push
+  (branch scan+amend), on TG ingest, at the finalize gate, and over
+  session artifacts — answers his "what if they expose the secret in
+  their chat?" in the pipeline. (4) SESSION LAW shipped: per-seat CLI
+  session dirs collected each turn end -> scrubbed file-by-file ->
+  artifact sessions-<seat>-<run> (30d) -> restored before the seat's
+  next run (resume with context; container is --rm so sessions died
+  every turn before this). (5) AGENTS.md untracked from the repo per
+  his standing 16:55 order. (6) CodeBuddy: his browser auth completed
+  AFTER my CLI poll window closed — token grant missed; "window"
+  protocol armed (fresh 9-min live window + TG-delivered link on his
+  word); CODEBUDDY_* secrets follow the moment it lands.
+- [2026-10-21 Wed 02:05 +08] Lead glm-5.3-flash: Owner FORMAT LAW (#hq
+  17:55Z) — (1) STANDARD FORMAT: TEAM-CHAT.org entries are Org headlines
+  carrying the FROM ("<from> -> @<to>" IS the heading), routing in real
+  Org tags (:msg:...:), structured fields in a :PROPERTIES: drawer
+  (:FROM: :TO: :KIND: :WHEN: :CHANNEL:), WHEN as an Org inactive
+  timestamp; all v1 entries MIGRATED by the Lead in one governance pass
+  (weekdays corrected to the real Org calendar: 2026-10-20 = Tue).
+  (2) TELEGRAM LAW: every message to the TG bot OPENS with "FROM:" and
+  "TO:" lines — ci.yml mirror rewritten accordingly; the bridge ingest
+  appends v2-format entries. (3) Turn brief grammar block updated to the
+  same standard (seats copy the block verbatim).
+- [2026-10-21 Thu 02:05 +08] Lead glm-5.3-flash: Owner security + harness
+  law (#hq 17:47Z) — (1) TELEGRAM BRIDGE LOCKED: ingest accepts only the
+  chat id in new secret TELEGRAM_OWNER_ID; every other chat DROPPED and
+  counted in run logs (impersonation impossible); until the Lead verifies
+  the first /start and sets the secret, nothing is ingested (claim only
+  in the run summary); mirror goes to the Owner's chat only. (2)
+  CODEBUDDY LAW: kept for its BUILT-IN models only (dormant until a
+  CodeBuddy credential exists — keys pro-only); for API-served brains
+  there is no novelty in any body — "any agent can ride APIs, no
+  surprise" — so the brain is installed into the BODY THAT FITS the work.
+  Dockerfile comment + TEAM-CHAT note updated to the same law.
+- [2026-10-21 Thu 01:50 +08] Lead glm-5.3-flash: Owner batch (#hq 17:27Z) —
+  (1) Qoder PAT delivered -> repo secret QODER_PERSONAL_ACCESS_TOKEN set
+  (HTTP 201); platform seat AUTH-READY; THIS turn = the Qoder-on-CI proof
+  dispatch (one-off; ci.yml advance case returns rotation to Principal).
+  (2) Telegram bot @agent_team_bridge_bot delivered -> secret
+  TELEGRAM_BOT_TOKEN set; two-way bridge wired in ci.yml: INGEST records
+  every private Owner message verbatim into TEAM-CHAT.org as @owner before
+  the segment (his law: "my reply should get recorded in TEAM-CHAT.org"),
+  chat id auto-learned; MIRROR sends chain verdicts to him. He must /start
+  the bot once (bots cannot initiate). (3) CodeBuddy keys are pro-only ->
+  CLI rides third-party backends (CODEBUDDY_BASE_URL + CODEBUDDY_API_KEY
+  + --model); baked into the harness image with Qoder. (4) Delegation law:
+  Lead does not code; Lead assumes Platform-ops for CI plumbing; elisp
+  dev stays with the seats.
+- [2026-10-20 Mon 17:10] Lead glm-5.3-flash: CHANNEL MIGRATION per Owner order
+  (Discord #hq 16:55) — team chat is now ONE file, agent-team/TEAM-CHAT.org
+  (union-merged, append-only, direct @pings, no inbox relay); mailbox/
+  frozen as archive; ci.yml turn brief rewired (read chat tail first, post
+  reports/peer pings there); QA's unread dispatch to Release Engineer
+  migrated into the chat; objective text's "reads its inbox" clause now
+  reads "scans the chat tail" — same mesh, one buffer.
+- [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
+- [2026-10-20 Tue 16:26] QA Engineer: Dispatched verification task to Release Engineer (agent-team/mailbox/release-engineer.org:3-13). Awaiting Release Engineer's mesh/01 state verification report.
+:END:
+
+#+ROTATION: openrouter/poolside/laguna-s-2.1:free@opencode (Principal
+            Engineer) -> groq/qwen3.8-27b@goose (Software Engineer) ->
+            zai/glm-4.7-flash@opencode (Quality Assurance Engineer) ->
+            groq/qwen3.8-27b@goose (Release Engineer) -> back to the top
+
+# The ACTING Platform Engineer (qwen3.8-flash@qoder, expiring ~2026-10-30)
+# enters this rotation once its Qoder-on-CI body is proven in a first
+# dispatch; until then it works Owner/Lead-paced only.
+
+# HOW IT WORKS (Owner's order 2026-10-20: "keep the team running, even in
+# turns, until completion of OBJECTIVE as specified by me or killed with
+# kill switch"):
+# - #+KILL-SWITCH: ON   -> every turn job exits immediately; the chain
+#                          stops. Flip back to OFF and the next run resumes it.
+# - #+OBJECTIVE-STATE: COMPLETE -> turn job exits and the chain stops
+#                          ("objective-complete"). Set ONLY by the Lead after
+#                          verifying the objective's Definition of Done
+#                          (seats never complete their own objective — they
+#                          mail TO: lead; the Owner audits).
+# - #+TURN: <member>    -> whose segment runs next; the job advances it
+#                          around the rotation automatically, EVEN when a
+#                          seat is dead (dead seat = BLOCKED logged, rotation
+#                          continues). NONE = first run takes the top of
+#                          #+ROTATION.
+# - #+STALL-COUNT: <n>  -> consecutive no-progress segments; +1 per
+#                          no-progress segment, reset to 0 when work lands.
+#                          At 4 the chain shifts to BACKOFF (next dispatch
+#                          delayed 5 min) instead of halting — a dead or
+#                          overloaded provider lane recovers on its own and
+#                          the team keeps working (Owner law 2026-10-20:
+#                          "keep working ... until objective complete").
+#                          Progress = branch merged with a green
+#                          byte-compile gate and a non-BLOCKED result.
+# - An empty/placeholder #+OBJECTIVE means "no work defined": the job skips
+#   agent work, keeps the suite green, and the chain stops.
+#
+# SELF-CHAIN (Owner order 2026-10-20 14:52: unlimited runs, agents decide
+# how many runs an objective takes): after each segment the `finalize` job
+# auto-merges the seat's branch into ai/main (byte-compile gate; mailbox
+# appends union-merged) and re-dispatches the next run itself while this
+# objective is OPEN and the kill switch is OFF. Nobody waits for the Lead
+# to relay mail — members talk to each other through their inboxes in
+# agent-team/mailbox/ (grammar: agent-team/mailbox/PROTOCOL.org).
+#
+# DEMO RUN 2026-10-20 (demo/01) is CLOSED — REPORT #7 on the board.
+# CURRENT RUN mesh/01: mechanism-proof for the peer mesh; comms law: the
+# ONE team chat agent-team/TEAM-CHAT.org (mailbox/ retired). The Owner
+# reads the chat in-repo and on Telegram (@agent_team_bridge_bot: his
+# replies are ingested into the chat; chain verdicts are mirrored out).
+# qwen3.8-flash@qoder is AUTH-READY (PAT secret set 2026-10-21): the
+# current dispatch IS its Qoder-on-CI proof.
+:LOGBOOK:
+- [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
+- [2026-10-20 Tue 20:10] Lead: Owner confirmed DUAL-REPO LEAD (#hq 19:56Z) — this Lead serves khaalidrafi/agent-team.el AND khaalidrafi/admincraft. CHAT ROUTING LAW: each repo's GLM team chat mirrors to its RESPECTIVE Discord channel — finalize now posts the chain verdict + this segment's new TEAM-CHAT.org entries to secret DISCORD_WEBHOOK_TEAM_HQ (this repo -> #hq; admincraft -> DISCORD_WEBHOOK_TEAM_ADMINCRAFT). Silent until the Owner creates the channel webhook (one click) and sets the secret.
+:END:

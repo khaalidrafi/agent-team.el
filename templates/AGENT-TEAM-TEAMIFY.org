@@ -1,0 +1,104 @@
+#+TITLE: AGENT-TEAM-TEAMIFY.org — existing project, no team setup (add to AGENT-TEAM-COMMON.org)
+#+ROLE: the TEAMIFY-specific layer; everything common lives in AGENT-TEAM-COMMON.org
+
+* WHEN TO USE
+
+The project EXISTS (has commits) but has NO team setup. You are turning a solo
+project into a team project — adopt, don't rebuild.
+
+* ADD THESE SECTIONS (on top of the MASTER)
+
+** OBJECTIVES
+
+- Adopt the existing project: read it fully before touching anything.
+- Add the team layer (agent-team/ files) without disturbing existing code.
+- Run the project as a team from the first board poll onward.
+
+** CONTEXT PACK (filled by the Director)
+
+- repo: <URL> (branch ai/main) · PAT: {{PAT}} (use immediately, never store)
+- the project's purpose, in one line: <filled by Director>
+
+- this prompt is SELF-CONTAINED: every instruction you need is here — do
+  not fetch any other repo to execute it. (The canonical manual lives in
+  khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org for reference and
+  versioning; it is not a prerequisite.)
+** TASK
+
+1. Probe environment (shell? net? git?); report one line. Never stall.
+2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
+3. TEAMIFY: write agent-team/AGENT-TEAM.md — the team CONSTITUTION, the
+   AGENTS.md equivalent for this team: purpose, standing team laws, role
+   scopes, conventions, and one pointer line to the canonical manual
+   (khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org) — NEVER embed
+   the manual (one canonical copy; per-repo copies drift). Plus TODOS,
+   MEMBERS, STATE — commit on ai/teamify, touching nothing else; no merge
+   without the Owner.
+4. Then team mode: poll the board, STAFFING, first real dispatch.
+5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
+
+** DEFINITION OF DONE
+- as agreed per dispatch (see COMMON anatomy)
+
+** FINAL INSTRUCTION (TEAMIFY)
+
+Existing code and conventions outrank the master prompt; the team layer wraps
+the project, never rewrites it.
+
+* FILE TARGETS (byte-level — every teamify produces these EXACTLY)
+
+** agent-team/AGENT-TEAM-TODOS.org
+
+#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+#+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
+
+* Board
+
+* Org cheat sheet
+
+  - PROGRESS + CLOCK start; notes in :LOGBOOK:
+  - BLOCKED + reason; :OWN: = owner ruling
+  - REVIEW + completion note (invalid without)
+  - BLOCKED never terminal; only the EM flips DONE
+
+** agent-team/AGENT-TEAM-MEMBERS.org
+
+#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+#+ROSTER: API roster authority = GET /v1/models on the gateway
+
+* <ROLE> — <model@platform>
+  - :last-dispatch: 0
+  - duties: <what this member OWNS and is accountable for — specific,
+    project-derived, not generic>
+  - rank: (STAFFING — evidence or intern, with citation)
+
+** agent-org/STATE.org
+
+#+TITLE: STATE.org — cross-session state (Owner pastes back at session start)
+
+* DONE
+* IN-FLIGHT
+* READY-FOR-HUMAN-REVIEW
+* DEFERRED
+* BLOCKED
+* TEAM-STAFFING
+* HIRING-LOG
+* AUTONOMY
+  AUTO
+
+** agent-team/AGENT-TEAM.md — the constitution; sections in this order:
+
+#+TITLE: AGENT-TEAM.md — <project> team constitution
+#+REPO: <repo>
+
+* PURPOSE
+  (one paragraph: what this project IS)
+* STANDING TEAM LAWS
+  (the rules specific to this team, as a list)
+* ROLE SCOPES
+  (who owns what, as a list)
+* CONVENTIONS
+  (commit style, branches, tooling, as a list)
+* MANUAL
+  - canonical manual: khaalidrafi/agent-team.el templates/AGENT-TEAM-COMMON.org
+  - NEVER embed the manual here (one canonical copy)

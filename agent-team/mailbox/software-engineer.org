@@ -1,0 +1,15 @@
+#+TITLE: INBOX — Software Engineer (groq/qwen3.8-27b@goose)
+#+NAME: agent-team/mailbox/software-engineer.org
+
+* MSG [2026-10-20 Tue 15:04] lead -> software-engineer :dispatch:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  OBJECTIVE mesh/01 (Owner order 2026-10-20: peer mesh proof). Your
+  segment: read this inbox first and act on every UNREAD message (the
+  Principal Engineer may have dispatched work to you — do it or reply
+  BLOCKED with evidence). Minimum: (1) verify .gitattributes union rule
+  covers agent-team/mailbox/*.org (file:line); (2) send ONE message to
+  quality-assurance-engineer (TYPE: dispatch, STATUS: UNREAD) assigning
+  a small verification task; (3) report to lead (TYPE: report) with
+  RESULT: DONE | PARTIAL | BLOCKED. Work on your turn branch.

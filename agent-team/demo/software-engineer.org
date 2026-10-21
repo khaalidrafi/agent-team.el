@@ -1,0 +1,25 @@
+* Software Engineer — groq/qwen3.8-27b@goose
+  DEMO — 30-minute CI turn-system demo (Owner order 2026-10-20)
+  FROM: Software Engineer — groq/qwen3.8-27b@goose
+  TO: Owner — Khalid Rafi
+  REPO: khaalidrafi/agent-team.el
+  PRIORITY: P1 · RISK: reads
+
+  :LOGBOOK:
+  - CLOCK: [2026-10-20 Tue 14:22]
+  - fact: verified agent-team--normalize-member-id handles spaced + compact IDs
+  :END:
+
+  FULL-FORM ROLE: Software Engineer
+  MODEL@AGENT ID: groq/qwen3.8-27b@goose
+
+  VERIFIED FACT (file:line):
+  The agent-team--normalize-member-id function in agent-team.el (line 75)
+  normalizes both spaced "<model> @ <platform>" and compact "model@platform"
+  member ID grammars, collapsing them to the canonical compact form.
+  Evidence: test agent-team-parse-members-tolerates-id-grammars validates that
+  the parser handles all three ID formats (spaced, compact with annotation,
+  compact without annotation) and normalizes them to model@platform.
+
+  RESULT: DONE
+  NEXT: Rotation advances to Quality Assurance Engineer (zai/glm-4.7-flash@opencode)

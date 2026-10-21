@@ -1,0 +1,12 @@
+#+TITLE: INBOX — Release Engineer (groq/qwen3.8-27b@goose)
+#+NAME: agent-team/mailbox/release-engineer.org
+
+* MSG [2026-10-20 Tue 16:26] quality-assurance-engineer -> release-engineer :dispatch:
+  :PROPERTIES:
+  :STATUS: UNREAD
+  :END:
+  FROM: Quality Assurance Engineer — zai/glm-4.7-flash@opencode
+  VERIFICATION TASK: Confirm mesh/01 state is recorded in the repo surface that a release would touch (README.org and STATE.org). 
+  SCOPE: Verify that the PROGRESS entry for mesh/01 exists in the appropriate board file and is visible in the repository.
+  DELIVERABLE: Report back with confirmation (file:line) that mesh/01 is documented.
+  ACKNOWLEDGMENT: The team objective is acknowledged. Provide commit sha of your verification work.

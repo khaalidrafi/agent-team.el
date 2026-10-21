@@ -1,0 +1,31 @@
+#+TITLE: AI-REVIEW.org — human review queue (v0.1 bootstrap)
+
+* TODO Review agent-team.el (AI-generated, needs human eyes)
+  - [ ] agent-team--bump-counter regex: assumes "# DISPATCH counter: N" format
+  - [X] key fallback baked into source — RESOLVED: removed; env var required
+  - [ ] flip-status has no role enforcement (EM-only DONE is by convention)
+  - [ ] dispatch inserts under first "* Board" heading — odd files break it
+  - [ ] jev-ask: single noul only; choice/score payloads not exposed yet
+  - [ ] org-element unused — parsing is regex-based on purpose (simple > clever)
+  - [ ] RUN TESTS: emacs -Q --batch ... (see README) — not yet run by a human
+
+* TODO Decide: comms-bridge integration points (next milestone)
+  - run konaito bridge from Emacs, pull replies into the board
+
+* TODO Review: mesh/01 self-chain + mailbox bus (2026-10-20 evening, Lead)
+  - [ ] ci.yml finalize self-chain: ONE cycle creates a push-event run
+    (control commit) + a dispatch run; GitHub keeps only the newest
+    QUEUED run per concurrency group and cancels older queued ones —
+    watch for cancelled test-gate runs in history (cosmetic, chain is
+    correct). Consider: drop the dispatch and drive the chain purely
+    from the control-commit push, OR give push-event runs their own
+    concurrency group.
+  - [ ] mailbox union-merge artifact: a seat appended a report body
+    without a MSG headline and the union driver glued it into another
+    message (lead.org 16:26 incident, repaired by Lead in d83daf7).
+    Decide: enforce headline check in the CI brief, or add a parser
+    test that fails on dangling body lines.
+  - [ ] AGENTS.md (Owner global law) adopted in-repo at e0ec7a4:
+    confirm seat briefs honor the model-identity commit author +
+    co-author trailer format on turn-branch commits (current turn
+    commits still use agent-team-ci identity — needs a brief update).

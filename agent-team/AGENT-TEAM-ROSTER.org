@@ -1,0 +1,187 @@
+#+TITLE: AGENT-TEAM-ROSTER.org — gateway roster snapshot (ground truth for web members)
+#+SOURCE: GET http://127.0.0.1:8080/v1/models on the Owner's box
+#+FETCHED: 2026-10-20 14:3x +06 — 163 ids
+#+WARNING: a snapshot is NOT authority. Re-verify with the command above whenever
+  the box is up. Naming a model from a snapshot is what produced the false
+  dispatch #2 (kilo/qwen3-32b is on this list but the gateway rejects it).
+
+* Proven today (one live call each — use these, they answer)
+
+  qwen3.8-27b · groq/qwen/qwen3.8-27b · glm-4.7-flash · zai/glm-4.7-flash
+  answered a chat completion.
+
+* Known-REFUSED today (do not staff a seat on these from outside the box)
+
+  - opencode/* free ids — "free tier can only be used from within OpenCode"
+    (applies to opencode/glm-5.3-flash-free, opencode/deepseek-v4.1-flash-free)
+  - cloudflare/@cf/* — daily quota exhausted ("you have used up your daily
+    allowance"), both glm and qwen variants
+  - kilo/qwen3-32b — model_not_found: listed, not served. The list lies.
+
+* Full live id list (163)
+
+#+BEGIN_SRC text
+aa-coding
+aa-coding-multimodal
+aa-intelligence
+aa-intelligence-multimodal
+arena-webdev
+arena-webdev-multimodal
+bai/gpt-image-2
+beam
+cloudflare
+cloudflare/@cf/aisingapore/gemma-sea-lion-v4-27b-it
+cloudflare/@cf/black-forest-labs/flux-1-schnell
+cloudflare/@cf/black-forest-labs/flux-2-dev
+cloudflare/@cf/black-forest-labs/flux-2-klein-4b
+cloudflare/@cf/black-forest-labs/flux-2-klein-9b
+cloudflare/@cf/bytedance/stable-diffusion-xl-lightning
+cloudflare/@cf/daily-co/phonellm-mini-alpha-2
+cloudflare/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b
+cloudflare/@cf/google/gemma-2b-it-lora
+cloudflare/@cf/google/gemma-4-26b-a4b-it
+cloudflare/@cf/google/gemma-7b-it-lora
+cloudflare/@cf/ibm-granite/granite-4.0-h-micro
+cloudflare/@cf/leonardo/lucid-origin
+cloudflare/@cf/leonardo/phoenix-1.0
+cloudflare/@cf/lykon/dreamshaper-8-lcm
+cloudflare/@cf/meta-llama/llama-2-7b-chat-hf-lora
+cloudflare/@cf/meta/llama-3.1-8b-instruct-fp8
+cloudflare/@cf/meta/llama-3.2-1b-instruct
+cloudflare/@cf/meta/llama-3.2-3b-instruct
+cloudflare/@cf/meta/llama-3.3-70b-instruct-fp8-fast
+cloudflare/@cf/meta/llama-4-scout-17b-16e-instruct
+cloudflare/@cf/meta/llama-guard-3-8b
+cloudflare/@cf/mistral/mistral-7b-instruct-v0.2-lora
+cloudflare/@cf/mistralai/mistral-small-3.1-24b-instruct
+cloudflare/@cf/moondream/moondream3.1-9B-A2B
+cloudflare/@cf/nvidia/nemotron-3-120b-a12b
+cloudflare/@cf/openai/gpt-oss-120b
+cloudflare/@cf/openai/gpt-oss-20b
+cloudflare/@cf/qwen/qwen2.5-coder-32b-instruct
+cloudflare/@cf/qwen/qwen3-30b-a3b-fp8
+cloudflare/@cf/qwen/qwen3.8-27b
+cloudflare/@cf/qwen/qwq-32b
+cloudflare/@cf/runwayml/stable-diffusion-v1-5-inpainting
+cloudflare/@cf/stabilityai/stable-diffusion-xl-base-1.0
+cloudflare/@cf/utter-project/eurollm-9b-it
+cloudflare/@cf/zai-org/glm-4.7-flash
+dots-3-note-preview
+free
+gemini
+gemini/antigravity-preview-05-2026
+gemini/antigravity-preview-09-2026
+gemini/antigravity-preview-latest
+gemini/gemini-2.5-flash
+gemini/gemini-2.5-flash-image
+gemini/gemini-3-flash-preview
+gemini/gemini-3-pro-image
+gemini/gemini-3-pro-image-preview
+gemini/gemini-3.1-flash-image
+gemini/gemini-3.1-flash-image-preview
+gemini/gemini-3.1-flash-lite
+gemini/gemini-3.1-flash-lite-image
+gemini/gemini-3.1-flash-lite-preview
+gemini/gemini-3.5-flash
+gemini/gemini-3.5-flash-lite
+gemini/gemini-3.6-flash
+gemini/gemini-flash-lite-latest
+gemini/gemini-nano-banana-2.1
+gemini/gemini-robotics-er-2-preview
+gemini/gemma-4-26b-a4b-it
+gemini/nano-banana-pro-preview
+gemma-4-26b-a4b-it
+glm-4.7-flash
+gmi
+gmi/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16
+gpt-oss-120b
+gpt-oss-20b
+groq
+groq/allam-2-7b
+groq/meta-llama/llama-prompt-guard-2-22m
+groq/meta-llama/llama-prompt-guard-2-86m
+groq/openai/gpt-oss-120b
+groq/openai/gpt-oss-20b
+groq/openai/gpt-oss-safeguard-20b
+groq/qwen/qwen3.8-27b
+jev/jev-1.13.0
+jev/jev-latest
+kilo
+kilo/cohere/north-mini-code:free
+kilo/dots-studio/dots-3-note-preview:free
+kilo/kilo-auto/free
+kilo/liquid/lfm-2.5-2.6b:free
+kilo/minimax/minimax-m3.1-flash:free
+kilo/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+kilo/nvidia/nemotron-3-super-120b-a12b:free
+kilo/nvidia/nemotron-3-ultra-550b-a55b:free
+kilo/nvidia/nemotron-3.5-content-safety:free
+kilo/nvidia/nemotron-3.5-lightning:free
+kilo/nvidia/nemotron-3.5-super-vl:free
+kilo/openrouter/free
+kilo/poolside/laguna-s-2.1:free
+kilo/poolside/laguna-xs-2.1:free
+kilo/reflection/beam-free
+kilo/thinkingmachines/inkling-small:free
+kilo/xingchen-agi/xing4.0-29b-a4b:free
+laguna-s-2.1
+laguna-xs-2.1
+lfm-2.5-2.6b
+minimax-m3.1-flash
+multimodal
+nemotron-3-nano-omni-30b-a3b-reasoning
+nemotron-3-super-120b-a12b
+nemotron-3-ultra-550b-a55b
+nemotron-3.5-content-safety
+nemotron-3.5-lightning
+nemotron-3.5-super-vl
+north-mini-code
+ollama-cloud
+ollama-cloud/beam
+ollama-cloud/gemma4:31b
+ollama-cloud/gpt-oss:120b
+ollama-cloud/gpt-oss:20b
+ollama-cloud/minimax-m3.1-flash
+ollama-cloud/nemotron-3-nano:30b
+ollama-cloud/nemotron-3-super
+ollama-cloud/nemotron-3-ultra
+opencode/beam-free
+opencode/deepseek-v4.1-flash-free
+opencode/glm-5.3-flash-free
+opencode/longcat-2.5-preview-free
+opencode/mimo-v2.6-flash-free
+opencode/minimax-m3.1-flash-free
+opencode/nemotron-3.5-lightning-free
+opencode/nemotron-3.5-super-vl-free
+openrouter
+openrouter-harness
+openrouter/cohere/north-mini-code:free
+openrouter/dots-studio/dots-3-note-preview:free
+openrouter/google/gemma-4-26b-a4b-it:free
+openrouter/google/gemma-4-31b-it:free
+openrouter/liquid/lfm-2.5-2.6b:free
+openrouter/minimax/minimax-m3.1-flash:free
+openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+openrouter/nvidia/nemotron-3-super-120b-a12b:free
+openrouter/nvidia/nemotron-3-ultra-550b-a55b:free
+openrouter/nvidia/nemotron-3.5-content-safety:free
+openrouter/nvidia/nemotron-3.5-lightning:free
+openrouter/nvidia/nemotron-3.5-super-vl:free
+openrouter/openrouter/free
+openrouter/poolside/laguna-s-2.1:free
+openrouter/poolside/laguna-xs-2.1:free
+openrouter/thinkingmachines/inkling-small:free
+openrouter/thinkingmachines/inkling:free
+openrouter/xingchen-agi/xing4.0-29b-a4b:free
+qwen3.8-27b
+tokenharbor
+tokenharbor/deepseek-v4-flash:free
+tokenharbor/deepseek-v4.1-flash:free
+tokenharbor/mimo-v2.5:free
+tokenharbor/mimo-v2.6-flash:free
+xing4.0-29b-a4b
+zai
+zai/glm-4.5-flash
+zai/glm-4.6v-flash
+zai/glm-4.7-flash
+#+END_SRC

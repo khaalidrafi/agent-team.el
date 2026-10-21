@@ -14,9 +14,9 @@
 ;; flips board statuses, and talks to the Owner's gateway (chat models + Jev
 ;; typed judgments) with plain curl — no external Elisp dependencies.
 ;;
-;; The board (agent-team/AGENT-TEAM-TODOS.org) stays the single source of
+;; The board (agent-team/TODOS.org) stays the single source of
 ;; truth; chat handoffs never count (see the master prompt in
-;; agent-team/AGENT-TEAM.md).
+;; agent-team/TEAM.md).
 
 ;;; Code:
 
@@ -88,7 +88,7 @@ rejected instead of being parsed as a seat."
       (when (string-match "\\`[^@]+@[^@]+\\'" id) id))))
 
 (defun agent-team--parse-members (file)
-  "Parse FILE (AGENT-TEAM-MEMBERS.org) into an alist of (ROLE . MODEL@PLATFORM).
+  "Parse FILE (MEMBERS.org) into an alist of (ROLE . MODEL@PLATFORM).
 Reverses file order so top-listed roles complete first.  Headings whose tail
 carries no parsable id are skipped, so a role never gets a blank brain."
   (let (out)
@@ -120,17 +120,17 @@ carries no parsable id are skipped, so a role never gets a blank brain."
 
 (defun agent-team--board ()
   "The board file."
-  (agent-team--file "AGENT-TEAM-TODOS.org"))
+  (agent-team--file "TODOS.org"))
 
 (defun agent-team--members ()
   "The members file."
-  (agent-team--file "AGENT-TEAM-MEMBERS.org"))
+  (agent-team--file "MEMBERS.org"))
 
 
 ;;; Scaffolding
 
 (defvar agent-team--board-template
-  "#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+  "#+TITLE: TODOS.org — team board (single source of truth)
 #+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 # DISPATCH counter: 0
 
@@ -149,7 +149,7 @@ carries no parsable id are skipped, so a role never gets a blank brain."
 ")
 
 (defvar agent-team--members-template
-  "#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+  "#+TITLE: MEMBERS.org — ranked members, ordered by roles
 #+ROSTER: authoritative roster = GET %s/v1/models
 
 * <ROLE> — <model@platform>
@@ -178,9 +178,9 @@ Refuses to overwrite existing files — adoption of new templates is the EM's
 call, not this command's."
   (interactive "DProject root: ")
   (let* ((dir (expand-file-name agent-team-dir root))
-         (files (list (cons (expand-file-name "AGENT-TEAM-TODOS.org" dir)
+         (files (list (cons (expand-file-name "TODOS.org" dir)
                             agent-team--board-template)
-                      (cons (expand-file-name "AGENT-TEAM-MEMBERS.org" dir)
+                      (cons (expand-file-name "MEMBERS.org" dir)
                             (format agent-team--members-template agent-team-gateway-url))
                       (cons (expand-file-name "STATE.org" root)
                             agent-team--state-template))))

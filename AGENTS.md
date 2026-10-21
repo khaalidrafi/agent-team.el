@@ -9,7 +9,7 @@ never committed here.
 ## What this repo is
 
 `agent-team.el` — the Emacs package for the multi-model agent team: board
-(AGENT-TEAM-TODOS.org), dispatch composer, status flips, the team mesh
+(TODOS.org), dispatch composer, status flips, the team mesh
 (TEAM-CHAT.org), the control plane (TEAM-CONTROL.org), the secret law
 commands, and the Owner's gateway client. The team ALSO runs on CI
 (.github/workflows/ci.yml): scheduled/dispatched turns rotate seats through
@@ -20,11 +20,11 @@ real work segments and self-chain until the objective completes.
 - `agent-team/TEAM-CONTROL.org` — chain switches: `#+KILL-SWITCH`,
   `#+OBJECTIVE`, `#+OBJECTIVE-STATE`, `#+TURN` (seat pointer),
   `#+STALL-COUNT`. CI reads it verbatim every run.
-- `agent-team/AGENT-TEAM-TODOS.org` — the BOARD, single source of truth
+- `agent-team/TODOS.org` — the BOARD, single source of truth
   for work; chat handoffs never count.
 - `agent-team/TEAM-CHAT.org` — ONE append-only chat buffer (mailbox/ is a
   frozen archive; never write there).
-- `agent-team/AGENT-TEAM-MEMBERS.org` — roster + ranks + SECRET/SESSION
+- `agent-team/MEMBERS.org` — roster + ranks + SECRET/SESSION
   law text.
 - `STATE.org`, `README.org`, `AI-REVIEW.org` — cross-session state, facts,
   review queue.

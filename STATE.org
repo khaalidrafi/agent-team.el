@@ -79,7 +79,7 @@
     Engineer: BLOCKED
   - CI gate: push/PR run ert + byte-compile; probe = informational
     key-liveness, direct providers only (GoModel removed — DOWN)
-  - Reference for web members: agent-team/AGENT-TEAM-ROSTER.org (163 live
+  - Reference for web members: agent-team/ROSTER.org (163 live
     gateway ids + what was proven/refused today; snapshot, not authority)
 * HIRING-LOG
   - 2026-10-20 (round 4, REPORT #6): hire review demanded by Owner —

@@ -1,4 +1,4 @@
-#+TITLE: AGENT-TEAM-TODOS.org — team board (single source of truth)
+#+TITLE: TODOS.org — team board (single source of truth)
 #+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 # DISPATCH counter: 0
 
@@ -150,7 +150,7 @@
    PRIORITY: P0 · RISK: writes
    :RESULTS:
    - HIRE REVIEW (every seat, model reason + agent reason separate +
-     pair fit — full text in agent-team/AGENT-TEAM-MEMBERS.org):
+     pair fit — full text in agent-team/MEMBERS.org):
      1. Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode.
         MODEL: strongest permanently-free open agentic brain (TB 2.1 70.2
         thinking, SWE-bench Pro 59.4, DeepSWE 40.4, OpenMDW-1.1, 256K ctx).
@@ -266,7 +266,7 @@
      seat is the Owner's own interactive relay, no seat or automation
      touches it; (5) Lead brain identity CONFIRMED by the Owner ruling —
      the UNVERIFIED-serving-id flag is resolved.
-   - RE-PAIRED ROSTER (agent-team/AGENT-TEAM-MEMBERS.org): Principal
+   - RE-PAIRED ROSTER (agent-team/MEMBERS.org): Principal
      Engineer — openrouter/poolside/laguna-s-2.1:free@opencode (strongest
      permanently-free open agentic brain × strongest harness) · Software
      Engineer — groq/qwen3.8-27b@goose (proven alive, Apache-2.0,
@@ -338,7 +338,7 @@
      bot identity ready (open_id ou_5a14e61ac673d06f2305a2f21222cffe); user
      identity ready via device flow (Owner Khalid Rafi,
      ou_fdccdb0c3968de7d363b56fb9c154513). Procedure + every gotcha:
-     templates/AGENT-TEAM-COMMON.org §LARK.
+     agent-team/COMMON.org §LARK.
    - Scope state, verified this session via
      GET /open-apis/application/v6/scopes (bot, --page-all): 52 scopes, ALL
      grant_status 1, and im:chat / im:chat:create ARE ABSENT — the Owner has
@@ -374,7 +374,7 @@
       exactly the error dispatch #2 made with kilo/qwen3-32b — listed, rejected).
    0b. WEB MODE, the Owner's local box is going down: you have NO shell. Dictate
       exact commands, the Owner runs them on whatever machine is up and pastes
-      the output. Never guess a command — AGENT-TEAM-ROSTER.org holds what the
+      the output. Never guess a command — ROSTER.org holds what the
       gateway actually serves, and COMMON §LARK holds the lark-cli recipe that
       already worked verbatim today.
    1. DONE 14:11 — Owner applied the scopes; verified at grant_status 1 with
@@ -469,11 +469,11 @@
    :HANDOFF:
    :FROM: qwen3.8-flash@qoder (acting Lead, dispatches #1-#3 as a body, no hands since)
    :CONTEXT: You hold BOTH the Lead and Director seats by Owner order. You are a web
-   brain: the Owner is your runtime. Board = agent-team/AGENT-TEAM-TODOS.org,
-   roster = agent-team/AGENT-TEAM-MEMBERS.org (rewritten 16:0x with the hiring/01
-   evidence), inventory + all citations = templates/AGENT-TEAM-CANDIDATES.org,
-   gateway ground truth = agent-team/AGENT-TEAM-ROSTER.org. Law =
-   templates/AGENT-TEAM-COMMON.org. Owner surface = STATE.org.
+   brain: the Owner is your runtime. Board = agent-team/TODOS.org,
+   roster = agent-team/MEMBERS.org (rewritten 16:0x with the hiring/01
+   evidence), inventory + all citations = agent-team/CANDIDATES.org,
+   gateway ground truth = agent-team/ROSTER.org. Law =
+   agent-team/COMMON.org. Owner surface = STATE.org.
    :NEXT:
    0. Rule on the RISK you inherited: author+verifier are now you. COMMON:172-173
       wants three different models on application code. Interim answer written into
@@ -555,10 +555,10 @@
    TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
    FROM: Platform Engineer — qwen3.8-flash@qoder (was acting Lead for this dispatch)
    REPO: khaalidrafi/agent-team.el · branch ai/main
-   DEPS: consumes DISPATCH #3 (kimi-k2.6@kimi.com) | supplies AGENT-TEAM-MEMBERS.org
+   DEPS: consumes DISPATCH #3 (kimi-k2.6@kimi.com) | supplies MEMBERS.org
    PRIORITY: P0 · RISK: writes
    :RESULTS:
-   - NEED → CANDIDATES: built the missing inventory, templates/AGENT-TEAM-CANDIDATES.org
+   - NEED → CANDIDATES: built the missing inventory, agent-team/CANDIDATES.org
      (COMMON §MODELS × live GET /v1/models = 163 ids), each row tagged by reachability
      class: RESIDENT / CI / WEB. They are three different pools and the old roster
      conflated them — that is how a promo-pool brain ended up in the Principal seat.
@@ -571,7 +571,7 @@
      (OpenCode-only), every cloudflare/@cf/* was quota-exhausted, and
      kilo/qwen3-32b is listed but model_not_found. 5 of 14 named seats sit on API
      bodies that still need one live verification call each before dispatch.
-   - LIVE ROSTER: agent-team/AGENT-TEAM-ROSTER.org. A snapshot generates
+   - LIVE ROSTER: agent-team/ROSTER.org. A snapshot generates
      candidates and confirms none of them.
    - DECIDE: every seat carries duties + rank + rank-3 fallbacks. Two seats carry
      an explicit status instead of a silent name: Build Engineer BLOCKED (no Guix
@@ -611,12 +611,12 @@
    PRIORITY: P0 · RISK: writes
    :RESULTS:
    - OWNER UPDATES APPLIED: (1) EXPIRY LAW — every candidate row in
-     templates/AGENT-TEAM-CANDIDATES.org now carries its free-tier expiry when
+     agent-team/CANDIDATES.org now carries its free-tier expiry when
      one exists; undated pools are marked undated-with-risk, never silently
      "permanent". minimax-m3.1-flash: FREE THROUGH 2026-10-25, confirmed not a
      preview — intern-only, clock on record, any round must close before the
      date. (2) CodeBuddy = WorkBuddy.ai cloud list — both entries synced.
-   - RE-HIRE (roster = agent-team/AGENT-TEAM-MEMBERS.org): every accountable
+   - RE-HIRE (roster = agent-team/MEMBERS.org): every accountable
      API seat moved to an @actions body — groq/qwen3.8-27b (Software Engineer
      + Release Engineer), zai/glm-4.7-flash (QA),
      openrouter/poolside/laguna-s-2.1:free (Principal Engineer) — all driven
@@ -708,7 +708,7 @@
    - [X] Docs verified (open.larksuite.com llms chain + lark-cli skills): custom-bot
          webhook creation is UI-ONLY — no API exists; send = POST
          /open-apis/bot/v2/hook/<id>; scopes need console apply + version release.
-         Full procedure: templates/AGENT-TEAM-COMMON.org §LARK.
+         Full procedure: agent-team/COMMON.org §LARK.
    - [ ] Group creation BLOCKED: app missing im:chat* scopes (error 99991672);
          14-scope list handed to Owner; retry on their "done".
          RESOLVED 14:11 — Owner applied scopes; see next lines.

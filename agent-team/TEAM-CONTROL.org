@@ -9,7 +9,7 @@
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
 #+TURN: groq/qwen3.8-27b@goose (Release Engineer)
-#+STALL-COUNT: 19
+#+STALL-COUNT: 0
 #+CHANNEL: agent-team/TEAM-CHAT.org (single-buffer team chat, direct @pings —
            mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
            brief now scans the chat tail instead of inboxes)

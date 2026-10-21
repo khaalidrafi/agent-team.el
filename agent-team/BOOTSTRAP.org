@@ -1,5 +1,5 @@
-#+TITLE: AGENT-TEAM-BOOTSTRAP.org — FRESH project (add to AGENT-TEAM-COMMON.org)
-#+ROLE: the FRESH-specific layer; everything common lives in AGENT-TEAM-COMMON.org
+#+TITLE: BOOTSTRAP.org — FRESH project (add to COMMON.org)
+#+ROLE: the FRESH-specific layer; everything common lives in COMMON.org
 
 * WHEN TO USE
 
@@ -10,8 +10,8 @@ The project does not exist yet — no repo, no commits. You create everything.
 ** OBJECTIVES
 
 - Create the repo (git init -b ai/main) and push it.
-- Charter the team: commit agent-team/ files (AGENT-TEAM.md generated FROM
-  templates/AGENT-TEAM-COMMON.org for THIS project, TODOS, MEMBERS, STATE).
+- Charter the team: commit agent-team/ files (TEAM.md generated FROM
+  agent-team/COMMON.org for THIS project, TODOS, MEMBERS, STATE).
 - Ship the first real task on the board within this session.
 
 ** CONTEXT PACK (filled by the Director)

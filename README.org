@@ -13,8 +13,8 @@ Emacs interface for the multi-model agent team system:
   (=POST /v1/systemone=) over a region
 - =agent-team-gateway-ping= — gateway health check
 
-The board (=agent-team/AGENT-TEAM-TODOS.org=) stays the single source of truth.
-The full operating manual lives in =agent-team/AGENT-TEAM.md= of each repo
+The board (=agent-team/TODOS.org=) stays the single source of truth.
+The full operating manual lives in =agent-team/TEAM.md= of each repo
 (master prompt embedded).
 
 * Install

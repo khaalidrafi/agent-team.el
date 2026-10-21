@@ -1,4 +1,4 @@
-#+TITLE: AGENT-TEAM-MEMBERS.org — ranked members, ordered by roles
+#+TITLE: MEMBERS.org — ranked members, ordered by roles
 #+UPDATED: 2026-10-20, hiring/01 round 4 — Team Lead + Director of Engineering
 #+ROUND-4-LAW: Owner orders 2026-10-20, ALL applied here: (1) NO @actions —
         every seat is a REAL model@agent pair; (2) per-seat hiring evidence
@@ -284,7 +284,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     released 2026-10-19. Wired as a live fallback lane in EVERY seat case
     of ci.yml (Lead, 2026-10-21).
   - MODEL REASON: AA intelligence 43, Terminal-Bench 4.0 25.8 (research
-    on record, templates/AGENT-TEAM-CANDIDATES.org); the largest free
+    on record, agent-team/CANDIDATES.org); the largest free
     context window in the pool (1M); multimodal coding brain, tunable
     thinking depth. Proprietary weights, dated promo — EXPIRY 2026-10-25
     on record per Owner law; the fallback chain below is independent of
@@ -305,6 +305,40 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
   - fallbacks: 1. zai/glm-4.7-flash@goose (proven alive, MIT, free)
              2. codebuddy@cli (Owner account; cred wired 835a1f9 + 334cf41)
              3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN; body proven on CI)
+
+* Acting Relief Engineer (Second Body) — openrouter/minimax/minimax-m3.1-flash@omp (ACTING — SAME PROMO EXPIRY 2026-10-25)
+  - :last-dispatch: 0
+  - status: HIRED per Owner orders 2026-10-21 05:24Z ("Then install a model
+    at an agent and hire accordingly") + 05:50Z ("Share me your hired
+    members list"). INSTALLED + PROVEN by the Lead 2026-10-21: oh-my-pi
+    (omp) v18.12.5 installed from npm (@oh-my-pi/pi-coding-agent), headless
+    `omp -p --no-session --no-tools --model minimax/minimax-m3.1-flash:free`
+    with OPENROUTER_API_KEY returned an exact-token reply (OMPGREEN).
+  - MODEL REASON: same brain as the Relief Engineer seat (AA intelligence
+    43, TB4.0 25.8, 1M-token free context, $0.00 lane) — deliberately the
+    proven free brain, so this hire tests a BODY, not a brain. EXPIRY
+    2026-10-25 on record; fallback chain below is promo-independent.
+  - AGENT REASON (omp = can1357/oh-my-pi): MIT, TypeScript+Rust, fork of
+    Pi; v18.12.5 shipping near-daily (~138K npm weekly downloads); FIRST-
+    CLASS headless `-p/--print` mode + RPC mode (`--mode rpc`) + ACP
+    (`omp acp`); 40+ providers BYOK; fuzzy --model matching. The pool's
+    third CI-installable body beside goose and the headless-defective
+    opencode (mesh/01).
+  - PAIR FIT FOR DUTIES: overflow absorption and lane liveness probes where
+    one-shot process isolation matters (omp -p exits clean, no session dir
+    to scrub); spreads bodies per the anti-lazy-staffing law instead of
+    pinning every brain on goose.
+  - MEASURED NEGATIVES (Lead, 2026-10-21, on record): groq/qwen3.8-27b@omp
+    = 403 role rejection (same family as goose's Groq failure — Groq stays
+    goose-only); zai glm-4.7-flash via openrouter@omp = 402 (free lane
+    cannot afford omp's 128K max_tokens request — set models.yml maxTokens
+    before any retry); OpenRouter minimax lane raw-HTTP 200 the same minute.
+  - duties: relief probes · one-shot verification segments · body-depth
+    backup for the Relief Engineer's duties
+  - fallbacks: 1. openrouter/minimax/minimax-m3.1-flash@goose (primary
+                Relief body — same brain, proven deterministic runner)
+             2. codebuddy@cli (Owner account cred, wired 835a1f9 + 334cf41)
+             3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN)
 
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may
@@ -369,7 +403,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     labelled as such.
   - Reddit sentiment lines are title-based paraphrases — Reddit was
     login-walled.
-  - Full per-model citations: templates/AGENT-TEAM-CANDIDATES.org.
+  - Full per-model citations: agent-team/CANDIDATES.org.
 
 * Values in force (Owner's law, unchanged + round-4 additions)
   - open-weights + permanent-free only in accountable seats; closed

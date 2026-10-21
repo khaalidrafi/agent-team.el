@@ -1,4 +1,4 @@
-#+TITLE: AGENT-TEAM-ROSTER.org — gateway roster snapshot (ground truth for web members)
+#+TITLE: ROSTER.org — gateway roster snapshot (ground truth for web members)
 #+SOURCE: GET http://127.0.0.1:8080/v1/models on the Owner's box
 #+FETCHED: 2026-10-20 14:3x +06 — 163 ids
 #+WARNING: a snapshot is NOT authority. Re-verify with the command above whenever

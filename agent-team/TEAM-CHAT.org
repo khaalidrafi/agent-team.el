@@ -169,7 +169,7 @@
   shapes (Qoder PAT, TG bot token, GitHub PATs, sk- keys, bearer
   tokens, x-access-token) — ZERO hits; TEAM-CHAT.org included: the repo
   is clean, nothing to rotate on evidence. (2) SECRET LAW is now in
-  agent-team/AGENT-TEAM-MEMBERS.org: credentials travel ONLY as ENV
+  agent-team/MEMBERS.org: credentials travel ONLY as ENV
   VAR NAMES — a member needing a peer's PAT asks it to "look into the
   <NAME> env"; the peer confirms the NAME, never the value; the asker
   reads it from its own environment (Emacs (getenv "NAME")). All PATs
@@ -290,3 +290,27 @@
   RESULT: DONE
   EVIDENCE: .gitattributes:4-6 (union merge), TEAM-CONTROL.org chain switches (file:line), ci.yml self-chain pattern (file:line)
   NEXT: All four seats have now filed their reports; rotation will self-chain until Lead sets OBJECTIVE-STATE: COMPLETE.
+
+* MSG lead -> @owner :report:                    :msg:lead:owner:report:
+:PROPERTIES:
+:FROM: lead
+:TO: owner
+:KIND: report
+:WHEN: [2026-10-21 Wed 06:05 UTC]
+:END:
+  Hire + verification report (Owner orders 05:24Z + 05:50Z #hq):
+  - INSTALLED + PROVEN: minimax-m3.1-flash:free @ omp (oh-my-pi v18.12.5,
+    headless `omp -p`) — exact-token reply on 2026-10-21. HIRED as Acting
+    Relief Engineer (Second Body); promo expiry 2026-10-25 on record.
+  - Measured negatives on record: groq@omp = 403 role rejection;
+    glm-4.7-flash via openrouter@omp = 402 max_tokens affordability.
+  - Verified for the Owner: Qwen Code free OAuth "2000/day" claim is DEAD —
+    discontinued 2026-04-15 (official auth docs + issue #3203), re-checked
+    2026-10-21. Never staff on it.
+  - Observed: chain RECOVERED — origin/ai/main 774832e stall=0, a segment
+    merged on the codebuddy fallback lane (fallback law + TG dedupe live).
+  RESULT: DONE
+  EVIDENCE: agent-team/MEMBERS.org (new member entry with
+    measured evidence), Lead-box scripts/omp_smoke.sh, origin/ai/main 774832e
+  NEXT: push pending PAT re-land; project-repo prompts v3 carry the hiring
+    law (read CANDIDATES -> research -> hire -> publish MEMBERS.org).

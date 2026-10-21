@@ -7,7 +7,7 @@ name: CI
 # is guarded, so a missing secret is reported and skipped instead of failing
 # the run.  (3) The team RUNS CONTINUOUSLY, IN TURNS (Owner order
 # 2026-10-20): the scheduled `turn` job rotates the real-agent seats
-# (model@agent pairs from agent-team/AGENT-TEAM-MEMBERS.org) through one
+# (model@agent pairs from agent-team/MEMBERS.org) through one
 # work segment per run, until the OBJECTIVE in agent-team/TEAM-CONTROL.org
 # is marked COMPLETE or the Owner flips #+KILL-SWITCH: ON.  (4) AGENTS ARE
 # PREINSTALLED IN A DOCKER CONTAINER (Owner order 2026-10-20 #hq: "Use
@@ -19,7 +19,7 @@ name: CI
 # (local rebuild hits the gha layer cache, ~seconds).  (5) A real agent,
 # not a bare key: each seat's brain is reached directly by its provider
 # key from repo secrets -- there is no @actions body (Owner order
-# 2026-10-20).  (6) REPORTS: the BOARD (agent-team/AGENT-TEAM-TODOS.org)
+# 2026-10-20).  (6) REPORTS: the BOARD (agent-team/TODOS.org)
 # is the report channel for DEMO runs only (Owner order 2026-10-20 #hq);
 # REAL runs use the Lark group through PER-ROLE custom-bot webhooks
 # (LARK_WEBHOOK_<ROLE>) written by the members themselves.  The GoModel
@@ -165,7 +165,7 @@ jobs:
 
           echo "" >> "$SUMMARY"
           echo "Law: a probe row is evidence of the RUNTIME, not of quality —" >> "$SUMMARY"
-          echo "seat ranks live in agent-team/AGENT-TEAM-MEMBERS.org." >> "$SUMMARY"
+          echo "seat ranks live in agent-team/MEMBERS.org." >> "$SUMMARY"
 
   # Build + publish the PREINSTALLED agent harness image (Owner order
   # 2026-10-20 #hq). Agents and configs are baked; keys are NEVER baked.
@@ -441,7 +441,7 @@ jobs:
           # 1-5: quoted objective text broke bash parsing -> exit 127 before
           # any agent ran).
           OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1)
-          BOARD=agent-team/AGENT-TEAM-TODOS.org
+          BOARD=agent-team/TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"
           TOP=$(grep -E '^\*\* (TODO|PROGRESS|BLOCKED)' "$BOARD" | head -3 | sed 's/^\*\* //' || true)
           BRANCH="ai/turn-$(date -u +%Y%m%d-%H%M)"
@@ -450,8 +450,8 @@ jobs:
 
           BRIEF="You are the on-turn member of the Agent Team, seat ${SEAT}.
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
-          Law: templates/AGENT-TEAM-COMMON.org. Board: agent-team/AGENT-TEAM-TODOS.org.
-          Roster: agent-team/AGENT-TEAM-MEMBERS.org. Repo facts: README.org, STATE.org.
+          Law: agent-team/COMMON.org. Board: agent-team/TODOS.org.
+          Roster: agent-team/MEMBERS.org. Repo facts: README.org, STATE.org.
           PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
           to each other — work, share reports, take each other's help, get
           dispatches; 16:55: team chat is ONE Org file, direct pings, no

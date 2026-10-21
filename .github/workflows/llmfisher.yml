@@ -127,5 +127,5 @@ jobs:
             cat /tmp/llmfisher/report.md
             echo ""
             echo "- gateway ai.khalidrafi.tech: HTTP 530 (box off) — GOMODEL_MASTER_KEY unusable until it is back"
-            echo "- next: feed the alive models into AGENT-TEAM-ROSTER.org rank updates (Lead gate)"
+            echo "- next: feed the alive models into ROSTER.org rank updates (Lead gate)"
           } >> "$GITHUB_STEP_SUMMARY"

@@ -71,11 +71,26 @@ RUN useradd -m -u 1001 agent
 #     Keys are env-interpolated at run time; nothing secret is baked. -------
 COPY docker/harness/opencode.json     /home/agent/.config/opencode/opencode.json
 COPY docker/harness/goose-config.yaml /home/agent/.config/goose/config.yaml
-COPY AGENTS.md         /home/agent/.config/opencode/AGENTS.md
 # Global AGENTS.md = agent law, CONFIGURED into memory (Owner 2026-10-21
-# 08:22Z: "configure the agent to load global AGENTS.md, automatically
-# loaded into memory") — OpenCode global rules path. Repo-root AGENTS.md
-# is additionally auto-discovered by OpenCode and Goose per session.
+# 08:22Z "configure the agent to load global AGENTS.md"; 09:16Z "read docs
+# for each agent for how they configure global AGENTS.md"). Verified against
+# each agent's official docs on 2026-10-21:
+#   OpenCode  ~/.config/opencode/AGENTS.md — "applied across all opencode
+#             sessions" (opencode.ai/docs/rules); repo-root AGENTS.md also
+#             rides instructions[] in opencode.json.
+#   Goose     ~/.config/goose/.goosehints is the GLOBAL hints file (goose
+#             config dir, ~/.config/goose/); repo-root AGENTS.md/.goosehints
+#             are additionally read from CWD per session.
+#   CodeBuddy ~/.codebuddy/CODEBUDDY.md is the USER-LEVEL memory file,
+#             "takes effect in all projects" (CodeBuddy docs, .codebuddy
+#             directory structure); repo-root AGENTS.md auto-loads when no
+#             CODEBUDDY.md exists (documented backward compatibility).
+#   Qoder     no global/user rules path documented — repo-root AGENTS.md is
+#             auto-recognized ("copy your AGENTS.md to your project
+#             directory", docs.qoder.com/user-guide/rules); nothing baked.
+COPY AGENTS.md /home/agent/.config/opencode/AGENTS.md
+COPY AGENTS.md /home/agent/.config/goose/.goosehints
+COPY AGENTS.md /home/agent/.codebuddy/CODEBUDDY.md
 RUN chown -R agent:agent /home/agent
 
 ENV HOME=/home/agent \

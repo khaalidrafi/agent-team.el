@@ -512,10 +512,11 @@ TEAM-MAKING header as before."
        "none" "<<<FILL>>>" nil)
       (setq prompt (with-current-buffer "*agent-team prompt*"
                      (buffer-string))))
-    (should (string-prefix-p
-             "* GLOBAL AGENTS.MD — the user's global law" prompt))
-    (should (string-match-p "be excellent to each other" prompt))
-    (should (string-match-p "TEAM CI (how the chain runs" prompt)))
+    (let ((case-fold-search nil))   ; the law header is UPPERCASE — match it
+      (should (string-prefix-p
+               "* GLOBAL AGENTS.MD — the user's global law" prompt))
+      (should (string-match-p "be excellent to each other" prompt))
+      (should (string-match-p "TEAM CI (how the chain runs" prompt)))
   ;; no variable → no law block, prompt starts at the header
   (let ((agent-team-global-agents-md nil)
         prompt)
@@ -524,8 +525,9 @@ TEAM-MAKING header as before."
      "none" "<<<FILL>>>" nil)
     (setq prompt (with-current-buffer "*agent-team prompt*"
                    (buffer-string)))
-    (should (string-prefix-p "# TEAM-MAKING PROMPT" prompt))
-    (should-not (string-match-p "GLOBAL AGENTS.MD" prompt))))
+    (let ((case-fold-search nil))
+      (should (string-prefix-p "# TEAM-MAKING PROMPT" prompt))
+      (should-not (string-match-p "GLOBAL AGENTS\\.MD" prompt))))))
 
 (ert-deftest agent-team-team-ci-brief-in-prompt ()
   "The teamify prompt carries the TEAM CI operating block (the Owner

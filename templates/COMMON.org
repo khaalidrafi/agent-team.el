@@ -163,7 +163,8 @@ the box.
   - PASSAGE TRIAGE — Score web-research snippets once; read only the shortlist
     (cheap model front, expensive brain after)
   - SELF-JUDGMENT — before any status report, check every standing instruction
-    (AGENTS.md global + local + this prompt); misses surface as blockers in the
+    (team law: TEAM-CONTROL.org + TEAM.md, the project's AGENTS.md where it
+    exists, and this prompt); misses surface as blockers in the
     report, never as footnotes
 - dispatches touching decisions-in-code carry one line: "JEV USAGE: load the
   typesafe-ai skill — https://github.com/typesafe-ai/skills"
@@ -384,12 +385,14 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
 
 ** DISPATCH RULES
 
-- use the MESSAGE STANDARD; reference AGENTS.md, never repeat it
+- use the MESSAGE STANDARD; reference the team manual, never repeat it
 - spec-first: no dispatch without a written spec — mission, stack, constraints,
   acceptance — living in-repo, versioned with the code; spec → plan → tasks →
   implement, in that order
 - preamble: local agents "git pull first" · web/cloud "clone/pull with PAT first,
-  then read AGENTS.md + agent-team/TEAM.md + agent-team/TODOS.org"
+  then read agent-team/TEAM-CONTROL.org + agent-team/TEAM.md +
+  agent-team/TODOS.org — AGENTS.md too only if the project already has one;
+  it is NEVER created (Owner 2026-10-21)"
 - INTRO: (mandatory on a new hire's first dispatch): who you are, the
   team, the mission, what is expected of you, how you report (board marks),
   and who your lead is — the human email a new colleague gets on day one,
@@ -398,7 +401,7 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
 - NEW-HIRE CONTEXT PACK (mandatory on a member's FIRST dispatch, and on
   request): repo URL + branch · PAT for clone/push · gateway URL +
   GOMODEL_MASTER_KEY · team file paths (agent-team/…, STATE.org) · the local
-  preamble (git pull first; read AGENTS.md + agent-team files) · worked example
+  preamble (git pull first; read agent-team files + AGENTS.md if present) · worked example
   pointer · REPO context. A hire without credentials or files cannot work —
   an incomplete context pack is an invalid dispatch
 - one task per chat; every dispatch: allowed files + acceptance

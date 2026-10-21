@@ -396,7 +396,7 @@ drift apart (this is the setup command's core invariant)."
   (let* ((root (make-temp-file "at-scaf-" t))
          (report (agent-team--scaffold-ci root "khaalidrafi/testrepo"))
          (wf (expand-file-name ".github/workflows/agent-team.yml" root))
-         (agents (expand-file-name "AGENTS.md" root))
+         (law (expand-file-name "docker/harness/AGENT-LAW.md" root))
          (sg (expand-file-name ".github/scripts/secret-guard.sh" root))
          (oc (expand-file-name "docker/harness/opencode.json" root)))
     ;; the chain lands, fully filled
@@ -406,8 +406,10 @@ drift apart (this is the setup command's core invariant)."
       (should (string-match-p "khaalidrafi/testrepo" yml))
       (should (string-match-p "secrets.GROQ_API_KEY" yml))
       (should (string-match-p "TELEGRAM_OWNER_ID" yml)))
-    ;; stub + guard + pkg configs land; per-project Dockerfile scaffolds
-    (should (file-exists-p agents))
+    ;; law bake file + guard + pkg configs land; per-project Dockerfile
+    ;; scaffolds — and NO repo-root AGENTS.md is ever created
+    (should (file-exists-p law))
+    (should-not (file-exists-p (expand-file-name "AGENTS.md" root)))
     (should (file-exists-p sg))
     (should (file-exists-p oc))
     (should (file-exists-p (expand-file-name "docker/harness/Dockerfile" root)))
@@ -416,8 +418,11 @@ drift apart (this is the setup command's core invariant)."
     (delete-directory root t)))
 
 (ert-deftest agent-team-scaffold-never-clobbers-project-files ()
-  "AGENTS.md and the harness Dockerfile are per-project: setup writes
-them ONLY when missing — an existing project's law is never clobbered."
+  "The harness Dockerfile is per-project: setup writes it ONLY when
+missing — an existing project's file is never clobbered.  And NO
+repo-root AGENTS.md is ever created (Owner 2026-10-21: a project
+AGENTS.md must not be made; the global law bakes from
+docker/harness/AGENT-LAW.md instead)."
   (let* ((root (make-temp-file "at-scaf2-" t))
          (agents (expand-file-name "AGENTS.md" root))
          (df (expand-file-name "docker/harness/Dockerfile" root)))
@@ -433,6 +438,13 @@ them ONLY when missing — an existing project's law is never clobbered."
              (with-temp-buffer (insert-file-contents df) (buffer-string))))
     ;; but the workflow itself IS written when absent
     (should (file-exists-p (expand-file-name ".github/workflows/agent-team.yml" root)))
+    (delete-directory root t))
+  ;; a project with NO AGENTS.md stays without one — the law bake file
+  ;; carries the global law instead
+  (let* ((root (make-temp-file "at-scaf3-" t)))
+    (agent-team--scaffold-ci root "khaalidrafi/testrepo")
+    (should-not (file-exists-p (expand-file-name "AGENTS.md" root)))
+    (should (file-exists-p (expand-file-name "docker/harness/AGENT-LAW.md" root)))
     (delete-directory root t)))
 
 (ert-deftest agent-team-team-ci-brief-in-prompt ()

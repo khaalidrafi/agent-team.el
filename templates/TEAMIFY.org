@@ -26,9 +26,12 @@ project into a team project — adopt, don't rebuild.
 ** TASK
 
 1. Probe environment (shell? net? git?); report one line. Never stall.
-2. Pull; read what EXISTS: AGENTS.md, README, code, commit history, CI.
-3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION, the
-   AGENTS.md equivalent for this team: purpose, standing team laws, role
+2. Pull; read what EXISTS: README, code, commit history, CI — and
+   AGENTS.md only if the project happens to have one (the setup NEVER
+   creates one; NEVER create or rewrite a repo-root AGENTS.md).
+3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION, this
+   team's law file standing in place of any AGENTS.md: purpose, standing
+   team laws, role
    scopes, conventions, and one pointer line to the canonical manual
    (khaalidrafi/agent-team.el templates/COMMON.org) — NEVER embed
    the manual (one canonical copy; per-repo copies drift). Plus TODOS,

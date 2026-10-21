@@ -275,16 +275,45 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     redacts it before commit — and the credential should then be
     ROTATED by its owner (assume seen).
 
+* Relief Engineer — openrouter/minimax/minimax-m3.1-flash@goose (ACTING RELIEF — FREE THROUGH 2026-10-25)
+  - :last-dispatch: 0
+  - status: HIRED per Owner order 2026-10-21 05:33Z #hq ("MiniMax M3.1 Flash
+    is free across a number of platforms... Hire 'em all.") — fires the
+    intern-bench dispatch window BEFORE the 2026-10-25 promo expiry.
+    Lane: OpenRouter :free, $0.00 in/out/cache, 1,000,000-token context,
+    released 2026-10-19. Wired as a live fallback lane in EVERY seat case
+    of ci.yml (Lead, 2026-10-21).
+  - MODEL REASON: AA intelligence 43, Terminal-Bench 4.0 25.8 (research
+    on record, templates/AGENT-TEAM-CANDIDATES.org); the largest free
+    context window in the pool (1M); multimodal coding brain, tunable
+    thinking depth. Proprietary weights, dated promo — EXPIRY 2026-10-25
+    on record per Owner law; the fallback chain below is independent of
+    the promo, as the expiring-model law requires.
+  - AGENT REASON (goose): the proven deterministic headless body —
+    `goose run --no-session`, one CI segment per call. OpenRouter
+    normalizes Goose's developer role server-side (demo/01 evidence:
+    qwen3.8-27b worked via OpenRouter where Groq did not), so the pair
+    shape is CI-proven. NOT @opencode: that body is headless-defective
+    (mesh/01 evidence; demo/01 turns 1 and 3) — body swap justified.
+  - PAIR FIT FOR DUTIES: relief is absorption, not authorship — a
+    big-window free brain on the most deterministic body takes overflow
+    segments and dead-lane rescue turns for ANY seat, keeping the chain
+    moving when primary quotas die; it never owns a board item first.
+  - duties: universal relief lane for every CI seat (fallback slot wired
+    in ci.yml) · overflow segment absorption · lane liveness report
+    after every run (:note: @lead with quota/HTTP evidence)
+  - fallbacks: 1. zai/glm-4.7-flash@goose (proven alive, MIT, free)
+             2. codebuddy@cli (Owner account; cred wired 835a1f9 + 334cf41)
+             3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN; body proven on CI)
+
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may
   now be used in ACTING roles (Owner order 2026-10-20) when capable
   enough — the intern bench is still for the no-data ones.
-  - openrouter/minimax/minimax-m3.1-flash@opencode — proprietary, size
-    undisclosed, AA 43 / TB 4.0 25.8. FREE THROUGH 2026-10-25 (Owner
-    order, confirmed NOT a preview): a dated promo with five days of
-    runway from the re-hire date. Eligible for ONE acting/intern round
-    before the date — capable enough per its AA number, so if the Owner
-    wants it used, the round must be dispatched before 2026-10-25.
+  - openrouter/minimax/minimax-m3.1-flash@opencode — HIRED 2026-10-21
+    05:33Z (Owner #hq: "Hire 'em all") — promoted to the RELIEF ENGINEER
+    seat above (@goose body per the mesh/01 opencode evidence). Acting
+    round MUST land before 2026-10-25 (promo expiry). Bench row retired.
   - openrouter/liquid/lfm-2.5@opencode — the only family plausibly
     runnable on the 4 GB Celeron; NO agentic-coding benchmark exists.
     Task: prove it can run the ert suite unaided in a container.

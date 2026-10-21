@@ -1155,7 +1155,7 @@ Override when this team's harness bakes different bodies.")
   (each message under its actual :FROM: seat) on Telegram, not just the
   lead's verdicts
 - NO repo-root AGENTS.md is ever created in the project (Owner
-  2026-10-21: "It shouldn't be made!"): the global law bakes from
+  2026-10-21: \"It shouldn't be made!\"): the global law bakes from
   docker/harness/AGENT-LAW.md into each agent's global config at image
   build; in-repo law lives in agent-team/TEAM-CONTROL.org + TEAM.md
 - seats work in ai/turn-* branches; finalize auto-merges behind the
@@ -1261,7 +1261,7 @@ RUN useradd -m -u 1001 agent
 #     2026-10-21: OpenCode ~/.config/opencode/AGENTS.md, Goose
 #     ~/.config/goose/.goosehints, CodeBuddy ~/.codebuddy/CODEBUDDY.md).
 #     Bake source = docker/harness/AGENT-LAW.md — the setup NEVER creates
-#     a repo-root AGENTS.md (Owner 2026-10-21: "It shouldn't be made!"). --
+#     a repo-root AGENTS.md (Owner 2026-10-21: \"It shouldn't be made!\"). --
 COPY docker/harness/opencode.json     /home/agent/.config/opencode/opencode.json
 COPY docker/harness/goose-config.yaml /home/agent/.config/goose/config.yaml
 COPY docker/harness/AGENT-LAW.md /home/agent/.config/opencode/AGENTS.md

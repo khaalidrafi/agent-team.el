@@ -54,8 +54,11 @@
     (needs the Owner's OBJECTIVE line) · Qoder-on-CI proof (Acting PE)
 * DEFERRED
 * BLOCKED
-  - GOMODEL GATEWAY DOWN (Owner, 2026-10-20): no seat depends on it;
-    direct provider keys only (15 secret names confirmed)
+  - GOMODEL GATEWAY DOWN (box 530 re-probed 2026-10-21 08:3xZ) — but the
+    CI chain now carries the health-gated gomodel/Jev lane (Owner re-order
+    08:25Z: use gomodel via khaalidrafi/llmfisher on CI): turn-job health
+    probe + finalize Jev judgment + llmfisher census row. Auto-resumes the
+    moment the box answers; seats stay on direct provider keys meanwhile
   - Owner's box OFF: local bodies asleep (goose@qoder, pi@qoder,
     cursor-agent@qoder, omp@qoder, codebuddy@qoder); CI unaffected
   - Owner items outstanding: per-role Lark bots in UI +

@@ -90,8 +90,13 @@ the box.
 
 ** TEAM LOOP (members contact each other — no human in the middle)
 
-- the board file is the ONLY inter-member channel — no side chats, no DMs; one
-  shared state beats N² peer chatter
+- inter-member communication runs agent-to-agent through the ACP client
+  (khaalidrafi/agent-org — the ACP client agent-org implemented in
+  khaalidrafi/agent-team.el; Owner order 2026-10-21). Until a member's body
+  has ACP support, it talks through its agent CLI directly — profiles in
+  CANDIDATES.org. The board file remains the single source of truth and the
+  durable reference — anything agreed over ACP, CLI, or direct contact is
+  recorded on the board before it counts; one shared state beats N² peer chatter
 - HANDOFF (member → member, inside agent-team/TODOS.org): a member whose task has
   a pre-declared next assignee flips the item into that member's queue with a
   structured handoff note — the API contract: :HANDOFF: drawer with :FROM:

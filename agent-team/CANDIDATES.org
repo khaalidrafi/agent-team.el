@@ -52,11 +52,54 @@
     [free-tier expiry: none dated — explicitly "limited time" per model and
     "dynamic" by design; treat every id here as revocable without notice]
   - goose (provider-agnostic, BYO brain) · omp (PROVEN headless 2026-10-21:
-    `omp -p`, v18.12.5, MIT — see "Bodies — 2026 landscape" below) ·
-    pi (parked, config pending)
+    `omp -p`, v18.12.5, MIT) · pi · cline · dsh — Owner order 2026-10-21:
+    full profiles in "Bodies — 2026 landscape (dsh · pi · cline)" below
   - cursor: cursor-agent · cursor-tab · github-copilot (auto-model)
   - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
     [free-tier expiry: none published]
+
+* Bodies — 2026 landscape (dsh · pi · cline — Owner order "Add dsh, pi and
+  cline", 2026-10-21; research digested from primary sources same day)
+
+  All three are BODIES (harnesses), not brains — pair per BRAINS AND BODIES.
+  Until agent-org ships ACP support for them, run their CLIs directly
+  (Owner order 2026-10-21).
+
+  - dsh — DeepSeek Harness (github.com/deepseek-ai/deepseek-harness). MIT,
+    TypeScript, DEV PREVIEW (breaking changes expected), pushed 2026-10-17.
+    npm @deepseek-ai/dsh (bin dsh; `npx @deepseek-ai/dsh web` → 127.0.0.1:3080).
+    Bundles that matter to us: dsh-headless (one-shot Agent/Session runner,
+    no Host/HTTP/browser — CI-ready), dsh-acp-app (ACP-style JSON-RPC over
+    stdio), dsh-experimental-agent-team-profile (agent teams, experimental).
+    BYOK: DeepSeek key + built-in anthropic/openai/moonshotai/zai + custom
+    OpenAI/Anthropic-compatible gateways; creds $DSH_HOME/.credentials.yaml.
+    Free tier: NONE of its own (pure BYOK). WATCHLIST body: strongest
+    agent-team-native newcomer; no accountable seat until it exits preview.
+  - pi — earendil-works/pi (badlogic/pi-mono redirects there; Mario Zechner).
+    MIT, very active (pushed 2026-10-21). Install: pi.dev install script or
+    npm @earendil-works/pi-coding-agent (Node >= 22.19). Headless: `pi
+    --print`, `--mode json`, `--mode rpc`, + SDK. BYOK 35+ providers — GROQ,
+    CEREBRAS, NVIDIA, OPENROUTER, ZAI global+CN, MINIMAX global+CN,
+    MOONSHOT/KIMI, QWEN_TOKEN_PLAN, OPENCODE_API_KEY, HF, FIREWORKS,
+    TOGETHER; keys via env vars / auth.json / !command sourcing. ACP:
+    community adapter npx pi-acp v0.0.34 (svkozak/pi-acp, MIT,
+    registry-listed). No built-in permission system — docs recommend Docker
+    isolation (fits CI seats). BEST free-tier AGGREGATOR body: one harness
+    over NIM 10k/day + Groq 1k/day + OpenRouter :free + Z.ai Flash + Gemini
+    API 250/day (see the census below).
+  - cline — github.com/cline/cline. Apache-2.0, npm cline@3.0.73
+    (2026-10-20). Standalone CLI `npm i -g cline`, "fully headless for
+    CI/CD": `cline "task" --json` (NDJSON run_result), hooks, `cline history
+    --json`. NATIVE ACP: `cline --acp` (docs.cline.bot/usage/acp;
+    registry-listed). Free tier: rotating FREE-tagged models on a cardless
+    Cline account — daily per-model allowance, IDE+CLI only (tracker
+    2026-10-21: muse-spark-1.3-contributor · mimo-v2.6-flash). Paid:
+    ClinePass $9.99/mo. BYOK 30+ providers. RISK: --auto-approve defaults
+    TRUE — set it explicitly off for accountable seats. CI-capable body with
+    native ACP; free rotating models = intern-grade fuel until measured.
+
+  Benchmarks note: no published dsh numbers; Cline/pi/OpenCode/Goose are
+  harnesses — their score IS the model choice (rank the PAIR).
 
 * API (via the Owner's gateway)
   #+GATEWAY: LOCAL authority = http://127.0.0.1:8080/v1/models on the Owner's box. The
@@ -373,6 +416,60 @@
     (a) relax "no caps" → Z.ai GLM Coding Plan Lite $18/mo (published 2,000
     credits/5h), or (b) accept groq's 200K tokens/day as a capped primary with
     CI as the executor. Do not staff an unattended seat on a web free tier.
+
+* Free-lane census — 2026-10-21 (Owner order: "review all free tiers online,
+  look for new free tiers or offers; verify the 2000/day claim")
+
+  VERDICT FIRST: the "2000 requests/day" claim was the Qwen Code free OAuth
+  tier and it is DEAD — discontinued 2026-04-15 (qwenlm.github.io/qwen-code-
+  docs auth page; QwenLM/qwen-code#3203). Re-verified 2026-10-21.
+  Never staff on it.
+
+  VERIFIED (primary doc, acc. 2026-10-21):
+  - Gemini CLI — 1,000 req/day free with Google login (Pro 1,500 / Ultra
+    2,000); API-key unpaid lane 250 req/day, Flash only
+    (geminicli.com/docs/resources/quota-and-pricing).
+  - OpenRouter :free — 20 RPM; 50 req/day under $10 lifetime topup, 1,000
+    req/day at >= $10 all-time (openrouter.ai/docs/api-reference/limits).
+    Live catalog 17 :free models incl. minimax-m3.1-flash:free (1M ctx).
+  - Groq free — 30 RPM · 1,000 req/day · 200K tokens/day (matches batch 5).
+  - GitHub Models — RETIRED (closed 2026-06-16, gone 2026-07-30;
+    github.blog changelog). Remove any lane referencing it.
+  - Amazon Q Developer — closed to NEW accounts 2026-05-15 (sunset → Kiro;
+    Kiro free 50 credits/mo incl. Sonnet/GLM/MiniMax rows).
+  - Moonshot platform — paid-only (pricing page). Cerebras — NO free tier,
+    $5 card-walled credits.
+
+  PROBE (tracker/consensus, not primary doc — date-stamped, re-probe before
+  relying):
+  - NVIDIA NIM — 40 RPM · ~10,000 req/day on free build endpoints
+    (glm-5.3, deepseek-v4.1-flash rows) — probe 2026-10-19; supersedes
+    batch-5's "UNKNOWN" until NIM publishes a doc. Highest ceiling today.
+  - Z.ai — GLM-4.7/4.5/4.6V-Flash free, no published cap. · DeepSeek — 5M
+    free tokens on signup (~30 days), then paid-cheap. · MiniMax — check-in
+    400 pts/day (day 4/7: 1,000); M3.1 Flash :free on OpenRouter.
+  - Mistral — free mode, unpublished monthly allowance. · Copilot Free —
+    2,000 completions/mo + unpublished agent-mode credits. · Kilo Code —
+    ~200 free req/hr rotation. · ModelScope — ~250 credits/day. · Token
+    Harbor :free — 60 RPM / 1,800 RPH promo (emergency-only).
+  - NEW 2025-26 entrants: Google Jules 15 tasks/day · Google Antigravity
+    weekly agent allowances · Qoder 300+100/day claimable · OpenCode
+    in-client free rotation (undated, “dynamic”). iFlow CLI: UNVERIFIED
+    (site pivoting, phone gate).
+
+  Where this points staffing: highest hard-number free APIs today =
+  NVIDIA NIM (10k/day) > Gemini CLI (1k/day) ~= Groq (1k/day) > OpenRouter
+  :free (50→1,000/day). Expiry law binds every row: undated ≠ unlimited.
+
+* Benchmark snapshot — 2026-10-21 (for pair-level ranking; values filters
+  still bind — closed models stay out of accountable seats)
+
+  - SWE-bench Verified (swebench.com, parsed 180 entries): Gemini 3 Flash
+    75.8 · MiniMax M2.5 75.8 · GLM-5 72.8 · GPT-5.2 72.8 · Kimi K2.5 70.8 ·
+    DeepSeek V3.2 70.0 · Qwen3-Coder-480B 55.4.
+  - Terminal-Bench 4.0 (benchlm mirror + AA): Claude Opus 5.5 @ Claude Code
+    64.85 (top) · GPT-6 Astra @ Codex 58.18 · GLM-5.3 41.8 (best open) ·
+    GLM-5.3-Flash 32.8 · MiniMax M3.1 Flash 25.8 (matches our own probe).
 
 * Intern pool (no-data / unevidenced bodies are interned, not rejected)
 

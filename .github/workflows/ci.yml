@@ -898,7 +898,7 @@ jobs:
       # TELEGRAM_CHAT_ID, else the owner-locked learned id (tg_chat
       # output — it only ever carries the verified Owner id). SILENT until
       # the lock is activated by the Lead.
-      - name: Mirror chain verdict to Telegram (silent without secrets)
+      - name: Mirror chain verdict to Telegram (silent without secrets, deduped)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
@@ -908,13 +908,26 @@ jobs:
           # OWNER LOCK (17:47Z): verdicts go ONLY to the Owner's chat —
           # secret id first, then the owner-locked learned id. No other
           # destination exists.
+          # TG DEDUPE LAW (Owner 2026-10-21 03:53Z: "I keep getting the
+          # same msgs on Telegram"): fire ONLY when a segment actually
+          # RAN and the verdict differs from #+LAST-VERDICT in the
+          # control file. Hourly safety-net no-ops are silent.
+          SEG="${{ needs.turn.outputs.seg_result }}"
+          [ -n "$SEG" ] || { echo "telegram mirror: turn skipped — silent (dedupe law)"; exit 0; }
           CHAT="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}}"
           [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
+          VH=$(printf '%s' "$SEG" | sha256sum | cut -c1-12)
+          CTL=agent-team/TEAM-CONTROL.org
+          LAST=$(grep -oP '^\#\+LAST-VERDICT:\s*\K.*' "$CTL" | head -1)
+          if [ "$LAST" = "$VH" ]; then
+            echo "telegram mirror: identical verdict ${VH} already mirrored — silent (dedupe law)"
+            exit 0
+          fi
           # TELEGRAM LAW (Owner order 17:55Z): every message to the TG bot
           # MUST contain FROM and TO — they open the text.
           TXT="$(printf 'FROM: team-lead (glm-5.3-flash, Agent Team)\nTO: @owner\n\nsegment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
             "${{ needs.turn.outputs.turn_branch }}" \
-            "${{ needs.turn.outputs.seg_result }}" \
+            "$SEG" \
             "${{ steps.merge.outputs.outcome }}" \
             "${{ steps.gate.outputs.gate }}" \
             "${CHAIN_STALL:-?}" \
@@ -924,6 +937,15 @@ jobs:
             --data-urlencode "chat_id=${CHAT}" \
             --data-urlencode "text=${TXT}") || CODE="curl-failed"
           echo "telegram mirror: HTTP ${CODE}"
+          git config user.name "agent-team-ci" 2>/dev/null || true
+          git config user.email "agent-team-ci@users.noreply.github.com" 2>/dev/null || true
+          git remote set-url --push origin \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch origin ai/main && git reset --hard origin/ai/main
+          sed -i "s|^\#\+LAST-VERDICT:.*|\#\+LAST-VERDICT: ${VH}|" "$CTL"
+          git add "$CTL"
+          git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0
+          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; sed -i "s|^\#\+LAST-VERDICT:.*|\#\+LAST-VERDICT: ${VH}|" "$CTL"; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
 
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
       # Their GLM chats go to their respective Discord channels." This repo's

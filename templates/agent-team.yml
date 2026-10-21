@@ -154,9 +154,9 @@ jobs:
         id: control
         run: |
           CTL=agent-team/TEAM-CONTROL.org
-          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1)
-          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1)
-          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1)
+          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1 || true)
+          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1 || true)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1 || true)
           TURN=$(grep -oP '^\#\+TURN:\s*\K.*' "$CTL" | head -1 | xargs)
           echo "kill=${KILL:-OFF} objstate=${OBJSTATE:-OPEN} turn='${TURN}'"
           # Pre-segment ai/main tip: the Discord chat mirror diffs TEAM-CHAT.org
@@ -358,7 +358,7 @@ jobs:
           # rendered into the script by the workflow template (mesh/01 turn
           # 1-5: quoted objective text broke bash parsing -> exit 127 before
           # any agent ran).
-          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1 || true)
           BOARD=agent-team/TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"
           TOP=$(grep -E {{TOP_GREP}} "$BOARD" | head -8 | sed 's/^\*\** //' || true)
@@ -779,7 +779,7 @@ jobs:
           RESULT="${{ needs.turn.outputs.seg_result }}"
           OUTCOME="${{ steps.merge.outputs.outcome }}"
           GATE="${{ steps.gate.outputs.gate }}"
-          STALL=$(grep -oP '^\#\+STALL-COUNT:\s*\K\d+' "$CTL" | head -1); STALL=${STALL:-0}
+          STALL=$(grep -oP '^\#\+STALL-COUNT:\s*\K\d+' "$CTL" | head -1 || true); STALL=${STALL:-0}
           PROGRESS=no
           if [ "$OUTCOME" = "merged" ] && [ "$GATE" = "green" ]; then PROGRESS=yes; fi
           case "$RESULT" in *BLOCKED*) PROGRESS=no ;; esac
@@ -796,9 +796,9 @@ jobs:
             git push origin "ai/main" || echo "::warning::stall push failed"
           fi
           # Decide the next link in the chain
-          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1)
-          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1)
-          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1)
+          KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1 || true)
+          OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1 || true)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1 || true)
           DECISION="dispatch"
           if [ "${KILL:-OFF}" = "ON" ]; then DECISION="kill-switch"; fi
           if [ "${OBJSTATE:-OPEN}" = "COMPLETE" ]; then DECISION="objective-complete"; fi
@@ -882,7 +882,7 @@ jobs:
           CH=""
           if [ -n "$ADDED" ]; then
             CH=$(printf '%s' "$ADDED" | sha256sum | cut -c1-12)
-            LASTC=$(grep -oP '^\#\+LAST-CHAT:\s*\K[0-9a-f]+' "$CTL" | head -1)
+            LASTC=$(grep -oP '^\#\+LAST-CHAT:\s*\K[0-9a-f]+' "$CTL" | head -1 || true)
             if [ "$CH" != "$LASTC" ]; then
               SEAT=$(printf '%s\n' "$ADDED" | grep -oP '^\s*:FROM:\s*\K.*' | head -1)
               SEAT="${SEAT:-team-lead}"
@@ -912,7 +912,7 @@ jobs:
               # the hourly heartbeat does. DONE/PARTIAL (fresh work) is
               # NEVER throttled.
               NOW=$(date +%s)
-              LASTB=$(grep -oP '^\#\+LAST-BLOCKED-NOTIFY:\s*\K[0-9]+' "$CTL" | head -1)
+              LASTB=$(grep -oP '^\#\+LAST-BLOCKED-NOTIFY:\s*\K[0-9]+' "$CTL" | head -1 || true)
               [ -n "$LASTB" ] || LASTB=0
               if [ "$((NOW - LASTB))" -lt 3600 ]; then
                 echo "telegram mirror: BLOCKED already mirrored <1h ago — silent (dedupe law v2)"

@@ -15,12 +15,12 @@ commands, and the Owner's gateway client. The team ALSO runs on CI
 (.github/workflows/ci.yml): scheduled/dispatched turns rotate seats through
 real work segments and self-chain until the objective completes.
 
-## AGENTS.MD LAW (Owner 2026-10-21)
-- THIS file is the GLOBAL agent law: every coding agent (local or on CI)
-  reads it FIRST. The CI turn brief routes agents here explicitly
-  (ci.yml: "Global law: AGENTS.md").
-- WEB MODELS have no config surface: their FIRST dispatch carries this
-  file's content inline, ahead of the task body.
+## AGENTS.MD CONFIG (Owner 2026-10-21 08:22Z)
+- THIS file is the GLOBAL agent law. Coding agents are CONFIGURED to load
+  it — never told to read it: the harness bakes it at the agent's global
+  config path (OpenCode ~/.config/opencode/AGENTS.md; Goose reads
+  AGENTS.md from the working directory natively) so it lands in memory
+  automatically. Web models get it inline in dispatch #1 (no config).
 
 ## File map (source-of-truth chain)
 

@@ -26,5 +26,8 @@
         }
       }
     }
-  }
+  },
+  "instructions": [
+    "AGENTS.md"
+  ]
 }

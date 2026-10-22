@@ -237,7 +237,7 @@ jobs:
       # khaalidrafi/llmfisher on your CI"). Jev = the chain's judgment
       # layer. Health-gated: gateway down -> lane fallback law, never red.
       GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
-      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
+      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'http://localhost:8080' }}
       # Per-role Lark custom-bot webhooks (Owner order 2026-10-20): the
       # on-turn MEMBER writes its own DISPATCH/REPORT to the Lark Agent Team
       # group through ITS role's bot. No generic CI notifications exist.
@@ -300,6 +300,64 @@ jobs:
             no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
           esac
           echo "$MSG" >> "$SUMMARY"
+
+      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+        if: steps.control.outputs.mode == 'work'
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: |
+          set -u
+          if [ -z "${GH_PAT:-}" ]; then
+            echo "::warning::GH_PAT missing — cannot clone khaalidrafi/llmfisher for the gateway config; gomodel lane stays DOWN -> fallback (never red)"
+            exit 0
+          fi
+          rm -rf /tmp/llmfisher-src
+          git clone --quiet --depth 1 \
+            "https://x-access-token:${GH_PAT}@github.com/khaalidrafi/llmfisher" \
+            /tmp/llmfisher-src
+          docker rm -f gomodel >/dev/null 2>&1 || true
+          # Tuned env block = llmfisher docker-compose.yml gomodel service
+          # verbatim (field types checked per the GoModel source; a wrong
+          # shape is a crash loop, not a warning). Keys ride as env only
+          # (env-var law): nothing baked, nothing printed, nothing in git.
+          export JEV_API_KEY="${TYPESAFE_API_KEY:-}"
+          docker run -d --name gomodel -p 127.0.0.1:8080:8080 \
+            -v /tmp/llmfisher-src/config:/app/config:ro \
+            -v gomodel_data:/app/data \
+            -e SQLITE_PATH=/app/data/gomodel.db \
+            -e CONFIGURED_PROVIDER_MODELS_MODE=allowlist \
+            -e FAILOVER_RETRY_ON_STATUSES=4xx,5xx \
+            -e FAILOVER_MAX_ATTEMPTS=5 \
+            -e RETRY_MAX_RETRIES=1 \
+            -e RETRY_INITIAL_BACKOFF=3s \
+            -e CIRCUIT_BREAKER_SCOPE=model \
+            -e HTTP_RESPONSE_HEADER_TIMEOUT=30 \
+            -e CACHE_REFRESH_INTERVAL=21600 \
+            -e PROVIDER_RECHECK_INTERVAL=300 \
+            -e LOG_LEVEL=info \
+            -e PROVIDER_PROMPT_CACHE_PLANNER_ENABLED=false \
+            -e GOMODEL_DEMO_MODE=false \
+            -e GOMODEL_MASTER_KEY -e JEV_API_KEY \
+            enterpilot/gomodel >/dev/null
+          ok=""
+          for i in $(seq 1 30); do
+            CODE=$(curl -s -o /dev/null -m 2 -w '%{http_code}' \
+              -H "Authorization: Bearer ${GOMODEL_MASTER_KEY:-}" \
+              "http://localhost:8080/" || echo 000)
+            if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+              echo "GoModel gateway UP inside the runner (HTTP $CODE, ping contract)"
+              ok=1; break
+            fi
+            sleep 1
+          done
+          if [ -z "$ok" ]; then
+            echo "::warning::gomodel container did not answer in 30s — lane stays DOWN -> fallback (never red)"
+            docker logs --tail 20 gomodel 2>&1 \
+              | sed 's/[A-Za-z0-9+/=_-]\{20,\}/[redacted]/g' || true
+          fi
+          exit 0
 
       - name: GoModel lane health (llmfisher gateway — Jev judgment layer)
         if: steps.control.outputs.mode == 'work'
@@ -881,11 +939,69 @@ jobs:
             echo "gate=red-merge-undone" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+        if: always()
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: |
+          set -u
+          if [ -z "${GH_PAT:-}" ]; then
+            echo "::warning::GH_PAT missing — cannot clone khaalidrafi/llmfisher for the gateway config; gomodel lane stays DOWN -> fallback (never red)"
+            exit 0
+          fi
+          rm -rf /tmp/llmfisher-src
+          git clone --quiet --depth 1 \
+            "https://x-access-token:${GH_PAT}@github.com/khaalidrafi/llmfisher" \
+            /tmp/llmfisher-src
+          docker rm -f gomodel >/dev/null 2>&1 || true
+          # Tuned env block = llmfisher docker-compose.yml gomodel service
+          # verbatim (field types checked per the GoModel source; a wrong
+          # shape is a crash loop, not a warning). Keys ride as env only
+          # (env-var law): nothing baked, nothing printed, nothing in git.
+          export JEV_API_KEY="${TYPESAFE_API_KEY:-}"
+          docker run -d --name gomodel -p 127.0.0.1:8080:8080 \
+            -v /tmp/llmfisher-src/config:/app/config:ro \
+            -v gomodel_data:/app/data \
+            -e SQLITE_PATH=/app/data/gomodel.db \
+            -e CONFIGURED_PROVIDER_MODELS_MODE=allowlist \
+            -e FAILOVER_RETRY_ON_STATUSES=4xx,5xx \
+            -e FAILOVER_MAX_ATTEMPTS=5 \
+            -e RETRY_MAX_RETRIES=1 \
+            -e RETRY_INITIAL_BACKOFF=3s \
+            -e CIRCUIT_BREAKER_SCOPE=model \
+            -e HTTP_RESPONSE_HEADER_TIMEOUT=30 \
+            -e CACHE_REFRESH_INTERVAL=21600 \
+            -e PROVIDER_RECHECK_INTERVAL=300 \
+            -e LOG_LEVEL=info \
+            -e PROVIDER_PROMPT_CACHE_PLANNER_ENABLED=false \
+            -e GOMODEL_DEMO_MODE=false \
+            -e GOMODEL_MASTER_KEY -e JEV_API_KEY \
+            enterpilot/gomodel >/dev/null
+          ok=""
+          for i in $(seq 1 30); do
+            CODE=$(curl -s -o /dev/null -m 2 -w '%{http_code}' \
+              -H "Authorization: Bearer ${GOMODEL_MASTER_KEY:-}" \
+              "http://localhost:8080/" || echo 000)
+            if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+              echo "GoModel gateway UP inside the runner (HTTP $CODE, ping contract)"
+              ok=1; break
+            fi
+            sleep 1
+          done
+          if [ -z "$ok" ]; then
+            echo "::warning::gomodel container did not answer in 30s — lane stays DOWN -> fallback (never red)"
+            docker logs --tail 20 gomodel 2>&1 \
+              | sed 's/[A-Za-z0-9+/=_-]\{20,\}/[redacted]/g' || true
+          fi
+          exit 0
+
       - name: Jev judgment (GoModel via llmfisher gateway — chain decision layer)
         if: always()
         env:
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
-          GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
+          GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'http://localhost:8080' }}
         run: |
           SUMMARY="$GITHUB_STEP_SUMMARY"
           # Owner order (re-issued 2026-10-21 08:25Z): use gomodel via

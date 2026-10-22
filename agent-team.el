@@ -27,8 +27,12 @@
   "Tools for running a multi-model AI agent team."
   :group 'tools)
 
-(defcustom agent-team-gateway-url "https://ai.khalidrafi.tech"
-  "Base URL of the Owner's OpenAI-compatible gateway."
+(defcustom agent-team-gateway-url "http://localhost:8080"
+  "Base URL of the Owner's GoModel gateway.  Default is the in-runner
+gateway (Owner order 2026-10-22: GoModel runs INSIDE the GH runner,
+started per job by the gateway-up step; ping contract GET / -> 404).
+Point it at the box tunnel (https://ai.khalidrafi.tech) only when
+calling the gateway from OUTSIDE a runner."
   :type 'string)
 
 (defcustom agent-team-gateway-key
@@ -1104,7 +1108,7 @@ package's own shape) -> loud placeholder the Lead must fill."
       QODER_PERSONAL_ACCESS_TOKEN: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
       CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
       GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
-      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'https://ai.khalidrafi.tech' }}
+      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'http://localhost:8080' }}
       LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
       LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
       LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER: ${{ secrets.LARK_WEBHOOK_QUALITY_ASSURANCE_ENGINEER }}
@@ -1246,8 +1250,12 @@ Override when this team's harness bakes different bodies.")
   ONLY on kill switch, objective complete, or tests red; a no-progress
   streak shifts to backoff, never to failure
 - GoModel gateway (Jev judgment layer, khaalidrafi/llmfisher) rides as a
-  HEALTH-GATED lane: turn health step + finalize judgment; DOWN ->
-  lane-fallback law, never red
+  HEALTH-GATED lane: turn health step + finalize judgment; since
+  Owner order 2026-10-22 the gateway runs INSIDE the runner on
+  localhost:8080 (gateway-up step starts the enterpilot/gomodel
+  container from the llmfisher config; the box tunnel
+  ai.khalidrafi.tech stays the external fallback via the
+  GOMODEL_GATEWAY_URL var); DOWN -> lane-fallback law, never red
 - every verdict mirrors to the Owner's Telegram (owner-locked, deduped)
   and the project's Discord channel webhook; the segment's NEW GLM chat
   entries diff into BOTH per run — the Owner reads the real team chat

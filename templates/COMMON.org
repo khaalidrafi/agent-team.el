@@ -29,8 +29,14 @@ gateway) is the sole authority; that endpoint can wedge on the Owner's
 loaded Celeron — trust diffs, never block on it. Space calls; bursts stress
 the box.
 
-** GATEWAY AUTH (Owner gateway + Jev) — STATUS: GATEWAY DOWN
+** GATEWAY AUTH (Owner gateway + Jev) — STATUS: IN-RUNNER (CI), TUNNEL DOWN
 
+- 2026-10-22, Owner: GoModel runs INSIDE the GH runner — the chain's
+  gateway-up step starts the enterpilot/gomodel container per job on
+  http://localhost:8080 (config from khaalidrafi/llmfisher, master key
+  from repo secrets). The chain's health + Jev judgment lanes use the
+  in-runner gateway; the box tunnel https://ai.khalidrafi.tech remains
+  the EXTERNAL entry (set repo var GOMODEL_GATEWAY_URL to override).
 - 2026-10-20, Owner: GoModel is now DOWN. Neither https://ai.khalidrafi.tech
   nor http://127.0.0.1:8080 may be a dependency of any seat. All provider
   access goes DIRECT with API keys from repo secrets. This section is kept
@@ -207,9 +213,11 @@ the box.
 - access (LIVE, verified): the Owner's gateway serves Jev natively — POST
   /v1/systemone (state + typed questions → calibrated answers; chat endpoints
   REJECT jev ids). Pin jev-1.13.0. SDKs: TYPESAFE_BASE_URL =
-  https://ai.khalidrafi.tech + gateway key. Fallback: direct api.typesafe.ai with
-  TYPESAFE_API_KEY. Jev ids are NEVER chat models — dispatch prose to an LLM,
-  then judge with Jev. Timeout calls at 90s (slow failover legs)
+  http://localhost:8080 inside CI (in-runner gateway, Owner 2026-10-22) or
+  https://ai.khalidrafi.tech outside CI + gateway key. Fallback: direct
+  api.typesafe.ai with TYPESAFE_API_KEY. Jev ids are NEVER chat models —
+  dispatch prose to an LLM, then judge with Jev. Timeout calls at 90s
+  (slow failover legs)
 - batching law: ONE call, MANY questions per state — 12.2× cheaper, 10× faster;
   never one question per request
 - the EM uses Jev for:

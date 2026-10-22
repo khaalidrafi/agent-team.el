@@ -72,7 +72,11 @@ one of these was paid for with a broken run.
    `#+CHAIN-PAUSE` -> next run mode=paused (halts cleanly, no burn) ->
    the LEAD reviews and clears the marker to resume. Effect: the Owner
    sees a report after every delivered TODO and no runaway burn. It
-   also gives the HR review (1d) a natural cadence.
+   also gives the HR review (1d) a natural cadence. Owner refinement
+   2026-10-22 17:19Z: the pause is OPT-IN, not a mandate — DEFAULT
+   OFF; chains run CONTINUOUSLY and may deliver MULTIPLE TODOs without
+   halting; only an explicit Owner order arms #+PAUSE-AFTER-TODO: ON
+   (a cadence the Owner chooses).
 
 ** 2c. EMPTY-SEGMENT law
    A lane exiting 0 with ZERO commits is NOT progress. Count post-turn

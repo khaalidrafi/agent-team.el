@@ -1267,9 +1267,10 @@ Override when this team's harness bakes different bodies.")
 - admincraft laws (backported 2026-10-22, ADMINCRAFT-LESSONS.org):
   an unknown rotation pointer REFUSES (BLOCKED) — never a silent wrong
   lane; a lane exiting 0 with ZERO commits is NOT progress (the commit
-  count is a first-class signal); #+PAUSE-AFTER-TODO: ON arms a clean
-  halt after every :DELIVERED: TODO (mode=paused, the Lead clears
-  #+CHAIN-PAUSE); fallback chains name the lane that ACTUALLY ran and
+  count is a first-class signal); PAUSE-AFTER-TODO is OPT-IN (default
+  OFF — chains continue across multiple TODOs; an explicit Owner order
+  arms a clean halt after a :DELIVERED: TODO, mode=paused, the Lead
+  clears #+CHAIN-PAUSE); fallback chains name the lane that ACTUALLY ran and
   a failed paid attempt reports PAID LANE FAILED — a paid visit is
   never faked; mirror (Telegram/Discord) failures are warnings, never
   the job result

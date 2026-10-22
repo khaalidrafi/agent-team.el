@@ -29,19 +29,26 @@ gateway) is the sole authority; that endpoint can wedge on the Owner's
 loaded Celeron — trust diffs, never block on it. Space calls; bursts stress
 the box.
 
-** GATEWAY AUTH (Owner gateway + Jev) — STATUS: IN-RUNNER (CI), TUNNEL DOWN
+** GATEWAY AUTH (Owner gateway + Jev) — STATUS: RESOLVED LANE (override -> deployment -> local -> boot)
 
-- 2026-10-22, Owner: GoModel runs INSIDE the GH runner — the chain's
-  gateway-up step starts the enterpilot/gomodel container per job on
-  http://localhost:8080 (config from khaalidrafi/llmfisher, master key
-  from repo secrets). The chain's health + Jev judgment lanes use the
-  in-runner gateway; the box tunnel https://ai.khalidrafi.tech remains
-  the EXTERNAL entry (set repo var GOMODEL_GATEWAY_URL to override).
+- 2026-10-22 (2nd order, 16:25Z), Owner: the gateway URL is RESOLVED per
+  job, never assumed. Order: (1) vars.GOMODEL_GATEWAY_URL override when
+  set; (2) https://ai.khalidrafi.tech — the deployment; (3)
+  http://localhost:8080 — an already-running listener; (4) ONLY when
+  nothing answers does the runner boot its own enterpilot/gomodel (from
+  khaalidrafi/llmfisher config, master key from repo secrets) — nothing
+  answering means no deployment is active right now. Every tier uses the
+  ping contract (agent-team-gateway-ping): GET / -> 404/200 = up.
+- 2026-10-22, Owner: the JUDGMENT LANE IS BINARY — if gomodel is up,
+  Jev is used from there; else the chain decides DIRECTLY (local rules).
+  The judgment lane carries NO provider fallback chain; it degrades
+  gracefully and never blocks a chain step (never red).
 - 2026-10-20, Owner: GoModel is now DOWN. Neither https://ai.khalidrafi.tech
   nor http://127.0.0.1:8080 may be a dependency of any seat. All provider
-  access goes DIRECT with API keys from repo secrets. This section is kept
-  only as the historical reference; treat every gateway id as unreachable
-  until the Owner brings it back.
+  access goes DIRECT with API keys from repo secrets. Superseded for the
+  CI chain by the 2026-10-22 resolution law (the chain probes before it
+  trusts); still the law for seat work — treat gateway ids as
+  unreachable until a resolve step proves otherwise.
 - GOMODEL_MASTER_KEY: from the Owner's shell env — NEVER stored in files,
   commits, boards, or repos; dispatches may carry it, files never do
 - header: Authorization: Bearer $GOMODEL_MASTER_KEY
@@ -212,9 +219,12 @@ the box.
   version, never jev-latest)
 - access (LIVE, verified): the Owner's gateway serves Jev natively — POST
   /v1/systemone (state + typed questions → calibrated answers; chat endpoints
-  REJECT jev ids). Pin jev-1.13.0. SDKs: TYPESAFE_BASE_URL =
-  http://localhost:8080 inside CI (in-runner gateway, Owner 2026-10-22) or
-  https://ai.khalidrafi.tech outside CI + gateway key. Fallback: direct
+  REJECT jev ids). Pin jev-1.13.0. SDKs: TYPESAFE_BASE_URL = the RESOLVED
+  gateway URL (Owner resolution law 2026-10-22: vars.GOMODEL_GATEWAY_URL
+  override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
+  boot; the CI chain's resolve step owns this — probe, never assume).
+  Judgment lane is BINARY: gateway up -> Jev; down -> decide directly.
+  Standalone fallback: direct
   api.typesafe.ai with TYPESAFE_API_KEY. Jev ids are NEVER chat models —
   dispatch prose to an LLM, then judge with Jev. Timeout calls at 90s
   (slow failover legs)

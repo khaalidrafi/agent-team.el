@@ -18,11 +18,15 @@ one of these was paid for with a broken run.
 
 * 1. BACKPORT INTO THE PROMPT LAW (AGENTS.md / COMMON.org / BOOTSTRAP.org)
 
-** 1a. MEMBER ID FORMAT LAW
-   Every member ID is PROVIDER/MODEL@PLATFORM (e.g.
-   openrouter/minimax-m3.1-flash:free@goose). Bare "minimax@goose" is
-   invalid (Owner ruling 2026-10-22 13:22Z after he corrected us).
-   One brain on two bodies = two members (body shapes output).
+** 1a. MEMBER ID FORMAT LAW (v2 — Owner refined it the same day)
+   v1 (13:22Z): every member ID is PROVIDER/MODEL@PLATFORM.
+   v2 (16:54Z, CORRECTION that supersedes the blanket rule):
+   "PROVIDER/ should only be included with API models!" — key-served
+   API lanes keep the prefix (zai/ groq/ openrouter/ gomodel/ ...,
+   all on goose); platform-native bundled brains are BARE
+   model@platform (qwen3.8-flash@qoder, deepseek-v4.1-flash@codebuddy,
+   glm-5.3@codebuddy). Bare provider-less ids stay invalid for API
+   lanes. One brain on two bodies = two members (body shapes output).
 
 ** 1b. ATOMIC RENAME LAW (the trap the format law creates)
    Renaming a member ID must change ALL of: TEAM-CONTROL.org #+TURN

@@ -494,34 +494,13 @@ clear enough language, well-structured with lists:
 - EMPTY-SEGMENT LAW (admincraft 2c): a lane exiting 0 with ZERO commits
   is NOT progress — post-turn commit count is a first-class signal;
   N no-progress segments -> backoff
-- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented): with
-  #+PAUSE-AFTER-TODO: ON the chain arms #+CHAIN-PAUSE after every
-  :DELIVERED: TODO and halts cleanly (mode=paused, no burn) until the
-  Lead reviews and clears the marker — the Owner sees a report after
-  every delivery, and HR reviews (below) get a natural cadence
-- PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
-  that ACTUALLY ran; a failed paid attempt reports "PAID LANE FAILED —
-  burn did NOT happen"; a paid visit is never faked
-- ATOMIC RENAME LAW (admincraft 1b): renaming a member id changes ALL
-  of TEAM-CONTROL.org #+TURN, the workflow's turn-control arm, and the
-  advance arm in ONE commit — a missed arm leaves an unknown pointer,
-  the rotation refuses (BLOCKED), the chain stalls
-- GIT HYGIENE LAW (admincraft 3d): a stale LOCAL ref named like a
-  remote-tracking ref ("origin/ai/main" as a local branch) makes
-  `git log origin/ai/main` AMBIGUOUS and can silently show a dead
-  history — check `git for-each-ref` for shadowing names; scripts use
-  explicit refs/remotes/origin/<branch>
-- UNKNOWN-REFUSAL LAW (admincraft 2a): an unknown rotation pointer
-  REFUSES (BLOCKED) — never silently run a wrong lane; keep legacy ids
-  as alias arms during migration
-- EMPTY-SEGMENT LAW (admincraft 2c): a lane exiting 0 with ZERO commits
-  is NOT progress — post-turn commit count is a first-class signal;
-  N no-progress segments -> backoff
-- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented): with
-  #+PAUSE-AFTER-TODO: ON the chain arms #+CHAIN-PAUSE after every
-  :DELIVERED: TODO and halts cleanly (mode=paused, no burn) until the
-  Lead reviews and clears the marker — the Owner sees a report after
-  every delivery, and HR reviews (below) get a natural cadence
+- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented; OPT-IN per Owner
+  refinement 2026-10-22): DEFAULT OFF — a chain runs CONTINUOUSLY and may
+  deliver MULTIPLE TODOs across segments without halting; only an explicit
+  Owner order arms #+PAUSE-AFTER-TODO: ON, which then arms #+CHAIN-PAUSE
+  after a :DELIVERED: TODO for a clean halt (mode=paused, no burn) until
+  the Lead reviews and clears the marker — pause is a cadence the Owner
+  chooses, never a mandate
 - PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
   that ACTUALLY ran; a failed paid attempt reports "PAID LANE FAILED —
   burn did NOT happen"; a paid visit is never faked

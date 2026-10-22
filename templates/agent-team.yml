@@ -17,9 +17,10 @@ name: Agent Team Chain
 # laws backported 2026-10-22 (khaalidrafi/agent-team.el
 # agent-team/ADMINCRAFT-LESSONS.org): an unknown rotation pointer REFUSES
 # (BLOCKED) instead of silently running a wrong lane; a lane exiting 0
-# with ZERO commits is not progress; #+PAUSE-AFTER-TODO: ON arms a clean
-# halt after every :DELIVERED: TODO so the Owner sees a report per
-# delivery (the Lead clears #+CHAIN-PAUSE to resume); fallback chains
+# with ZERO commits is not progress; PAUSE-AFTER-TODO is OPT-IN (default
+# OFF — chains continue across multiple TODOs; an explicit Owner order
+# arms a clean halt after a :DELIVERED: TODO, the Lead clears
+# #+CHAIN-PAUSE to resume); fallback chains
 # name the lane that ACTUALLY ran and never fake a paid visit; mirror
 # failures are warnings, never the job result. Verdicts mirror to the
 # Owner's Telegram (owner-locked, deduped) and this project's Discord
@@ -889,13 +890,15 @@ jobs:
         id: pause
         if: always() && steps.gate.outputs.gate == 'green'
         run: |
-          # Owner-invented in admincraft: #+PAUSE-AFTER-TODO: ON + the
+          # Owner-invented in admincraft; OPT-IN since the Owner refinement
+          # 2026-10-22: #+PAUSE-AFTER-TODO: ON (explicit Owner order only —
+          # default OFF, chains continue across multiple TODOs) + the
           # segment diff carrying a :DELIVERED: marker on the board ->
           # decision=paused-todo-review -> arm #+CHAIN-PAUSE: ON. The next
           # run halts in mode=paused (clean, no burn); the LEAD reviews
-          # and clears the marker to resume. Effect: the Owner sees a
-          # report after every delivered TODO — no runaway burn, and the
-          # HR review (MEMBERS.org) gets a natural cadence.
+          # and clears the marker to resume. Effect: an Owner-chosen
+          # report cadence — no runaway burn, and the HR review
+          # (MEMBERS.org) gets a natural cadence.
           CTL=agent-team/TEAM-CONTROL.org
           BASE="${{ needs.turn.outputs.base_sha }}"
           DELIV=$(git diff "$BASE" HEAD -- agent-team/TODOS.org 2>/dev/null \

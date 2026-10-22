@@ -494,13 +494,14 @@ clear enough language, well-structured with lists:
 - EMPTY-SEGMENT LAW (admincraft 2c): a lane exiting 0 with ZERO commits
   is NOT progress — post-turn commit count is a first-class signal;
   N no-progress segments -> backoff
-- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented; OPT-IN per Owner
-  refinement 2026-10-22): DEFAULT OFF — a chain runs CONTINUOUSLY and may
-  deliver MULTIPLE TODOs across segments without halting; only an explicit
-  Owner order arms #+PAUSE-AFTER-TODO: ON, which then arms #+CHAIN-PAUSE
-  after a :DELIVERED: TODO for a clean halt (mode=paused, no burn) until
-  the Lead reviews and clears the marker — pause is a cadence the Owner
-  chooses, never a mandate
+- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented; DEFAULT ON per
+  Owner order 2026-10-22 17:28Z "PAUSE AFTER TODO MUST BE DEFAULT" —
+  supersedes the 17:19Z opt-in default): a chain PAUSES after every
+  :DELIVERED: TODO — finalize arms #+CHAIN-PAUSE, the next run halts
+  cleanly (mode=paused, no burn) until the Lead reviews and clears the
+  marker; a MISSING key counts as ON (fail-safe vs runaway burn). The
+  17:19Z capability stays as the override: an explicit Owner order may
+  set #+PAUSE-AFTER-TODO: OFF for a continuous multi-TODO run
 - PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
   that ACTUALLY ran; a failed paid attempt reports "PAID LANE FAILED —
   burn did NOT happen"; a paid visit is never faked

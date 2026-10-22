@@ -1,0 +1,137 @@
+#+TITLE: TEAMIFY-PROMPT-REVIEW.org — quality, language, per-member maximization
+#+DATE: 2026-10-22 (Owner order 17:30Z #hq: review the team-making prompt
+        from templates/ for quality, language, and the ability to get the
+        most out of agents and EACH member — use prominent resources like
+        deeplearning.ai)
+#+SOURCES: deeplearning.ai Agentic Design Patterns 1-5 (Ng; reflection,
+        multi-agent collaboration) · Anthropic "Building effective agents"
+        (workflows vs agents, ACI/tool craft) · Anthropic "How we built our
+        multi-agent research system" (delegation, effort scaling,
+        self-improvement, evals) · Anthropic "Best practices for Claude
+        Code" (context bloat law, refutation-based verification,
+        explore-plan-code) · local copies in research/ (dl-pattern-*.txt,
+        anthropic-*.txt, anthropic-claude-code-bp.txt)
+
+* VERDICT
+
+The prompt's SKELETON is research-grade — delegation contracts, refutation
+separation, file-based state, effort-matching, and the landing gate each
+match a named best practice, usually before we could have read the source.
+The defects were BLOAT BUGS, not design bugs: the R-2-24 backport duplicated
+whole law blocks in three files, and duplication is the exact failure mode
+the Claude Code BP warns about ("bloated files cause agents to ignore your
+actual instructions"). All duplicates are now removed; five surgical
+additions close real gaps; no restructuring was needed.
+
+* A. ALREADY STRONG (mapped to sources)
+
+- "a role is a contract (goal + authority + boundaries + evidence), never a
+  costume" (ROLE ATTACHMENT) = Anthropic delegation spec: each subagent
+  needs an objective, an output format, tool guidance, and clear task
+  boundaries; vague briefs produce duplicated or gapped work. Also Ng's
+  pattern 5: role prompts must say what MATTERS for that subtask.
+- "complete delegation: objective + output format + tools + boundaries"
+  (LAWS) — the same four-part contract, as a law.
+- "verification is separate: author never grades own green" + "verification
+  = a separate critique pass" = Claude Code BP: have a fresh model try to
+  REFUTE the result, so the agent doing the work is not the one grading it.
+- "effort-match: trivial → junior/sandbox · P0 → senior · verification → a
+  model that did NOT author the work" = Anthropic: scale effort to query
+  complexity; embed explicit scaling rules to prevent overinvestment.
+- "MINIMUM VIABLE TEAM: fewest roles that cover the task; complexity must
+  earn its place" = Building effective agents: simplest thing that works;
+  add complexity only when it demonstrably helps.
+- Board as single source of truth, :HANDOFF: drawers as API contracts,
+  scratchpad rule (:LOGBOOK: read-before-continue) = Anthropic multi-agent:
+  subagent output to a filesystem to minimize the "game of telephone";
+  durable external memory over chat-borne state.
+- Loop detection (3 near-identical attempts → STOP) + persistence limits =
+  guardrails against agent sprawl (Anthropic's "50 subagents for a simple
+  query" failure mode).
+- Segregation (author, verifier, merger = three different models; the EM
+  never grades application code) = refutation separation at the org level.
+- MESSAGE CRAFT dual-audience (human-scannable + AI-precise) = the Telegram
+  mirror constraint AND the precision agents need — both audiences served
+  explicitly.
+- Few-shot DISPATCH example byte-embedded in the standard = few-shot in the
+  prompt, not referenced.
+- STAFFING evidence law ("EVIDENCE IS NOT IN YOUR CONTEXT, IT IS ON THE
+  WEB") = tool-use pattern: the environment, not the context window, is the
+  source of truth.
+- INTERN PROGRAM + HR LEDGER (KEEP/WATCH/PROBE/RELEASE at pause windows) =
+  Anthropic evals: start small, judge on real task outcomes, end-state over
+  turn-by-turn.
+
+* B. DEFECTS FOUND AND FIXED
+
+- DUPLICATE LAW BLOCKS (the R-2-24 substring-anchor re-run bug; only the
+  YAML had been deduped):
+  - TEAMIFY.org: VISITING MEMBER pattern + CONSULT LAW appeared twice.
+  - BOOTSTRAP.org: STANDING LAWS block appeared twice.
+  - COMMON.org: ID FORMAT LAW v2 (BRAINS AND BODIES), HR LEDGER +
+    EXPIRING-CREDIT (STAFFING), CONSULT + PROBE + LANDING GATE +
+    root-cause-BODY (HIRING PROTOCOL) — each twice.
+  Why it matters (BP): every redundant line trains the reader to skim, and
+  then REAL laws get skimmed too; each law now appears exactly once.
+- Language nits: "todos edits" → "TODOS.org edits" (file names are load-
+  bearing identifiers; never lowercase them into ambiguity).
+
+* C. GAPS CLOSED (additions, ~14 lines total — each earns its place)
+
+- VERIFIER REFUTES (LAWS): "a verifier REFUTES — reproduce the claimed fix,
+  run the full suite, try to break the claim; a refutation attempt that
+  fails IS the verification." (BP: the checker's job is refutation, not
+  confirmation.)
+- GROUND TRUTH OVER CONFIDENCE (MEMBER LAWS): "read the touched code paths
+  FIRST, plan short, then code — the suite/run output is the truth, the
+  model's certainty is not (explore → plan → code → verify)." (BP explore-
+  plan-code; Anthropic: agents gain ground truth from the environment each
+  step.)
+- TOOL PREFERENCE (MEMBER LAWS): "prefer the body's specialized tools over
+  generic shell workarounds; a missing tool is a BLOCKED that names the
+  tool, never a fragile chain." (Anthropic: tool choice is critical; bad
+  tool paths doom the task; naming the gap beats hiding it.)
+- EFFORT BUDGET (ROLE ATTACHMENT): dispatches name a size class (S/M/L); a
+  task that bursts its class escalates instead of sprawling. (Anthropic:
+  explicit scaling rules prevent overinvestment — a top early failure
+  mode.)
+- STRENGTH NOTES (ROLE ATTACHMENT): one line per member per segment in
+  MEMBERS.org — what this member did better/worse than roster average — and
+  future dispatches scope to PROVEN strengths. This is the Owner's "most
+  out of EACH member" made operational: BODY SHAPES OUTPUT applied over
+  time, per individual, not per model card.
+
+* D. LANGUAGE REVIEW
+
+- House style is em-dash-dense but consistent; imperatives are short;
+  every law names its failure mode in the same sentence as the rule — keep.
+- Deliberate idioms ("Groundhog-Day", "benchmaxxing", "wearing a public
+  hat") aid recall and are attached to laws, not decorations — keep.
+- Terminology drift risk: "master" vs "manual" vs "COMMON.org" — the
+  canonical pointer is always spelled out on first use per file; acceptable.
+- No ambiguous pronouns found in laws ("it/that" chains are already banned
+  by MESSAGE CRAFT).
+- Duplicate blocks were the only readability hazard; now gone.
+
+* E. CONSIDERED AND NOT APPLIED (anti-bloat)
+
+- Per-role verbatim prompt templates for every seat — rejected: ROLE
+  ATTACHMENT + MESSAGE STANDARD already generate them; hardcoding N role
+  prompts would drift from the per-project tailoring law.
+- Token-budget arithmetic per dispatch — rejected: the size class (S/M/L)
+  captures the behavior without fake precision.
+- A "self-improve the prompt" law letting seats amend TEAM.md — rejected as
+  written; the EM already amends via TEAM UPDATE with evidence. Seats
+  propose, EM disposes — that stays.
+- Long-horizon context compression rules (Anthropic summarization patterns)
+  — already covered by STATE.org + scratchpad + fresh-seat-per-turn design;
+  nothing to add.
+
+* FOLLOW-UPS
+
+- The duplicated blocks also shipped inside both teamify prompt artifacts;
+  both were REBUILT from the fixed templates (admincraft + docneural), so
+  every downstream copy is clean.
+- Re-run this review after the next structural template change; the dup
+  class (substring-anchored inserts) is now checked by grep asserts in the
+  fix script (scripts/review_fixes_2_28.py).

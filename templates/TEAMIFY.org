@@ -67,25 +67,6 @@ the project, never rewrites it.
   BEFORE activation, and the list is re-shared after every staffing
   change — never hire first and consult after
 
-** VISITING MEMBER pattern (expiring credits — admincraft 3a)
-
-- expiring paid credits (promos, trial pools) hire a VISITING MEMBER
-  OUTSIDE the standing rotation: budget = total credits / remaining
-  days; ONE visiting turn per day; the Lead points #+TURN at the
-  visiting ID and its advance rejoins the rotation where it left
-- keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
-  note); if the platform publishes no balance endpoint, say so in the
-  ledger and calibrate from the Owner's console readings — never
-  invent endpoints
-- a paid lane that fails reports "PAID LANE FAILED — burn did NOT
-  happen"; a paid visit is never faked
-
-** CONSULT LAW (admincraft 1c)
-
-- every hire is posted to the Owner as a roles-with-members list
-  BEFORE activation, and the list is re-shared after every staffing
-  change — never hire first and consult after
-
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 
 ** agent-team/TODOS.org

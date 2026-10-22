@@ -208,7 +208,7 @@
     of /api/v1/models; do NOT re-add without a fresh probe)
   - MiniMax M3.1 Flash open weights land 2026-10-23 → expect cheap/free
     listings on SiliconFlow/Novita/ModelScope within days (watch lane;
-    SiliconFlow already carries M3 at $0.30/$1.20)
+    SiliconFlow already carries M3 at $0.30/$1.20) [LANDED 2026-10-22: ollama.com/library/minimax-m3.1-flash live — 428B, 976K ctx]
   - zai/ — glm-4.5 · glm-4.6v · glm-4.7-flash
     [free-tier expiry: none published on the GLM-4.7-Flash free API tier;
     MIT open weights make it low-risk even so]
@@ -501,7 +501,7 @@
     (geminicli.com/docs/resources/quota-and-pricing).
   - OpenRouter :free — 20 RPM; 50 req/day under $10 lifetime topup, 1,000
     req/day at >= $10 all-time (openrouter.ai/docs/api-reference/limits).
-    Live catalog 17 :free models incl. minimax-m3.1-flash:free (1M ctx).
+    Live catalog 17 :free models incl. minimax-m3.1-flash:free (1M ctx). [STALE 2026-10-22: that :free variant is DEAD — see the M3.1 Flash free-lane map below]
   - Groq free — 30 RPM · 1,000 req/day · 200K tokens/day (matches batch 5).
   - GitHub Models — RETIRED (closed 2026-06-16, gone 2026-07-30;
     github.blog changelog). Remove any lane referencing it.
@@ -530,6 +530,81 @@
   Where this points staffing: highest hard-number free APIs today =
   NVIDIA NIM (10k/day) > Gemini CLI (1k/day) ~= Groq (1k/day) > OpenRouter
   :free (50→1,000/day). Expiry law binds every row: undated ≠ unlimited.
+
+* M3.1 Flash free-lane map — 2026-10-22 (Owner order: the 10-provider tweet)
+
+  Owner order 2026-10-22 17:33Z #hq: "We MUST use M3.1 free from all the
+  providers in the above tweet" — @sakatayasha status/2112783172517949696
+  (2026-10-20: "10 platforms where you can use it for absolutely FREE").
+  Probed live 2026-10-22. VERDICT FIRST: of the 10 — 3 lanes runnable
+  today (1 needs nothing), 3 free after Owner signup, 2 subscription-
+  gated, 2 stale-free (paid now), 2 unverified behind auth. Rows keep
+  tweet order for auditability.
+
+  1. MiniMax — LANES READY, 3 live free shapes: MiniMax Agent
+     minimax-m3.1-flash FREE through 2026-10-25 (row above; RE-HIRE
+     DATE); mcode M Plan Free — PROVEN `mcode exec` 2026-10-22 (body
+     profile above); platform.minimax.io trial credits (row above).
+  2. OpenRouter — :free DEAD: model record exists (created 2026-10-19)
+     but GET /api/v1/models/minimax/minimax-m3.1-flash:free -> 404 and
+     the /endpoints record shows endpoints=[] (probe 2026-10-22); the
+     API-section row above already records the death. Paid $0.15/$0.60
+     only. Tweet stale here; do NOT re-add without a fresh probe.
+  3. OpenCode — SUBSCRIPTION-GATED: M3.1 Flash is "Space Bunny" on
+     OpenCode Go (subscription; opencode.ai/v2/docs/console/go) or paid
+     Zen pay-as-you-go; the in-client free roster does NOT list M3.1
+     Flash, and every opencode/*-free id is PROVEN REFUSED (below).
+  4. ZenMux — OWNER-SIGNUP: minimax/minimax-m3.1-flash live ($0.15/
+     $0.60 list, cache $0.015; zenmux.ai/minimax/minimax-m3.1-flash);
+     free shape = token gifts (official @ZenMuxAI X 2112151513200279588:
+     "1,000 free token gifts, with 1M tokens each" — campaign/
+     first-come, UNDATED); OpenAI + Anthropic dual-protocol
+     (zenmux.ai/docs). Burn the gift fast; cap-risk applies.
+  5. CommandCode — OWNER-SIGNUP: "MiniMax M3.1 Flash ... FREE for a
+     limited time", $0.00/M (commandcode.ai/Models + /docs/resources,
+     acc. 2026-10-22): in-product CLI/app lane with account; their
+     Provider API plan is $15/mo (NOT a raw free API). Undated
+     limited-time — EXPIRY LAW: cap-risk, never "unlimited".
+  6. GMI Cloud — PAID ONLY: $0.15/$0.60, api.gmi-serving.com/v1,
+     model MiniMaxAI/MiniMax-M3.1-Flash (row above). MiniMax Week free
+     was M3-era, closed 2026-09-06 (gmicloud.ai/minimax-week). Tweet
+     stale here.
+  7. Cline — OWNER-SIGNUP: M3.1 Flash FREE in Cline (official @cline X
+     2112220504258224605 + ClineBot LinkedIn "now FREE in Cline",
+     r/CLine 2026-10-20; 1M ctx, 200+ tok/s): Cline account daily
+     per-model allowance, IDE+CLI body lane — NOT a raw API lane
+     (body profile above).
+  8. Ollama — weights LIVE: ollama.com/library/minimax-m3.1-flash
+     (428B total, 976K ctx, text+image, tools, thinking; probe
+     2026-10-22). Local run free FOREVER — hardware-gated (428B >> the
+     Celeron; resident seat excluded; GPU rental is the real cost).
+     Ollama :cloud free tier BURNED 2026-10-22 23:59 UTC (probe found
+     ~6h left); then $0.15/$0.60.
+  9. XPLabs — UNVERIFIED: platform.xplabs.ai lists MiniMax (10 models)
+     but no M3.1 Flash row visible; the "on Ultra: Free, rate limited"
+     promo covers GPT-6 Luna/Jev/Clef Flash rows — no MiniMax free row
+     (acc. 2026-10-22). Re-probe after any Owner signup.
+  10. KiosAPI — UNVERIFIED: kiosapi.com is a 40+ provider
+      OpenAI-compatible gateway, key from account; /models behind
+      sign-in. Older public posts show free $0-model selection incl.
+      MiniMax M3 (not M3.1 Flash; acc. 2026-10-22).
+
+  MODEL FACTS (MiniMax + GMI Cloud blog): 428B MoE, ~23B active, 1M ctx
+  flat pricing, MSA sparse attention, 200+ TPS; reasoning always on
+  with selectable effort (Low..Max). WEAK SPOT: AA-Omniscience 56%
+  factuality with ~93% hallucination rate when unsure — pair with
+  retrieval/tool results/verification; never staff it solo on
+  open-ended ungrounded Q&A.
+
+  STAFFING (what "use M3.1 free" means TODAY): runnable now = mcode
+  lane (PROVEN) + MiniMax Agent (dated 10-25) + Ollama local
+  (hardware-gated). Free after Owner signup = Cline allowance,
+  CommandCode, ZenMux gift. NOT free = OpenRouter, OpenCode, GMI.
+  Unknown = XPLabs, KiosAPI. Dated rows are RE-HIRE DATES with
+  independent fallbacks (EXPIRY LAW). Watched aliases: aimlapi free
+  minimax-m3.1-flash (row above, their own X), Puter gateway
+  (third-party, never load-bearing); weights now landed ->
+  SiliconFlow/Novita/ModelScope cheap listings within days.
 
 * Benchmark snapshot — 2026-10-21 (for pair-level ranking; values filters
   still bind — closed models stay out of accountable seats)

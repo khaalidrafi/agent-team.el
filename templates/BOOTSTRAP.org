@@ -47,19 +47,6 @@ The project does not exist yet — no repo, no commits. You create everything.
 - rename a member id ATOMICALLY (pointer + both case arms in one
   commit); unknown rotation pointers REFUSE (BLOCKED)
 
-** STANDING LAWS (admincraft backport, 2026-10-22)
-
-- ID FORMAT v2: PROVIDER/ prefix only for API models; platform-native
-  brains are bare model@platform
-- CONSULT LAW: post the roles-with-members list to the Owner BEFORE
-  activating any hire; re-share after every staffing change
-- HR LEDGER: MEMBERS.org records hires WITH REASONS + performance
-  reviews (KEEP/WATCH/PROBE/RELEASE) at every pause window
-- LANDING GATE = the only quality floor: red work never lands; a green
-  probe row hires nobody
-- rename a member id ATOMICALLY (pointer + both case arms in one
-  commit); unknown rotation pointers REFUSE (BLOCKED)
-
 ** FINAL INSTRUCTION (FRESH)
 
 The master prompt binds from the moment the repo exists — your first commits

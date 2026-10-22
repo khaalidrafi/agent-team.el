@@ -183,5 +183,33 @@ codebuddy lane as burn-only, not delivery-capable.
 2. COMMON.org/BOOTSTRAP.org: add 1a-1e as law lines + 3c gate wording.
 3. TEAMIFY.org: add the VISITING MEMBER pattern (3a) + consult law (1c).
 4. MEMBERS.org template: add HIRES WITH REASONS + HR REVIEW table
-   scaffolding (1d) + BURN LEDGER (3a).
+   scaffolding (1d) + BURN LEDGER (3a) + STRENGTH NOTES (R-2-30).
 5. Investigate 5 and report back in the mesh chat.
+6. Process (R-2-30, section 7): reviews are not repo files; Lead changesets
+   get an independent model review before merge.
+
+* 7. PROCESS (R-2-30 — Owner 17:45Z #hq, after the Lead committed a review doc)
+
+Two laws the Lead broke and now bakes into the templates (COMMON's segregation
+bullet carries the normative text; this records the case and the Lead-ops
+rule):
+
+1. REVIEWS ARE NOT REPO FILES: a review write-up (verdict + findings +
+   sources) never lands in the repo tree. Committing
+   TEAMIFY-PROMPT-REVIEW.org was the exact failure a review exists to
+   prevent: the author shipping his own grade as a deliverable. Findings go
+   into the files they correct; the verdict goes into the merge commit
+   message (carve-outs are owned by the COMMON segregation bullet).
+
+2. AUTHOR / REVIEWER / MERGER SEPARATION ON LEAD CHANGES: teams already run
+   it (COMMON segregation law — three different models). A Lead-authored
+   changeset runs the same discipline: the Lead writes; an independent model
+   reviews with a refutation mandate (try to break the claim, run the
+   checks, judge the diff against the stated intent) and ends with
+   "overall judgment: PASS/FAIL because ..."; the merge is a separate
+   mechanical stage — gates + push — run only on PASS, with the verdict
+   carried in the commit message. A FAIL loops back to the author; no stage
+   folds into another. (COMMON's three-model clause governs team application
+   code; the Lead's merge stage here is mechanical and gated on the review
+   verdict. At teamify bootstrap the Owner gates the first law merge —
+   TEAMIFY FINAL INSTRUCTION.)

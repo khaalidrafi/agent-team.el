@@ -193,7 +193,14 @@ the box.
 - standing roles persist (scoped in agent-team/TEAM.md); task roles attach at
   dispatch, detach at close (:LOGBOOK:)
 - segregation: author, verifier, merger are three different models; the EM is
-  never any of the three on application code
+  never any of the three on application code; seat work is gated by the
+  landing gate, while a template or law change authored by the Lead or the EM
+  merges only after an independent model review of the diff ends "overall
+  judgment: PASS" (OUTPUT RULE format); a review write-up never lands as its
+  own repo file — findings go into the files they correct, the verdict goes
+  into the merge commit message; board REVIEW completion notes, TEAM-CHAT
+  prose, and human review queues (AI-REVIEW.org) are process outputs, not
+  write-ups
 - roles are TAILORED PER PROJECT: derive them from the project's code,
   maturity, and workflow — a greenfield prototype needs builder + verifier
   roles; a mature repo with CI needs maintainers, migration owners, regression

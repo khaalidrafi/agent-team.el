@@ -108,6 +108,9 @@ File sketch (produce EXACTLY this skeleton):
 * HR REVIEW (at every pause window — KEEP/WATCH/PROBE/RELEASE)
   | date | member | segments | gate-first-try | stalls | findings | verdict |
 
+* STRENGTH NOTES (one line per member per segment — ROLE ATTACHMENT)
+  | date | member | segment | did better / worse than roster average |
+
 * BURN LEDGER (visiting members / expiring credits)
   | date | member | segment | credits burned | note |
 #+END_SRC

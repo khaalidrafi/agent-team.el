@@ -62,6 +62,18 @@ the box.
   reliability, startup cost) and the box's current load
 - the member id carries both: <provider/model@agent> (e.g.
   groq/qwen3.8-27b@opencode-local)
+- ID FORMAT LAW v2 (admincraft, Owner 2026-10-22 16:54Z): the PROVIDER/
+  prefix belongs ONLY to key-served API lanes (zai/ groq/ openrouter/
+  gomodel/ ...); platform-native bundled brains are BARE model@platform
+  (qwen3.8-flash@qoder, deepseek-v4.1-flash@codebuddy, glm-5.3@codebuddy).
+  Bare provider-less ids stay invalid FOR API LANES. One brain on two
+  bodies = two members (BODY SHAPES OUTPUT)
+- ID FORMAT LAW v2 (admincraft, Owner 2026-10-22 16:54Z): the PROVIDER/
+  prefix belongs ONLY to key-served API lanes (zai/ groq/ openrouter/
+  gomodel/ ...); platform-native bundled brains are BARE model@platform
+  (qwen3.8-flash@qoder, deepseek-v4.1-flash@codebuddy, glm-5.3@codebuddy).
+  Bare provider-less ids stay invalid FOR API LANES. One brain on two
+  bodies = two members (BODY SHAPES OUTPUT)
 - a brain on an incapable body = BENCH — a pair whose body cannot do the task's
   environment-fit is never staffed
 - one body for every brain is LAZY STAFFING and is rejected: bodies are spread
@@ -112,6 +124,28 @@ the box.
 - roster diff is COMPUTED: live GET /v1/models vs the previous member table,
   counts + added/removed ids shown; "no change" without that comparison is a
   false report
+- HR LEDGER LAW (admincraft 1d): MEMBERS.org is a living HR file, not a
+  roster dump — each hire carries its REASONS (benchmarks, hands-on
+  reviews, AND observed CI performance); PERFORMANCE REVIEWS run at
+  every pause window (segments delivered, gate green first try, stalls,
+  findings) with verdicts KEEP / WATCH / PROBE / RELEASE (2 stalls no
+  finding = WATCH, 3 = RELEASE); record lane-vs-seat honestly — the
+  result line names the lane that ran, HR records the seat
+- EXPIRING-CREDIT LAW (admincraft 1e): expiring credits (promos, trial
+  pools) get STAGED NEEDS-KEY rows in CANDIDATES.org + a hire/expiry
+  DATE in the roster — each row activates the moment its key lands and
+  is re-hired or retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
+- HR LEDGER LAW (admincraft 1d): MEMBERS.org is a living HR file, not a
+  roster dump — each hire carries its REASONS (benchmarks, hands-on
+  reviews, AND observed CI performance); PERFORMANCE REVIEWS run at
+  every pause window (segments delivered, gate green first try, stalls,
+  findings) with verdicts KEEP / WATCH / PROBE / RELEASE (2 stalls no
+  finding = WATCH, 3 = RELEASE); record lane-vs-seat honestly — the
+  result line names the lane that ran, HR records the seat
+- EXPIRING-CREDIT LAW (admincraft 1e): expiring credits (promos, trial
+  pools) get STAGED NEEDS-KEY rows in CANDIDATES.org + a hire/expiry
+  DATE in the roster — each row activates the moment its key lands and
+  is re-hired or retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
 
 ** HIRING PROTOCOL
 
@@ -127,6 +161,34 @@ the box.
   type = benched; warn Owner before spend; log everything in HIRING-LOG
 - prompt-fix law: a task type failing across ≥2 capable models indicts the spec
   or task type, not the prompt — re-spec before re-hiring
+- CONSULT LAW (admincraft 1c): every hire is posted to the Owner as a
+  roles-with-members list BEFORE activation, and the list is re-shared
+  after every staffing change — hiring first and consulting after is a
+  violation (Owner: "You should have consulted me once hired")
+- PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY (admincraft 3b): a
+  green probe row hires nobody; a body earns its seat by landing real
+  work behind the landing gate — a quality-96 paid brain can still
+  deliver an empty segment (model tier != delivery)
+- LANDING GATE = THE ONLY QUALITY FLOOR (admincraft 3c): pytest + checks
+  run inside the segment AND at merge; red work never lands, whoever
+  produced it — the gate is what makes benchmaxxing risk survivable
+- root-cause the BODY before firing the BRAIN (admincraft 1d): two
+  different brains failing identically on one body indict the body —
+  bench the lane, not the models, while it is investigated
+- CONSULT LAW (admincraft 1c): every hire is posted to the Owner as a
+  roles-with-members list BEFORE activation, and the list is re-shared
+  after every staffing change — hiring first and consulting after is a
+  violation (Owner: "You should have consulted me once hired")
+- PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY (admincraft 3b): a
+  green probe row hires nobody; a body earns its seat by landing real
+  work behind the landing gate — a quality-96 paid brain can still
+  deliver an empty segment (model tier != delivery)
+- LANDING GATE = THE ONLY QUALITY FLOOR (admincraft 3c): pytest + checks
+  run inside the segment AND at merge; red work never lands, whoever
+  produced it — the gate is what makes benchmaxxing risk survivable
+- root-cause the BODY before firing the BRAIN (admincraft 1d): two
+  different brains failing identically on one body indict the body —
+  bench the lane, not the models, while it is investigated
 
 ** ROLE ATTACHMENT (EM only)
 
@@ -417,6 +479,52 @@ clear enough language, well-structured with lists:
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone
+- ATOMIC RENAME LAW (admincraft 1b): renaming a member id changes ALL
+  of TEAM-CONTROL.org #+TURN, the workflow's turn-control arm, and the
+  advance arm in ONE commit — a missed arm leaves an unknown pointer,
+  the rotation refuses (BLOCKED), the chain stalls
+- GIT HYGIENE LAW (admincraft 3d): a stale LOCAL ref named like a
+  remote-tracking ref ("origin/ai/main" as a local branch) makes
+  `git log origin/ai/main` AMBIGUOUS and can silently show a dead
+  history — check `git for-each-ref` for shadowing names; scripts use
+  explicit refs/remotes/origin/<branch>
+- UNKNOWN-REFUSAL LAW (admincraft 2a): an unknown rotation pointer
+  REFUSES (BLOCKED) — never silently run a wrong lane; keep legacy ids
+  as alias arms during migration
+- EMPTY-SEGMENT LAW (admincraft 2c): a lane exiting 0 with ZERO commits
+  is NOT progress — post-turn commit count is a first-class signal;
+  N no-progress segments -> backoff
+- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented): with
+  #+PAUSE-AFTER-TODO: ON the chain arms #+CHAIN-PAUSE after every
+  :DELIVERED: TODO and halts cleanly (mode=paused, no burn) until the
+  Lead reviews and clears the marker — the Owner sees a report after
+  every delivery, and HR reviews (below) get a natural cadence
+- PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
+  that ACTUALLY ran; a failed paid attempt reports "PAID LANE FAILED —
+  burn did NOT happen"; a paid visit is never faked
+- ATOMIC RENAME LAW (admincraft 1b): renaming a member id changes ALL
+  of TEAM-CONTROL.org #+TURN, the workflow's turn-control arm, and the
+  advance arm in ONE commit — a missed arm leaves an unknown pointer,
+  the rotation refuses (BLOCKED), the chain stalls
+- GIT HYGIENE LAW (admincraft 3d): a stale LOCAL ref named like a
+  remote-tracking ref ("origin/ai/main" as a local branch) makes
+  `git log origin/ai/main` AMBIGUOUS and can silently show a dead
+  history — check `git for-each-ref` for shadowing names; scripts use
+  explicit refs/remotes/origin/<branch>
+- UNKNOWN-REFUSAL LAW (admincraft 2a): an unknown rotation pointer
+  REFUSES (BLOCKED) — never silently run a wrong lane; keep legacy ids
+  as alias arms during migration
+- EMPTY-SEGMENT LAW (admincraft 2c): a lane exiting 0 with ZERO commits
+  is NOT progress — post-turn commit count is a first-class signal;
+  N no-progress segments -> backoff
+- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented): with
+  #+PAUSE-AFTER-TODO: ON the chain arms #+CHAIN-PAUSE after every
+  :DELIVERED: TODO and halts cleanly (mode=paused, no burn) until the
+  Lead reviews and clears the marker — the Owner sees a report after
+  every delivery, and HR reviews (below) get a natural cadence
+- PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
+  that ACTUALLY ran; a failed paid attempt reports "PAID LANE FAILED —
+  burn did NOT happen"; a paid visit is never faked
 - FRs (feature requests against upstream repos) BELONG TO THE EM: the EM
   triages the need, drafts the FR, and tracks it to closure; posting to the
   upstream repo requires the Owner's explicit approval — drafts only until

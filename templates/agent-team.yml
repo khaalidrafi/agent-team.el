@@ -9,12 +9,21 @@ name: Agent Team Chain
 # gates) -> turn (TG ingest owner-locked -> session restore -> ONE agent
 # segment in the preinstalled harness container -> session scrub+upload ->
 # branch push + rotation advance) -> finalize (auto-merge behind the gate
-# -> Jev judgment -> stall accounting -> SELF-DISPATCH while the objective
-# is open and KILL-SWITCH is OFF). The team decides how many runs the
-# objective takes; the chain stops ONLY on kill switch, objective
-# complete, or tests red; a no-progress streak shifts to backoff, never to
-# failure. Verdicts mirror to the Owner's Telegram (owner-locked, deduped)
-# and this project's Discord channel. GoModel (llmfisher gateway) rides as
+# -> pause-after-TODO review -> Jev judgment -> stall accounting ->
+# SELF-DISPATCH while the objective is open and KILL-SWITCH is OFF). The
+# team decides how many runs the objective takes; the chain stops ONLY on
+# kill switch, objective complete, tests red, or the CHAIN-PAUSE arm; a
+# no-progress streak shifts to backoff, never to failure. Admincraft
+# laws backported 2026-10-22 (khaalidrafi/agent-team.el
+# agent-team/ADMINCRAFT-LESSONS.org): an unknown rotation pointer REFUSES
+# (BLOCKED) instead of silently running a wrong lane; a lane exiting 0
+# with ZERO commits is not progress; #+PAUSE-AFTER-TODO: ON arms a clean
+# halt after every :DELIVERED: TODO so the Owner sees a report per
+# delivery (the Lead clears #+CHAIN-PAUSE to resume); fallback chains
+# name the lane that ACTUALLY ran and never fake a paid visit; mirror
+# failures are warnings, never the job result. Verdicts mirror to the
+# Owner's Telegram (owner-locked, deduped) and this project's Discord
+# channel. GoModel (llmfisher gateway) rides as
 # a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
 # RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
 # override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
@@ -131,6 +140,9 @@ jobs:
   # ONE TURN OF WORK. Reads agent-team/TEAM-CONTROL.org:
   #   #+KILL-SWITCH: ON           -> stop everything, exit green.
   #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, exit green.
+  #   #+CHAIN-PAUSE: ON           -> paused-todo-review: halt cleanly, no
+  #                                  burn (admincraft pause law); the Lead
+  #                                  clears the marker to resume.
   #   #+OBJECTIVE: empty          -> no work defined; gate stays green, skip.
   #   otherwise                   -> run the on-turn member's REAL agent
   #                                  (preinstalled in the harness container)
@@ -144,6 +156,7 @@ jobs:
       seg_result: ${{ steps.seg.outputs.result }}
       tg_chat: ${{ steps.ingest.outputs.chat_id }}   # owner-locked chat id (secret TELEGRAM_OWNER_ID)
       base_sha: ${{ steps.control.outputs.base_sha }} # ai/main before this segment — the Discord chat-mirror diff base
+      commits: ${{ steps.push.outputs.commits }}      # post-turn commit count — EMPTY-SEGMENT law signal
     runs-on: ubuntu-latest
     timeout-minutes: 35
     continue-on-error: true
@@ -166,6 +179,14 @@ jobs:
           # Pre-segment ai/main tip: the Discord chat mirror diffs TEAM-CHAT.org
           # from here to post-merge HEAD to extract THIS segment's GLM chats.
           echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          # GIT HYGIENE (admincraft 3d): a stale LOCAL ref named like a
+          # remote-tracking ref ("origin/ai/main" as a local branch) makes
+          # git log origin/ai/main AMBIGUOUS and can silently show a dead
+          # history. Warn loudly; scripts use explicit refs/remotes/.
+          for SHADOW in $(git for-each-ref --format='%(refname:short)' refs/heads/ \
+              | grep '^origin/' || true); do
+            echo "::warning::local branch '$SHADOW' shadows a remote-tracking ref — delete it (git branch -D '$SHADOW') before trusting git log $SHADOW"
+          done
           if [ "${KILL:-OFF}" = "ON" ]; then
             echo "mode=killed" >> "$GITHUB_OUTPUT"
             exit 0
@@ -177,6 +198,16 @@ jobs:
           # Placeholder objective = nothing specified by the Owner yet.
           if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
             echo "mode=no-objective" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # PAUSE-AFTER-TODO law (admincraft, Owner-invented): while the
+          # pause is armed the chain halts CLEANLY after a delivered TODO —
+          # no segment runs, nothing burns, the Lead reviews and clears
+          # #+CHAIN-PAUSE to resume. Green, not failed.
+          PAUSE=$(grep -oP '^\#\+CHAIN-PAUSE:\s*\K\w+' "$CTL" | head -1 || true)
+          if [ "${PAUSE:-OFF}" = "ON" ]; then
+            echo "mode=paused" >> "$GITHUB_OUTPUT"
+            echo "chain PAUSED (#+CHAIN-PAUSE: ON) — Lead reviews the delivered TODO, clears the marker to resume" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           echo "mode=work" >> "$GITHUB_OUTPUT"
@@ -720,6 +751,15 @@ jobs:
             || { git rebase --abort 2>/dev/null || true; echo "::warning::branch rebase skipped"; }
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
           echo "branch=${TURN_BRANCH:-}" >> "$GITHUB_OUTPUT"
+          # EMPTY-SEGMENT law (admincraft 2c): a lane exiting 0 with ZERO
+          # commits is NOT progress — the commit count is a first-class
+          # chain signal, consumed by finalize's stall accounting.
+          COMMITS=0
+          if git ls-remote --exit-code --heads origin "${TURN_BRANCH:-ai/turn-orphan}" >/dev/null 2>&1; then
+            COMMITS=$(git rev-list --count "origin/ai/main..origin/${TURN_BRANCH}" 2>/dev/null || echo 0)
+          fi
+          echo "commits=${COMMITS:-0}" >> "$GITHUB_OUTPUT"
+          echo "empty-segment check: ${COMMITS:-0} post-turn commit(s) on ${TURN_BRANCH:-no-branch}" >> "$GITHUB_STEP_SUMMARY"
           CTL=agent-team/TEAM-CONTROL.org
           case "${{ steps.control.outputs.seat }}" in
 {{NEXT_MAP}}
@@ -844,6 +884,45 @@ jobs:
             *)
               echo "gate=conflict-branch-kept" >> "$GITHUB_OUTPUT" ;;
           esac
+
+      - name: Pause-after-TODO review (admincraft pause law 2b)
+        id: pause
+        if: always() && steps.gate.outputs.gate == 'green'
+        run: |
+          # Owner-invented in admincraft: #+PAUSE-AFTER-TODO: ON + the
+          # segment diff carrying a :DELIVERED: marker on the board ->
+          # decision=paused-todo-review -> arm #+CHAIN-PAUSE: ON. The next
+          # run halts in mode=paused (clean, no burn); the LEAD reviews
+          # and clears the marker to resume. Effect: the Owner sees a
+          # report after every delivered TODO — no runaway burn, and the
+          # HR review (MEMBERS.org) gets a natural cadence.
+          CTL=agent-team/TEAM-CONTROL.org
+          BASE="${{ needs.turn.outputs.base_sha }}"
+          DELIV=$(git diff "$BASE" HEAD -- agent-team/TODOS.org 2>/dev/null \
+            | grep '^+' | grep -v '^+++' | grep -c ':DELIVERED:' || true)
+          PAUSE_AFTER=$(grep -oP '^\#\+PAUSE-AFTER-TODO:\s*\K\w+' "$CTL" | head -1 || true)
+          if [ "${PAUSE_AFTER:-OFF}" = "ON" ] && [ "${DELIV:-0}" -gt 0 ]; then
+            git config user.name "agent-team-ci"
+            git config user.email "agent-team-ci@users.noreply.github.com"
+            git remote set-url --push origin \
+              "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+            ARMED=no
+            for i in 1 2 3; do
+              git fetch origin ai/main
+              git reset --hard origin/ai/main
+              grep -q '^#+CHAIN-PAUSE:' "$CTL" \
+                && sed -i "s|^#+CHAIN-PAUSE:.*|#+CHAIN-PAUSE: ON|" "$CTL" \
+                || printf '#+CHAIN-PAUSE: ON\n' >> "$CTL"
+              git add "$CTL"
+              git commit -m "ci-chain: pause-after-todo armed (${DELIV} delivered TODO(s) this segment)" || break
+              if git push origin "ai/main"; then ARMED=yes; break; fi
+            done
+            echo "PAUSED_TODOS=${DELIV}" >> "$GITHUB_OUTPUT"
+            echo "pause-after-todo: ${DELIV} delivered TODO(s) — chain armed to pause (push ${ARMED}); Lead clears #+CHAIN-PAUSE to resume" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "pause-after-todo: ${DELIV:-0} delivered TODO(s), PAUSE-AFTER-TODO=${PAUSE_AFTER:-OFF} — no pause" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
 
       - name: Resolve gateway (override -> deployment -> local -> boot — Owner order 2026-10-22)
         if: always()
@@ -1020,6 +1099,16 @@ jobs:
           if [ -z "$OBJECTIVE" ] || echo "$OBJECTIVE" | grep -q "the Owner writes"; then
             DECISION="no-objective"
           fi
+          # Pause law: a freshly armed CHAIN-PAUSE overrides dispatch —
+          # the Owner reviews the delivery first (step above armed it).
+          PAUSE=$(grep -oP '^\#\+CHAIN-PAUSE:\s*\K\w+' "$CTL" | head -1 || true)
+          if [ "${PAUSE:-OFF}" = "ON" ]; then DECISION="paused-todo-review"; fi
+          # EMPTY-SEGMENT law (2c): zero post-turn commits is visible in
+          # the accounting, never silently counted as work.
+          COMMITS="${{ needs.turn.outputs.commits }}"
+          if [ "${COMMITS:-0}" = "0" ] && [ "$OUTCOME" != "merged" ]; then
+            echo "empty segment: lane delivered 0 commits — counted as no-progress" >> "$GITHUB_STEP_SUMMARY"
+          fi
           # Tests red = no agent can even run (turn needs a green suite):
           # chaining would spin red forever. Halt and page the Lead.
           if [ "${{ needs.test.result }}" = "failure" ]; then
@@ -1051,6 +1140,7 @@ jobs:
           echo "- merge: ${OUTCOME} (${{ steps.merge.outputs.branch }})" >> "$SUMMARY"
           echo "- landing gate: ${GATE:-skipped}" >> "$SUMMARY"
           echo "- stall count: ${NEW} (>=4 = 5-min backoff mode)" >> "$SUMMARY"
+          echo "- post-turn commits: ${COMMITS:-?} (0 = empty segment — not progress)" >> "$SUMMARY"
           echo "- chain decision: **${DECISION}** (dispatch HTTP ${DISPATCH_CODE})" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
@@ -1062,6 +1152,7 @@ jobs:
       # output — it only ever carries the verified Owner id). SILENT until
       # the lock is activated by the Lead.
       - name: Mirror chain verdict + GLM chat to Telegram (owner-locked, deduped)
+        continue-on-error: true   # MIRROR LAW (admincraft 2g): a bridge failure is a warning — it must never race a healthy run to "failure"
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
@@ -1175,6 +1266,7 @@ jobs:
           git add "$CTL"
           git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0
           for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
+          exit 0   # MIRROR LAW (2g): even a failed marker push stays a warning, never the job result
 
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
       # Their GLM chats go to their respective Discord channels." This
@@ -1185,6 +1277,7 @@ jobs:
       # HEAD. SILENT until the webhook secret exists. FROM/TO law applies
       # to every mirrored block.
       - name: Mirror verdict + new GLM chats to Discord (silent without secret)
+        continue-on-error: true   # MIRROR LAW (admincraft 2g): bridge failure = warning, never the job result
         env:
           DISCORD_WEBHOOK_TEAM: ${{ secrets.{{DISCORD_SECRET}} }}
           BASE_SHA: ${{ needs.turn.outputs.base_sha }}

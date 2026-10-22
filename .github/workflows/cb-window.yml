@@ -33,8 +33,10 @@ jobs:
     env:
       # GoModel lane (Owner order re-issued 2026-10-21 08:25Z): health-gated
       # use of the llmfisher gateway; down -> lane-fallback, never red.
+      # No static GOMODEL_GATEWAY_URL since the 2026-10-22 resolution law
+      # (this workflow's steps never call the gateway); add the resolve
+      # step if that ever changes.
       GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
-      GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'http://localhost:8080' }}
     steps:
       - uses: actions/checkout@v4
 

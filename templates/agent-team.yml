@@ -15,8 +15,12 @@ name: Agent Team Chain
 # complete, or tests red; a no-progress streak shifts to backoff, never to
 # failure. Verdicts mirror to the Owner's Telegram (owner-locked, deduped)
 # and this project's Discord channel. GoModel (llmfisher gateway) rides as
-# a HEALTH-GATED lane (turn health + finalize Jev; DOWN -> lane-fallback
-# law, never red).
+# a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
+# RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
+# override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
+# boot (last resort = no deployment active). DOWN -> lane-fallback law,
+# never red. Judgment lane is BINARY: Jev via the gateway when it is up,
+# else the chain decides directly (local rules) — no provider chain.
 #
 # This file is LEAD-OWNED: seats never edit it (brief law #10). Re-scaffold
 # it with M-x agent-team-setup-project (refresh = re-run, adoption is
@@ -196,8 +200,56 @@ jobs:
           esac
           echo "$MSG" >> "$SUMMARY"
 
-      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+      - name: Resolve gateway (override -> deployment -> local -> boot — Owner order 2026-10-22)
         if: steps.control.outputs.mode == 'work'
+        env:
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          GOMODEL_GATEWAY_OVERRIDE: ${{ vars.GOMODEL_GATEWAY_URL }}
+        run: |
+          set -u
+          # Owner resolution law (2026-10-22): 1) vars.GOMODEL_GATEWAY_URL
+          # override wins when set; 2) https://ai.khalidrafi.tech — the
+          # deployment; 3) http://localhost:8080 — an already-running
+          # listener; 4) ONLY when nothing answers does the next step boot
+          # gomodel inside the runner (nothing answers == no deployment is
+          # active right now). Every tier uses the ping contract
+          # (agent-team-gateway-ping): GET / -> 404/200 = UP, else down.
+          # The judgment lane is BINARY and rides no provider chain: Jev
+          # via the resolved gateway when it is up, else the chain decides
+          # directly (local rules) — never red.
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          ping() {
+            curl -s -o /dev/null -m 20 -w '%{http_code}' \
+              -H "Authorization: Bearer ${GOMODEL_MASTER_KEY:-}" "$1/" || echo 000
+          }
+          if [ -n "${GOMODEL_GATEWAY_OVERRIDE:-}" ]; then
+            echo "GOMODEL_GATEWAY_URL=${GOMODEL_GATEWAY_OVERRIDE}" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: vars.GOMODEL_GATEWAY_URL override in force (${GOMODEL_GATEWAY_OVERRIDE}) — health step still gates it" >> "$SUMMARY"
+            exit 0
+          fi
+          CODE=$(ping "https://ai.khalidrafi.tech")
+          if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+            echo "GOMODEL_GATEWAY_URL=https://ai.khalidrafi.tech" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: deployment UP at ai.khalidrafi.tech (HTTP $CODE) — in-runner boot skipped" >> "$SUMMARY"
+            exit 0
+          fi
+          REMOTE_CODE="$CODE"
+          CODE=$(ping "http://localhost:8080")
+          if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+            echo "GOMODEL_GATEWAY_URL=http://localhost:8080" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: local listener UP at localhost:8080 (HTTP $CODE) — in-runner boot skipped" >> "$SUMMARY"
+            exit 0
+          fi
+          echo "GOMODEL_GATEWAY_URL=http://localhost:8080" >> "$GITHUB_ENV"
+          echo "GOMODEL_BOOT=boot" >> "$GITHUB_ENV"
+          echo "gateway: nothing answers (ai.khalidrafi.tech HTTP ${REMOTE_CODE}, localhost:8080 HTTP ${CODE}) — next step boots gomodel in-runner (last resort)" >> "$SUMMARY"
+          exit 0
+
+      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+        if: steps.control.outputs.mode == 'work' && env.GOMODEL_BOOT != 'skip'
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
@@ -793,8 +845,56 @@ jobs:
               echo "gate=conflict-branch-kept" >> "$GITHUB_OUTPUT" ;;
           esac
 
-      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+      - name: Resolve gateway (override -> deployment -> local -> boot — Owner order 2026-10-22)
         if: always()
+        env:
+          GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
+          GOMODEL_GATEWAY_OVERRIDE: ${{ vars.GOMODEL_GATEWAY_URL }}
+        run: |
+          set -u
+          # Owner resolution law (2026-10-22): 1) vars.GOMODEL_GATEWAY_URL
+          # override wins when set; 2) https://ai.khalidrafi.tech — the
+          # deployment; 3) http://localhost:8080 — an already-running
+          # listener; 4) ONLY when nothing answers does the next step boot
+          # gomodel inside the runner (nothing answers == no deployment is
+          # active right now). Every tier uses the ping contract
+          # (agent-team-gateway-ping): GET / -> 404/200 = UP, else down.
+          # The judgment lane is BINARY and rides no provider chain: Jev
+          # via the resolved gateway when it is up, else the chain decides
+          # directly (local rules) — never red.
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          ping() {
+            curl -s -o /dev/null -m 20 -w '%{http_code}' \
+              -H "Authorization: Bearer ${GOMODEL_MASTER_KEY:-}" "$1/" || echo 000
+          }
+          if [ -n "${GOMODEL_GATEWAY_OVERRIDE:-}" ]; then
+            echo "GOMODEL_GATEWAY_URL=${GOMODEL_GATEWAY_OVERRIDE}" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: vars.GOMODEL_GATEWAY_URL override in force (${GOMODEL_GATEWAY_OVERRIDE}) — health step still gates it" >> "$SUMMARY"
+            exit 0
+          fi
+          CODE=$(ping "https://ai.khalidrafi.tech")
+          if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+            echo "GOMODEL_GATEWAY_URL=https://ai.khalidrafi.tech" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: deployment UP at ai.khalidrafi.tech (HTTP $CODE) — in-runner boot skipped" >> "$SUMMARY"
+            exit 0
+          fi
+          REMOTE_CODE="$CODE"
+          CODE=$(ping "http://localhost:8080")
+          if [ "$CODE" = "404" ] || [ "$CODE" = "200" ]; then
+            echo "GOMODEL_GATEWAY_URL=http://localhost:8080" >> "$GITHUB_ENV"
+            echo "GOMODEL_BOOT=skip" >> "$GITHUB_ENV"
+            echo "gateway: local listener UP at localhost:8080 (HTTP $CODE) — in-runner boot skipped" >> "$SUMMARY"
+            exit 0
+          fi
+          echo "GOMODEL_GATEWAY_URL=http://localhost:8080" >> "$GITHUB_ENV"
+          echo "GOMODEL_BOOT=boot" >> "$GITHUB_ENV"
+          echo "gateway: nothing answers (ai.khalidrafi.tech HTTP ${REMOTE_CODE}, localhost:8080 HTTP ${CODE}) — next step boots gomodel in-runner (last resort)" >> "$SUMMARY"
+          exit 0
+
+      - name: GoModel gateway up (inside the runner — Owner order 2026-10-22)
+        if: always() && env.GOMODEL_BOOT != 'skip'
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
@@ -855,7 +955,6 @@ jobs:
         if: always()
         env:
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
-          GOMODEL_GATEWAY_URL: ${{ vars.GOMODEL_GATEWAY_URL || 'http://localhost:8080' }}
         run: |
           SUMMARY="$GITHUB_STEP_SUMMARY"
           # Owner order (re-issued 2026-10-21 08:25Z): use gomodel via

@@ -17,7 +17,7 @@ only for what blocks or is his alone.
 - PROGRESS + CLOCK start · progress in :LOGBOOK: · BLOCKED (:OWN: = owner
   ruling) · REVIEW + completion note (invalid without) · BLOCKED never
   terminal · EM-only DONE
-- local agents commit todos edits to ai/main; web models carry the edit in their
+- local agents commit TODOS.org edits to ai/main; web models carry the edit in their
   task branch
 
 ** MODELS
@@ -62,12 +62,6 @@ the box.
   reliability, startup cost) and the box's current load
 - the member id carries both: <provider/model@agent> (e.g.
   groq/qwen3.8-27b@opencode-local)
-- ID FORMAT LAW v2 (admincraft, Owner 2026-10-22 16:54Z): the PROVIDER/
-  prefix belongs ONLY to key-served API lanes (zai/ groq/ openrouter/
-  gomodel/ ...); platform-native bundled brains are BARE model@platform
-  (qwen3.8-flash@qoder, deepseek-v4.1-flash@codebuddy, glm-5.3@codebuddy).
-  Bare provider-less ids stay invalid FOR API LANES. One brain on two
-  bodies = two members (BODY SHAPES OUTPUT)
 - ID FORMAT LAW v2 (admincraft, Owner 2026-10-22 16:54Z): the PROVIDER/
   prefix belongs ONLY to key-served API lanes (zai/ groq/ openrouter/
   gomodel/ ...); platform-native bundled brains are BARE model@platform
@@ -135,17 +129,6 @@ the box.
   pools) get STAGED NEEDS-KEY rows in CANDIDATES.org + a hire/expiry
   DATE in the roster — each row activates the moment its key lands and
   is re-hired or retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
-- HR LEDGER LAW (admincraft 1d): MEMBERS.org is a living HR file, not a
-  roster dump — each hire carries its REASONS (benchmarks, hands-on
-  reviews, AND observed CI performance); PERFORMANCE REVIEWS run at
-  every pause window (segments delivered, gate green first try, stalls,
-  findings) with verdicts KEEP / WATCH / PROBE / RELEASE (2 stalls no
-  finding = WATCH, 3 = RELEASE); record lane-vs-seat honestly — the
-  result line names the lane that ran, HR records the seat
-- EXPIRING-CREDIT LAW (admincraft 1e): expiring credits (promos, trial
-  pools) get STAGED NEEDS-KEY rows in CANDIDATES.org + a hire/expiry
-  DATE in the roster — each row activates the moment its key lands and
-  is re-hired or retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
 
 ** HIRING PROTOCOL
 
@@ -161,20 +144,6 @@ the box.
   type = benched; warn Owner before spend; log everything in HIRING-LOG
 - prompt-fix law: a task type failing across ≥2 capable models indicts the spec
   or task type, not the prompt — re-spec before re-hiring
-- CONSULT LAW (admincraft 1c): every hire is posted to the Owner as a
-  roles-with-members list BEFORE activation, and the list is re-shared
-  after every staffing change — hiring first and consulting after is a
-  violation (Owner: "You should have consulted me once hired")
-- PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY (admincraft 3b): a
-  green probe row hires nobody; a body earns its seat by landing real
-  work behind the landing gate — a quality-96 paid brain can still
-  deliver an empty segment (model tier != delivery)
-- LANDING GATE = THE ONLY QUALITY FLOOR (admincraft 3c): pytest + checks
-  run inside the segment AND at merge; red work never lands, whoever
-  produced it — the gate is what makes benchmaxxing risk survivable
-- root-cause the BODY before firing the BRAIN (admincraft 1d): two
-  different brains failing identically on one body indict the body —
-  bench the lane, not the models, while it is investigated
 - CONSULT LAW (admincraft 1c): every hire is posted to the Owner as a
   roles-with-members list BEFORE activation, and the list is re-shared
   after every staffing change — hiring first and consulting after is a
@@ -210,6 +179,14 @@ the box.
 - evidence per task type, never habit or loyalty; capability outranks tenure
 - effort-match: trivial → junior/sandbox · P0/judgment → senior Web · loops →
   agentic · verification → a model that did NOT author the work
+- effort budget per dispatch: name the size class (S = one sitting, one
+  segment · M = a few segments · L = staged plan) — a task that bursts its
+  class escalates instead of sprawling; overinvesting a small task is a
+  failure mode, not diligence
+- STRENGTH NOTES: after each segment the EM records one line per member in
+  MEMBERS.org — what this member did better or worse than roster average —
+  and scopes future dispatches to PROVEN strengths (BODY SHAPES OUTPUT
+  applied over time)
 - environment-fit: judgment/research → Web · shell work without repo secrets →
   Cloud · repo/machine work → Local · latency-sensitive API calls → groq/ pool
 - one role per concern; overlapping mandates declared, EM names the active one
@@ -464,7 +441,9 @@ clear enough language, well-structured with lists:
 - no consensus voting: proven expert decides, EM final
 - reports are artifacts: branch + sha + suite summary; never pasted code
 - verification is separate: author never grades own green; UNVERIFIED beats
-  heroic DONE; a false green is unforgivable
+  heroic DONE; a false green is unforgivable; a verifier REFUTES — reproduce
+  the claimed fix, run the full suite, try to break the claim; a refutation
+  attempt that fails IS the verification
 - suite accumulation: every task's tests join the permanent suite; the FULL
   suite runs at every merge — scoped-green against a red whole = false green
 - rollback doctrine: UAT fails after merge → revert first, diagnose second; a
@@ -534,6 +513,11 @@ clear enough language, well-structured with lists:
 - persistence: max 3 self-attempts per segment, then STOP → BLOCKED with
   hypotheses + evidence; identical repeated actions = stop signal
 - scratchpad: read the item's :LOGBOOK: before continuing; the file remembers
+- ground truth over confidence: read the touched code paths FIRST, plan
+  short, then code — the suite/run output is the truth, the model's
+  certainty is not (explore -> plan -> code -> verify)
+- prefer the body's specialized tools over generic shell workarounds; a
+  missing tool is a BLOCKED that names the tool, never a fragile chain
 
 ** OUTPUT RULE
 

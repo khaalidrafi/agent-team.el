@@ -48,6 +48,44 @@ project into a team project — adopt, don't rebuild.
 Existing code and conventions outrank the master prompt; the team layer wraps
 the project, never rewrites it.
 
+** VISITING MEMBER pattern (expiring credits — admincraft 3a)
+
+- expiring paid credits (promos, trial pools) hire a VISITING MEMBER
+  OUTSIDE the standing rotation: budget = total credits / remaining
+  days; ONE visiting turn per day; the Lead points #+TURN at the
+  visiting ID and its advance rejoins the rotation where it left
+- keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
+  note); if the platform publishes no balance endpoint, say so in the
+  ledger and calibrate from the Owner's console readings — never
+  invent endpoints
+- a paid lane that fails reports "PAID LANE FAILED — burn did NOT
+  happen"; a paid visit is never faked
+
+** CONSULT LAW (admincraft 1c)
+
+- every hire is posted to the Owner as a roles-with-members list
+  BEFORE activation, and the list is re-shared after every staffing
+  change — never hire first and consult after
+
+** VISITING MEMBER pattern (expiring credits — admincraft 3a)
+
+- expiring paid credits (promos, trial pools) hire a VISITING MEMBER
+  OUTSIDE the standing rotation: budget = total credits / remaining
+  days; ONE visiting turn per day; the Lead points #+TURN at the
+  visiting ID and its advance rejoins the rotation where it left
+- keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
+  note); if the platform publishes no balance endpoint, say so in the
+  ledger and calibrate from the Owner's console readings — never
+  invent endpoints
+- a paid lane that fails reports "PAID LANE FAILED — burn did NOT
+  happen"; a paid visit is never faked
+
+** CONSULT LAW (admincraft 1c)
+
+- every hire is posted to the Owner as a roles-with-members list
+  BEFORE activation, and the list is re-shared after every staffing
+  change — never hire first and consult after
+
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 
 ** agent-team/TODOS.org
@@ -81,6 +119,16 @@ File sketch (produce EXACTLY this skeleton):
   - duties: <what this member OWNS and is accountable for — specific,
     project-derived, not generic>
   - rank: (STAFFING — evidence or intern, with citation)
+
+* HIRES WITH REASONS (HR LEDGER — one line per hire)
+  - <role> — <model@platform>: hired <date> because <capability
+    evidence: benchmark + hands-on review + observed CI performance>
+
+* HR REVIEW (at every pause window — KEEP/WATCH/PROBE/RELEASE)
+  | date | member | segments | gate-first-try | stalls | findings | verdict |
+
+* BURN LEDGER (visiting members / expiring credits)
+  | date | member | segment | credits burned | note |
 #+END_SRC
 
 ** agent-team/CANDIDATES.org

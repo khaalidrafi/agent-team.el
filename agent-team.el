@@ -1126,9 +1126,15 @@ value — the chain's resolve step is the single source of truth.")
             zai/glm-4.7-flash@opencode*)                     NEXT_SEAT=quality-assurance-engineer ;;
             groq/qwen3.8-27b@goose*Release*)                 NEXT_SEAT=release-engineer ;;
             qwen3.8-flash@qoder*)                            NEXT_SEAT=platform-engineer ;;
-            *)                                               NEXT_SEAT=principal-engineer ;;"
+            *)                                               NEXT_SEAT=unknown-rotation-pointer ;;"
   "Rotation case ({{ROTATION_CASE}} default): the engine's proven five-seat
-round.  Re-run setup with overrides when this team's MEMBERS.org differs.")
+round.  Re-run setup with overrides when this team's MEMBERS.org differs.
+ATOMIC RENAME + UNKNOWN-REFUSAL laws (ADMINCRAFT-LESSONS 1b/2a): an
+unknown pointer REFUSES — the segment runner hits its `*)' arm and
+returns BLOCKED (rotation case gap) instead of silently running a wrong
+lane; when renaming a member id, change the #+TURN pointer, the
+turn-control arm and the advance arm in ONE commit; keep legacy ids as
+alias arms during migration.")
 
 (defconst agent-team--next-map-default
   "            principal-engineer)          NEXT=\"groq/qwen3.8-27b@goose (Software Engineer)\" ;;
@@ -1136,8 +1142,12 @@ round.  Re-run setup with overrides when this team's MEMBERS.org differs.")
             quality-assurance-engineer)  NEXT=\"groq/qwen3.8-27b@goose (Release Engineer)\" ;;
             release-engineer)            NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;
             platform-engineer)           NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;
-            *)                           NEXT=\"openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)\" ;;"
-  "Rotation advance map ({{NEXT_MAP}} default): seat -> next #+TURN pointer.")
+            *)                           NEXT=\"${TURN}\" ;;"
+  "Rotation advance map ({{NEXT_MAP}} default): seat -> next #+TURN pointer.
+UNKNOWN-REFUSAL law (ADMINCRAFT-LESSONS 2a): the `*)' arm keeps #+TURN
+unchanged for an unknown seat (NEXT=${TURN}) — never advance to a
+guessed pointer; the run reports BLOCKED so the Lead repairs the map;
+a silently wrong advance was the admincraft no-op-pointer bug.")
 
 (defconst agent-team--segment-runner-default
   "            principal-engineer)
@@ -1250,9 +1260,19 @@ Override when this team's harness bakes different bodies.")
 - control file agent-team/TEAM-CONTROL.org drives everything:
   #+OBJECTIVE / #+OBJECTIVE-STATE (OPEN|COMPLETE) / #+TURN (rotation
   pointer) / #+KILL-SWITCH (ON|OFF) / #+STALL-COUNT (>=4 -> 5-min backoff)
+  / #+PAUSE-AFTER-TODO (ON|OFF) / #+CHAIN-PAUSE (ON|OFF)
 - the team decides how many runs the objective takes; the chain stops
-  ONLY on kill switch, objective complete, or tests red; a no-progress
-  streak shifts to backoff, never to failure
+  ONLY on kill switch, objective complete, tests red, or an armed
+  CHAIN-PAUSE; a no-progress streak shifts to backoff, never to failure
+- admincraft laws (backported 2026-10-22, ADMINCRAFT-LESSONS.org):
+  an unknown rotation pointer REFUSES (BLOCKED) — never a silent wrong
+  lane; a lane exiting 0 with ZERO commits is NOT progress (the commit
+  count is a first-class signal); #+PAUSE-AFTER-TODO: ON arms a clean
+  halt after every :DELIVERED: TODO (mode=paused, the Lead clears
+  #+CHAIN-PAUSE); fallback chains name the lane that ACTUALLY ran and
+  a failed paid attempt reports PAID LANE FAILED — a paid visit is
+  never faked; mirror (Telegram/Discord) failures are warnings, never
+  the job result
 - GoModel gateway (Jev judgment layer, khaalidrafi/llmfisher) rides as a
   HEALTH-GATED lane: turn health step + finalize judgment; the URL is
   RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL

@@ -133,8 +133,9 @@ File sketch (produce EXACTLY this skeleton):
 
 ** agent-team/CANDIDATES.org
 
-Copy the CANDIDATES.ORG inventory section of this prompt VERBATIM —
-this file is the seed; COMMON's MODELS + STAFFING laws point here.
+Land the CURRENT file from the canonical repo — fetch, never copy
+from this prompt (a prompt snapshot goes stale; see PART 3).
+COMMON's MODELS + STAFFING laws point here.
 
 ** agent-team/ROSTER.org
 

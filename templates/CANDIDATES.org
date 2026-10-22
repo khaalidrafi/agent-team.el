@@ -180,6 +180,16 @@
     https://api.aimlapi.com/v1 (model id minimax/minimax-m3.1-flash)
     [free-tier expiry: none dated — standard free-tier caps; key needs
     Owner signup; VERIFY the free flag in console at claim time]
+  - MiniMax platform direct (platform.minimax.io): official $0.15/$0.60
+    (cache $0.015) but new-user TRIAL CREDITS cover first runs (size
+    varies; bonus credits can expire in days — claim-and-use, never
+    bank); keys: Subscription sk-cp- (M Plan) vs PAYG sk-api-; either
+    key works on api.minimax.io/v1 (OpenAI-shape) AND the
+    api.minimax.io/anthropic compat endpoint (verified 2026-10-22)
+    [free-tier expiry: trial credits DATED BY GRANT — often days]
+  - Puter gateway (third-party, optional): M3.1 Flash reachable via
+    puter.js free tier — unverified SLA, third-party middleman
+    [free-tier expiry: none dated — opportunistic, never load-bearing]
   - DeepSeek official (api.deepseek.com, id deepseek-flash; 1M ctx/384K out,
     2500 concurrent): off-peak $0.15/$0.60 (cache-hit $0.003), peak 2x at
     01–04 & 06–10 UTC Mon–Fri; Search & Fetch server tools FREE until

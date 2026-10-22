@@ -613,11 +613,30 @@ file-target sketches must stay byte-level."
         (t line)))
      (split-string text "\n") "\n")))
 
-(defun agent-team--seed-block ()
-  "The CANDIDATES.org template verbatim, newline-terminated — the seed
-ships inside one #+BEGIN_SRC org block in the assembled prompt."
-  (let ((seed (agent-team--template "CANDIDATES.org")))
-    (if (string-suffix-p "\n" seed) seed (concat seed "\n"))))
+(defun agent-team--candidates-part ()
+  "PART 3 of the teamify prompt: land agent-team/CANDIDATES.org in the
+repo by FETCHING the canonical file (khaalidrafi/agent-team.el
+templates/CANDIDATES.org @ ai/main). Never inline a snapshot in chat —
+a prompt copy goes stale; the fetched file is current. Mirrored by
+scripts/build_teamify_prompt.py candidates_part()."
+  (concat
+   "  COMMON's MODELS + STAFFING laws point at agent-team/CANDIDATES.org —\n"
+   "  a fresh teamify must not dangle.\n\n"
+   "#+BEGIN_SRC bash\n"
+   "mkdir -p agent-team\n"
+   "curl -fsSL https://raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/templates/CANDIDATES.org \\\n"
+   "  -o agent-team/CANDIDATES.org\n"
+   "grep -m1 '^#+TITLE: CANDIDATES.org' agent-team/CANDIDATES.org\n"
+   "grep -m1 '^#+EXPIRY-LAW:' agent-team/CANDIDATES.org\n"
+   "wc -l agent-team/CANDIDATES.org   # hundreds of lines expected\n"
+   "#+END_SRC\n\n"
+   "  - sanity greps fail, or curl is unavailable -> WebFetch the GitHub\n"
+   "    blob page (khaalidrafi/agent-team.el @ ai/main,\n"
+   "    templates/CANDIDATES.org) and write the file from that view\n"
+   "  - still failing -> STOP, name it, ask the Owner — NEVER proceed with\n"
+   "    a dangling pointer (COMMON would point at nothing)\n"
+   "  - the file is inventory, not endorsement: staffing filters per\n"
+   "    COMMON; commit the file in the teamify commit (ai/teamify)\n"))
 
 ;;;###autoload
 (defun agent-team-teamify-prompt (&optional repo project not-touch pat fresh)
@@ -688,12 +707,12 @@ the prompt only — never stored in files/commits/board (Owner order
                   " templates/COMMON.org; changes land there first, teams"
                   " receive them via TEAM UPDATE)\n\n"
                   (agent-team--strip-template-header manual) "\n"
-                  "* PART 3 — CANDIDATES SEED: copy the org block below VERBATIM"
-                  " into agent-team/CANDIDATES.org (COMMON's MODELS + STAFFING"
-                  " laws point there — a fresh teamify must not dangle)\n\n"
-                  "#+BEGIN_SRC org\n"
-                  (agent-team--seed-block)
-                  "#+END_SRC\n"))
+                  "* PART 3 — CANDIDATES FILE: land agent-team/CANDIDATES.org"
+                  " in the repo (never inline it in chat — one canonical copy"
+                  " lives in khaalidrafi/agent-team.el templates/CANDIDATES.org"
+                  " @ ai/main; a snapshot inside a prompt goes stale, so fetch"
+                  " the file CURRENT at teamify time)\n\n"
+                  (agent-team--candidates-part)))
          (buffer (get-buffer-create "*agent-team prompt*")))
     (with-current-buffer buffer
       (erase-buffer)
@@ -1267,10 +1286,10 @@ Override when this team's harness bakes different bodies.")
 - admincraft laws (backported 2026-10-22, ADMINCRAFT-LESSONS.org):
   an unknown rotation pointer REFUSES (BLOCKED) — never a silent wrong
   lane; a lane exiting 0 with ZERO commits is NOT progress (the commit
-  count is a first-class signal); PAUSE-AFTER-TODO is OPT-IN (default
-  OFF — chains continue across multiple TODOs; an explicit Owner order
-  arms a clean halt after a :DELIVERED: TODO, mode=paused, the Lead
-  clears #+CHAIN-PAUSE); fallback chains name the lane that ACTUALLY ran and
+  count is a first-class signal); PAUSE-AFTER-TODO DEFAULTS ON (a clean
+  halt after a :DELIVERED: TODO, mode=paused, the Lead clears
+  #+CHAIN-PAUSE; a missing key pauses — fail-safe; an explicit Owner
+  order may set OFF for a continuous multi-TODO run); fallback chains name the lane that ACTUALLY ran and
   a failed paid attempt reports PAID LANE FAILED — a paid visit is
   never faked; mirror (Telegram/Discord) failures are warnings, never
   the job result

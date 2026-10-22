@@ -17,10 +17,10 @@ name: Agent Team Chain
 # laws backported 2026-10-22 (khaalidrafi/agent-team.el
 # agent-team/ADMINCRAFT-LESSONS.org): an unknown rotation pointer REFUSES
 # (BLOCKED) instead of silently running a wrong lane; a lane exiting 0
-# with ZERO commits is not progress; PAUSE-AFTER-TODO is OPT-IN (default
-# OFF — chains continue across multiple TODOs; an explicit Owner order
-# arms a clean halt after a :DELIVERED: TODO, the Lead clears
-# #+CHAIN-PAUSE to resume); fallback chains
+# with ZERO commits is not progress; PAUSE-AFTER-TODO DEFAULTS ON — a
+# clean halt after a :DELIVERED: TODO (mode=paused, the Lead clears
+# #+CHAIN-PAUSE to resume); an explicit Owner order may set OFF for a
+# continuous multi-TODO run; fallback chains
 # name the lane that ACTUALLY ran and never fake a paid visit; mirror
 # failures are warnings, never the job result. Verdicts mirror to the
 # Owner's Telegram (owner-locked, deduped) and this project's Discord
@@ -890,21 +890,22 @@ jobs:
         id: pause
         if: always() && steps.gate.outputs.gate == 'green'
         run: |
-          # Owner-invented in admincraft; OPT-IN since the Owner refinement
-          # 2026-10-22: #+PAUSE-AFTER-TODO: ON (explicit Owner order only —
-          # default OFF, chains continue across multiple TODOs) + the
-          # segment diff carrying a :DELIVERED: marker on the board ->
-          # decision=paused-todo-review -> arm #+CHAIN-PAUSE: ON. The next
-          # run halts in mode=paused (clean, no burn); the LEAD reviews
-          # and clears the marker to resume. Effect: an Owner-chosen
-          # report cadence — no runaway burn, and the HR review
-          # (MEMBERS.org) gets a natural cadence.
+          # Owner-invented in admincraft; DEFAULT ON per Owner order
+          # 2026-10-22 17:28Z ("PAUSE AFTER TODO MUST BE DEFAULT"): a
+          # MISSING key pauses — fail-safe against runaway burn. The
+          # 17:19Z capability stands as the override: an explicit
+          # #+PAUSE-AFTER-TODO: OFF runs the chain CONTINUOUSLY across
+          # multiple TODOs (no halting between deliveries). With ON (or
+          # missing) + the segment diff carrying a :DELIVERED: marker on
+          # the board -> decision=paused-todo-review -> arm
+          # #+CHAIN-PAUSE: ON. The next run halts in mode=paused (clean,
+          # no burn); the LEAD reviews and clears the marker to resume.
           CTL=agent-team/TEAM-CONTROL.org
           BASE="${{ needs.turn.outputs.base_sha }}"
           DELIV=$(git diff "$BASE" HEAD -- agent-team/TODOS.org 2>/dev/null \
             | grep '^+' | grep -v '^+++' | grep -c ':DELIVERED:' || true)
           PAUSE_AFTER=$(grep -oP '^\#\+PAUSE-AFTER-TODO:\s*\K\w+' "$CTL" | head -1 || true)
-          if [ "${PAUSE_AFTER:-OFF}" = "ON" ] && [ "${DELIV:-0}" -gt 0 ]; then
+          if [ "${PAUSE_AFTER:-ON}" = "ON" ] && [ "${DELIV:-0}" -gt 0 ]; then
             git config user.name "agent-team-ci"
             git config user.email "agent-team-ci@users.noreply.github.com"
             git remote set-url --push origin \
@@ -923,7 +924,7 @@ jobs:
             echo "PAUSED_TODOS=${DELIV}" >> "$GITHUB_OUTPUT"
             echo "pause-after-todo: ${DELIV} delivered TODO(s) — chain armed to pause (push ${ARMED}); Lead clears #+CHAIN-PAUSE to resume" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "pause-after-todo: ${DELIV:-0} delivered TODO(s), PAUSE-AFTER-TODO=${PAUSE_AFTER:-OFF} — no pause" >> "$GITHUB_STEP_SUMMARY"
+            echo "pause-after-todo: ${DELIV:-0} delivered TODO(s), PAUSE-AFTER-TODO=${PAUSE_AFTER:-ON} (OFF = Owner's continuous-run override) — no pause" >> "$GITHUB_STEP_SUMMARY"
           fi
           exit 0
 

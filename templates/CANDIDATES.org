@@ -600,10 +600,19 @@
      Celeron; resident seat excluded; GPU rental is the real cost).
      Ollama :cloud free tier BURNED 2026-10-22 23:59 UTC (probe found
      ~6h left); then $0.15/$0.60.
-  9. XPLabs — UNVERIFIED: platform.xplabs.ai lists MiniMax (10 models)
-     but no M3.1 Flash row visible; the "on Ultra: Free, rate limited"
-     promo covers GPT-6 Luna/Jev/Clef Flash rows — no MiniMax free row
-     (acc. 2026-10-22). Re-probe after any Owner signup.
+  9. XPLabs — OWNER-SIGNUP DONE + KEY LIVE 2026-10-22 (Experiential Labs:
+     xplabs.ai -> experientiallabs.ai; OpenAI-compatible,
+     api.experientiallabs.ai/v1, Bearer xpl_ key). Authed /v1/models:
+     318 models LISTED — CONFIRMS no M3.1 Flash row (newest MiniMax
+     there = minimax-m3); ultra-free promo rows present (gpt-6-luna,
+     clef-flash, jev-latest). Serving BLOCKED pending XPLabs' $1 card
+     verification: chat call answers insufficient_quota/card_required
+     ("everything else, including your own provider keys (BYOK) and
+     trace uploads, works now"). Wired: XPLABS_API_KEY on both chain
+     repos' Actions secrets + gateway leg declared (llmfisher xplabs:
+     clef-flash, qwen3.8-27b, gpt-6-luna). Lane self-activates on card
+     verification; free status UNVERIFIED until first live call. DATA
+     POLICY: clef-flash ZDR + no-training; jev-latest NEITHER.
   10. KiosAPI — UNVERIFIED: kiosapi.com is a 40+ provider
       OpenAI-compatible gateway, key from account; /models behind
       sign-in. Older public posts show free $0-model selection incl.

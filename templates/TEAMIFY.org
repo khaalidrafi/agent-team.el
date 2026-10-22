@@ -183,3 +183,13 @@ File sketch (produce EXACTLY this skeleton):
   reads the Telegram mirror verbatim
 - the exact header line drives the Telegram mirror and the live
   viewer; never reformat another member's entry
+
+** agent-team/DOE-UPDATES.org
+
+Cross-team inbox from the Director of Engineering (COMMON's DOE UPDATES
+law pins the section format and the EM's ACK duty). Create it with the
+title line only — updates arrive as sections; empty is a healthy state.
+
+#+BEGIN_SRC org
+#+TITLE: DOE-UPDATES.org — cross-team inbox from the Director of Engineering
+#+END_SRC

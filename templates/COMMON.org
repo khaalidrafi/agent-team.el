@@ -257,6 +257,34 @@ the box.
     files, so work resumes without replay when he answers)
   - a gate is never a chat ping-pong: one batched message, file-backed, resumable
 
+** DOE UPDATES (Director of Engineering -> other teams' EMs)
+
+Cross-team mail travels in REPO FILES (the board law owns why; chat is not
+an artifact). The DoE lands a TEAM UPDATE — MSG-TYPE TEAM-UPDATE with the
+MESSAGE STANDARD header (FROM/TO model@platform, REPO, DEPS, PRIORITY
+P0|P1|P2 · RISK reads|writes|both) — by appending a section to the TARGET
+team's agent-team/DOE-UPDATES.org on the team's main branch:
+
+#+BEGIN_SRC org
+* TEAM-UPDATE #<n> — <target-team>/<scope>: <title>
+  :FROM: Director of Engineering — <model@platform>
+  :TO: <role> EM — <model@platform>
+  REPO: <the target repo>
+  DEPS: <no dep = no DEPS line>
+  PRIORITY: P1 · RISK: reads
+  <facts, each with its evidence (commit, probe, file)>
+  ASK: <one concrete ask; deadline if it has one>
+  ACK: <EM appends: date — disposition — never the DoE>
+#+END_SRC
+
+- the EM reads DOE-UPDATES.org beside the board at turn start; MISSING or
+  EMPTY = no cross-team mail, never a STOP
+- the ACK line is the closure evidence: appended by the EM, and the section
+  is append-only from then on — a new message is a new section, #n counts
+  per target team and is never renumbered
+- a TEAM UPDATE is correspondence, never a review write-up (segregation
+  law): findings go in the files they correct, the section POINTS at them
+
 ** JEV (TypeSafe System One decision model — cheap judgment layer)
 
 - load the typesafe-ai skill first: https://github.com/typesafe-ai/skills — it
@@ -543,7 +571,9 @@ clear enough language, well-structured with lists:
 ** SETUP (session start, in order)
 
 AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
-TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner pastes back)
+TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org
+(Owner pastes back) → agent-team/DOE-UPDATES.org (empty = no cross-team
+mail, never a STOP)
 
 - any file missing/empty → STOP, name it, wait — never proceed on assumption
 - STATE.org: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW / DEFERRED / BLOCKED /

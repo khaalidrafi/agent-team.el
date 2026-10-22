@@ -53,7 +53,8 @@
     "dynamic" by design; treat every id here as revocable without notice]
   - goose (provider-agnostic, BYO brain) · omp (PROVEN headless 2026-10-21:
     `omp -p`, v18.12.5, MIT) · pi · cline · dsh — Owner order 2026-10-21:
-    full profiles in "Bodies — 2026 landscape (dsh · pi · cline)" below
+    full profiles in "Bodies — 2026 landscape (dsh · pi · cline)" below ·
+    mcode (MiniMax Code CLI — authed 2026-10-22, profile below)
   - cursor: cursor-agent · cursor-tab · github-copilot (auto-model)
   - codebuddy: same models as WorkBuddy.ai cloud (Owner, 2026-10-20)
     [free-tier expiry: none published]
@@ -99,6 +100,30 @@
     TRUE — set it explicitly off for accountable seats. CI-capable body with
     native ACP; free rotating models = intern-grade fuel until measured.
 
+  - mcode — MiniMax Code CLI (npm @minimax-ai/code 0.6.12; Node 22.19+/24–26).
+    AUTH LIVE 2026-10-22: device OAuth (account.minimax.io, client
+    mcode-public, scope agent.default, audience agent-backend) completed via
+    the Lead's stateless PKCE-terminating proxy — the sandbox kills background
+    processes between calls, and the device grant binds redemption to the
+    living process, so a plain `mcode login` can never survive; the proxy
+    holds the verifier file-side and redeems on any later short-lived call
+    (scripts/mcode_oauth_proxy.py + mcode_login_driver.py). Credential shape
+    (reverse-engineered): ~/.minimax/auth/prod/en/mcode-public/auth.json is a
+    RECORDS MAP {schemaVersion:1, records:{"com.minimax.mcode.oauth.prod.en\0<sha256(authHome)\0mcode-public b64url>":
+    record}} + auth-state.json (schemaVersion 2, status authenticated);
+    record = accessToken/refreshToken/tokenType "Bearer"/clientId/scopes/
+    audience/expiresAtMs/generation/loginEpoch. Refresh-token grant needs NO
+    PKCE → CI-SEEDABLE: seal auth.json as secret MCODE_AUTH_JSON, CI writes
+    both files and runs mcode normally (refreshes hit the real endpoint).
+    Server device-code TTL is 300s (the CLI prints 600 — it misreads the
+    non-standard "expired_in" field; do not trust its printed window).
+    Headless: `mcode exec` (PROVEN 2026-10-22: minimax/minimax-m3.1-flash
+    answered end-to-end); TUI `mcode`; `mcode acp`; `mcode init .` writes
+    AGENTS.md. Free tier: M Plan Free — LIMITED M3.1 Flash, NO API key on
+    Free (OAuth credential only; paid M Plan is the upgrade path).
+    [free-tier expiry: none published — "limited" quota, undated; treat as
+    revocable without notice]
+
   Benchmarks note: no published dsh numbers; Cline/pi/OpenCode/Goose are
   harnesses — their score IS the model choice (rank the PAIR).
 
@@ -141,6 +166,39 @@
     kimi-k2 (unstable historically) [free-tier expiry: none published]
   - tokenharbor/ — deepseek-v4.1-flash:free
     [free-tier expiry: NONE DATED, PROMO — can vanish; emergency-only]
+  - nvidia-nim direct (free key via build.nvidia.com; phone verify):
+    deepseek-ai/deepseek-v4.1-flash @ https://integrate.api.nvidia.com/v1 —
+    FREE endpoint, ~40 RPM, no per-token billing; 40+ other open models
+    behind the same key
+    [free-tier expiry: none dated — capacity-based free tier, "free to
+    prototype"; key needs Owner signup]
+  - novita direct: DeepSeek V4.1 Flash + open catalog; signup grants
+    $100 Sandbox credits valid 90 days from claim (GitHub/Google/HF OAuth)
+    [free-tier expiry: DATED BY CREDITS — claim date + 90d; referral adds
+    $10+$10]
+  - aimlapi direct: minimax-m3.1-flash FREE per their own Oct 2026 table @
+    https://api.aimlapi.com/v1 (model id minimax/minimax-m3.1-flash)
+    [free-tier expiry: none dated — standard free-tier caps; key needs
+    Owner signup; VERIFY the free flag in console at claim time]
+  - DeepSeek official (api.deepseek.com, id deepseek-flash; 1M ctx/384K out,
+    2500 concurrent): off-peak $0.15/$0.60 (cache-hit $0.003), peak 2x at
+    01–04 & 06–10 UTC Mon–Fri; Search & Fetch server tools FREE until
+    2026-11-01 — PAID lane
+    [free-tier expiry: the Search+Fetch freebie DATED 2026-11-01]
+  - GMI Cloud direct (Owner-asked 2026-10-22): MiniMaxAI/MiniMax-M3.1-Flash
+    @ https://api.gmi-serving.com/v1 — $0.15/$0.60, cached $0.015, FP8,
+    1,048,576 ctx — PAID ONLY (verified 2026-10-22: no free credits for
+    M3.1 Flash; their MiniMax Week free campaign for M3 ended 2026-09-06)
+    [free-tier expiry: n/a — paid]
+  - OpenRouter direct additions (owner key, PAID): deepseek/
+    deepseek-v4.1-flash-1017 $0.15/$0.60 FLAT — beats official peak 2x ·
+    deepseek/deepseek-v4.1-flash:batch $0.05/$0.15 — cheapest V4.1 Flash
+    found anywhere (async/batch lanes) · minimax/minimax-m3.1-flash
+    $0.15/$0.60 — the :free variant ENDED 2026-10-22 (verified live probe
+    of /api/v1/models; do NOT re-add without a fresh probe)
+  - MiniMax M3.1 Flash open weights land 2026-10-23 → expect cheap/free
+    listings on SiliconFlow/Novita/ModelScope within days (watch lane;
+    SiliconFlow already carries M3 at $0.30/$1.20)
   - zai/ — glm-4.5 · glm-4.6v · glm-4.7-flash
     [free-tier expiry: none published on the GLM-4.7-Flash free API tier;
     MIT open weights make it low-risk even so]

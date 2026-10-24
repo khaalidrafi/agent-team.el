@@ -93,6 +93,12 @@ the box.
   as part of ranking, no external command needed — waiting to be told is a
   failure; ranking rows ≠ dispatching rows: ranking is an EM desk job over
   the candidate list, it never fans a subagent out across every model
+- THE HARNESS IS NOT A CANDIDATE (Owner 2026-10-24: "It should just refer to
+  CANDIDATES.org and not go beyond"): your own chat/subagent/sandbox lanes
+  are WORKERS, never roster rows — never roster them, never probe them for
+  staffing, no lane introspection reports; the roster is DONE the moment it
+  draws from agent-team/CANDIDATES.org rows — anything not in that file,
+  including your own runtime, is out of scope
 - every rank entry = evidence RESEARCHED NOW, actually performed, not assumed:
   run BATCHED web searches (multiple models per query round, never one model at
   a time) — patterns: "<model> LMArena ELO 2026", "<model> benchmark

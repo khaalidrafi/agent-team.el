@@ -591,6 +591,22 @@ clear enough language, well-structured with lists:
 - correction duty: new evidence beats what you already wrote — fix the
   artifact and state what changed; defending a stale claim to save face is
   a worse defect than the original error
+- ACCESS CLAIMS ARE PROBED — DISCRIMINATING, not existence (Owner order
+  2026-10-24, after a Lead claimed "access to ALL GLM models in its sandbox"):
+  * "I can access <models>" is a claim about reality — prove it with a probe
+    that COULD fail: one burn call per claimed model AND a NEGATIVE CONTROL
+    (a deliberately fake id must FAIL; if the fake id also returns 200, the
+    endpoint silently falls back and NOTHING about model access is proven)
+  * read the served identity back: ask the model to name itself AND read the
+    response's model field — identical answers/fields across different
+    requested ids = ONE backend, not many
+  * report access as a table: requested id → HTTP → resp.model → verdict
+    (routed / FELL BACK / failed); no table, no claim
+  * a lane that accepts arbitrary ids without erroring is NOT a catalog;
+    team model access = the WIRED lanes (gateway config rows + context-pack
+    keys, each with its own caps), never "everything the vendor lists"
+    (OBSERVED 2026-10-24: a chat lane accepted 5/5 ids — including a
+    fabricated one — all answered by the same backend)
 
 ** WORK PROOF (anti-laziness — effort is shown, never asserted)
 

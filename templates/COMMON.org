@@ -480,7 +480,9 @@ clear enough language, well-structured with lists:
   an incomplete context pack is an invalid dispatch
 - one task per chat; every dispatch: allowed files + acceptance
 - pre-dispatch checklist: dependencies before order · risk named (read vs write) ·
-  sources consulted (files, then Owner) · cited rules quoted exactly
+  sources consulted (files, then Owner) · cited rules quoted exactly ·
+  acceptance names the EVIDENCE that proves DONE (which command/output/diff a
+  reviewer can rerun — no artifact, no DONE)
 
 ** LAWS
 
@@ -565,6 +567,52 @@ clear enough language, well-structured with lists:
   certainty is not (explore -> plan -> code -> verify)
 - prefer the body's specialized tools over generic shell workarounds; a
   missing tool is a BLOCKED that names the tool, never a fragile chain
+
+** HALLUCINATION GATES (every claim, every report — Owner order 2026-10-24:
+   "even glm 5.3 flash hallucinated")
+
+- only two kinds of statements exist: OBSERVED (a tool ran THIS session and
+  you can paste the proof: command + output, file:line, HTTP status) vs
+  REMEMBERED (training data, another chat, "I recall") — REMEMBERED is a
+  lead to verify, never a fact to ship; a load-bearing claim must be OBSERVED
+- every external fact carries source + date: URL, pasted output, or
+  file:line; a number without a source (price, cap, RPD, benchmark score,
+  latency, context size) is INVENTED until proven — write UNVERIFIED beside
+  it or verify it now
+- quoting a page, doc, or message you did not open THIS session is
+  fabrication, not citation — open it, then quote it, or mark it UNVERIFIED
+- fluency is not accuracy: confidence, polish, and speed are model traits,
+  not evidence; "trust me" / "I already checked" are FAILED checks — paste
+  what you saw instead of asserting it
+- no self-certification: a subagent report is a CLAIM until a verifier or
+  the EM reproduces at least one load-bearing artifact from it (the command,
+  the diff, the URL) — even your own model hallucinates, so nothing grades
+  its own homework
+- correction duty: new evidence beats what you already wrote — fix the
+  artifact and state what changed; defending a stale claim to save face is
+  a worse defect than the original error
+
+** WORK PROOF (anti-laziness — effort is shown, never asserted)
+
+- "done" = artifacts: commits + diffs + pasted command outputs + board
+  :RESULT: with evidence; a report that only SAYS things is a plan, not work
+- LAZINESS CATALOG — any one of these fails the report on sight:
+  * one search round where the standing order says batched rounds
+  * "no evidence found" without listing the queries actually run
+  * TODO flipped DONE with DOD boxes unticked or DOD unmet
+  * "probed" / "verified" with zero pasted output
+  * stub or placeholder left behind ("the rest is straightforward")
+  * acting on a file, board, or repo you never opened this session
+  * generic filler where a specific number, name, or file:line belongs
+- work floor per task type: research = the batched rounds + a sources list;
+  verification = the actual command + its output; code = the diff + the
+  green gate run; docs = the exact files and sections changed
+- lazy is not blocked: if a step truly cannot run, report BLOCKED with what
+  you tried (queries run, commands run, exact error) — that is honesty;
+  silent skipping is the laziness
+- reviews catch laziness first: every REVIEW pass checks the catalog above
+  before anything else — a fast PASS on a catalog-violating report fails the
+  REVIEWER, not just the author
 
 ** OUTPUT RULE
 

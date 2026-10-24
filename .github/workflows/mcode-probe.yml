@@ -1,0 +1,87 @@
+name: Mcode Token Probe
+
+# Answers: is the EXISTING sealed MCODE_AUTH_JSON still alive?
+# Seeds the credential from this repo's own secret, checks expiry,
+# refreshes via the MiniMax OAuth endpoint if stale, re-seals the fresh
+# credential to the team repos. Verdicts only — no token material in logs.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: mcode-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Seed + probe + refresh-if-stale + re-seal
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          MCODE_AUTH_JSON: ${{ secrets.MCODE_AUTH_JSON }}
+        run: |
+          python3 -m pip install --quiet pynacl
+          python3 - <<'PY'
+          import base64, json, os, time, urllib.request, urllib.parse
+          from nacl import encoding, public
+
+          cred = json.loads(os.environ["MCODE_AUTH_JSON"])
+          now = int(time.time() * 1000)
+          exp = cred.get("expiresAtMs") or cred.get("expires_at_ms") or 0
+          at = cred.get("accessToken") or cred.get("access_token") or ""
+          rt = cred.get("refreshToken") or cred.get("refresh_token") or ""
+          print(f"cred shape: keys={sorted(cred.keys())}")
+          print(f"access-token present: {bool(at)} | refresh-token present: {bool(rt)}")
+          print(f"expiresAtMs: {exp} | now: {now} | delta_min: {(exp-now)//60000}")
+
+          def seal_all(val):
+              pat = os.environ["GH_PAT"]
+              def api(method, url, payload=None):
+                  req = urllib.request.Request(url, method=method,
+                      data=json.dumps(payload).encode() if payload is not None else None)
+                  req.add_header("Authorization", f"Bearer {pat}")
+                  req.add_header("Accept", "application/vnd.github+json")
+                  if payload is not None:
+                      req.add_header("Content-Type", "application/json")
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      body = r.read().decode()
+                      return json.loads(body) if body else None
+              for repo in ("khaalidrafi/docneural", "khaalidrafi/admincraft",
+                           "khaalidrafi/agent-team.el"):
+                  pk = api("GET", f"https://api.github.com/repos/{repo}/actions/secrets/public-key")
+                  box = public.SealedBox(public.PublicKey(pk["key"].encode(), encoding.Base64Encoder()))
+                  enc = box.encrypt(val.encode())
+                  api("PUT", f"https://api.github.com/repos/{repo}/actions/secrets/MCODE_AUTH_JSON",
+                      {"encrypted_value": base64.b64encode(enc).decode(), "key_id": pk["key_id"]})
+                  print(f"RESEALED MCODE_AUTH_JSON -> {repo}")
+
+          if at and exp > now + 120000:
+              print("VERDICT: ALIVE — access token still valid; no re-auth needed")
+          elif rt:
+              data = urllib.parse.urlencode({
+                  "grant_type": "refresh_token", "client_id": "mcode-public",
+                  "refresh_token": rt}).encode()
+              req = urllib.request.Request("https://account.minimax.io/oauth2/token",
+                                           data=data, method="POST")
+              req.add_header("Content-Type", "application/x-www-form-urlencoded")
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      tok = json.loads(r.read().decode())
+                  nat = tok.get("access_token")
+                  if not nat:
+                      print(f"VERDICT: DEAD — refresh rejected: {tok.get('error', tok)}")
+                  else:
+                      cred["accessToken"] = nat
+                      if tok.get("expires_in"):
+                          cred["expiresAtMs"] = int(time.time()*1000) + int(tok["expires_in"])*1000
+                      if tok.get("refresh_token"):
+                          cred["refreshToken"] = tok["refresh_token"]
+                      seal_all(json.dumps(cred))
+                      print("VERDICT: REFRESHED+RESEALED — existing session lived; no device click needed")
+              except urllib.error.HTTPError as e:
+                  print(f"VERDICT: DEAD — refresh HTTP {e.code}; device re-auth needed")
+          else:
+              print("VERDICT: DEAD — no refresh token; device re-auth needed")
+          PY

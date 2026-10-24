@@ -10,6 +10,18 @@
         minimax-m3.1-flash, free through 2026-10-25) are RE-HIRE DATES — the
         seat using one must carry a fallback that is independent of the promo.
 
+#+BURN-LAW: Owner order 2026-10-24 17:01Z — "burn Minimax m3.1 to the ground,
+        according to its performance!" EVERY minimax-m3.1-flash lane in this
+        inventory is PERSONA NON GRATA: no hire, no probe, no fallback, no
+        staged-needs-key revival, superseding every earlier order that named
+        M3.1 (incl. the 2026-10-22 consume-ALL mandate and the 2026-10-20
+        free-through-10-25 promo). Evidence class: hallucination weak spot
+        (mandate note below), openrouter delist at source 2026-10-22 18:16Z,
+        promo already dying 10-25. The mcode body's only free brain WAS M3.1
+        Flash -> the mcode lane is DORMANT and MCODE_AUTH_JSON sealing is
+        CANCELLED. minimax-m2 and minimax-m3 are SEPARATE models - m2 stays
+        hireable inventory; m3 remains undelivered vapor.
+
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
     [free-tier expiry: none published; agentic features membership-gated]
@@ -33,9 +45,10 @@
     gpt-5.5/5.4 [closed] · grok-4.7 · step-5-preview · deepseek-v4.1-flash
     [free-tier expiry: none published]
   - MiniMax Agent: minimax-m3.1-flash · minimax-m3
-    [free-tier expiry: minimax-m3.1-flash FREE ONLY THROUGH 2026-10-25 (Owner
-    order 2026-10-20) — a dated promo with five days of runway from this file's
-    date; minimax-m3: n/a (no delivered free tier, weights still "promised")]
+    [BURNED 2026-10-24 per BURN-LAW — was: minimax-m3.1-flash FREE ONLY
+    THROUGH 2026-10-25 (Owner order 2026-10-20), a dated promo; the Owner
+    pulled the trigger a day early on performance. minimax-m3: n/a (no
+    delivered free tier, weights still "promised")]
   - CodeBuddy: SAME model list as the WorkBuddy.ai cloud pool — one pool, two
     harnesses (Owner confirmation 2026-10-20; both entries in this file kept
     in sync from now on) [free-tier expiry: none published]
@@ -114,6 +127,11 @@
     Settings -> API Keys (one console action).
 
   - mcode — MiniMax Code CLI (npm @minimax-ai/code 0.6.12; Node 22.19+/24–26).
+    [LANE DORMANT 2026-10-24 per BURN-LAW: the only M-Plan-Free brain was
+    minimax-m3.1-flash, now burned. Auth remains LIVE and the PKCE proxy
+    scripts stay archived; MCODE_AUTH_JSON CI seeding is CANCELLED. Wake
+    condition: MiniMax serves a replacement brain on Free, or an Owner-paid
+    key arrives with its own Owner word.]
     AUTH LIVE 2026-10-22: device OAuth (account.minimax.io, client
     mcode-public, scope agent.default, audience agent-backend) completed via
     the Lead's stateless PKCE-terminating proxy — the sandbox kills background
@@ -404,7 +422,8 @@
   - nemotron-3-super-120b@a12b — vendor SWE-bench Verified 60.5 · TB-Hard 25.8
     (llm-stats 2026-03-10); AA intelligence 13, TB2.1 38.6, and AA marks it
     DEPRECATED (acc 2026-10-20). Superseded → intern-adjacent.
-  - minimax-m3.1-flash — **FREE THROUGH 2026-10-25** (Owner order 2026-10-20). A
+  - minimax-m3.1-flash — BURNED 2026-10-24 (Owner 17:01Z, performance verdict;
+    was **FREE THROUGH 2026-10-25** per Owner order 2026-10-20). A
     dated promo, not a permanent free tier: five days of runway, then billed or gone,
     so it fails "permanent-free" for accountable seats while the price is still live.
     No "preview" variant exists — the name is minimax-m3.1-flash. PROPRIETARY, weights

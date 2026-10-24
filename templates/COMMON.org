@@ -281,7 +281,7 @@ Cross-team mail travels in REPO FILES (the board law owns why; chat is not
 an artifact). The DoE lands a TEAM UPDATE — MSG-TYPE TEAM-UPDATE with the
 MESSAGE STANDARD header (FROM/TO model@platform, REPO, DEPS, PRIORITY
 P0|P1|P2 · RISK reads|writes|both) — by appending a section to the TARGET
-team's agent-team/DOE-UPDATES.org on the team's main branch:
+team's agent-team/TEAM-UPDATE.org on the team's main branch:
 
 #+BEGIN_SRC org
 * TEAM-UPDATE #<n> — <target-team>/<scope>: <title>
@@ -295,7 +295,7 @@ team's agent-team/DOE-UPDATES.org on the team's main branch:
   ACK: <EM appends: date — disposition — never the DoE>
 #+END_SRC
 
-- the EM reads DOE-UPDATES.org beside the board at turn start; MISSING or
+- the EM reads TEAM-UPDATE.org beside the board at turn start; MISSING or
   EMPTY = no cross-team mail, never a STOP
 - the ACK line is the closure evidence: appended by the EM, and the section
   is append-only from then on — a new message is a new section, #n counts
@@ -654,7 +654,7 @@ clear enough language, well-structured with lists:
 
 AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
 TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org
-(Owner pastes back) → agent-team/DOE-UPDATES.org (empty = no cross-team
+(Owner pastes back) → agent-team/TEAM-UPDATE.org (empty = no cross-team
 mail, never a STOP)
 
 - any file missing/empty → STOP, name it, wait — never proceed on assumption

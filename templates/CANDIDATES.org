@@ -652,3 +652,53 @@
   promotion or release. Five per round. Live list:
   agent-team/MEMBERS.org §INTERN POOL.
 
+
+* Free-lane delta — 2026-10-24 (R-2-45/46/46-b live-verified; supersedes
+  conflicting rows above where they disagree)
+
+  Owner-driven sweeps, live-probed from this box. Dedup law (R-2-44): gomodel
+  already wires 17 providers — cloudflare, gemini, groq, opencode-zen, zai,
+  openrouter, bai, ollama-cloud, kilo, tokenharbor, gmi, jev(typesafe),
+  cline(API leg), nvidia-nim, aimlapi, deepseek-official, xplabs — anything on
+  that list is NOT a delta; do not re-recommend it to the Owner.
+
+  VERIFIED LIVE (primary evidence, acc. 2026-10-23/24):
+  - aiHubMix — one email signup → AIHUBMIX_API_KEY, FOUR free rows, all
+    $0/$0: coding-kimi-k3-free (5 RPM · 100 req/day · 1M tokens/day, 1.05M
+    ctx, vision+video+thinking+tools+computer-use, measured ~25 tok/s),
+    kimi-for-coding-free, k2.6-code-preview-free (262K ctx),
+    coding-glm-5.3-flash-free (aihubmix.com/model/<id>). no-cc status
+    UNVERIFIED — needs the Owner to mint the key. NOT in gomodel = true delta.
+  - GitHub Models — LIVE, re-verified 2026-10-24: POST
+    models.github.ai/inference/chat/completions with the existing repo PAT
+    returned a real completion (gpt-oss-20b → "OK"). The "RETIRED
+    2026-06-16" census row above refers to the OLD azure-leg preview;
+    models.github.ai is the current leg. Free rows (R-2-45): llama-3.3-70b
+    ~50 RPD, llama-3.1-405b ~50 RPD, deepseek-r1 ~8 RPD, gpt-oss-120b/20b.
+    Tiny caps, zero setup, recurring.
+  - Command Code CLI (commandcode.ai) — second CLI harness, Cline-shaped,
+    headless -p/--yolo = lane-ready. Free rows: beam:free (NO daily cap,
+    while capacity lasts), laguna-s-2.1-free (while capacity),
+    glyph-cluster:free (100/day, stealth preview), minimax-m3.1-flash:free
+    (limited time). Account auth NOT yet run — needs Owner device flow.
+  - Respan (api.respan.ai/api/v1) — CHAT IS A BYOK WALL: Owner-key burn test
+    2026-10-23, 61 routes tested / 0 working — every route INCLUDING all 29
+    zero-priced rows 401s activation_required without an upstream key or
+    credits; their own credits-billing doc documents this exact 401. The
+    ONLY free surface is span-01-free: POST /api/v1/scores behavior-scoring
+    (span.input/output + behavior defs → p_present/p_absent/p_not_observable,
+    no generation), live 200 verified, daily cap resets 00:00 UTC. NOT a chat
+    leg — eval/scoring tool only.
+  - Free kimi k3 — EXISTS ONLY on aiHubMix (coding-kimi-k3-free). Moonshot
+    platform.kimi.ai official = ALL PAID (kimi-k3.1-pro $2/$10, kimi-k3
+    $3/$15). Respan kimi-k3.1-pro = $2/$10 paid. Nowhere else free.
+
+  CARRIED DELTA (R-2-44/45, unchanged, still open):
+  - OVHcloud AI Endpoints — anonymous, 2 RPM/model, zero setup.
+  - ModelScope — ~2k calls/day, real-name check pending (Owner action).
+  - Mistral Experiment tier — ~$10/mo credits, data opt-in required.
+
+  DEAD (never staff on these):
+  - Chutes free 200/day — retired 2026-03-15 (their own community post).
+  - Qwen Code OAuth 2000/day — discontinued 2026-04-15 (census above).
+  - Respan chat with a bare account key — BYOK wall, see above.

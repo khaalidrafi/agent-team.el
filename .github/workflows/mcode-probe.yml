@@ -1,9 +1,10 @@
 name: Mcode Token Probe
 
 # Answers: is the EXISTING sealed MCODE_AUTH_JSON still alive?
-# Seeds the credential from this repo's own secret, checks expiry,
-# refreshes via the MiniMax OAuth endpoint if stale, re-seals the fresh
-# credential to the team repos. Verdicts only — no token material in logs.
+# Shape-agnostic: walks the credential JSON (records/nested), finds token
+# fields wherever they live, checks expiry, refreshes via the MiniMax OAuth
+# endpoint if stale, re-seals the fresh credential to the team repos.
+# Verdicts + key-path names only — no token material in logs.
 
 on:
   workflow_dispatch:
@@ -28,13 +29,61 @@ jobs:
           from nacl import encoding, public
 
           cred = json.loads(os.environ["MCODE_AUTH_JSON"])
+
+          def walk(obj, path=()):
+              """Yield (path, key, value) for every dict field."""
+              if isinstance(obj, dict):
+                  for k, v in obj.items():
+                      yield path + (k,), k, v
+                      yield from walk(v, path + (k,))
+              elif isinstance(obj, list):
+                  for i, v in enumerate(obj):
+                      yield from walk(v, path + (f"[{i}]",))
+
+          def find(names):
+              for p, k, v in walk(cred):
+                  if k in names and isinstance(v, str) and v:
+                      return p, v
+              return None, None
+
+          def find_num(names):
+              for p, k, v in walk(cred):
+                  if k in names and isinstance(v, (int, float)):
+                      return p, v
+              return None, None
+
+          # structure dump — names/paths only, never values
+          def dump(o, ind=0):
+              if isinstance(o, dict):
+                  for k, v in o.items():
+                      t = type(v).__name__
+                      print("  " * ind + f"{k} ({t})")
+                      if isinstance(v, (dict, list)) and ind < 4:
+                          dump(v, ind + 1)
+              elif isinstance(o, list):
+                  for i, v in enumerate(o[:3]):
+                      print("  " * ind + f"[{i}] ({type(v).__name__})")
+                      if isinstance(v, (dict, list)) and ind < 4:
+                          dump(v, ind + 1)
+
+          dump(cred)
+          at_p, at = find({"accessToken", "access_token", "token", "id_token"})
+          rt_p, rt = find({"refreshToken", "refresh_token"})
+          exp_p, exp = find_num({"expiresAtMs", "expires_at_ms", "expiresAt", "expires_in_ts"})
           now = int(time.time() * 1000)
-          exp = cred.get("expiresAtMs") or cred.get("expires_at_ms") or 0
-          at = cred.get("accessToken") or cred.get("access_token") or ""
-          rt = cred.get("refreshToken") or cred.get("refresh_token") or ""
-          print(f"cred shape: keys={sorted(cred.keys())}")
-          print(f"access-token present: {bool(at)} | refresh-token present: {bool(rt)}")
-          print(f"expiresAtMs: {exp} | now: {now} | delta_min: {(exp-now)//60000}")
+          print(f"access-token path: {'.'.join(map(str, at_p)) if at_p else None} present={bool(at)}")
+          print(f"refresh-token path: {'.'.join(map(str, rt_p)) if rt_p else None} present={bool(rt)}")
+          print(f"expiry path: {'.'.join(map(str, exp_p)) if exp_p else None} value={exp} now={now} delta_min={(exp-now)//60000 if exp else 'n/a'}")
+
+          def set_at_path(p, val):
+              node = cred
+              for part in p[:-1]:
+                  node = node[int(part[1:-1])] if part.startswith("[") else node[part]
+              last = p[-1]
+              if last.startswith("["):
+                  node[int(last[1:-1])] = val
+              else:
+                  node[last] = val
 
           def seal_all(val):
               pat = os.environ["GH_PAT"]
@@ -57,7 +106,7 @@ jobs:
                       {"encrypted_value": base64.b64encode(enc).decode(), "key_id": pk["key_id"]})
                   print(f"RESEALED MCODE_AUTH_JSON -> {repo}")
 
-          if at and exp > now + 120000:
+          if at and exp and exp > now + 120000:
               print("VERDICT: ALIVE — access token still valid; no re-auth needed")
           elif rt:
               data = urllib.parse.urlencode({
@@ -71,17 +120,18 @@ jobs:
                       tok = json.loads(r.read().decode())
                   nat = tok.get("access_token")
                   if not nat:
-                      print(f"VERDICT: DEAD — refresh rejected: {tok.get('error', tok)}")
+                      print(f"VERDICT: DEAD — refresh rejected: {tok.get('error', 'unknown')}")
                   else:
-                      cred["accessToken"] = nat
+                      if at_p: set_at_path(at_p, nat)
                       if tok.get("expires_in"):
-                          cred["expiresAtMs"] = int(time.time()*1000) + int(tok["expires_in"])*1000
-                      if tok.get("refresh_token"):
-                          cred["refreshToken"] = tok["refresh_token"]
+                          e = int(time.time()*1000) + int(tok["expires_in"])*1000
+                          if exp_p: set_at_path(exp_p, e)
+                      if tok.get("refresh_token") and rt_p:
+                          set_at_path(rt_p, tok["refresh_token"])
                       seal_all(json.dumps(cred))
                       print("VERDICT: REFRESHED+RESEALED — existing session lived; no device click needed")
               except urllib.error.HTTPError as e:
                   print(f"VERDICT: DEAD — refresh HTTP {e.code}; device re-auth needed")
           else:
-              print("VERDICT: DEAD — no refresh token; device re-auth needed")
+              print("VERDICT: DEAD — no refresh token found; device re-auth needed")
           PY

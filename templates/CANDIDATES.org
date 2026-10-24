@@ -702,3 +702,14 @@
   - Chutes free 200/day — retired 2026-03-15 (their own community post).
   - Qwen Code OAuth 2000/day — discontinued 2026-04-15 (census above).
   - Respan chat with a bare account key — BYOK wall, see above.
+
+* Sandbox chat-lane artifact — 2026-10-24 (measured, NEVER a model source)
+
+  The z.ai-agent sandbox chat lane (z-ai-web-dev-sdk chat completions) ACCEPTS
+  ANY model id and silently serves ONE fixed backend: probed 2026-10-24 with
+  glm-5.3-flash, glm-4.5, glm-5.2, span-01 AND a fabricated id — all 5 returned
+  HTTP 200 with resp.model constant and identical self-report. The `model`
+  param is IGNORED. An all-200 probe here proves NOTHING about model access.
+  Verdict: NOT a candidate, NOT a catalog, NOT "all GLM models" — one harness
+  brain behind a lenient router. Team model access comes from wired lanes only
+  (gateway config rows + context-pack keys).

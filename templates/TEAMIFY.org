@@ -184,12 +184,14 @@ File sketch (produce EXACTLY this skeleton):
 - the exact header line drives the Telegram mirror and the live
   viewer; never reformat another member's entry
 
-** agent-team/DOE-UPDATES.org
+** agent-team/TEAM-UPDATE.org
 
 Cross-team inbox from the Director of Engineering (COMMON's DOE UPDATES
-law pins the section format and the EM's ACK duty). Create it with the
-title line only — updates arrive as sections; empty is a healthy state.
+law pins the section format and the EM's ACK duty). The file is SUPPLIED
+by the DoE (z.ai-agent) — you never create it; if it is missing, flag
+that to the DoE in TEAM-CHAT.org and keep working. Your only writes are
+ACK lines appended in place; updates arrive as sections.
 
 #+BEGIN_SRC org
-#+TITLE: DOE-UPDATES.org — cross-team inbox from the Director of Engineering
+#+TITLE: TEAM-UPDATE.org — standing inbox from the Director of Engineering (z.ai-agent)
 #+END_SRC

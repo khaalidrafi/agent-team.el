@@ -84,10 +84,15 @@ the box.
 
 ** STAFFING (standing order — automatic, never wait to be told)
 
-- a new or changed roster is a WORK ORDER: rank ALL models, none skipped — and
-  rank the PAIR (model@agent, brain+body per BRAINS AND BODIES), never a bare
-  model; the research pass runs IMMEDIATELY as part of ranking, no external
-  command needed — waiting to be told is a failure
+- a new or changed roster is a WORK ORDER: rank every row of
+  agent-team/CANDIDATES.org, none skipped — the ranking universe is THAT
+  curated file, NEVER "all models in existence": a model with no CANDIDATES
+  row is not rankable (land it as a row with evidence first, or it does not
+  exist for this team) — and rank the PAIR (model@agent, brain+body per
+  BRAINS AND BODIES), never a bare model; the research pass runs IMMEDIATELY
+  as part of ranking, no external command needed — waiting to be told is a
+  failure; ranking rows ≠ dispatching rows: ranking is an EM desk job over
+  the candidate list, it never fans a subagent out across every model
 - every rank entry = evidence RESEARCHED NOW, actually performed, not assumed:
   run BATCHED web searches (multiple models per query round, never one model at
   a time) — patterns: "<model> LMArena ELO 2026", "<model> benchmark
@@ -166,6 +171,13 @@ the box.
   does not. So: real role names, work-related and in-domain; cast by capability
   evidence per task type; a role is a contract (goal + authority + boundaries +
   evidence), never a costume
+- UNREAL ROLES ARE BANNED (Owner, docneural 2026-10-24): "auditor", "reviewer",
+  "judge", "oversight", "watcher" and the like are NOT roles — they name a PASS,
+  not a job; verification/audit is a dispatch PATTERN (a critique pass by a model
+  that did not author the work, verdict into the merge commit), never a seat or a
+  hire; a standing role must name the artifact it owns (e.g. regression guardian
+  owns the suite, migration owner owns the boundary) — if you cannot name the
+  artifact, you invented a costume; delete it
 - patterns run deliberately: routing (classify task type, then staff) · parallel
   workstreams (independent tasks in parallel, ≤4 active total) · delivery
   pipeline (ordered chain with gates: code → green suite → merge → UAT) · code

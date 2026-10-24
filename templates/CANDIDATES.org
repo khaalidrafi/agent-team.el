@@ -22,6 +22,57 @@
         CANCELLED. minimax-m2 and minimax-m3 are SEPARATE models - m2 stays
         hireable inventory; m3 remains undelivered vapor.
 
+* OWNER-KEYS — the REAL inventory (2026-10-24, Owner order: "Where are ALL my
+  real models?"). These are the lanes with keys ALREADY IN HAND — sealed as
+  GitHub Actions secrets (24 names) on docneural/admincraft/agent-team.el and
+  wired in llmfisher (config/config.yaml is the machine-readable registry).
+  EVERY hire draws from HERE FIRST. Any lane not in this section and not
+  explicitly keyless needs a signup the Owner has NOT done — recommending it
+  to the Owner is recommending work he never asked for (the
+  aiHubMix/GitHub-Models mistake below is the standing example).
+
+  API-key lanes (secret name → provider; model counts from llmfisher config,
+  2026-10-24):
+  - GEMINI_API_KEY → gemini — 25 ids (gemini-2.5/3-flash-preview, 3.1→3.8
+    flash tiers, antigravity previews)
+  - GROQ_API_KEY → groq — 7 (openai/gpt-oss-120b, gpt-oss-20b,
+    qwen3.8-27b, allam-2-7b, 2 prompt-guards, safeguard-20b)
+  - OPENROUTER_API_KEY → openrouter — 20 ids incl. :free rows (M3.1 flash
+    BURNED here per BURN-LAW)
+  - ZAI_API_KEY → zai — 3 (glm-4.7-flash, glm-4.5-flash, glm-4.6v-flash)
+  - CLOUDFLARE_ACCOUNT_ID + CLOUDFLARE_API_KEY → cloudflare — 35 Workers-AI ids
+  - OLLAMA_CLOUD_API_KEY → ollama-cloud — 7 (gpt-oss:120b/20b, nemotron-3
+    tiers, beam, gemma4:31b)
+  - OPENCODE_API_KEY → opencode — 8 Zen -free ids (client_only: answer only
+    inside OpenCode's own client)
+  - TOKENHARBOR_API_KEY → tokenharbor — free :free rows
+  - TYPESAFE_API_KEY → jev — 2 (jev-1.13.0, jev-latest; decision layer)
+  - XPLABS_API_KEY → xplabs — 3 (clef-flash, qwen3.8-27b, gpt-6-luna;
+    card_required block still stands)
+  - GMI_API_KEY → gmi — 2 (Nemotron-3.5-Super-VL, MiniMax-M3.1-Flash — M3.1
+    BURNED per BURN-LAW)
+  - BAI_API_KEY → bai — 1 (gpt-image-2, image gen)
+  - ANTLING_API_KEY → antling — 7 (Ling-3.0/3.1-flash, 3.0-flash-VL,
+    3.0-tiny, 2.6-flash/1T, Ring-2.6-1T; burn-verified live 2026-10-24)
+  - AIMLAPI / NVIDIA_NIM / DEEPSEEK keys → aimlapi (M3.1 flash — BURNED),
+    nvidia-nim (deepseek-v4.1-flash), deepseek-official (deepseek-flash);
+    these three live in the llmfisher deployment env, not the repo secret set
+  - AA_API_KEY, NAVYAI_API_KEY → sealed but declared gomodel-side only (no
+    llmfisher provider entry yet)
+  OAuth/credential-file lanes (token-keeper workflow re-seals both):
+  - CLINE_AUTH_JSON → cline (api.cline.bot/api/v1)
+  - MCODE_AUTH_JSON → mcode — see BURN-LAW (17:01Z dormant) vs the 17:11Z
+    carve-out that re-armed the M-Plan-Free m3.1-flash leg; both orders
+    coexist exactly as written there
+  Non-model secrets (context only): GOMODEL_MASTER_KEY, GH_PAT,
+  CODEBUDDY_AUTH_TOKEN, QODER_PERSONAL_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN,
+  TELEGRAM_OWNER_ID.
+
+  NO-ACCOUNT-DEAD (Owner 2026-10-24 19:52Z: "I never created an account"):
+  aiHubMix and GitHub Models. Intel rows below stay for context, but these
+  are NOT actionable: no staffing, no re-recommendation, until the Owner
+  registers on his own initiative.
+
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
     [free-tier expiry: none published; agentic features membership-gated]
@@ -683,20 +734,27 @@
   cline(API leg), nvidia-nim, aimlapi, deepseek-official, xplabs — anything on
   that list is NOT a delta; do not re-recommend it to the Owner.
 
-  VERIFIED LIVE (primary evidence, acc. 2026-10-23/24):
-  - aiHubMix — one email signup → AIHUBMIX_API_KEY, FOUR free rows, all
+  VERIFIED LIVE (primary evidence, acc. 2026-10-23/24) — READ THE GATE
+  ABOVE: aiHubMix and GitHub Models are NO-ACCOUNT-DEAD (Owner never
+  registered). Evidence kept for context only:
+  - aiHubMix — DEAD-NO-ACCOUNT (Owner 2026-10-24 19:52Z — never created an
+    account; do not staff, do not re-recommend until he registers). If that
+    ever changes: one email signup → AIHUBMIX_API_KEY, FOUR free rows, all
     $0/$0: coding-kimi-k3-free (5 RPM · 100 req/day · 1M tokens/day, 1.05M
     ctx, vision+video+thinking+tools+computer-use, measured ~25 tok/s),
     kimi-for-coding-free, k2.6-code-preview-free (262K ctx),
     coding-glm-5.3-flash-free (aihubmix.com/model/<id>). no-cc status
     UNVERIFIED — needs the Owner to mint the key. NOT in gomodel = true delta.
-  - GitHub Models — LIVE, re-verified 2026-10-24: POST
+  - GitHub Models — DEAD-NO-ACCOUNT (Owner 2026-10-24 19:52Z — never created
+    an account; the repo-PAT route is UNSANCTIONED, a PAT is not a Models
+    account). Formerly marked "LIVE, re-verified 2026-10-24: POST
     models.github.ai/inference/chat/completions with the existing repo PAT
-    returned a real completion (gpt-oss-20b → "OK"). The "RETIRED
+    returned a real completion (gpt-oss-20b → "OK")" — technical reach is
+    NOT permission. The "RETIRED
     2026-06-16" census row above refers to the OLD azure-leg preview;
     models.github.ai is the current leg. Free rows (R-2-45): llama-3.3-70b
     ~50 RPD, llama-3.1-405b ~50 RPD, deepseek-r1 ~8 RPD, gpt-oss-120b/20b.
-    Tiny caps, zero setup, recurring.
+    Tiny caps. All of it moot until the Owner registers.
   - Command Code CLI (commandcode.ai) — second CLI harness, Cline-shaped,
     headless -p/--yolo = lane-ready. Free rows: beam:free (NO daily cap,
     while capacity lasts), laguna-s-2.1-free (while capacity),
@@ -710,7 +768,8 @@
     (span.input/output + behavior defs → p_present/p_absent/p_not_observable,
     no generation), live 200 verified, daily cap resets 00:00 UTC. NOT a chat
     leg — eval/scoring tool only.
-  - Free kimi k3 — EXISTS ONLY on aiHubMix (coding-kimi-k3-free). Moonshot
+  - Free kimi k3 — EXISTS ONLY on aiHubMix (coding-kimi-k3-free) — which is
+    DEAD-NO-ACCOUNT, so free kimi k3 is effectively UNAVAILABLE. Moonshot
     platform.kimi.ai official = ALL PAID (kimi-k3.1-pro $2/$10, kimi-k3
     $3/$15). Respan kimi-k3.1-pro = $2/$10 paid. Nowhere else free.
 

@@ -127,11 +127,13 @@
     Settings -> API Keys (one console action).
 
   - mcode — MiniMax Code CLI (npm @minimax-ai/code 0.6.12; Node 22.19+/24–26).
-    [LANE DORMANT 2026-10-24 per BURN-LAW: the only M-Plan-Free brain was
-    minimax-m3.1-flash, now burned. Auth remains LIVE and the PKCE proxy
-    scripts stay archived; MCODE_AUTH_JSON CI seeding is CANCELLED. Wake
-    condition: MiniMax serves a replacement brain on Free, or an Owner-paid
-    key arrives with its own Owner word.]
+    [LANE ALIVE 2026-10-24 17:11Z — Owner carve-out "bruh, yiu can use m3.1
+    on Mcode for free!!!": the BURN-LAW covers the API/GATEWAY M3.1 lanes
+    ONLY (openrouter/gomodel/gmi/tokenharbor/navyai/bai/aa/ollama-cloud —
+    those stay burned); the mcode OAuth FREE lane is EXEMPTED and RE-ARMED
+    on its M-Plan-Free brain minimax-m3.1-flash. Auth LIVE, PKCE proxy
+    scripts archived, MCODE_AUTH_JSON CI seeding RE-INSTATED. The
+    hallucination caveat still binds — pair mcode output with verification.]
     AUTH LIVE 2026-10-22: device OAuth (account.minimax.io, client
     mcode-public, scope agent.default, audience agent-backend) completed via
     the Lead's stateless PKCE-terminating proxy — the sandbox kills background

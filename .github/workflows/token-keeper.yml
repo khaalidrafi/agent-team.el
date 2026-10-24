@@ -1,0 +1,163 @@
+name: Token Keeper
+
+# Keep long-lived credentials alive so they never idle out again.
+# R-2-59 lesson (2026-10-24): a sealed MCODE credential died at ~48h idle —
+# access token expired, refresh token rejected (HTTP 400). Access tokens are
+# short-lived by design; the fix is scheduled refresh, not storage.
+# Every 6h: mcode — refresh-if-near-expiry + re-seal; cline — shape + expiry
+# monitor (refresh lands once its flow is proven). Verdicts only in logs.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: token-keeper
+  cancel-in-progress: false
+
+jobs:
+  mcode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Refresh-or-verify MCODE_AUTH_JSON + re-seal
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          MCODE_AUTH_JSON: ${{ secrets.MCODE_AUTH_JSON }}
+        run: |
+          python3 -m pip install --quiet pynacl
+          python3 - <<'PY'
+          import base64, json, os, time, urllib.request, urllib.parse
+          from nacl import encoding, public
+
+          cred = json.loads(os.environ["MCODE_AUTH_JSON"])
+
+          def walk(obj, path=()):
+              if isinstance(obj, dict):
+                  for k, v in obj.items():
+                      yield path + (k,), k, v
+                      yield from walk(v, path + (k,))
+              elif isinstance(obj, list):
+                  for i, v in enumerate(obj):
+                      yield from walk(v, path + (f"[{i}]",))
+
+          def find(names, pred=lambda v: isinstance(v, str) and v):
+              for p, k, v in walk(cred):
+                  if k in names and pred(v):
+                      return list(p), v
+              return None, None
+
+          def set_at_path(p, val):
+              node = cred
+              for part in p[:-1]:
+                  node = node[int(part[1:-1])] if part.startswith("[") else node[part]
+              last = p[-1]
+              if last.startswith("["):
+                  node[int(last[1:-1])] = val
+              else:
+                  node[last] = val
+
+          at_p, at = find({"accessToken", "access_token"})
+          rt_p, rt = find({"refreshToken", "refresh_token"})
+          exp_p, exp = find({"expiresAtMs", "expires_at_ms"},
+                            pred=lambda v: isinstance(v, (int, float)))
+          now = int(time.time() * 1000)
+          delta_h = (exp - now) / 3600000 if exp else None
+          print(f"mcode: access present={bool(at)} refresh present={bool(rt)} "
+                f"expires_in_h={round(delta_h, 1) if delta_h is not None else 'n/a'}")
+
+          def seal_all(val):
+              pat = os.environ["GH_PAT"]
+              def api(method, url, payload=None):
+                  req = urllib.request.Request(url, method=method,
+                      data=json.dumps(payload).encode() if payload is not None else None)
+                  req.add_header("Authorization", f"Bearer {pat}")
+                  req.add_header("Accept", "application/vnd.github+json")
+                  if payload is not None:
+                      req.add_header("Content-Type", "application/json")
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      body = r.read().decode()
+                      return json.loads(body) if body else None
+              for repo in ("khaalidrafi/docneural", "khaalidrafi/admincraft",
+                           "khaalidrafi/agent-team.el"):
+                  pk = api("GET", f"https://api.github.com/repos/{repo}/actions/secrets/public-key")
+                  box = public.SealedBox(public.PublicKey(pk["key"].encode(), encoding.Base64Encoder()))
+                  enc = box.encrypt(val.encode())
+                  api("PUT", f"https://api.github.com/repos/{repo}/actions/secrets/MCODE_AUTH_JSON",
+                      {"encrypted_value": base64.b64encode(enc).decode(), "key_id": pk["key_id"]})
+                  print(f"mcode resealed -> {repo}")
+
+          if delta_h is not None and delta_h > 2:
+              print("MCODE VERDICT: OK-IDLE — access token fresh enough; no action")
+          elif rt:
+              data = urllib.parse.urlencode({
+                  "grant_type": "refresh_token", "client_id": "mcode-public",
+                  "refresh_token": rt}).encode()
+              req = urllib.request.Request("https://account.minimax.io/oauth2/token",
+                                           data=data, method="POST")
+              req.add_header("Content-Type", "application/x-www-form-urlencoded")
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      tok = json.loads(r.read().decode())
+                  if tok.get("access_token"):
+                      if at_p: set_at_path(at_p, tok["access_token"])
+                      if tok.get("expires_in") and exp_p:
+                          set_at_path(exp_p, int(time.time()*1000) + int(tok["expires_in"])*1000)
+                      if tok.get("refresh_token") and rt_p:
+                          set_at_path(rt_p, tok["refresh_token"])
+                      seal_all(json.dumps(cred))
+                      print("MCODE VERDICT: REFRESHED+RESEALED")
+                  else:
+                      print(f"MCODE VERDICT: SESSION-DEAD — refresh rejected "
+                            f"({tok.get('error', 'unknown')}); device re-auth needed")
+              except urllib.error.HTTPError as e:
+                  print(f"MCODE VERDICT: SESSION-DEAD — refresh HTTP {e.code}; device re-auth needed")
+          else:
+              print("MCODE VERDICT: SESSION-DEAD — no refresh token; device re-auth needed")
+          PY
+
+  cline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Monitor CLINE_AUTH_JSON (paths + expiry only)
+        env:
+          CLINE_AUTH_JSON: ${{ secrets.CLINE_AUTH_JSON }}
+        run: |
+          python3 - <<'PY'
+          import json, os, time
+
+          raw = os.environ.get("CLINE_AUTH_JSON", "")
+          if not raw.strip():
+              print("CLINE VERDICT: ABSENT — secret not sealed yet; device flow pending")
+          else:
+              try:
+                  cred = json.loads(raw)
+              except Exception:
+                  print("CLINE VERDICT: UNPARSEABLE — expected JSON credential file")
+                  raise SystemExit(0)
+
+              def walk(obj, path=()):
+                  if isinstance(obj, dict):
+                      for k, v in obj.items():
+                          yield path + (k,), k, v
+                          yield from walk(v, path + (k,))
+                  elif isinstance(obj, list):
+                      for i, v in enumerate(obj):
+                          yield from walk(v, path + (f"[{i}]",))
+
+              paths = [".".join(map(str, p)) for p, k, v in walk(cred)
+                       if any(t in k.lower() for t in ("token", "expires"))]
+              print("CLINE shape paths (names only):")
+              for p in paths[:12]:
+                  print("  ", p)
+              exp = next((v for p, k, v in walk(cred)
+                          if "expires" in k.lower() and isinstance(v, (int, float))), None)
+              now = int(time.time() * 1000)
+              if exp:
+                  dh = (exp - now) / 3600000
+                  print(f"CLINE VERDICT: {'OK' if dh > 1 else 'STALE'} — expires_in_h={round(dh,1)}")
+              else:
+                  print("CLINE VERDICT: SEALED — no numeric expiry field found; monitor only")
+          PY

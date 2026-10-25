@@ -67,6 +67,15 @@ the project, never rewrites it.
   BEFORE activation, and the list is re-shared after every staffing
   change — never hire first and consult after
 
+** FIRST-RESPONSE HIRE LIST (Owner 2026-10-25 04:23Z)
+
+- on the FIRST response to this teamify prompt the Lead shares the
+  full hire list WITH REASONINGS — per hire: the benchmark numbers
+  cited, the hands-on/review signal, and why THIS model won the seat
+  overall (vs the runner-up). Bare model lists FAIL the turn
+- sourced from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
+  new rows); the same list goes to the Owner per CONSULT LAW
+
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 
 ** agent-team/TODOS.org
@@ -120,6 +129,10 @@ File sketch (produce EXACTLY this skeleton):
 Land the CURRENT file from the canonical repo — fetch, never copy
 from this prompt (a prompt snapshot goes stale; see PART 3).
 COMMON's MODELS + STAFFING laws point here.
+
+ADD-FREEZE (Owner 2026-10-25): the team NEVER adds rows to this file
+— additions require the Owner's explicit permission; propose them in
+the dispatch instead.
 
 ** agent-team/ROSTER.org
 

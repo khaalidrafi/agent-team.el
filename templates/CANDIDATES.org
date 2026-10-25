@@ -80,6 +80,11 @@
   llmfisher provider WITH ITS KEY ON FILE; anything else is deleted on
   sight.
 
+  ADD-FREEZE (Owner 2026-10-25 04:23Z): NOTHING is ever added to this
+  file without the Owner's explicit permission — agents propose in #hq
+  or the dispatch; only the Owner's fiat adds. Removals need no
+  permission.
+
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
     [free-tier expiry: none published; agentic features membership-gated]

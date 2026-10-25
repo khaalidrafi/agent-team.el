@@ -6,7 +6,7 @@ name: Agent Team Chain
 # khaalidrafi/admincraft (Owner orders 2026-10-20 -> 2026-10-21).
 #
 # Structure per run: test (landing gate) -> probe (seat liveness, never
-# gates) -> turn (TG ingest owner-locked -> session restore -> ONE agent
+# gates) -> turn (session restore -> ONE agent
 # segment in the preinstalled harness container -> session scrub+upload ->
 # branch push + rotation advance) -> finalize (auto-merge behind the gate
 # -> pause-after-TODO review -> Jev judgment -> stall accounting ->
@@ -22,9 +22,9 @@ name: Agent Team Chain
 # #+CHAIN-PAUSE to resume); an explicit Owner order may set OFF for a
 # continuous multi-TODO run; fallback chains
 # name the lane that ACTUALLY ran and never fake a paid visit; mirror
-# failures are warnings, never the job result. Verdicts mirror to the
-# Owner's Telegram (owner-locked, deduped) and this project's Discord
-# channel. GoModel (llmfisher gateway) rides as
+# failures are warnings, never the job result. Verdicts mirror to
+# this project's Discord channel (the ONLY mirror — Telegram retired,
+# Owner order 2026-10-25 #hq: no Telegram communication). GoModel (llmfisher gateway) rides as
 # a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
 # RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
 # override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
@@ -45,9 +45,8 @@ name: Agent Team Chain
 # NEVER crosses between branches, so parallel tasks cannot stomp the
 # team control. Rotation pointer / stall / mirror markers write to the
 # task branch (state lives in the file; history disposable). Sessions
-# are namespaced per task: sessions-<task-slug>-<seat>-<run>. The
-# Telegram Owner bridge ingests on the ai/main chain ONLY (one chat
-# record; task chains never re-ingest). Arm a task: cut the branch from
+# are namespaced per task: sessions-<task-slug>-<seat>-<run>. No Telegram bridge or mirror exists anywhere (retired 2026-10-25:
+# no Telegram communication). Arm a task: cut the branch from
 # ai/main, fork the control file with the task keys, dispatch the
 # workflow on that branch (Actions UI branch picker or `gh workflow run
 # agent-team.yml --ref <branch>`) — the chain self-dispatches while the
@@ -174,7 +173,6 @@ jobs:
     outputs:
       turn_branch: ${{ steps.push.outputs.branch }}
       seg_result: ${{ steps.seg.outputs.result }}
-      tg_chat: ${{ steps.ingest.outputs.chat_id }}   # owner-locked chat id (secret TELEGRAM_OWNER_ID)
       base_sha: ${{ steps.control.outputs.base_sha }} # chain ref tip before this segment — the chat-mirror diff base
       commits: ${{ steps.push.outputs.commits }}      # post-turn commit count — EMPTY-SEGMENT law signal
     runs-on: ubuntu-latest
@@ -287,8 +285,8 @@ jobs:
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
           SYNCED=no
           for i in 1 2 3; do
-            git fetch origin ai/main || true
-            git fetch origin "$CHAIN_REF" || true
+            git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main || true
+            git fetch origin +refs/heads/"$CHAIN_REF":refs/remotes/origin/"$CHAIN_REF" || true
             if ! git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > /tmp/.task-ctl.org 2>/dev/null; then
               echo "::warning::no task control on ${CHAIN_REF} — branch not armed; skipping sync"
               break
@@ -447,98 +445,9 @@ jobs:
           git remote set-url --push origin \
             "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
 
-      # Owner channel — INBOUND leg (Owner order 2026-10-21 #hq: "You and
-      # any team member should contact me through this [Telegram bot]. And,
-      # my reply should get recorded in TEAM-CHAT.org"; 17:47Z addendum:
-      # "Keep bridge bot restricted to my chat ID — else anyone can
-      # impersonate me"). Only messages from the Owner's chat (secret
-      # TELEGRAM_OWNER_ID, else TELEGRAM_CHAT_ID) are recorded VERBATIM
-      # into the team chat as an @owner entry BEFORE the segment runs;
-      # every OTHER chat is DROPPED and counted in the run log —
-      # impersonation impossible. Until the secret is set, even a first
-      # contact is dropped and surfaced only in the run summary as a claim
-      # for the Lead to verify and activate. Runs even when the chain is
-      # idle/killed — the chat is the record.
-      - name: Telegram bridge — ingest Owner replies into the team chat (owner-locked)
-        id: ingest
-        if: github.ref_name == 'ai/main'   # R-2-69: task chains skip the Owner bridge — the trunk chain owns the one chat record
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          [ -n "$TELEGRAM_BOT_TOKEN" ] || { echo "telegram: no token — silent"; exit 0; }
-          OWNER="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID}}"
-          git config user.name "agent-team-ci"
-          git config user.email "agent-team-ci@users.noreply.github.com"
-          git remote set-url --push origin \
-            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          CHAT=agent-team/TEAM-CHAT.org
-          UPD=$(curl -sS --max-time 20 \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?allowed_updates=%5B%22message%22%5D&limit=20") || UPD=""
-          echo "$UPD" | jq -e '.ok == true' >/dev/null 2>&1 || { echo "telegram: API error or empty — skip"; exit 0; }
-          if [ -z "$OWNER" ]; then
-            CLAIM=$(echo "$UPD" | jq -r '[.result[] | select(.message.chat.type=="private") | .message.chat.id] | first // empty')
-            if [ -n "$CLAIM" ]; then
-              echo "::warning::telegram lock ENGAGED, TELEGRAM_OWNER_ID unset — first-contact claim from chat ${CLAIM} DROPPED (nothing reached the team chat; the Lead verifies and sets the secret)"
-              {
-                echo "### Telegram bridge — LOCKED, claim pending"
-                echo "First-contact claim from chat \`${CLAIM}\` was DROPPED (owner lock engaged, secret unset)."
-                echo "The Lead verifies the claim is really the Owner, then sets the TELEGRAM_OWNER_ID secret. Until then NOTHING is ingested — impersonation impossible."
-              } >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo "telegram: lock engaged (no owner secret yet), no pending messages"
-            fi
-            exit 0
-          fi
-          COUNT=$(echo "$UPD" | jq --arg owner "$OWNER" '[.result[] | select(.message.chat.type=="private") and (.message.text != null) and ((.message.chat.id | tostring) == $owner)] | length')
-          REJECT=$(echo "$UPD" | jq --arg owner "$OWNER" '[.result[] | select(.message.chat.type=="private") and ((.message.chat.id | tostring) != $owner)] | length')
-          if [ "$REJECT" -gt 0 ]; then
-            echo "::warning::telegram: DROPPED ${REJECT} message(s) from non-owner chat(s) — logged here, never ingested (owner lock)"
-          fi
-          if [ "$COUNT" -eq 0 ]; then echo "telegram: no pending OWNER messages (dropped ${REJECT} non-owner)"; exit 0; fi
-          LAST_ID=$(echo "$UPD" | jq '[.result[].update_id] | max')
-          CHAT_ID="$OWNER"
-          TS=$(date -u '+%Y-%m-%d %a %H:%M UTC')
-          {
-            echo ""
-            echo "* MSG owner (tg) -> @lead :note:                    :msg:owner:lead:note:"
-            echo ":PROPERTIES:"
-            echo ":FROM: owner"
-            echo ":TO: lead"
-            echo ":KIND: note"
-            echo ":WHEN: [${TS}]"
-            echo ":CHANNEL: telegram"
-            echo ":END:"
-            echo "  [Telegram bridge — Owner's message, recorded verbatim per Owner"
-            echo "   order 2026-10-21 #hq: \"my reply should get recorded in TEAM-CHAT.org\"]"
-            echo "$UPD" | jq -r '.result[] | select(.message.chat.type=="private") | select(.message.text) |
-                     "  >> " + (.message.text | gsub("\n"; "\n  >> "))'
-          } >> "$CHAT"
-          # SECRET GUARD (Owner order 18:27Z): his message is recorded
-          # VERBATIM — but a credential pasted by mistake must never reach
-          # git history. Redact in place, then commit.
-          bash .github/scripts/secret-guard.sh file "$CHAT"
-          git add "$CHAT"
-          git commit -m "tg-ingest: ${COUNT} Owner message(s) -> team chat" || echo "::notice::nothing to commit"
-          # Race-proof push (Lead pushes move ai/main mid-run): rebase + retry.
-          PUSHED=no
-          for i in 1 2 3; do
-            if git push origin "ai/main"; then PUSHED=yes; break; fi
-            git fetch origin ai/main && git rebase origin/ai/main || git rebase --abort
-          done
-          if [ "$PUSHED" = "yes" ] && [ -n "$LAST_ID" ]; then
-            curl -sS -o /dev/null "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates?offset=$((LAST_ID+1))"
-            echo "telegram: ingested ${COUNT} message(s), chat_id=${CHAT_ID:-unlearned}, offset confirmed"
-          else
-            git checkout -- "$CHAT" || true
-            echo "::warning::telegram ingest push failed — messages left unconfirmed for the next run"
-          fi
-          if [ -n "$CHAT_ID" ]; then
-            echo "chat_id=${CHAT_ID}" >> "$GITHUB_OUTPUT"
-            echo "TG_LEARNED_CHAT=${CHAT_ID}" >> "$GITHUB_ENV"
-          fi
-
+      # (Telegram bridge retired — Owner order 2026-10-25 #hq: no more
+      # Telegram communication. The Owner's words reach the team via
+      # Discord #hq; the Lead transcribes them into the team chat.)
       - name: Restore previous session of this seat (resume context)
         id: sess-restore
         if: steps.control.outputs.mode == 'work'
@@ -611,8 +520,10 @@ jobs:
           The headline MUST carry the FROM (Owner: \"Org headings should
           contain the FROM content\"); tags + properties drawer = Org
           syntax; WHEN is an Org inactive timestamp. Never edit existing
-          entries — append only. Any Telegram-bound message MUST open with
-          \"FROM: <seat>\" and \"TO: @owner\" lines (Owner law 17:55).
+          entries — append only. Any message meant for the Owner MUST open with
+          \"FROM: <seat>\" and \"TO: @owner\" lines — the Discord mirror
+          carries it to him verbatim; write it in plain simple words
+          (PLAIN LANGUAGE law, Owner 2026-10-25).
           Handles: {{HANDLES}}.
           mailbox/ is a frozen archive — NEVER write there.
           TOP BOARD ITEMS (oldest-first):
@@ -831,7 +742,7 @@ jobs:
           # Rebase onto moved main before push (run 39488529938: branch born
           # from a stale base carried old workflow content — remote rejected
           # the ref creation). Converging with origin kills that class.
-          git fetch origin ai/main || true
+          git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main || true
           git rebase origin/ai/main "${TURN_BRANCH:-ai/turn-orphan}" 2>/dev/null \
             || { git rebase --abort 2>/dev/null || true; echo "::warning::branch rebase skipped"; }
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
@@ -857,7 +768,7 @@ jobs:
           git checkout -f "${CHAIN_REF:-ai/main}" 2>/dev/null || true
           CPUSH=no
           for i in 1 2 3; do
-            git fetch origin ai/main
+            git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
               git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
@@ -965,7 +876,7 @@ jobs:
           # mirror diff base (their chat entries land HERE, on the trunk).
           echo "trunk_pre=$(git rev-parse origin/ai/main 2>/dev/null || echo '')" >> "$GITHUB_OUTPUT"
           for i in 1 2 3; do
-            git fetch origin ai/main
+            git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if ! git merge --no-ff --no-edit "origin/$BRANCH" 2>/dev/null; then
               if ! git checkout HEAD -- agent-team/TEAM-CONTROL.org 2>/dev/null \
@@ -1031,7 +942,7 @@ jobs:
               "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
             ARMED=no
             for i in 1 2 3; do
-              git fetch origin ai/main
+              git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
               git reset --hard origin/ai/main
               if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
                 git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
@@ -1202,7 +1113,7 @@ jobs:
             # R-2-69: read THIS task's control state (the working tree may
             # be the trunk after the landing gate; the task state lives on
             # the task branch blob).
-            git fetch origin "${CHAIN_REF}" || true
+            git fetch origin +refs/heads/"${CHAIN_REF}":refs/remotes/origin/"${CHAIN_REF}" || true
             git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
           fi
           RESULT="${{ needs.turn.outputs.seg_result }}"
@@ -1216,7 +1127,7 @@ jobs:
           if [ "$NEW" != "$STALL" ]; then
             # Race-proof (Lead pushes can move ai/main mid-run — same class
             # as the 15:57Z fetch-first rejection): reset, re-apply, commit.
-            git fetch origin ai/main
+            git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
               git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
@@ -1259,7 +1170,7 @@ jobs:
           if [ "$NEW" -ge 4 ] && [ "$DECISION" = "dispatch" ]; then
             DECISION="backoff-dispatch"   # slow-poll: transient dead lanes recover on their own
           fi
-          # Export for the Telegram mirror step below (same job, later step).
+          # Export for the Discord mirror step below (same job, later step).
           echo "CHAIN_DECISION=$DECISION" >> "$GITHUB_ENV"
           echo "CHAIN_STALL=$NEW" >> "$GITHUB_ENV"
           DISPATCH_CODE="n/a"
@@ -1287,150 +1198,17 @@ jobs:
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
 
-      # Owner channel — OUTBOUND leg (Owner order 2026-10-21 #hq: contact
-      # over Telegram; 17:47Z: locked to HIS chat id). Mirrors every chain
-      # verdict to the Owner's chat ONLY: TELEGRAM_OWNER_ID secret, else
-      # TELEGRAM_CHAT_ID, else the owner-locked learned id (tg_chat
-      # output — it only ever carries the verified Owner id). SILENT until
-      # the lock is activated by the Lead.
-      - name: Mirror chain verdict + GLM chat to Telegram (owner-locked, deduped)
-        continue-on-error: true   # MIRROR LAW (admincraft 2g): a bridge failure is a warning — it must never race a healthy run to "failure"
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TG_LEARNED_CHAT: ${{ needs.turn.outputs.tg_chat }}
-        run: |
-          # OWNER LOCK (17:47Z): verdicts go ONLY to the Owner's chat —
-          # secret id first, then the owner-locked learned id. No other
-          # destination exists.
-          # TG DEDUPE LAW (Owner 2026-10-21 03:53Z: "I keep getting the
-          # same msgs on Telegram"): fire ONLY when a segment actually
-          # RAN and the verdict differs from #+LAST-VERDICT in the
-          # control file. Hourly safety-net no-ops are silent.
-          SEG="${{ needs.turn.outputs.seg_result }}"
-          [ -n "$SEG" ] || { echo "telegram mirror: turn skipped — silent (dedupe law)"; exit 0; }
-          CHAT="${TELEGRAM_OWNER_ID:-${TELEGRAM_CHAT_ID:-${TG_LEARNED_CHAT}}}"
-          [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$CHAT" ] || { echo "telegram mirror: silent (no token or chat id yet)"; exit 0; }
-          CTL=agent-team/TEAM-CONTROL.org
-          # GLM CHAT MIRROR (Owner 2026-10-21 #hq: "I can't see team chat
-          # on Telegram — it keeps sending FROM: team-lead msgs"): the
-          # segment's NEW TEAM-CHAT.org entries go to the Owner too, each
-          # block under its REAL :FROM: seat — verdicts alone made the
-          # feed look like a team-lead monologue. Char-safe chunking under
-          # TG's 4096 cap; deduped via #+LAST-CHAT (a re-run diffs the
-          # same segment -> same hash -> silent). Runs BEFORE the BLOCKED
-          # verdict cap so chat flows even when the verdict is throttled.
-          ADDED=""
-          BASE="${{ needs.turn.outputs.base_sha }}"
-          # R-2-69: task chains mirror the TRUNK landing diff (their chat
-          # entries reach the trunk through the gate merge) so entries from
-          # other tasks — absorbed via the trunk relay — never double-send.
-          CB="$BASE"; CE="HEAD"
-          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-            CB="${{ steps.gate.outputs.trunk_pre }}"; CE="origin/ai/main"
-          fi
-          if [ -n "$CB" ] && git cat-file -e "$CB" 2>/dev/null; then
-            ADDED=$(git diff "$CB" "$CE" -- agent-team/TEAM-CHAT.org 2>/dev/null \
-              | grep '^+' | grep -v '^+++' | sed 's/^+//')
-          fi
-          CH=""
-          if [ -n "$ADDED" ]; then
-            CH=$(printf '%s' "$ADDED" | sha256sum | cut -c1-12)
-            LASTC=$(grep -oP '^\#\+LAST-CHAT:\s*\K[0-9a-f]+' "$CTL" | head -1 || true)
-            if [ "$CH" != "$LASTC" ]; then
-              SEAT=$(printf '%s\n' "$ADDED" | grep -oP '^\s*:FROM:\s*\K.*' | head -1)
-              SEAT="${SEAT:-team-lead}"
-              export ADDED
-              python3 -c 'import os,sys; added=os.environ["ADDED"]; sys.stdout.write("\x1f".join(added[i:i+3800] for i in range(0, len(added), 3800)))' > /tmp/tg-chunks.txt
-              while IFS= read -r -d $'\x1f' CHUNK || [ -n "$CHUNK" ]; do
-                [ -n "$CHUNK" ] || continue
-                curl -sS -o /dev/null -w 'telegram chat mirror: HTTP %{http_code}\n' \
-                  "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-                  --data-urlencode "chat_id=${CHAT}" \
-                  --data-urlencode "text=$(printf 'FROM: %s\nTO: @owner\n\n[{{PROJECT}}] team chat — new this segment\n---\n%s' "$SEAT" "$CHUNK")" || true
-                CHUNK=""
-              done < /tmp/tg-chunks.txt
-              rm -f /tmp/tg-chunks.txt
-            else
-              echo "telegram chat mirror: already mirrored this segment — silent (dedupe)"
-            fi
-          else
-            echo "telegram chat mirror: no new chat entries this segment"
-          fi
-          case "$SEG" in
-            *BLOCKED*)
-              # DEDUPE LAW v2 (Owner 2026-10-21 05:24Z: the same BLOCKED msg
-              # kept arriving every ~5 min): a BLOCKED situation pages the
-              # Owner AT MOST ONCE PER HOUR. Seat wording and the stall
-              # counter never reset the cap — only a real state change or
-              # the hourly heartbeat does. DONE/PARTIAL (fresh work) is
-              # NEVER throttled.
-              NOW=$(date +%s)
-              LASTB=$(grep -oP '^\#\+LAST-BLOCKED-NOTIFY:\s*\K[0-9]+' "$CTL" | head -1 || true)
-              [ -n "$LASTB" ] || LASTB=0
-              if [ "$((NOW - LASTB))" -lt 3600 ]; then
-                echo "telegram mirror: BLOCKED already mirrored <1h ago — silent (dedupe law v2)"
-                exit 0
-              fi
-              ;;
-          esac
-          VH=$(printf '%s' "$SEG" | sha256sum | cut -c1-12)
-          # TELEGRAM LAW (Owner order 17:55Z): every message to the TG bot
-          # MUST contain FROM and TO — they open the text.
-          TXT="$(printf 'FROM: {{FROM_ID}}\nTO: @owner\n\n[{{PROJECT}}] segment done\nbranch: %s\nresult: %s\nmerge: %s\ngate: %s\nstall: %s\ndecision: %s' \
-            "${{ needs.turn.outputs.turn_branch }}" \
-            "$SEG" \
-            "${{ steps.merge.outputs.outcome }}" \
-            "${{ steps.gate.outputs.gate }}" \
-            "${CHAIN_STALL:-?}" \
-            "${CHAIN_DECISION:-unknown}")"
-          CODE=$(curl -sS -o /dev/null -w '%{http_code}' \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${CHAT}" \
-            --data-urlencode "text=${TXT}") || CODE="curl-failed"
-          echo "telegram mirror: HTTP ${CODE}"
-          git config user.name "agent-team-ci" 2>/dev/null || true
-          git config user.email "agent-team-ci@users.noreply.github.com" 2>/dev/null || true
-          git remote set-url --push origin \
-            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          # SED BUG FIX (root cause of the 5-min TG spam): the old pattern
-          # '^\#\+LAST-VERDICT:' is GNU BRE — '\+' = one-or-more of '#', so it
-          # NEVER matched the org line '#+LAST-VERDICT:' (literal '#' then
-          # '+'). sed no-oped -> empty commit -> exit 0 -> the marker never
-          # landed on ai/main -> every run re-mirrored. Fixed: '^#+...'.
-          write_markers() {
-            grep -q '^#+LAST-BLOCKED-NOTIFY:' "$CTL" || printf '#+LAST-BLOCKED-NOTIFY: 0\n' >> "$CTL"
-            sed -i "s|^#+LAST-VERDICT:.*|#+LAST-VERDICT: ${VH}|" "$CTL"
-            if [ -n "${CH:-}" ]; then
-              grep -q '^#+LAST-CHAT:' "$CTL" || printf '#+LAST-CHAT: 0\n' >> "$CTL"
-              sed -i "s|^#+LAST-CHAT:.*|#+LAST-CHAT: ${CH}|" "$CTL"
-            fi
-            case "$SEG" in
-              *BLOCKED*) sed -i "s|^#+LAST-BLOCKED-NOTIFY:.*|#+LAST-BLOCKED-NOTIFY: $(date +%s)|" "$CTL" ;;
-            esac
-          }
-          git fetch origin ai/main && git reset --hard origin/ai/main
-          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-            git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
-          fi
-          write_markers
-          git add "$CTL"
-          git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0
-          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-            for i in 1 2 3; do git push --force origin "${CHAIN_REF}" && break; git fetch origin ai/main && git reset --hard origin/ai/main; git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
-          else
-            for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
-          fi
-          exit 0   # MIRROR LAW (2g): even a failed marker push stays a warning, never the job result
-
+      # (Telegram mirror retired — Owner order 2026-10-25 #hq: no more
+      # Telegram communication. The Discord mirror below is the ONLY
+      # outbound mirror: chain verdict + this segment's new chat entries.)
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
       # Their GLM chats go to their respective Discord channels." This
       # project's channel webhook rides as secret {{DISCORD_SECRET}} (the
       # Owner creates it in one click in the channel settings). Mirrors
       # (1) the chain verdict and (2) every TEAM-CHAT.org message this
       # segment appended — the GLM chats — diffed base_sha..post-merge
-      # HEAD. SILENT until the webhook secret exists. FROM/TO law applies
+      # HEAD. SILENT until the webhook secret exists. This is the ONLY mirror
+# (Telegram retired 2026-10-25). FROM/TO law applies
       # to every mirrored block.
       - name: Mirror verdict + new GLM chats to Discord (silent without secret)
         continue-on-error: true   # MIRROR LAW (admincraft 2g): bridge failure = warning, never the job result

@@ -32,6 +32,27 @@ name: Agent Team Chain
 # never red. Judgment lane is BINARY: Jev via the gateway when it is up,
 # else the chain decides directly (local rules) — no provider chain.
 #
+# TASK BRANCHES (Owner order 2026-10-25 #hq — "run multiple CI with
+# different branches, where branches will represent a task assigned to a
+# team member. Update templates, too"): every branch
+# ai/task/<member-slug>-<task-slug> runs its OWN chain (the concurrency
+# group is per-ref) on a THIN branch = trunk tip + ONE control commit
+# holding the task's own fork of agent-team/TEAM-CONTROL.org with
+# #+TASK-ID: + #+ASSIGNEE: and #+TURN: pinned to the assignee. Each
+# segment: sync the branch to a fresh trunk tip keeping the task control
+# (force push), cut the work branch, seat works, and the work lands on
+# ai/main through the EXISTING landing gate — the trunk control file
+# NEVER crosses between branches, so parallel tasks cannot stomp the
+# team control. Rotation pointer / stall / mirror markers write to the
+# task branch (state lives in the file; history disposable). Sessions
+# are namespaced per task: sessions-<task-slug>-<seat>-<run>. The
+# Telegram Owner bridge ingests on the ai/main chain ONLY (one chat
+# record; task chains never re-ingest). Arm a task: cut the branch from
+# ai/main, fork the control file with the task keys, dispatch the
+# workflow on that branch (Actions UI branch picker or `gh workflow run
+# agent-team.yml --ref <branch>`) — the chain self-dispatches while the
+# task objective is OPEN. The ai/main chain behaves exactly as before.
+
 # This file is LEAD-OWNED: seats never edit it (brief law #10). Re-scaffold
 # it with M-x agent-team-setup-project (refresh = re-run, adoption is
 # asked). Slot tokens are filled by the setup command; the blocks already
@@ -156,7 +177,7 @@ jobs:
       turn_branch: ${{ steps.push.outputs.branch }}
       seg_result: ${{ steps.seg.outputs.result }}
       tg_chat: ${{ steps.ingest.outputs.chat_id }}   # owner-locked chat id (secret TELEGRAM_OWNER_ID)
-      base_sha: ${{ steps.control.outputs.base_sha }} # ai/main before this segment — the Discord chat-mirror diff base
+      base_sha: ${{ steps.control.outputs.base_sha }} # chain ref tip before this segment — the chat-mirror diff base
       commits: ${{ steps.push.outputs.commits }}      # post-turn commit count — EMPTY-SEGMENT law signal
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -177,6 +198,26 @@ jobs:
           OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1 || true)
           TURN=$(grep -oP '^\#\+TURN:\s*\K.*' "$CTL" | head -1 | xargs)
           echo "kill=${KILL:-OFF} objstate=${OBJSTATE:-OPEN} turn='${TURN}'"
+          # R-2-69 TASK-BRANCH LAW: every ai/task/** ref runs its OWN chain
+          # off ITS OWN agent-team/TEAM-CONTROL.org (thin branch: trunk tip
+          # + task control). CHAIN_REF replaces every hardcoded branch from
+          # here down; ai/main keeps the legacy single-team behavior.
+          REF="${{ github.ref_name }}"
+          case "$REF" in
+            ai/main|ai/task/*) : ;;
+            *) REF="ai/main"
+               echo "::warning::chain dispatched on non-team ref '${{ github.ref_name }}' — pinned to ai/main semantics" ;;
+          esac
+          echo "CHAIN_REF=$REF" >> "$GITHUB_ENV"
+          REF_SLUG=$(printf '%s' "$REF" | sed 's#^ai/##; s#/#-#g')
+          echo "REF_SLUG=$REF_SLUG" >> "$GITHUB_ENV"
+          TASK_ID=$(grep -oP '^\#\+TASK-ID:\s*\K.*' "$CTL" | head -1 | xargs || true)
+          ASSIGNEE=$(grep -oP '^\#\+ASSIGNEE:\s*\K.*' "$CTL" | head -1 | xargs || true)
+          echo "TASK_ID=${TASK_ID:-none}" >> "$GITHUB_ENV"
+          echo "ASSIGNEE=${ASSIGNEE:-none}" >> "$GITHUB_ENV"
+          if [ "$REF" = "ai/main" ]; then SESS_PREFIX="sessions-"; else SESS_PREFIX="sessions-${REF_SLUG}-"; fi
+          echo "sess_prefix=$SESS_PREFIX" >> "$GITHUB_OUTPUT"
+          echo "chain ref: $REF (slug $REF_SLUG) task=${TASK_ID:-none} assignee=${ASSIGNEE:-none}"
           # Pre-segment ai/main tip: the Discord chat mirror diffs TEAM-CHAT.org
           # from here to post-merge HEAD to extract THIS segment's GLM chats.
           echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -231,6 +272,41 @@ jobs:
             no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
           esac
           echo "$MSG" >> "$SUMMARY"
+
+      # R-2-69 TASK-BRANCH SYNC: a task branch is THIN — trunk tip plus
+      # exactly one control commit (the task's own TEAM-CONTROL.org fork).
+      # Every segment starts from a FRESH base: absorb origin/ai/main (peer
+      # mesh + landed work), keep the task control, force-push. The per-ref
+      # concurrency group serializes this chain; the seat's WORK travels
+      # via the work branch -> trunk landing, never through this branch.
+      - name: Sync task branch with the trunk (fresh base, task control kept)
+        if: steps.control.outputs.mode == 'work' && env.CHAIN_REF != 'ai/main'
+        run: |
+          set -u
+          git config user.name "agent-team-ci"
+          git config user.email "agent-team-ci@users.noreply.github.com"
+          git remote set-url --push origin \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          SYNCED=no
+          for i in 1 2 3; do
+            git fetch origin ai/main || true
+            git fetch origin "$CHAIN_REF" || true
+            if ! git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > /tmp/.task-ctl.org 2>/dev/null; then
+              echo "::warning::no task control on ${CHAIN_REF} — branch not armed; skipping sync"
+              break
+            fi
+            git reset --hard origin/ai/main
+            cp /tmp/.task-ctl.org agent-team/TEAM-CONTROL.org
+            if git diff --quiet -- agent-team/TEAM-CONTROL.org; then
+              SYNCED=uptodate; break
+            fi
+            git add agent-team/TEAM-CONTROL.org
+            git commit -m "ci-sync: ${CHAIN_REF} = trunk tip + task control (fresh segment base)"
+            if git push --force origin "$CHAIN_REF"; then SYNCED=yes; break; fi
+            sleep 10
+          done
+          echo "task sync: ${SYNCED} (${CHAIN_REF} = trunk tip + task control)" >> "$GITHUB_STEP_SUMMARY"
+          exit 0
 
       - name: Resolve gateway (override -> deployment -> local -> boot — Owner order 2026-10-22)
         if: steps.control.outputs.mode == 'work'
@@ -387,6 +463,7 @@ jobs:
       # idle/killed — the chat is the record.
       - name: Telegram bridge — ingest Owner replies into the team chat (owner-locked)
         id: ingest
+        if: github.ref_name == 'ai/main'   # R-2-69: task chains skip the Owner bridge — the trunk chain owns the one chat record
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
@@ -473,7 +550,7 @@ jobs:
         run: |
           ART_ID=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=100" \
-            | jq -r --arg p "sessions-${SEAT}-" \
+            | jq -r --arg p "${{ steps.control.outputs.sess_prefix }}${SEAT}-" \
               '[.artifacts[] | select(.name | startswith($p))] | sort_by(.id) | last | .id // empty')
           [ -n "$ART_ID" ] || { echo "sessions: no previous artifact for ${SEAT} — cold start"; exit 0; }
           curl -sSL -H "Authorization: Bearer $GH_TOKEN" -o "$PWD/.sessions-prev.zip" \
@@ -504,12 +581,17 @@ jobs:
           BOARD=agent-team/TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"
           TOP=$(grep -E {{TOP_GREP}} "$BOARD" | head -8 | sed 's/^\*\** //' || true)
-          BRANCH="ai/turn-$(date -u +%Y%m%d-%H%M)"
+          BRANCH="ai/turn-${REF_SLUG:-main}-$(date -u +%Y%m%d-%H%M%S)"   # R-2-69: ref-slug + seconds — parallel task chains never collide
           git checkout -b "$BRANCH"
           echo "TURN_BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
           BRIEF="You are the on-turn member of the {{PROJECT}} Agent Team, seat ${SEAT}.
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
+          TASK BRANCH LAW (Owner order 2026-10-25 #hq): you are on branch
+          ${CHAIN_REF:-ai/main} — this branch IS the task${TASK_ID:+ (task: ${TASK_ID})}${ASSIGNEE:+, assigned to ${ASSIGNEE}}.
+          Work ONLY this task on this branch; tag your chat entries
+          :task:${TASK_ID:-main}; peer pings across tasks still ride the
+          ONE team chat (the trunk relays it every segment).
           Law: templates/COMMON.org (canonical manual, khaalidrafi/agent-team.el).
           Board: agent-team/TODOS.org. Roster: agent-team/MEMBERS.org.
           Manual: agent-team/TEAM-CONTROL.org + agent-team/TEAM.md. Repo context: {{REPO_CONTEXT}}.
@@ -572,7 +654,8 @@ jobs:
              goes to the chat as '${SEAT} -> @lead :report:'; the Lead
              verifies against the objective and only the Lead sets
              OBJECTIVE-STATE: COMPLETE.
-          10. Do NOT push to ai/main; the CI self-chain auto-merges your
+          10. Do NOT push to ai/main or your task branch; the CI self-chain
+              auto-merges your
               branch right after the segment (your chat posts must
               propagate).
           11. LEAD-OWNED FILES — never edit, only read and cite:
@@ -688,6 +771,7 @@ jobs:
           echo "## Turn — ${SEAT} @ ${GITHUB_SHA::7}" >> "$SUMMARY"
           echo "" >> "$SUMMARY"
           echo "objective: ${OBJECTIVE}" >> "$SUMMARY"
+          echo "task: ${TASK_ID:-none} (assignee: ${ASSIGNEE:-none}, chain ref: ${CHAIN_REF:-ai/main})" >> "$SUMMARY"
           echo "branch: ${BRANCH}" >> "$SUMMARY"
           echo "result: ${TURN_RESULT}" >> "$SUMMARY"
           echo "TURN_SEAT=$SEAT" >> "$GITHUB_ENV"
@@ -715,12 +799,14 @@ jobs:
           while IFS= read -r f; do
             if out=$(bash .github/scripts/secret-guard.sh file "$f"); then N=$((N+1)); fi
           done < <(find /tmp/sess -type f 2>/dev/null)
-          tar czf "/tmp/sessions-${SEAT}-${GITHUB_RUN_NUMBER}.tgz" -C /tmp/sess . 2>/dev/null || true
-          if [ -s "/tmp/sessions-${SEAT}-${GITHUB_RUN_NUMBER}.tgz" ]; then
+          SESSP="${{ steps.control.outputs.sess_prefix }}"   # R-2-69: per-task session namespace
+          TGZ="/tmp/${SESSP}${SEAT}-${GITHUB_RUN_NUMBER}.tgz"
+          tar czf "$TGZ" -C /tmp/sess . 2>/dev/null || true
+          if [ -s "$TGZ" ]; then
             # v4 upload-artifact rejects absolute paths outside the
             # workspace — copy in before upload (run 39485635406 failure)
             mkdir -p "$PWD/.sessions-upload"
-            cp "/tmp/sessions-${SEAT}-${GITHUB_RUN_NUMBER}.tgz" "$PWD/.sessions-upload/"
+            cp "$TGZ" "$PWD/.sessions-upload/"
             echo "found=yes" >> "$GITHUB_OUTPUT"
             echo "sessions: ${N} file(s) had secret hits — redacted before upload" >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -730,7 +816,7 @@ jobs:
         if: always() && steps.sess.outputs.found == 'yes'
         uses: actions/upload-artifact@v4
         with:
-          name: sessions-${{ steps.control.outputs.seat }}-${{ github.run_number }}
+          name: ${{ steps.control.outputs.sess_prefix }}${{ steps.control.outputs.seat }}-${{ github.run_number }}
           path: .sessions-upload/sessions-*.tgz
           retention-days: 30
           if-no-files-found: ignore
@@ -765,27 +851,29 @@ jobs:
           case "${{ steps.control.outputs.seat }}" in
 {{NEXT_MAP}}
           esac
-          git checkout -f ai/main
-          # Race-proof the control commit: the Lead's pushes or another
-          # finalize can move ai/main while this segment ran — a plain push
-          # would be rejected (fetch first) and the rotation pointer lost
-          # (QA segment 15:57Z evidence). Reset to origin and re-apply.
-          git fetch origin ai/main
-          git reset --hard origin/ai/main
-          sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
-          git add "$CTL"
-          git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
-            -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
-          # Push retry (run 39485635406: the control push died silently —
-          # the rotation pointer only survived by luck of the parked seat)
+          # R-2-69 POINTER ADVANCE: ai/main keeps the classic checkout+sed
+          # +push; a task branch is THIN — rebuilt as trunk tip + this
+          # task's control file (fetched fresh, carrying the new TURN
+          # pointer in its CONTENT), then force-pushed. State lives in the
+          # file; the per-ref concurrency group serializes the chain.
+          git checkout -f "${CHAIN_REF:-ai/main}" 2>/dev/null || true
           CPUSH=no
           for i in 1 2 3; do
-            if git push origin "ai/main"; then CPUSH=yes; break; fi
-            git fetch origin ai/main && git reset --hard origin/ai/main
+            git fetch origin ai/main
+            git reset --hard origin/ai/main
+            if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+              git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+            fi
             sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
             git add "$CTL"
             git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
-              -m "result: ${TURN_RESULT:-unknown}" || true
+              -m "result: ${TURN_RESULT:-unknown}" || { CPUSH=uptodate; break; }
+            if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+              if git push --force origin "$CHAIN_REF"; then CPUSH=yes; break; fi
+            else
+              if git push origin "ai/main"; then CPUSH=yes; break; fi
+            fi
+            sleep 10
           done
           [ "$CPUSH" = "yes" ] || echo "::warning::control push failed after 3 attempts"
 
@@ -817,7 +905,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ai/main
+          ref: ${{ github.ref_name }}   # R-2-69: the chain ref itself — ai/main trunk or the task branch
 
       - name: Auto-merge the turn branch (peer mail propagation)
         id: merge
@@ -831,7 +919,14 @@ jobs:
           OUTCOME="no-branch"
           if [ -n "$BRANCH" ] && git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
             git fetch origin "$BRANCH"
-            if git merge --no-ff --no-edit "origin/$BRANCH"; then
+            if git merge --no-ff --no-edit "origin/$BRANCH" 2>/dev/null; then
+              OUTCOME="merged"
+            elif git checkout HEAD -- agent-team/TEAM-CONTROL.org 2>/dev/null \
+                 && git add agent-team/TEAM-CONTROL.org 2>/dev/null \
+                 && git commit --no-edit >/dev/null 2>&1; then
+              # R-2-69: the only legal cross-branch divergence is the
+              # control file (task fork vs target) — the landing target
+              # keeps ITS OWN control; everything else merges.
               OUTCOME="merged"
             else
               git merge --abort || true
@@ -855,14 +950,21 @@ jobs:
           # Re-fetch + re-merge against moved main, push with retry;
           # the branch is deleted ONLY after a verified landing.
           RESULT=conflict
+          # R-2-69: trunk pre-landing sha — task chains use it as the chat
+          # mirror diff base (their chat entries land HERE, on the trunk).
+          echo "trunk_pre=$(git rev-parse origin/ai/main 2>/dev/null || echo '')" >> "$GITHUB_OUTPUT"
           for i in 1 2 3; do
             git fetch origin ai/main
             git reset --hard origin/ai/main
-            if ! git merge --no-ff --no-edit "origin/$BRANCH"; then
-              git merge --abort || true
-              echo "attempt $i: merge conflict vs moved main — retrying"
-              sleep 15
-              continue
+            if ! git merge --no-ff --no-edit "origin/$BRANCH" 2>/dev/null; then
+              if ! git checkout HEAD -- agent-team/TEAM-CONTROL.org 2>/dev/null \
+                   || ! git add agent-team/TEAM-CONTROL.org 2>/dev/null \
+                   || ! git commit --no-edit >/dev/null 2>&1; then
+                git merge --abort || true
+                echo "attempt $i: merge conflict vs moved main — retrying"
+                sleep 15
+                continue
+              fi
             fi
             if {{GATE_SH}}; then
               bash .github/scripts/secret-guard.sh staged
@@ -902,7 +1004,13 @@ jobs:
           # no burn); the LEAD reviews and clears the marker to resume.
           CTL=agent-team/TEAM-CONTROL.org
           BASE="${{ needs.turn.outputs.base_sha }}"
-          DELIV=$(git diff "$BASE" HEAD -- agent-team/TODOS.org 2>/dev/null \
+          # R-2-69: task chains delivered board notes via the TRUNK landing —
+          # diff trunk pre..post landing instead of the thin task branch.
+          PB="$BASE"; PE="HEAD"
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            PB="${{ steps.gate.outputs.trunk_pre }}"; PE="origin/ai/main"
+          fi
+          DELIV=$(git diff "$PB" "$PE" -- agent-team/TODOS.org 2>/dev/null \
             | grep '^+' | grep -v '^+++' | grep -c ':DELIVERED:' || true)
           PAUSE_AFTER=$(grep -oP '^\#\+PAUSE-AFTER-TODO:\s*\K\w+' "$CTL" | head -1 || true)
           if [ "${PAUSE_AFTER:-ON}" = "ON" ] && [ "${DELIV:-0}" -gt 0 ]; then
@@ -914,12 +1022,17 @@ jobs:
             for i in 1 2 3; do
               git fetch origin ai/main
               git reset --hard origin/ai/main
+              if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+                git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+              fi
               grep -q '^#+CHAIN-PAUSE:' "$CTL" \
                 && sed -i "s|^#+CHAIN-PAUSE:.*|#+CHAIN-PAUSE: ON|" "$CTL" \
                 || printf '#+CHAIN-PAUSE: ON\n' >> "$CTL"
               git add "$CTL"
               git commit -m "ci-chain: pause-after-todo armed (${DELIV} delivered TODO(s) this segment)" || break
-              if git push origin "ai/main"; then ARMED=yes; break; fi
+              if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+                git push --force origin "${CHAIN_REF}" && ARMED=yes && break
+              elif git push origin "ai/main"; then ARMED=yes; break; fi
             done
             echo "PAUSED_TODOS=${DELIV}" >> "$GITHUB_OUTPUT"
             echo "pause-after-todo: ${DELIV} delivered TODO(s) — chain armed to pause (push ${ARMED}); Lead clears #+CHAIN-PAUSE to resume" >> "$GITHUB_STEP_SUMMARY"
@@ -1074,6 +1187,13 @@ jobs:
       - name: Stall accounting + dispatch the next run (self-chain)
         run: |
           CTL=agent-team/TEAM-CONTROL.org
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            # R-2-69: read THIS task's control state (the working tree may
+            # be the trunk after the landing gate; the task state lives on
+            # the task branch blob).
+            git fetch origin "${CHAIN_REF}" || true
+            git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+          fi
           RESULT="${{ needs.turn.outputs.seg_result }}"
           OUTCOME="${{ steps.merge.outputs.outcome }}"
           GATE="${{ steps.gate.outputs.gate }}"
@@ -1087,11 +1207,18 @@ jobs:
             # as the 15:57Z fetch-first rejection): reset, re-apply, commit.
             git fetch origin ai/main
             git reset --hard origin/ai/main
+            if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+              git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+            fi
             sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
             git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \
               || echo "::notice::stall commit empty"
-            git push origin "ai/main" || echo "::warning::stall push failed"
+            if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+              git push --force origin "${CHAIN_REF}" || echo "::warning::stall push failed"
+            else
+              git push origin "ai/main" || echo "::warning::stall push failed"
+            fi
           fi
           # Decide the next link in the chain
           KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1 || true)
@@ -1136,7 +1263,7 @@ jobs:
               -H "Authorization: Bearer ${{ github.token }}" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${{ github.repository }}/actions/workflows/{{WORKFLOW_FILE}}/dispatches" \
-              -d '{"ref":"ai/main"}')
+              -d "$(jq -nc --arg r "${CHAIN_REF:-ai/main}" '{ref:$r}')")   # R-2-69: re-dispatch THIS chain's ref
           fi
           SUMMARY="$GITHUB_STEP_SUMMARY"
           echo "## Chain — finalize" >> "$SUMMARY"
@@ -1185,8 +1312,15 @@ jobs:
           # verdict cap so chat flows even when the verdict is throttled.
           ADDED=""
           BASE="${{ needs.turn.outputs.base_sha }}"
-          if [ -n "$BASE" ] && git cat-file -e "$BASE" 2>/dev/null; then
-            ADDED=$(git diff "$BASE" HEAD -- agent-team/TEAM-CHAT.org 2>/dev/null \
+          # R-2-69: task chains mirror the TRUNK landing diff (their chat
+          # entries reach the trunk through the gate merge) so entries from
+          # other tasks — absorbed via the trunk relay — never double-send.
+          CB="$BASE"; CE="HEAD"
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            CB="${{ steps.gate.outputs.trunk_pre }}"; CE="origin/ai/main"
+          fi
+          if [ -n "$CB" ] && git cat-file -e "$CB" 2>/dev/null; then
+            ADDED=$(git diff "$CB" "$CE" -- agent-team/TEAM-CHAT.org 2>/dev/null \
               | grep '^+' | grep -v '^+++' | sed 's/^+//')
           fi
           CH=""
@@ -1266,10 +1400,17 @@ jobs:
             esac
           }
           git fetch origin ai/main && git reset --hard origin/ai/main
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+          fi
           write_markers
           git add "$CTL"
           git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0
-          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            for i in 1 2 3; do git push --force origin "${CHAIN_REF}" && break; git fetch origin ai/main && git reset --hard origin/ai/main; git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
+          else
+            for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
+          fi
           exit 0   # MIRROR LAW (2g): even a failed marker push stays a warning, never the job result
 
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
@@ -1302,9 +1443,14 @@ jobs:
           FROM="FROM: {{FROM_ID}}"
           post "$(printf '%s\nTO: @team (discord, {{PROJECT}} channel)\n\n[{{PROJECT}}] segment done\nbranch: %s\nresult: %s\ndecision: %s\nstall: %s' \
             "$FROM" "${TURN_BRANCH:-?}" "${SEG_RESULT:-?}" "${CHAIN_DECISION:-unknown}" "${CHAIN_STALL:-?}")"
-          # The GLM chats this segment appended (merge landed them in ai/main):
-          if [ -n "$BASE_SHA" ] && git cat-file -e "$BASE_SHA" 2>/dev/null; then
-            ADDED=$(git diff "$BASE_SHA" HEAD -- agent-team/TEAM-CHAT.org 2>/dev/null \
+          # The GLM chats this segment appended (gate landed them in
+          # ai/main; task chains diff the trunk landing — R-2-69):
+          CB="$BASE_SHA"; CE="HEAD"
+          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
+            CB="${{ steps.gate.outputs.trunk_pre }}"; CE="origin/ai/main"
+          fi
+          if [ -n "$CB" ] && git cat-file -e "$CB" 2>/dev/null; then
+            ADDED=$(git diff "$CB" "$CE" -- agent-team/TEAM-CHAT.org 2>/dev/null \
               | grep '^+' | grep -v '^+++' | sed 's/^+//')
             if [ -n "$ADDED" ]; then
               post "$(printf '%s\nTO: @team (discord, {{PROJECT}} channel)\n--- GLM chat, this segment ---\n%s' "$FROM" "$ADDED")"

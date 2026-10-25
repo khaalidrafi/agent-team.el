@@ -24,9 +24,9 @@ RUN export HOME=/usr/local/lib/opencode-home \
 # --- Goose body (direct tarball: the download_cli.sh installer opens
 #     /dev/tty and dies on headless runners — demo/01 turn 2 evidence) ------
 RUN mkdir -p /tmp/goose-dl \
- && curl -fsSL -o /tmp/goose-dl/goose.tar.bz2 \
+ && curl -fsSL --retry 5 --retry-all-errors --retry-delay 5 -m 300 -o /tmp/goose-dl/goose.tar.bz2 \
       https://github.com/block/goose/releases/download/stable/goose-x86_64-unknown-linux-gnu.tar.bz2 \
- && tar -xjf /tmp/goose-dl/goose.tar.bz2 -C /tmp/goose-dl \
+ && test -s /tmp/goose-dl/goose.tar.bz2 && tar -xjf /tmp/goose-dl/goose.tar.bz2 -C /tmp/goose-dl \
  && install -m 0755 /tmp/goose-dl/goose /usr/local/bin/goose \
  && rm -rf /tmp/goose-dl
 

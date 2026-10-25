@@ -193,10 +193,10 @@ File sketch (produce EXACTLY this skeleton):
   history: append, never rewrite
 - one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
   (COMMON): simple plain language (the PLAIN LANGUAGE law),
-  well-structured with lists — the Owner reads every entry verbatim on
-  the Discord mirror
-- the exact header line drives the Discord mirror and the live
-  viewer; never reformat another member's entry
+  well-structured with lists — the Lead couriers Owner-bound entries
+  to the Owner verbatim (no chat mirror since 2026-10-26)
+- the exact header line routes the entry (FROM seat, @target, :kind:);
+  never reformat another member's entry
 
 ** agent-team/TEAM-UPDATE.org
 

@@ -451,7 +451,8 @@ language. I struggle to understand their current language")
 ** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
 
 Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
-(the Owner reads every entry verbatim on the Discord mirror) — Owner's
+(the Lead couriers every Owner-bound entry to him verbatim on #hq; no
+chat mirror since 2026-10-26) — Owner's
 words: clear enough language, well-structured with lists:
 
 - clear enough language: plain, direct, complete sentences — no cryptic
@@ -461,8 +462,8 @@ words: clear enough language, well-structured with lists:
   then bullets/numbered lists — state → evidence → next step; NEVER a
   prose wall
 - one topic per entry; a new topic = a new entry
-- keep the header exact (FROM seat, @target, :kind:) — it drives the
-  Discord mirror and the live viewer
+- keep the header exact (FROM seat, @target, :kind:) — the Lead uses it
+  to route and courier entries (no chat mirror since 2026-10-26)
 
 ** LARK (team communication — per-role bots, Owner order 2026-10-20)
 

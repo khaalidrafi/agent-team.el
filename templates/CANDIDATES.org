@@ -158,8 +158,8 @@
     community adapter npx pi-acp v0.0.34 (svkozak/pi-acp, MIT,
     registry-listed). No built-in permission system — docs recommend Docker
     isolation (fits CI seats). BEST free-tier AGGREGATOR body: one harness
-    over NIM 10k/day + Groq 1k/day + OpenRouter :free + Z.ai Flash + Gemini
-    API 250/day (see the census below).
+    over Groq 1k/day + OpenRouter :free + Z.ai Flash + Gemini API 250/day
+    (see the census below).
   - cline — github.com/cline/cline. Apache-2.0, npm cline@3.0.73
     (2026-10-20). Standalone CLI `npm i -g cline`, "fully headless for
     CI/CD": `cline "task" --json` (NDJSON run_result), hooks, `cline history

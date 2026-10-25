@@ -87,8 +87,9 @@ the box.
 - a new or changed roster is a WORK ORDER: rank every row of
   agent-team/CANDIDATES.org, none skipped — the ranking universe is THAT
   curated file, NEVER "all models in existence": a model with no CANDIDATES
-  row is not rankable (land it as a row with evidence first, or it does not
-  exist for this team) — and rank the PAIR (model@agent, brain+body per
+  row is not rankable and does not exist for this team — propose row
+  additions to the Owner (ADD-FREEZE 2026-10-25, no self-adds) — and rank
+  the PAIR (model@agent, brain+body per
   BRAINS AND BODIES), never a bare model; the research pass runs IMMEDIATELY
   as part of ranking, no external command needed — waiting to be told is a
   failure; ranking rows ≠ dispatching rows: ranking is an EM desk job over
@@ -137,9 +138,10 @@ the box.
   finding = WATCH, 3 = RELEASE); record lane-vs-seat honestly — the
   result line names the lane that ran, HR records the seat
 - EXPIRING-CREDIT LAW (admincraft 1e): expiring credits (promos, trial
-  pools) get STAGED NEEDS-KEY rows in CANDIDATES.org + a hire/expiry
-  DATE in the roster — each row activates the moment its key lands and
-  is re-hired or retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
+  pools) are PROPOSED to the Owner for CANDIDATES.org rows (ADD-FREEZE
+  2026-10-25: never self-add) + a hire/expiry DATE in the roster — each
+  approved row activates the moment its key lands and is re-hired or
+  retired at its expiry (RE-HIRE DATES per EXPIRY-LAW)
 
 ** HIRING PROTOCOL
 

@@ -61,9 +61,10 @@ real work segments and self-chain until the objective completes.
    a `:PROPERTIES:` drawer (`:FROM:`/`:TO:`/`:KIND:`/`:WHEN:`/`:CHANNEL:`),
    body indented, WHEN an Org inactive timestamp. Append at EOF only;
    never edit or delete existing entries.
-2. OWNER MESSAGE LAW (17:55Z; retargeted 2026-10-25): any message meant
-   for the Owner opens with `FROM:` and `TO:` lines — the Discord mirror
-   carries it to him. Write it in plain simple words (law 11).
+2. OWNER MESSAGE LAW (17:55Z; retargeted 2026-10-26): any message meant
+   for the Owner opens with `FROM:` and `TO:` lines — the Lead reads them
+   in the repo and couriers the message to him on #hq. Write it in plain
+   simple words (law 11).
 3. SECRET LAW (18:27Z): credentials NEVER travel in chat, files, commits,
    or messages — only as ENV VAR NAMES. A peer asked for a credential
    replies with the NAME + has-it/absent (Emacs: `M-x agent-team-env-look`),
@@ -75,10 +76,11 @@ real work segments and self-chain until the objective completes.
    end, scrubbed of secrets, uploaded as `sessions-<seat>-*` artifacts
    (30d), and restored before the same seat's next turn — resume with
    context instead of starting cold.
-5. OWNER CHANNEL (2026-10-25; supersedes the 17:47Z bridge lock):
-   Discord only — no Telegram communication anywhere (bridge and mirror
-   removed from the CI). The Owner speaks in #hq; the Lead transcribes
-   his words into the team chat.
+5. OWNER CHANNEL (2026-10-26; supersedes the 2026-10-25 version):
+   NO chat bridge and NO chat mirror in the CI — no Telegram (retired
+   2026-10-25), no Discord ("remv discord, too", 2026-10-26). The Owner
+   speaks to the Lead on #hq; the Lead transcribes his words into the
+   team chat and couriers Owner-bound entries back to him.
 6. DOCKER LAW (Owner 2026-10-20): agents are PREINSTALLED in the harness
    image (docker/harness/); CI never installs bodies at turn time. Keys
    are env-injected, never baked.
@@ -118,5 +120,6 @@ advance) → `finalize` (auto-merge behind the byte-compile gate → stall
 accounting → SELF-DISPATCH the next run while the objective is open).
 The chain stops only on KILL-SWITCH ON, OBJECTIVE-STATE COMPLETE, no
 objective, or tests red; a no-progress streak shifts to backoff, never
-to failure. Owner gets every verdict + new chat entries mirrored on
-Discord (the project channel webhook). No Telegram anywhere.
+to failure. No chat mirror anywhere (Telegram retired 2026-10-25; Discord
+retired 2026-10-26) — the team chat lives in agent-team/TEAM-CHAT.org and
+the Lead couriers Owner-bound entries to #hq.

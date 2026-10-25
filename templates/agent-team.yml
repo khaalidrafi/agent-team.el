@@ -21,10 +21,11 @@ name: Agent Team Chain
 # clean halt after a :DELIVERED: TODO (mode=paused, the Lead clears
 # #+CHAIN-PAUSE to resume); an explicit Owner order may set OFF for a
 # continuous multi-TODO run; fallback chains
-# name the lane that ACTUALLY ran and never fake a paid visit; mirror
-# failures are warnings, never the job result. Verdicts mirror to
-# this project's Discord channel (the ONLY mirror — Telegram retired,
-# Owner order 2026-10-25 #hq: no Telegram communication). GoModel (llmfisher gateway) rides as
+# name the lane that ACTUALLY ran and never fake a paid visit. NO chat
+# mirror: Telegram retired (Owner 2026-10-25 #hq), Discord retired too
+# (Owner 2026-10-26 #hq: "remv discord, too."). The team chat lives in
+# agent-team/TEAM-CHAT.org on the repo; the Lead couriers Owner-bound
+# entries to #hq by hand. GoModel (llmfisher gateway) rides as
 # a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
 # RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
 # override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
@@ -214,8 +215,9 @@ jobs:
           if [ "$REF" = "ai/main" ]; then SESS_PREFIX="sessions-"; else SESS_PREFIX="sessions-${REF_SLUG}-"; fi
           echo "sess_prefix=$SESS_PREFIX" >> "$GITHUB_OUTPUT"
           echo "chain ref: $REF (slug $REF_SLUG) task=${TASK_ID:-none} assignee=${ASSIGNEE:-none}"
-          # Pre-segment ai/main tip: the Discord chat mirror diffs TEAM-CHAT.org
-          # from here to post-merge HEAD to extract THIS segment's GLM chats.
+          # Pre-segment ai/main tip: base for diffing TEAM-CHAT.org to
+          # post-merge HEAD — THIS segment's new GLM chats (no chat mirror
+          # since 2026-10-26; the Lead reads them in the repo and couriers).
           echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           # GIT HYGIENE (admincraft 3d): a stale LOCAL ref named like a
           # remote-tracking ref ("origin/ai/main" as a local branch) makes
@@ -521,9 +523,9 @@ jobs:
           contain the FROM content\"); tags + properties drawer = Org
           syntax; WHEN is an Org inactive timestamp. Never edit existing
           entries — append only. Any message meant for the Owner MUST open with
-          \"FROM: <seat>\" and \"TO: @owner\" lines — the Discord mirror
-          carries it to him verbatim; write it in plain simple words
-          (PLAIN LANGUAGE law, Owner 2026-10-25).
+          \"FROM: <seat>\" and \"TO: @owner\" lines — the Lead reads the chat
+          in the repo and pastes your message to him on #hq verbatim; write
+          it in plain simple words (PLAIN LANGUAGE law, Owner 2026-10-25).
           Handles: {{HANDLES}}.
           mailbox/ is a frozen archive — NEVER write there.
           TOP BOARD ITEMS (oldest-first):
@@ -1170,9 +1172,8 @@ jobs:
           if [ "$NEW" -ge 4 ] && [ "$DECISION" = "dispatch" ]; then
             DECISION="backoff-dispatch"   # slow-poll: transient dead lanes recover on their own
           fi
-          # Export for the Discord mirror step below (same job, later step).
-          echo "CHAIN_DECISION=$DECISION" >> "$GITHUB_ENV"
-          echo "CHAIN_STALL=$NEW" >> "$GITHUB_ENV"
+          # (The old Discord-mirror exports of CHAIN_DECISION/CHAIN_STALL
+          # retired with the mirror — Owner 2026-10-26 #hq.)
           DISPATCH_CODE="n/a"
           if [ "$DECISION" = "dispatch" ] || [ "$DECISION" = "backoff-dispatch" ]; then
             if [ "$DECISION" = "backoff-dispatch" ]; then
@@ -1198,54 +1199,9 @@ jobs:
           echo "" >> "$SUMMARY"
           echo "kill=${KILL:-OFF} state=${OBJSTATE:-OPEN}" >> "$SUMMARY"
 
-      # (Telegram mirror retired — Owner order 2026-10-25 #hq: no more
-      # Telegram communication. The Discord mirror below is the ONLY
-      # outbound mirror: chain verdict + this segment's new chat entries.)
-      # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
-      # Their GLM chats go to their respective Discord channels." This
-      # project's channel webhook rides as secret {{DISCORD_SECRET}} (the
-      # Owner creates it in one click in the channel settings). Mirrors
-      # (1) the chain verdict and (2) every TEAM-CHAT.org message this
-      # segment appended — the GLM chats — diffed base_sha..post-merge
-      # HEAD. SILENT until the webhook secret exists. This is the ONLY mirror
-# (Telegram retired 2026-10-25). FROM/TO law applies
-      # to every mirrored block.
-      - name: Mirror verdict + new GLM chats to Discord (silent without secret)
-        continue-on-error: true   # MIRROR LAW (admincraft 2g): bridge failure = warning, never the job result
-        env:
-          DISCORD_WEBHOOK_TEAM: ${{ secrets.{{DISCORD_SECRET}} }}
-          BASE_SHA: ${{ needs.turn.outputs.base_sha }}
-          TURN_BRANCH: ${{ needs.turn.outputs.turn_branch }}
-          SEG_RESULT: ${{ needs.turn.outputs.seg_result }}
-        run: |
-          [ -n "$DISCORD_WEBHOOK_TEAM" ] || { echo "discord mirror: silent (no {{DISCORD_SECRET}} secret yet)"; exit 0; }
-          post() { # chunk to Discord's 2000-char cap
-            local txt="$1"
-            while [ -n "$txt" ]; do
-              local chunk="${txt:0:1900}"; txt="${txt:1900}"
-              curl -sS -o /dev/null -w 'discord mirror: HTTP %{http_code}\n' \
-                "$DISCORD_WEBHOOK_TEAM" \
-                -H 'Content-Type: application/json' \
-                -d "$(python3 -c 'import json,sys; print(json.dumps({"content": sys.stdin.read()}))' <<< "$chunk")" || true
-            done
-          }
-          FROM="FROM: {{FROM_ID}}"
-          post "$(printf '%s\nTO: @team (discord, {{PROJECT}} channel)\n\n[{{PROJECT}}] segment done\nbranch: %s\nresult: %s\ndecision: %s\nstall: %s' \
-            "$FROM" "${TURN_BRANCH:-?}" "${SEG_RESULT:-?}" "${CHAIN_DECISION:-unknown}" "${CHAIN_STALL:-?}")"
-          # The GLM chats this segment appended (gate landed them in
-          # ai/main; task chains diff the trunk landing — R-2-69):
-          CB="$BASE_SHA"; CE="HEAD"
-          if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-            CB="${{ steps.gate.outputs.trunk_pre }}"; CE="origin/ai/main"
-          fi
-          if [ -n "$CB" ] && git cat-file -e "$CB" 2>/dev/null; then
-            ADDED=$(git diff "$CB" "$CE" -- agent-team/TEAM-CHAT.org 2>/dev/null \
-              | grep '^+' | grep -v '^+++' | sed 's/^+//')
-            if [ -n "$ADDED" ]; then
-              post "$(printf '%s\nTO: @team (discord, {{PROJECT}} channel)\n--- GLM chat, this segment ---\n%s' "$FROM" "$ADDED")"
-            else
-              echo "discord mirror: no new chat entries this segment"
-            fi
-          else
-            echo "discord mirror: base sha unavailable — verdict only"
-          fi
+      # (Discord mirror retired — Owner order 2026-10-26 #hq: "remv
+      # discord, too." NO outbound chat mirror remains — Telegram retired
+      # 2026-10-25, Discord retired 2026-10-26. The chain verdict lands in
+      # the run summary; the team chat lives in agent-team/TEAM-CHAT.org on
+      # the repo. The Lead reads it there and couriers Owner-bound entries
+      # (FROM:/TO: lines) to the Owner's #hq channel by hand.)

@@ -188,7 +188,7 @@ PRIORITY: P1 · ORDER: 2")))
 
 (ert-deftest agent-team-env-shape-p ()
   (should (agent-team--env-shape-p "QODER_PERSONAL_ACCESS_TOKEN"))
-  (should (agent-team--env-shape-p "DISCORD_WEBHOOK_TEAM"))
+  (should-not (agent-team--env-shape-p "DISCORD_WEBHOOK_TEAM"))
   (should (agent-team--env-shape-p "GOMODEL_MASTER_KEY"))
   (should (agent-team--env-shape-p "OPENROUTER_API_KEY"))
   (should (agent-team--env-shape-p "LARK_WEBHOOK_PRINCIPAL_ENGINEER"))
@@ -356,10 +356,11 @@ drift apart (this is the setup command's core invariant)."
          (slots (agent-team--default-slots root "khaalidrafi/testrepo"))
          (filled (agent-team--fill-slots tpl slots)))
     (should (equal '() (agent-team--unfilled-slots filled)))
-    ;; the fill is project-aware: project name, repo slug, discord secret
+    ;; the fill is project-aware: project name, repo slug; no chat-mirror
+    ;; secret since 2026-10-26 (Discord retired after Telegram)
     (should (string-match-p "testrepo — CI agent-team chain" filled))
     (should (string-match-p "khaalidrafi/testrepo" filled))
-    (should (string-match-p "DISCORD_WEBHOOK_TEAM_TESTREPO" filled))
+    (should-not (string-match-p "DISCORD_WEBHOOK" filled))
     ;; engine defaults ride inside: gomodel health step + Jev judgment
     (should (string-match-p "GoModel lane health" filled))
     (should (string-match-p "Jev judgment" filled))

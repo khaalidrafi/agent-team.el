@@ -60,10 +60,6 @@
   - BAI_API_KEY → bai — 1 (gpt-image-2, image gen)
   - ANTLING_API_KEY → antling — 7 (Ling-3.0/3.1-flash, 3.0-flash-VL,
     3.0-tiny, 2.6-flash/1T, Ring-2.6-1T; burn-verified live 2026-10-24)
-  - NVIDIA_NIM / DEEPSEEK keys → nvidia-nim (deepseek-v4.1-flash),
-    deepseek-official (deepseek-flash) — keys on file in the llmfisher
-    deployment env, not the repo secret set. aimlapi's only wired id was
-    minimax-m3.1-flash — BURNED (BURN-LAW); lane left idle.
   - AA_API_KEY, NAVYAI_API_KEY → sealed but declared gomodel-side only (no
     llmfisher provider entry yet)
   OAuth/credential-file lanes (token-keeper workflow re-seals both):
@@ -81,7 +77,8 @@
   account on is NOT inventory — never listed, never probed, never
   recommended, no "intel rows for context", no exceptions. Every model row
   in THIS file traces to a secret above, an OAuth credential, or a wired
-  llmfisher provider; anything else is deleted on sight.
+  llmfisher provider WITH ITS KEY ON FILE; anything else is deleted on
+  sight.
 
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
@@ -260,16 +257,6 @@
     kimi-k2 (unstable historically) [free-tier expiry: none published]
   - tokenharbor/ — deepseek-v4.1-flash:free
     [free-tier expiry: NONE DATED, PROMO — can vanish; emergency-only]
-  - nvidia-nim/ — deepseek-ai/deepseek-v4.1-flash @
-    https://integrate.api.nvidia.com/v1 — FREE endpoint, ~40 RPM, no
-    per-token billing; 40+ other open models behind the same key
-    [free-tier expiry: none dated — capacity-based free tier, "free to
-    prototype"; key on file, probed 2026-10-19]
-  - DeepSeek official (api.deepseek.com, id deepseek-flash; 1M ctx/384K out,
-    2500 concurrent): off-peak $0.15/$0.60 (cache-hit $0.003), peak 2x at
-    01–04 & 06–10 UTC Mon–Fri; Search & Fetch server tools FREE until
-    2026-11-01 — PAID lane
-    [free-tier expiry: the Search+Fetch freebie DATED 2026-11-01]
   - GMI Cloud direct (Owner-asked 2026-10-22): MiniMaxAI/MiniMax-M3.1-Flash
     @ https://api.gmi-serving.com/v1 — $0.15/$0.60, cached $0.015, FP8,
     1,048,576 ctx — PAID ONLY (verified 2026-10-22: no free credits for
@@ -535,9 +522,6 @@
     = 30 RPM · 1,000 RPD · 8K TPM · 200K tokens/day (console.groq.com/docs/
     rate-limits). Small for an unattended agent, but it is a REAL number, permits
     scripts, and is far above what a per-push CI probe job burns.
-  - nvidia NIM — "free inference" with no primary doc of the quota; forum
-    consensus ~1,000-credit allowance, ~40-60 RPM (forums.developer.nvidia.com).
-    Verdict: UNKNOWN, terms can change without docs.
   - cloudflare Workers AI — CAPPED: 10,000 Neurons/day free, then requests fail
     unless billing is on; some LLMs require a paid billing method just to try
     (developers.cloudflare.com/workers-ai/platform/pricing). Observed exhausted
@@ -586,9 +570,6 @@
 
   PROBE (tracker/consensus, not primary doc — date-stamped, re-probe before
   relying):
-  - NVIDIA NIM — 40 RPM · ~10,000 req/day on free build endpoints
-    (glm-5.3, deepseek-v4.1-flash rows) — probe 2026-10-19; supersedes
-    batch-5's "UNKNOWN" until NIM publishes a doc. Highest ceiling today.
   - Z.ai — GLM-4.7/4.5/4.6V-Flash free, no published cap. · DeepSeek —
     5M free tokens on signup (~30 days), then paid-cheap.
   - Copilot Free — 2,000 completions/mo + unpublished agent-mode credits
@@ -598,8 +579,8 @@
     (undated, "dynamic").
 
   Where this points staffing: highest hard-number free APIs today =
-  NVIDIA NIM (10k/day) > Gemini CLI (1k/day) ~= Groq (1k/day) > OpenRouter
-  :free (50→1,000/day). Expiry law binds every row: undated ≠ unlimited.
+  Gemini CLI (1k/day) ~= Groq (1k/day) > OpenRouter :free (50→1,000/day).
+  Expiry law binds every row: undated ≠ unlimited.
 
 * Benchmark snapshot — 2026-10-21 (for pair-level ranking; values filters
   still bind — closed models stay out of accountable seats)

@@ -432,11 +432,27 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   chat handoffs do not exist
 - routine traffic (PROGRESS/BLOCKED/REVIEW) = the same file, no chat
 
+** PLAIN LANGUAGE (Owner order 2026-10-25 #hq: "speak clearly with simple
+language. I struggle to understand their current language")
+
+- EVERYTHING a human reads — chat entries, reports, dispatches, status
+  lines, step summaries — is written in simple everyday English.
+- Short sentences. One idea per line. Lists over paragraphs. No codename
+  without a plain-word explanation on first use.
+- House words translated: segment = one work session · stall = no
+  progress · burn = credits spent · lane = a model or API path · seat =
+  one team member slot · turn = one CI run · chain = the CI loop that
+  keeps giving turns · gate = the test check before work lands · Jev =
+  the automatic review step · mesh = members messaging each other.
+- The test: a non-engineer could read it aloud and follow it. If not,
+  rewrite before posting.
+- Shorthand stays allowed in code, commits, and machine files.
+
 ** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
 
 Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
-(the Owner reads the chat mirrored to Telegram verbatim) — Owner's words:
-clear enough language, well-structured with lists:
+(the Owner reads every entry verbatim on the Discord mirror) — Owner's
+words: clear enough language, well-structured with lists:
 
 - clear enough language: plain, direct, complete sentences — no cryptic
   shorthand, no inside jargon, no raw log/JSON dumps (point at file:line
@@ -446,7 +462,7 @@ clear enough language, well-structured with lists:
   prose wall
 - one topic per entry; a new topic = a new entry
 - keep the header exact (FROM seat, @target, :kind:) — it drives the
-  Telegram mirror and the live viewer
+  Discord mirror and the live viewer
 
 ** LARK (team communication — per-role bots, Owner order 2026-10-20)
 
@@ -494,6 +510,8 @@ clear enough language, well-structured with lists:
 
 ** LAWS
 
+- PLAIN LANGUAGE (Owner 2026-10-25): everything a human reads is simple
+everyday English — no codename without a plain-word explanation
 - complete delegation: objective + output format + tools + boundaries
 - no consensus voting: proven expert decides, EM final
 - reports are artifacts: branch + sha + suite summary; never pasted code

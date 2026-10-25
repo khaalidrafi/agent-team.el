@@ -138,8 +138,9 @@
 # DEMO RUN 2026-10-20 (demo/01) is CLOSED — REPORT #7 on the board.
 # CURRENT RUN mesh/01: mechanism-proof for the peer mesh; comms law: the
 # ONE team chat agent-team/TEAM-CHAT.org (mailbox/ retired). The Owner
-# reads the chat in-repo and on Telegram (@agent_team_bridge_bot: his
-# replies are ingested into the chat; chain verdicts are mirrored out).
+# reads the chat in-repo and on the project's Discord channel; he speaks
+# in Discord #hq and the Lead transcribes. (Telegram retired 2026-10-25
+# per his order: no bridge, no mirror, no Telegram communication.)
 # qwen3.8-flash@qoder is AUTH-READY (PAT secret set 2026-10-21): the
 # current dispatch IS its Qoder-on-CI proof.
 :LOGBOOK:

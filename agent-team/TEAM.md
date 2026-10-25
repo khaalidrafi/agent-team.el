@@ -540,6 +540,12 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
 - minimal Owner contact: act on declared policy, batch decisions into one
   message, ask only for what blocks or is his alone — every question costs his
   focus; never ask twice what one message could carry
+- plain language (Owner 2026-10-25 #hq): everything a human reads is
+  simple everyday English — short sentences, one idea per line, no
+  codename without a plain-word explanation (stall = no progress, burn
+  = credits spent, lane = a model/API path, seat = one member slot,
+  turn = one CI run, chain = the CI loop, gate = the test check, Jev =
+  the automatic review step, mesh = members messaging each other)
 
 ** TASK BRANCHES — one branch per task, one member per task (Owner order 2026-10-25 #hq)
 
@@ -551,7 +557,8 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
   in, task control kept), the seat works, and the work lands on ai/main
   through the landing gate — the trunk control file never crosses branches.
 - Sessions are per task: ~sessions-<task-slug>-<seat>-<run>~.
-- Telegram Owner bridge = ai/main chain only; tag chat entries =:task:<id>=.
+- No Telegram anywhere (Owner 2026-10-25): Discord only; tag chat
+  entries =:task:<id>=.
 - Arm a task: cut the branch from ai/main, fork the control file with the
   task keys, dispatch the workflow on that branch (Actions UI branch picker
   or ~gh workflow run agent-team.yml --ref <branch>~). Self-dispatch

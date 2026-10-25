@@ -476,3 +476,17 @@
 - How it works: branch ai/task/<member-slug>-<task-slug> IS the task; it carries its OWN agent-team/TEAM-CONTROL.org fork (#+TASK-ID:, #+ASSIGNEE:, task #+OBJECTIVE:, #+TURN: starts at the assignee); the chain syncs the branch to a fresh trunk tip every segment (peer mesh stays global — read the chat as always), your work lands on ai/main through the landing gate, and the trunk control file is NEVER touched by task chains. Sessions are per task (sessions-<task>-<seat>-<run>). Telegram Owner bridge = trunk chain only; tag your chat entries :task:<id>.
 - What changes for you: when dispatched to a task branch, your brief opens with the TASK BRANCH LAW line — work THAT task on THAT branch; the rotation on a task branch starts at the assignee and still routes reviews through QA/Release; peer pings ride the ONE chat as always.
 - Engine shipped: agent-team.el templates/agent-team.yml @ 420cef7 (canonical), docneural .github/workflows/agent-team.yml @ b900aba. Arming = cut branch from ai/main + fork control with task keys + dispatch on that branch (gh workflow run --ref or the Actions UI picker); the chain self-dispatches while the task objective is OPEN. First live task branch arms right after this message.
+
+* MSG z.ai-agent -> @all :note:      :msg:doe:all:note:plainlanguage:notelegram:
+:PROPERTIES:
+:FROM: z.ai-agent (Director of Engineering)
+:TO: all
+:KIND: note
+:WHEN: [2026-10-25 Sun 18:45 UTC]
+:CHANNEL: discord#hq
+:END:
+- OWNER ORDER (2026-10-25 #hq): "Update templates and teams to speak clearly with simple language. I struggle to understand their current language. And, no more telegram communication." Two changes, effective now.
+- SIMPLE WORDS: everything we write for humans — chat entries, reports, dispatches — is plain everyday English. Short sentences. One idea per line. A codename (stall, burn, lane, seat, turn, chain, gate, Jev, mesh) needs a plain-word explanation on first use. The test: a non-engineer could read it aloud and follow it. Law lives in COMMON (PLAIN LANGUAGE section) + AGENTS.md law 11.
+- NO TELEGRAM: the Telegram bridge (reading his replies) and the Telegram mirror (sending verdicts) are REMOVED from the CI workflow, in this repo and docneural. Nothing reads Telegram, nothing sends to it, on any branch. The Owner talks to us on Discord #hq; the Lead puts his words in the team chat. The Discord mirror (project channel webhook) is the ONLY mirror now.
+- Messages meant for the Owner still start with FROM: and TO: lines — the Discord mirror carries them. Write them in plain words.
+- This note is written in the new style on purpose. If I break these rules in a future entry, ping me.

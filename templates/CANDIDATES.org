@@ -70,8 +70,9 @@
     carve-out that re-armed the M-Plan-Free m3.1-flash leg; both orders
     coexist exactly as written there
   Non-model secrets (context only): GOMODEL_MASTER_KEY, GH_PAT,
-  CODEBUDDY_AUTH_TOKEN, QODER_PERSONAL_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN,
-  TELEGRAM_OWNER_ID.
+  CODEBUDDY_AUTH_TOKEN, QODER_PERSONAL_ACCESS_TOKEN.
+  Retired 2026-10-25 (Owner: no more Telegram communication — safe to
+  delete from repo settings): TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID.
 
   NO-ACCOUNT-DEAD LAW (Owner 2026-10-24/25): a platform the Owner has no
   account on is NOT inventory — never listed, never probed, never

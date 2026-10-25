@@ -188,7 +188,7 @@ PRIORITY: P1 · ORDER: 2")))
 
 (ert-deftest agent-team-env-shape-p ()
   (should (agent-team--env-shape-p "QODER_PERSONAL_ACCESS_TOKEN"))
-  (should (agent-team--env-shape-p "TELEGRAM_BOT_TOKEN"))
+  (should (agent-team--env-shape-p "DISCORD_WEBHOOK_TEAM"))
   (should (agent-team--env-shape-p "GOMODEL_MASTER_KEY"))
   (should (agent-team--env-shape-p "OPENROUTER_API_KEY"))
   (should (agent-team--env-shape-p "LARK_WEBHOOK_PRINCIPAL_ENGINEER"))
@@ -404,7 +404,8 @@ drift apart (this is the setup command's core invariant)."
       (should (equal '() (agent-team--unfilled-slots yml)))
       (should (string-match-p "khaalidrafi/testrepo" yml))
       (should (string-match-p "secrets.GROQ_API_KEY" yml))
-      (should (string-match-p "TELEGRAM_OWNER_ID" yml)))
+      (should-not (string-match-p "TELEGRAM_" yml))
+      (should-not (string-match-p "api.telegram.org" yml)))
     ;; guard + pkg configs land; the Dockerfile scaffolds — and NO
     ;; AGENTS.md (repo root OR harness law invention) is ever created
     (should-not (file-exists-p (expand-file-name "AGENTS.md" root)))

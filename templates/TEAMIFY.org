@@ -192,9 +192,10 @@ File sketch (produce EXACTLY this skeleton):
 - seed the file ONLY when it does not exist yet — an existing chat is
   history: append, never rewrite
 - one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
-  (COMMON): clear language, well-structured with lists — a human
-  reads the Telegram mirror verbatim
-- the exact header line drives the Telegram mirror and the live
+  (COMMON): simple plain language (the PLAIN LANGUAGE law),
+  well-structured with lists — the Owner reads every entry verbatim on
+  the Discord mirror
+- the exact header line drives the Discord mirror and the live
   viewer; never reformat another member's entry
 
 ** agent-team/TEAM-UPDATE.org

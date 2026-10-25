@@ -61,8 +61,9 @@ real work segments and self-chain until the objective completes.
    a `:PROPERTIES:` drawer (`:FROM:`/`:TO:`/`:KIND:`/`:WHEN:`/`:CHANNEL:`),
    body indented, WHEN an Org inactive timestamp. Append at EOF only;
    never edit or delete existing entries.
-2. TELEGRAM LAW (17:55Z): every Telegram-bound message opens with
-   `FROM:` and `TO:` lines.
+2. OWNER MESSAGE LAW (17:55Z; retargeted 2026-10-25): any message meant
+   for the Owner opens with `FROM:` and `TO:` lines — the Discord mirror
+   carries it to him. Write it in plain simple words (law 11).
 3. SECRET LAW (18:27Z): credentials NEVER travel in chat, files, commits,
    or messages — only as ENV VAR NAMES. A peer asked for a credential
    replies with the NAME + has-it/absent (Emacs: `M-x agent-team-env-look`),
@@ -74,9 +75,10 @@ real work segments and self-chain until the objective completes.
    end, scrubbed of secrets, uploaded as `sessions-<seat>-*` artifacts
    (30d), and restored before the same seat's next turn — resume with
    context instead of starting cold.
-5. OWNER LOCK (17:47Z): the Telegram bridge ingests ONLY the Owner's
-   chat (secret TELEGRAM_OWNER_ID); every other chat is dropped and
-   counted — impersonation impossible.
+5. OWNER CHANNEL (2026-10-25; supersedes the 17:47Z bridge lock):
+   Discord only — no Telegram communication anywhere (bridge and mirror
+   removed from the CI). The Owner speaks in #hq; the Lead transcribes
+   his words into the team chat.
 6. DOCKER LAW (Owner 2026-10-20): agents are PREINSTALLED in the harness
    image (docker/harness/); CI never installs bodies at turn time. Keys
    are env-injected, never baked.
@@ -89,6 +91,10 @@ real work segments and self-chain until the objective completes.
 9. IDENTITY: commit as your seat identity, never as a generic bot.
 10. NO SPEND, no destructive actions, stay in scope of the item you picked;
     escalate to @lead as `:escalation:` after 2 failed self-attempts.
+11. PLAIN LANGUAGE (Owner 2026-10-25): everything a human reads — chat
+    entries, reports, dispatches — is simple everyday English; short
+    sentences, one idea per line, no codename without a plain-word
+    explanation. The test: a non-engineer reads it aloud and follows it.
 
 ## Emacs members — quick reference
 
@@ -106,10 +112,11 @@ real work segments and self-chain until the objective completes.
 ## CI chain in one paragraph
 
 `test` (byte-compile + ert) → `probe` (seat liveness) → `harness` (build
-the preinstalled image) → `turn` (TG ingest → session restore → one agent
+the preinstalled image) → `turn` (session restore → one agent
 segment in the container → session scrub+upload → branch push + rotation
 advance) → `finalize` (auto-merge behind the byte-compile gate → stall
 accounting → SELF-DISPATCH the next run while the objective is open).
 The chain stops only on KILL-SWITCH ON, OBJECTIVE-STATE COMPLETE, no
 objective, or tests red; a no-progress streak shifts to backoff, never
-to failure. Owner gets every verdict mirrored on Telegram.
+to failure. Owner gets every verdict + new chat entries mirrored on
+Discord (the project channel webhook). No Telegram anywhere.

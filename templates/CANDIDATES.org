@@ -64,8 +64,10 @@
     llmfisher provider entry yet)
   OAuth/credential-file lanes (token-keeper workflow re-seals both):
   - CLINE_AUTH_JSON → cline (api.cline.bot/api/v1) — credential live,
-    token-keeper re-seals; its only declared id (minimax-m3.1-flash) is
-    BURNED, so the lane idles until a live catalog probe names a replacement
+    token-keeper re-seals. RE-ARMED 2026-10-26 (Owner fiat — see the CLINE
+    BUILT-IN FREE CATALOG section below): the public catalog names 18
+    FREE-tagged ids, all declared for this lane there. minimax-m3.1-flash
+    stays BURNED; no minimax id exists in the catalog at all.
   - MCODE_AUTH_JSON → mcode — see BURN-LAW (17:01Z dormant) vs the 17:11Z
     carve-out that re-armed the M-Plan-Free m3.1-flash leg; both orders
     coexist exactly as written there
@@ -73,6 +75,9 @@
   CODEBUDDY_AUTH_TOKEN, QODER_PERSONAL_ACCESS_TOKEN.
   Retired 2026-10-25 (Owner: no more Telegram communication — safe to
   delete from repo settings): TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID.
+  Retired 2026-10-26 (Owner: "remv discord, too." — the Discord mirror is
+  removed from CI; safe to delete from repo settings): every
+  DISCORD_WEBHOOK_* (TEAM, TEAM_DOCNEURAL, TEAM_HQ, TEAM_ADMINCRAFT).
 
   NO-ACCOUNT-DEAD LAW (Owner 2026-10-24/25): a platform the Owner has no
   account on is NOT inventory — never listed, never probed, never
@@ -128,6 +133,17 @@
     longcat-2.5 · mimo-v2.6 (roster rotates)
     [free-tier expiry: none dated — explicitly "limited time" per model and
     "dynamic" by design; treat every id here as revocable without notice]
+
+    ZEN REFRESH 2026-10-26 (live probe opencode.ai/zen/v1/models — 85 ids,
+    8 suffix-tagged -free; endpoint ships no pricing fields, free = id
+    suffix; big-pickle is NOT free, corrected on the record):
+    glm-5.3-flash-free · beam-free · flint-40b-free · mimo-v2.6-flash-free ·
+    nemotron-3.5-super-vl-free · nemotron-3.5-lightning-free ·
+    jev-1.13-free · deepseek-v4.1-flash-free (ds-flash values filter:
+    intern/API-probe only). GAP-FILL 2026-10-26, Owner fiat:
+    glm-5.3-flash-free = the docneural FE seat brain (AA 57/42 · TB 84.3 ·
+    DeepSWE 63.4 — same numbers as glm-5.3-flash@chat.z.ai, MIT);
+    flint-40b-free = no data anywhere → interned (no-data rule).
   - goose (provider-agnostic, BYO brain) · omp (PROVEN headless 2026-10-21:
     `omp -p`, v18.12.5, MIT) · pi · cline · dsh — Owner order 2026-10-21:
     full profiles in "Bodies — 2026 landscape (dsh · pi · cline)" below ·
@@ -172,7 +188,10 @@
     --json`. NATIVE ACP: `cline --acp` (docs.cline.bot/usage/acp;
     registry-listed). Free tier: rotating FREE-tagged models on a cardless
     Cline account — daily per-model allowance, IDE+CLI bodies (tracker
-    2026-10-21: muse-spark-1.3-contributor · mimo-v2.6-flash). Paid:
+    2026-10-21: muse-spark-1.3-contributor · mimo-v2.6-flash; LIVE CATALOG
+    2026-10-26 supersedes the tracker: api.cline.bot/api/v1/models is
+    PUBLIC — 472 ids, 18 FREE-tagged, stable across 2026-10-25/26 — full
+    list in the CLINE BUILT-IN FREE CATALOG section below). Paid:
     ClinePass $9.99/mo. BYOK 30+ providers. RISK: --auto-approve defaults
     TRUE — set it explicitly off for accountable seats. CI-capable body with
     native ACP; free rotating models = intern-grade fuel until measured.
@@ -223,6 +242,73 @@
 
   Benchmarks note: no published dsh numbers; Cline/pi/OpenCode/Goose are
   harnesses — their score IS the model choice (rank the PAIR).
+
+* CLINE BUILT-IN FREE CATALOG — live probe 2026-10-26 (added by Owner fiat)
+
+  ADD AUTHORITY: Owner order 2026-10-26 #hq — "Resolve docneural team's
+  issue on your CANDIDATES.org not containing CLINE CLI's built-in free
+  models" (following his 2026-10-26 #docneural-site order: "CANDIDATES.org
+  should contain them. If not, complain to DE."). This fiat adds the rows
+  below; ADD-FREEZE otherwise stands untouched. The complaint: docneural
+  :de-complaint: 2026-10-26 = agent-team.el GitHub issue #2.
+
+  Probe (re-run by the DoE 2026-10-26, matching the team's 2026-10-25/26
+  snapshots): GET api.cline.bot/api/v1/models — PUBLIC, no auth — 472 ids,
+  18 FREE-tagged. Lane: CLINE_AUTH_JSON OAuth (sealed, token-keeper
+  re-seals) on the cline OWN-CLI body; the same catalog also serves the
+  raw API lane on CLINE_API_KEY (not yet sealed — rows self-activate when
+  it is). Seat form drops the vendor/ prefix (ID FORM law: no "/" after
+  "@"); vendor/ below is verbatim catalog text. BURN-LAW note: NO minimax
+  id exists in this catalog — the burn holds at the source.
+
+  Free-tier expiry: UNDATED — rotating daily per-model allowance on a
+  cardless Cline account; treat every id as revocable without notice
+  (EXPIRY-LAW: undated is not unlimited).
+
+  - nvidia/nemotron-3-ultra-550b-a55b:free — strongest FREE id on the list
+    (550B-A55B); batch-4 row: AA 23 · TB2.1 53.9 · TB-Hard 36.4; intern
+    (batch-4 found "no free tier" THEN — cline supplies one now).
+  - thinkingmachines/inkling-small:free — 276B-A12B; vendor SWE-V 80.2 ·
+    TB2.1 64.7 (batch-4); intern until measured.
+  - thinkingmachines/inkling:free — 975B-A41B; vendor SWE-V 77.6 · TB2.1
+    63.8. STALE-VERDICT FIX: batch-4 "NO free API tier" superseded (see
+    the batch-4 row).
+  - poolside/laguna-s-2.1:free — batch-4 verdict STANDS: "BEST
+    accountable-seat candidate in this batch" (TB2.1 70.2 · SWE-Pro 59.4 ·
+    DeepSWE 40.4; OpenMDW-1.1, 118B-A8B); rides docneural's workflow
+    relief lane (3d3e7d9).
+  - poolside/laguna-xs-2.1:free — family XS twin; S covers the purpose.
+  - xingchen-agi/xing4.0-29b-a4b:free — vendor SWE-V 75.0 · TB2.1 57.5.
+    STALE-VERDICT FIX: batch-4 "no permanent-free found" superseded.
+  - dots-studio/dots-3-note-preview:free — vendor SWE-V 78.4 · TB2.1 75.1
+    (280B-A16B). STALE-VERDICT FIX: batch-4 "NO hosted API at all"
+    superseded — api.cline.bot IS the host (preview caveat stands).
+  - nvidia/nemotron-3.5-lightning:free — SWE-V 51.6–52.8 · TB2.1 24.6;
+    real quoted quota "$0/$0, 65,536 max-token cap" → QA-grade.
+  - nvidia/nemotron-3.5-super-vl:free — the free vision (VL) lane.
+  - nvidia/nemotron-3-super-120b-a12b:free — SWE-V 60.5; AA 13 + AA
+    DEPRECATED mark → intern-adjacent.
+  - cohere/north-mini-code:free — AA coding 33.4; exact cap wording not
+    retrievable (recorded, not invented) → QA only.
+  - recursive/flint-v1.0:free — NO data anywhere (no benchmark, no
+    review) → interned under the no-data rule; the flint family's first
+    cline-lane row.
+  - liquid/lfm-2.5-2.6b:free — no agentic-coding benchmarks (BFCL/Tau2
+    only); r/LocalLLaMA "not for real agentic work" → local-toy class.
+  - nvidia/nemotron-3.5-content-safety:free — a safety CLASSIFIER, not a
+    coding brain; listed for completeness, not hireable as a seat brain.
+  - nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free — omni/audio
+    class; no coding row → intern-class at most.
+  - openrouter/free — opaque relay-of-relay; backing brain not rankable
+    (COMMON: an unrankable row does not exist for staffing).
+  - google/gemma-4-26b-a4b-it:free · google/gemma-4-31b-it:free — values
+    filter: gemma stays OUT of accountable seats; intern-class only.
+
+  Disposition: 18 rows = 16 eligible after the values filter (gemma x2
+  out), most intern/QA-grade until measured (no-data rule). docneural
+  hire round 3 already seated 7 of these ids on the Owner's direct hire
+  order (docneural MEMBERS.org, commit 5f29ec0) — this section is now
+  their CANDIDATES.org trace, per "staff from CANDIDATES.org rows only".
 
 * API (via the Owner's gateway)
   #+GATEWAY: LOCAL authority = http://127.0.0.1:8080/v1/models on the Owner's box. The
@@ -431,6 +517,9 @@
     (thinkingmachines.ai/news/inkling-small 2026-07-30). $4.05 out (Inkling),
     $1.20 (Small). NO free API tier (time-limited discount only) → not
     accountable-seat eligible under "permanent-free".
+    CLINE-LANE FIX 2026-10-26 (Owner fiat): cline's :free catalog serves
+    BOTH inkling and inkling-small — "no free API tier" is superseded on
+    that lane (the paid-API verdict stands).
   - laguna-s-2.1 · laguna-xs-2.1@poolside — 118B-A8B, OpenMDW-1.1, day-one
     weights; vendor TB2.1 70.2 (thinking) · SWE-bench Pro 59.4 · DeepSWE 40.4
     (poolside.ai/blog/introducing-laguna-s-2-1 2026-07-21). OpenRouter free
@@ -440,10 +529,15 @@
   - xing4.0-29b-a4b@xingchen — Apache-2.0; vendor SWE-bench Verified 75.0 ·
     TB2.1 57.5 (HF card, acc 2026-10-20). China Telecom; 4-bit ≈15 GB → no.
     No permanent-free found; low community engagement.
+    CLINE-LANE FIX 2026-10-26 (Owner fiat): xingchen-agi/xing4.0-29b-a4b:free
+    IS served free on cline — "no permanent-free found" superseded there.
   - dots-3-note@dots-studio — CORRECTION: this is Xiaohongshu/RedNote's dots
     studio, NOT Red Hat as previously assumed. Apache-2.0, HF 2026-08-14,
     280B-A16B multimodal; vendor SWE-bench Verified 78.4 · TB2.1 75.1.
     NO hosted API at all → self-host-only → unreachable for our seats.
+    CLINE-LANE FIX 2026-10-26 (Owner fiat): api.cline.bot hosts
+    dots-studio/dots-3-note-preview:free — "NO hosted API" superseded
+    (preview-tag caveat stands).
   - nemotron-3.5-lightning@nvidia — 30B-A3B, OpenMDW-1.1, weights+data+recipes
     (datacamp.com/blog/nemotron-3-5-lightning 2026-08-12); vendor SWE-bench
     Verified 51.6–52.8 · TB2.1 24.6. OpenRouter FREE tier, "$0 input/$0 output,

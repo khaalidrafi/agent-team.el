@@ -151,9 +151,7 @@ jobs:
             "https://api.z.ai/api/paas/v4/chat/completions" \
             "glm-4.7-flash" "$ZAI_API_KEY"
 
-          probe "openrouter/minimax/minimax-m3.1-flash:free" \
-            "https://openrouter.ai/api/v1/chat/completions" \
-            "minimax/minimax-m3.1-flash:free" "$OPENROUTER_API_KEY"
+          # minimax-m3.1 probe row REMOVED — BURN-LAW (Owner 2026-10-24 17:01Z)
 
           echo "" >> "$SUMMARY"
           echo "Law: a probe row is evidence of the RUNTIME, not of quality —" >> "$SUMMARY"
@@ -906,6 +904,19 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref_name }}   # R-2-69: the chain ref itself — ai/main trunk or the task branch
+
+      # R-2-69: GITHUB_ENV is JOB-SCOPED — the turn job's CHAIN_REF never
+      # crosses into finalize. Recompute it here (proof run 40218134008:
+      # every task-aware branch in this job silently fell back to ai/main).
+      - name: Resolve chain ref (task-branch law)
+        run: |
+          REF="${{ github.ref_name }}"
+          case "$REF" in
+            ai/main|ai/task/*) : ;;
+            *) REF="ai/main" ;;
+          esac
+          echo "CHAIN_REF=$REF" >> "$GITHUB_ENV"
+          echo "REF_SLUG=$(printf '%s' "$REF" | sed 's#^ai/##; s#/#-#g')" >> "$GITHUB_ENV"
 
       - name: Auto-merge the turn branch (peer mail propagation)
         id: merge

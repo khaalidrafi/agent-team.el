@@ -108,6 +108,13 @@
 #                          seat is dead (dead seat = BLOCKED logged, rotation
 #                          continues). NONE = first run takes the top of
 #                          #+ROTATION.
+# - #+TASK-ID: / #+ASSIGNEE: (task branches only, Owner order 2026-10-25
+#                          #hq) -> name the task and its assigned member; a
+#                          task branch ai/task/<member>-<task> carries its
+#                          OWN fork of this file and #+TURN: starts at the
+#                          assignee. ai/main keeps the single team objective;
+#                          task work lands on ai/main through the landing
+#                          gate with the trunk control file untouched.
 # - #+STALL-COUNT: <n>  -> consecutive no-progress segments; +1 per
 #                          no-progress segment, reset to 0 when work lands.
 #                          At 4 the chain shifts to BACKOFF (next dispatch

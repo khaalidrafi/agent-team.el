@@ -540,3 +540,21 @@ TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner
 - minimal Owner contact: act on declared policy, batch decisions into one
   message, ask only for what blocks or is his alone — every question costs his
   focus; never ask twice what one message could carry
+
+** TASK BRANCHES — one branch per task, one member per task (Owner order 2026-10-25 #hq)
+
+- Branch name: ~ai/task/<member-slug>-<task-slug>~ — the branch IS the task.
+- Each task branch is THIN: trunk tip (ai/main) + ONE control commit holding
+  the task's own ~agent-team/TEAM-CONTROL.org~ fork with =#+TASK-ID:=,
+  =#+ASSIGNEE:=, the task =#+OBJECTIVE:=, and =#+TURN:= pinned to the assignee.
+- Every segment: the chain syncs the branch to a fresh trunk tip (peer mesh
+  in, task control kept), the seat works, and the work lands on ai/main
+  through the landing gate — the trunk control file never crosses branches.
+- Sessions are per task: ~sessions-<task-slug>-<seat>-<run>~.
+- Telegram Owner bridge = ai/main chain only; tag chat entries =:task:<id>=.
+- Arm a task: cut the branch from ai/main, fork the control file with the
+  task keys, dispatch the workflow on that branch (Actions UI branch picker
+  or ~gh workflow run agent-team.yml --ref <branch>~). Self-dispatch
+  continues while the task objective is OPEN.
+- Parallel chains are safe: the concurrency group is per-ref; chat and board
+  are union-merged; only the control file is branch-private.

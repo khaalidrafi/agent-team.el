@@ -22,14 +22,20 @@
         CANCELLED. minimax-m2 and minimax-m3 are SEPARATE models - m2 stays
         hireable inventory; m3 remains undelivered vapor.
 
+#+CARVE-OUT: Owner order 2026-10-24 17:11Z — the BURN narrows to API/gateway
+        lanes; the mcode body's OAuth M-Plan-Free m3.1-flash leg is
+        LANE-ALIVE and MCODE_AUTH_JSON sealing is RE-INSTATED (token-keeper
+        refreshes it). Everything else in BURN-LAW stands.
+
 * OWNER-KEYS — the REAL inventory (2026-10-24, Owner order: "Where are ALL my
   real models?"). These are the lanes with keys ALREADY IN HAND — sealed as
   GitHub Actions secrets (24 names) on docneural/admincraft/agent-team.el and
   wired in llmfisher (config/config.yaml is the machine-readable registry).
-  EVERY hire draws from HERE FIRST. Any lane not in this section and not
-  explicitly keyless needs a signup the Owner has NOT done — recommending it
-  to the Owner is recommending work he never asked for (the
-  aiHubMix/GitHub-Models mistake below is the standing example).
+  EVERY hire draws from HERE FIRST. Any lane not in this section needs a
+  signup the Owner has NOT done — recommending it is recommending work he
+  never asked for. STANDING ORDER (Owner 2026-10-25): list NOTHING he has no
+  account for; a row naming an unregistered platform is deleted on sight
+  (aiHubMix/GitHub-Models/CommandCode incident).
 
   API-key lanes (secret name → provider; model counts from llmfisher config,
   2026-10-24):
@@ -54,13 +60,16 @@
   - BAI_API_KEY → bai — 1 (gpt-image-2, image gen)
   - ANTLING_API_KEY → antling — 7 (Ling-3.0/3.1-flash, 3.0-flash-VL,
     3.0-tiny, 2.6-flash/1T, Ring-2.6-1T; burn-verified live 2026-10-24)
-  - AIMLAPI / NVIDIA_NIM / DEEPSEEK keys → aimlapi (M3.1 flash — BURNED),
-    nvidia-nim (deepseek-v4.1-flash), deepseek-official (deepseek-flash);
-    these three live in the llmfisher deployment env, not the repo secret set
+  - NVIDIA_NIM / DEEPSEEK keys → nvidia-nim (deepseek-v4.1-flash),
+    deepseek-official (deepseek-flash) — keys on file in the llmfisher
+    deployment env, not the repo secret set. aimlapi's only wired id was
+    minimax-m3.1-flash — BURNED (BURN-LAW); lane left idle.
   - AA_API_KEY, NAVYAI_API_KEY → sealed but declared gomodel-side only (no
     llmfisher provider entry yet)
   OAuth/credential-file lanes (token-keeper workflow re-seals both):
-  - CLINE_AUTH_JSON → cline (api.cline.bot/api/v1)
+  - CLINE_AUTH_JSON → cline (api.cline.bot/api/v1) — credential live,
+    token-keeper re-seals; its only declared id (minimax-m3.1-flash) is
+    BURNED, so the lane idles until a live catalog probe names a replacement
   - MCODE_AUTH_JSON → mcode — see BURN-LAW (17:01Z dormant) vs the 17:11Z
     carve-out that re-armed the M-Plan-Free m3.1-flash leg; both orders
     coexist exactly as written there
@@ -68,10 +77,11 @@
   CODEBUDDY_AUTH_TOKEN, QODER_PERSONAL_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN,
   TELEGRAM_OWNER_ID.
 
-  NO-ACCOUNT-DEAD (Owner 2026-10-24 19:52Z: "I never created an account"):
-  aiHubMix and GitHub Models. Intel rows below stay for context, but these
-  are NOT actionable: no staffing, no re-recommendation, until the Owner
-  registers on his own initiative.
+  NO-ACCOUNT-DEAD LAW (Owner 2026-10-24/25): a platform the Owner has no
+  account on is NOT inventory — never listed, never probed, never
+  recommended, no "intel rows for context", no exceptions. Every model row
+  in THIS file traces to a secret above, an OAuth credential, or a wired
+  llmfisher provider; anything else is deleted on sight.
 
 * Web (brains-only chat, one-shot couriers)
   - kimi-k2.6 @ kimi.ai
@@ -250,30 +260,11 @@
     kimi-k2 (unstable historically) [free-tier expiry: none published]
   - tokenharbor/ — deepseek-v4.1-flash:free
     [free-tier expiry: NONE DATED, PROMO — can vanish; emergency-only]
-  - nvidia-nim direct (free key via build.nvidia.com; phone verify):
-    deepseek-ai/deepseek-v4.1-flash @ https://integrate.api.nvidia.com/v1 —
-    FREE endpoint, ~40 RPM, no per-token billing; 40+ other open models
-    behind the same key
+  - nvidia-nim/ — deepseek-ai/deepseek-v4.1-flash @
+    https://integrate.api.nvidia.com/v1 — FREE endpoint, ~40 RPM, no
+    per-token billing; 40+ other open models behind the same key
     [free-tier expiry: none dated — capacity-based free tier, "free to
-    prototype"; key needs Owner signup]
-  - novita direct: DeepSeek V4.1 Flash + open catalog; signup grants
-    $100 Sandbox credits valid 90 days from claim (GitHub/Google/HF OAuth)
-    [free-tier expiry: DATED BY CREDITS — claim date + 90d; referral adds
-    $10+$10]
-  - aimlapi direct: minimax-m3.1-flash FREE per their own Oct 2026 table @
-    https://api.aimlapi.com/v1 (model id minimax/minimax-m3.1-flash)
-    [free-tier expiry: none dated — standard free-tier caps; key needs
-    Owner signup; VERIFY the free flag in console at claim time]
-  - MiniMax platform direct (platform.minimax.io): official $0.15/$0.60
-    (cache $0.015) but new-user TRIAL CREDITS cover first runs (size
-    varies; bonus credits can expire in days — claim-and-use, never
-    bank); keys: Subscription sk-cp- (M Plan) vs PAYG sk-api-; either
-    key works on api.minimax.io/v1 (OpenAI-shape) AND the
-    api.minimax.io/anthropic compat endpoint (verified 2026-10-22)
-    [free-tier expiry: trial credits DATED BY GRANT — often days]
-  - Puter gateway (third-party, optional): M3.1 Flash reachable via
-    puter.js free tier — unverified SLA, third-party middleman
-    [free-tier expiry: none dated — opportunistic, never load-bearing]
+    prototype"; key on file, probed 2026-10-19]
   - DeepSeek official (api.deepseek.com, id deepseek-flash; 1M ctx/384K out,
     2500 concurrent): off-peak $0.15/$0.60 (cache-hit $0.003), peak 2x at
     01–04 & 06–10 UTC Mon–Fri; Search & Fetch server tools FREE until
@@ -290,9 +281,6 @@
     found anywhere (async/batch lanes) · minimax/minimax-m3.1-flash
     $0.15/$0.60 — the :free variant ENDED 2026-10-22 (verified live probe
     of /api/v1/models; do NOT re-add without a fresh probe)
-  - MiniMax M3.1 Flash open weights land 2026-10-23 → expect cheap/free
-    listings on SiliconFlow/Novita/ModelScope within days (watch lane;
-    SiliconFlow already carries M3 at $0.30/$1.20) [LANDED 2026-10-22: ollama.com/library/minimax-m3.1-flash live — 428B, 976K ctx]
   - zai/ — glm-4.5 · glm-4.6v · glm-4.7-flash
     [free-tier expiry: none published on the GLM-4.7-Flash free API tier;
     MIT open weights make it low-risk even so]
@@ -302,6 +290,11 @@
     deepseek-v4.1-flash · clef · clef-flash · clef-omni
     [free-tier expiry: none — 10k Neurons/day shared cap; emergency-only]
   - OpenRouter direct (owner key): the :free list above
+  - antling/ — Ling-3.0-flash · Ling-3.1-flash · Ling-3.0-flash-VL ·
+    Ling-3.0-tiny · Ling-2.6-flash · Ling-2.6-1T · Ring-2.6-1T @
+    https://api.ant-ling.com/v1
+    [free-tier expiry: undated daily free grant; burn-verified live
+    2026-10-24; reasoning ids burn max_tokens — caps carry headroom]
 
 * Decision layer (not an LLM, not chat-compatible)
   - jev-1.13.0 @ api.typesafe.ai (or /v1/systemone via the gateway)
@@ -586,126 +579,27 @@
     (geminicli.com/docs/resources/quota-and-pricing).
   - OpenRouter :free — 20 RPM; 50 req/day under $10 lifetime topup, 1,000
     req/day at >= $10 all-time (openrouter.ai/docs/api-reference/limits).
-    Live catalog 17 :free models incl. minimax-m3.1-flash:free (1M ctx). [STALE 2026-10-22: that :free variant is DEAD — see the M3.1 Flash free-lane map below]
+    Live catalog ~17 :free models, rotates.
+    [2026-10-22: the minimax-m3.1-flash:free variant is DEAD —
+    probe-verified; BURN-LAW bars it regardless]
   - Groq free — 30 RPM · 1,000 req/day · 200K tokens/day (matches batch 5).
-  - GitHub Models — RETIRED (closed 2026-06-16, gone 2026-07-30;
-    github.blog changelog). Remove any lane referencing it.
-  - Amazon Q Developer — closed to NEW accounts 2026-05-15 (sunset → Kiro;
-    Kiro free 50 credits/mo incl. Sonnet/GLM/MiniMax rows).
-  - Moonshot platform — paid-only (pricing page). Cerebras — NO free tier,
-    $5 card-walled credits.
 
   PROBE (tracker/consensus, not primary doc — date-stamped, re-probe before
   relying):
   - NVIDIA NIM — 40 RPM · ~10,000 req/day on free build endpoints
     (glm-5.3, deepseek-v4.1-flash rows) — probe 2026-10-19; supersedes
     batch-5's "UNKNOWN" until NIM publishes a doc. Highest ceiling today.
-  - Z.ai — GLM-4.7/4.5/4.6V-Flash free, no published cap. · DeepSeek — 5M
-    free tokens on signup (~30 days), then paid-cheap. · MiniMax — check-in
-    400 pts/day (day 4/7: 1,000); M3.1 Flash :free on OpenRouter.
-  - Mistral — free mode, unpublished monthly allowance. · Copilot Free —
-    2,000 completions/mo + unpublished agent-mode credits. · Kilo Code —
-    ~200 free req/hr rotation. · ModelScope — ~250 credits/day. · Token
-    Harbor :free — 60 RPM / 1,800 RPH promo (emergency-only).
-  - NEW 2025-26 entrants: Google Jules 15 tasks/day · Google Antigravity
-    weekly agent allowances · Qoder 300+100/day claimable · OpenCode
-    in-client free rotation (undated, “dynamic”). iFlow CLI: UNVERIFIED
-    (site pivoting, phone gate).
+  - Z.ai — GLM-4.7/4.5/4.6V-Flash free, no published cap. · DeepSeek —
+    5M free tokens on signup (~30 days), then paid-cheap.
+  - Copilot Free — 2,000 completions/mo + unpublished agent-mode credits
+    (used via the cursor body). · Kilo Code — ~200 free req/hr rotation. ·
+    Token Harbor :free — 60 RPM / 1,800 RPH promo (emergency-only).
+  - Qoder 300+100/day claimable · OpenCode in-client free rotation
+    (undated, "dynamic").
 
   Where this points staffing: highest hard-number free APIs today =
   NVIDIA NIM (10k/day) > Gemini CLI (1k/day) ~= Groq (1k/day) > OpenRouter
   :free (50→1,000/day). Expiry law binds every row: undated ≠ unlimited.
-
-* M3.1 Flash free-lane map — 2026-10-22 (Owner order: the 10-provider tweet)
-
-  Owner order 2026-10-22 17:33Z #hq: "We MUST use M3.1 free from all the
-  providers in the above tweet" — @sakatayasha status/2112783172517949696
-  (2026-10-20: "10 platforms where you can use it for absolutely FREE").
-  Probed live 2026-10-22. VERDICT FIRST: of the 10 — 3 lanes runnable
-  today (1 needs nothing), 3 free after Owner signup, 2 subscription-
-  gated, 2 stale-free (paid now), 2 unverified behind auth. Rows keep
-  tweet order for auditability.
-
-  1. MiniMax — LANES READY, 3 live free shapes: MiniMax Agent
-     minimax-m3.1-flash FREE through 2026-10-25 (row above; RE-HIRE
-     DATE); mcode M Plan Free — PROVEN `mcode exec` 2026-10-22 (body
-     profile above); platform.minimax.io trial credits (row above).
-  2. OpenRouter — :free DEAD: model record exists (created 2026-10-19)
-     but GET /api/v1/models/minimax/minimax-m3.1-flash:free -> 404 and
-     the /endpoints record shows endpoints=[] (probe 2026-10-22); the
-     API-section row above already records the death. Paid $0.15/$0.60
-     only. Tweet stale here; do NOT re-add without a fresh probe.
-  3. OpenCode — SUBSCRIPTION-GATED: M3.1 Flash is "Space Bunny" on
-     OpenCode Go (subscription; opencode.ai/v2/docs/console/go) or paid
-     Zen pay-as-you-go; the in-client free roster does NOT list M3.1
-     Flash, and every opencode/*-free id is PROVEN REFUSED (below).
-  4. ZenMux — OWNER-SIGNUP: minimax/minimax-m3.1-flash live ($0.15/
-     $0.60 list, cache $0.015; zenmux.ai/minimax/minimax-m3.1-flash);
-     free shape = token gifts (official @ZenMuxAI X 2112151513200279588:
-     "1,000 free token gifts, with 1M tokens each" — campaign/
-     first-come, UNDATED); OpenAI + Anthropic dual-protocol
-     (zenmux.ai/docs). Burn the gift fast; cap-risk applies.
-  5. CommandCode — OWNER-SIGNUP: "MiniMax M3.1 Flash ... FREE for a
-     limited time", $0.00/M (commandcode.ai/Models + /docs/resources,
-     acc. 2026-10-22): in-product CLI/app lane with account; their
-     Provider API plan is $15/mo (NOT a raw free API). Undated
-     limited-time — EXPIRY LAW: cap-risk, never "unlimited".
-  6. GMI Cloud — PAID ONLY: $0.15/$0.60, api.gmi-serving.com/v1,
-     model MiniMaxAI/MiniMax-M3.1-Flash (row above). MiniMax Week free
-     was M3-era, closed 2026-09-06 (gmicloud.ai/minimax-week). Tweet
-     stale here.
-  7. Cline — OWNER-SIGNUP + AUTH PATH PROVEN 2026-10-22 (key pending;
-     corrects the earlier "NOT a raw API lane" — it IS one, see the body
-     profile ADDENDUM above for the mint path and the non-interactive CLI
-     proof): M3.1 Flash FREE in Cline per official announce (@cline X
-     2112220504258224605 + "now FREE in Cline", r/CLine 2026-10-20; 1M
-     ctx, 200+ tok/s), account daily per-model allowance — EXPIRY LAW:
-     UNDATED, cap-risk, never "unlimited"; the raw API leg is
-     credit-metered per Cline docs (402) and the catalog tags no minimax
-     id :free, so API-leg free status is UNVERIFIED until the first live
-     call with a real key. Dual body once the key lands: gateway leg
-     (llmfisher, ${CLINE_API_KEY}) + CLI body (`cline auth -p cline -k`).
-     Never fake a key; lane self-activates when it lands.
-  8. Ollama — weights LIVE: ollama.com/library/minimax-m3.1-flash
-     (428B total, 976K ctx, text+image, tools, thinking; probe
-     2026-10-22). Local run free FOREVER — hardware-gated (428B >> the
-     Celeron; resident seat excluded; GPU rental is the real cost).
-     Ollama :cloud free tier BURNED 2026-10-22 23:59 UTC (probe found
-     ~6h left); then $0.15/$0.60.
-  9. XPLabs — OWNER-SIGNUP DONE + KEY LIVE 2026-10-22 (Experiential Labs:
-     xplabs.ai -> experientiallabs.ai; OpenAI-compatible,
-     api.experientiallabs.ai/v1, Bearer xpl_ key). Authed /v1/models:
-     318 models LISTED — CONFIRMS no M3.1 Flash row (newest MiniMax
-     there = minimax-m3); ultra-free promo rows present (gpt-6-luna,
-     clef-flash, jev-latest). Serving BLOCKED pending XPLabs' $1 card
-     verification: chat call answers insufficient_quota/card_required
-     ("everything else, including your own provider keys (BYOK) and
-     trace uploads, works now"). Wired: XPLABS_API_KEY on both chain
-     repos' Actions secrets + gateway leg declared (llmfisher xplabs:
-     clef-flash, qwen3.8-27b, gpt-6-luna). Lane self-activates on card
-     verification; free status UNVERIFIED until first live call. DATA
-     POLICY: clef-flash ZDR + no-training; jev-latest NEITHER.
-  10. KiosAPI — UNVERIFIED: kiosapi.com is a 40+ provider
-      OpenAI-compatible gateway, key from account; /models behind
-      sign-in. Older public posts show free $0-model selection incl.
-      MiniMax M3 (not M3.1 Flash; acc. 2026-10-22).
-
-  MODEL FACTS (MiniMax + GMI Cloud blog): 428B MoE, ~23B active, 1M ctx
-  flat pricing, MSA sparse attention, 200+ TPS; reasoning always on
-  with selectable effort (Low..Max). WEAK SPOT: AA-Omniscience 56%
-  factuality with ~93% hallucination rate when unsure — pair with
-  retrieval/tool results/verification; never staff it solo on
-  open-ended ungrounded Q&A.
-
-  STAFFING (what "use M3.1 free" means TODAY): runnable now = mcode
-  lane (PROVEN) + MiniMax Agent (dated 10-25) + Ollama local
-  (hardware-gated). Free after Owner signup = Cline allowance,
-  CommandCode, ZenMux gift. NOT free = OpenRouter, OpenCode, GMI.
-  Unknown = XPLabs, KiosAPI. Dated rows are RE-HIRE DATES with
-  independent fallbacks (EXPIRY LAW). Watched aliases: aimlapi free
-  minimax-m3.1-flash (row above, their own X), Puter gateway
-  (third-party, never load-bearing); weights now landed ->
-  SiliconFlow/Novita/ModelScope cheap listings within days.
 
 * Benchmark snapshot — 2026-10-21 (for pair-level ranking; values filters
   still bind — closed models stay out of accountable seats)
@@ -724,64 +618,6 @@
   promotion or release. Five per round. Live list:
   agent-team/MEMBERS.org §INTERN POOL.
 
-
-* Free-lane delta — 2026-10-24 (R-2-45/46/46-b live-verified; supersedes
-  conflicting rows above where they disagree)
-
-  Owner-driven sweeps, live-probed from this box. Dedup law (R-2-44): gomodel
-  already wires 17 providers — cloudflare, gemini, groq, opencode-zen, zai,
-  openrouter, bai, ollama-cloud, kilo, tokenharbor, gmi, jev(typesafe),
-  cline(API leg), nvidia-nim, aimlapi, deepseek-official, xplabs — anything on
-  that list is NOT a delta; do not re-recommend it to the Owner.
-
-  VERIFIED LIVE (primary evidence, acc. 2026-10-23/24) — READ THE GATE
-  ABOVE: aiHubMix and GitHub Models are NO-ACCOUNT-DEAD (Owner never
-  registered). Evidence kept for context only:
-  - aiHubMix — DEAD-NO-ACCOUNT (Owner 2026-10-24 19:52Z — never created an
-    account; do not staff, do not re-recommend until he registers). If that
-    ever changes: one email signup → AIHUBMIX_API_KEY, FOUR free rows, all
-    $0/$0: coding-kimi-k3-free (5 RPM · 100 req/day · 1M tokens/day, 1.05M
-    ctx, vision+video+thinking+tools+computer-use, measured ~25 tok/s),
-    kimi-for-coding-free, k2.6-code-preview-free (262K ctx),
-    coding-glm-5.3-flash-free (aihubmix.com/model/<id>). no-cc status
-    UNVERIFIED — needs the Owner to mint the key. NOT in gomodel = true delta.
-  - GitHub Models — DEAD-NO-ACCOUNT (Owner 2026-10-24 19:52Z — never created
-    an account; the repo-PAT route is UNSANCTIONED, a PAT is not a Models
-    account). Formerly marked "LIVE, re-verified 2026-10-24: POST
-    models.github.ai/inference/chat/completions with the existing repo PAT
-    returned a real completion (gpt-oss-20b → "OK")" — technical reach is
-    NOT permission. The "RETIRED
-    2026-06-16" census row above refers to the OLD azure-leg preview;
-    models.github.ai is the current leg. Free rows (R-2-45): llama-3.3-70b
-    ~50 RPD, llama-3.1-405b ~50 RPD, deepseek-r1 ~8 RPD, gpt-oss-120b/20b.
-    Tiny caps. All of it moot until the Owner registers.
-  - Command Code CLI (commandcode.ai) — second CLI harness, Cline-shaped,
-    headless -p/--yolo = lane-ready. Free rows: beam:free (NO daily cap,
-    while capacity lasts), laguna-s-2.1-free (while capacity),
-    glyph-cluster:free (100/day, stealth preview), minimax-m3.1-flash:free
-    (limited time). Account auth NOT yet run — needs Owner device flow.
-  - Respan (api.respan.ai/api/v1) — CHAT IS A BYOK WALL: Owner-key burn test
-    2026-10-23, 61 routes tested / 0 working — every route INCLUDING all 29
-    zero-priced rows 401s activation_required without an upstream key or
-    credits; their own credits-billing doc documents this exact 401. The
-    ONLY free surface is span-01-free: POST /api/v1/scores behavior-scoring
-    (span.input/output + behavior defs → p_present/p_absent/p_not_observable,
-    no generation), live 200 verified, daily cap resets 00:00 UTC. NOT a chat
-    leg — eval/scoring tool only.
-  - Free kimi k3 — EXISTS ONLY on aiHubMix (coding-kimi-k3-free) — which is
-    DEAD-NO-ACCOUNT, so free kimi k3 is effectively UNAVAILABLE. Moonshot
-    platform.kimi.ai official = ALL PAID (kimi-k3.1-pro $2/$10, kimi-k3
-    $3/$15). Respan kimi-k3.1-pro = $2/$10 paid. Nowhere else free.
-
-  CARRIED DELTA (R-2-44/45, unchanged, still open):
-  - OVHcloud AI Endpoints — anonymous, 2 RPM/model, zero setup.
-  - ModelScope — ~2k calls/day, real-name check pending (Owner action).
-  - Mistral Experiment tier — ~$10/mo credits, data opt-in required.
-
-  DEAD (never staff on these):
-  - Chutes free 200/day — retired 2026-03-15 (their own community post).
-  - Qwen Code OAuth 2000/day — discontinued 2026-04-15 (census above).
-  - Respan chat with a bare account key — BYOK wall, see above.
 
 * Sandbox chat-lane artifact — 2026-10-24 (measured, NEVER a model source)
 

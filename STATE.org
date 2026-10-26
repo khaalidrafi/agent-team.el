@@ -5,6 +5,9 @@
   - teamify: agent-team/ files + templates committed
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +
     byte-compile green on the runner (run 39404373880)
+  - common teamify template moved to the VAULT (Owner 2026-10-26: store
+    TEAMIFY-COMMON.org in vault, not public; paste.rs retired) —
+    khaalidrafi/vault eb7b0bf + sealed secret TEAMIFY_COMMON_ORG x3 repos
 * IN-FLIGHT
   - mesh/01 (Owner order 2026-10-20 14:52): PEER MESH live — members talk
     to each other via agent-team/mailbox/ inboxes (PROTOCOL.org grammar,

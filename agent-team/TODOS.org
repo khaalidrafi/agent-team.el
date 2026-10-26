@@ -3,13 +3,20 @@
 # DISPATCH counter: 0
 #+COLUMNS: %40ITEM %TODO %EFFORT %CLOCKSUM(Clocked)
 #+PROPERTY: Effort_ALL 0 0:25 0:50 1:00 2:00 4:00
-# TIME LAW (Owner 2026-10-26 #hq): strict time discipline, Org-powered.
+# TIME LAW (Owner 2026-10-26 10:42 #hq): strict time discipline, Org-powered.
 # 1. Every TODO assigned by the team lead sets :EFFORT: (from the
 #    Effort_ALL ladder; outside the ladder needs the Owner's word).
-# 2. Every member CLOCKS actual work with :LOGBOOK: CLOCK: in/out
-#    entries — append-only like everything on this board.
-# 3. A TODO closed without clock evidence bounces at review.
-# 4. The closing report carries one line: :EFFORT: vs clocked variance.
+# 2. The BEGINNING of a task = the EXACT time its prompt is sent to the
+#    member. AUTOMATION marks it, never the member: the item flips to
+#    ONGOING and the send instant enters its :LOGBOOK: as an open Org
+#    clock. Emacs path: the agent-org prompt-send hook
+#    (agent-team-clock.el). CI path: the dispatch-step clock-in
+#    (clock_in.py — canonical in khaalidrafi/agent-team.el).
+# 3. MANUAL EXCEPTION: web/cloud models never pass through agent-org —
+#    whoever dispatches pastes the ONGOING flip + :LOGBOOK: clock with
+#    the exact send time.
+# 4. A TODO closed without clock evidence bounces at review.
+# 5. The closing report carries one line: :EFFORT: vs clocked variance.
 
 * Board
 

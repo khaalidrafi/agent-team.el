@@ -421,8 +421,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   criteria, context before instructions, named files over "it"/"that", bounded
   scope, no buried conditions
 - INTER-TEAM LETTERS (Owner 2026-10-26 #hq): any message a team addresses
-  to ANOTHER team or a CLIENT additionally follows agent-team/COMMS-FORMAT.org
-  — full letter skeleton (drawer fields SUBJECT/REF/PRIORITY/REPLY-BY/STATUS;
+  to ANOTHER team or a CLIENT additionally follows the canonical
+  agent-team/COMMS-FORMAT.org (THIS repo; other repos reference it,
+  never duplicate — Owner no-duplication law 2026-10-26) — full letter
+  skeleton (drawer fields SUBJECT/REF/PRIORITY/REPLY-BY/STATUS;
   salutation -> purpose -> artifact-anchored body -> numbered action list ->
   signature) and professional register. Reviewers reject non-conforming
   letters.
@@ -469,6 +471,10 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   reason
 - inter-team letters follow COMMS-FORMAT.org: non-conforming letters
   bounce at review, same as red suites
+- time discipline (Owner 2026-10-26 #hq): strict, Org-powered —
+  lead-assigned TODOs set :EFFORT: (Effort_ALL ladder); members clock
+  actual work with :LOGBOOK: CLOCK entries; a TODO closed without clock
+  evidence bounces at review
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone

@@ -47,6 +47,9 @@
 (declare-function agent-org-start "agent-org" (provider))
 (defvar agent-org-session-strategy)
 (defvar agent-org-response-finished-hook)
+;; TIME LAW clock automation (agent-team-clock.el) — the role binding var;
+;; defined there, declared here so this file still compiles without it.
+(defvar agent-team-clock--current-role)
 
 (defgroup agent-team-sessions nil
   "Team session buffer over per-role agent-org sessions."
@@ -397,7 +400,12 @@ own type-ahead model)."
                           (agent-org--session-for-buffer buf)))))
       (unless session
         (user-error "Session for %s is not ready (still starting?)" role))
-      (agent-org-send-prompt-with-session text session)
+      ;; TIME LAW (Owner 2026-10-26 10:42 #hq): the prompt-send hook
+      ;; clock-in needs to know which role the wire carries — bind it
+      ;; around the send so the automation (never the member) clocks the
+      ;; item in at the exact send moment.
+      (let ((agent-team-clock--current-role role))
+        (agent-org-send-prompt-with-session text session))
       (message "agent-team: dispatched to %s" role))))
 
 ;;;###autoload
@@ -408,6 +416,10 @@ own type-ahead model)."
       (progn
         (add-hook 'agent-org-response-finished-hook
                   #'agent-team-sessions--response-finished)
+        ;; TIME LAW: also hang the automated clock-in when the clock
+        ;; module is loaded (agent-team-clock-install guards itself).
+        (when (fboundp 'agent-team-clock-install)
+          (agent-team-clock-install))
         (message "agent-team: live refresh hooked into agent-org"))
     (user-error "agent-org is not loaded")))
 

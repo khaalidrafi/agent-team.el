@@ -1,6 +1,15 @@
 #+TITLE: TODOS.org — team board (single source of truth)
 #+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 # DISPATCH counter: 0
+#+COLUMNS: %40ITEM %TODO %EFFORT %CLOCKSUM(Clocked)
+#+PROPERTY: Effort_ALL 0 0:25 0:50 1:00 2:00 4:00
+# TIME LAW (Owner 2026-10-26 #hq): strict time discipline, Org-powered.
+# 1. Every TODO assigned by the team lead sets :EFFORT: (from the
+#    Effort_ALL ladder; outside the ladder needs the Owner's word).
+# 2. Every member CLOCKS actual work with :LOGBOOK: CLOCK: in/out
+#    entries — append-only like everything on this board.
+# 3. A TODO closed without clock evidence bounces at review.
+# 4. The closing report carries one line: :EFFORT: vs clocked variance.
 
 * Board
 

@@ -36,9 +36,10 @@
 #   weekdays corrected to real Org calendar values (2026-10-20 = Tue).
 # - LETTER LAW (Owner 2026-10-26 #hq): any message a team addresses to
 #   another team or a client MUST follow agent-team/COMMS-FORMAT.org —
-#   full letter skeleton + professional register; file it here with
-#   KIND: letter (enum extended). Non-conforming letters are rejected
-#   at review.
+#   CANONICAL copy lives in THIS repo; other repos reference it, never
+#   duplicate it (Owner no-duplication law 2026-10-26). Full letter
+#   skeleton + professional register; file it here with KIND: letter
+#   (enum extended). Non-conforming letters are rejected at review.
 
 * MSG lead -> @release-engineer :dispatch:                    :msg:lead:release-engineer:dispatch:
 :PROPERTIES:

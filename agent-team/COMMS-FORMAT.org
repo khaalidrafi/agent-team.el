@@ -4,6 +4,9 @@
 #+LAW: channel it travels through. Non-conforming messages are REJECTED at
 #+LAW: review and re-issued in this format. Lead-owned file; changes need
 #+LAW: the Owner's sign-off.
+#+LAW: CANONICAL COPY (Owner no-duplication law 2026-10-26): this file
+#+LAW: lives ONLY in this repo (khaalidrafi/agent-team.el). Every other
+#+LAW: repo REFERENCES it — no repo keeps its own copy.
 
 * WHY THIS EXISTS
   A team message to the Freshorama team (flagged by the Owner in #hq on
@@ -17,24 +20,35 @@
 * SCOPE — WHAT THIS GOVERNS
   A LETTER is any written message whose sender is a TEAM and whose
   recipient is a party outside the seat-to-seat work chat:
-  - team -> team (admincraft <-> docneural <-> agent-team.el, any future team),
-  - team -> client (e.g. Freshorama e-commerce),
-  - team -> Owner when it is a formal request, offer, or report of record.
-  Quick #hq pings stay conversational; the Owner is exempt, teams are not.
+  - team -> team
+    - admincraft <-> docneural <-> agent-team.el,
+    - any future team,
+  - team -> client
+    - e.g. Freshorama e-commerce,
+  - team -> Owner
+    - formal requests, offers, and reports of record,
+    - quick #hq pings stay conversational; the Owner is exempt, teams
+      are not.
   Internal TEAM-CHAT.org dispatch/report/ask traffic keeps the existing
   headline + drawer FORMAT LAW untouched. An entry that is ALSO a letter
-  satisfies BOTH grammars: local headline + drawer grammar, :KIND: letter
-  (this extends the KIND enum by Owner order), the extra drawer fields
-  below, and the letter body skeleton.
+  satisfies BOTH grammars:
+  - the local headline + drawer grammar,
+  - :KIND: letter (extends the KIND enum by Owner order),
+  - the extra drawer fields below,
+  - the letter body skeleton.
 
 * WHERE A LETTER LIVES
-  - Default: a TEAM-CHAT.org entry. Keep the local MSG headline grammar
-    exactly, set :KIND: letter, add the drawer fields, write the body in
-    the skeleton below.
-  - A client deliverable or standalone letter file: one Org headline per
-    letter tagged :letter:<from>:<to>:, same drawer and body.
-  - Relayed through chat/email: relayed VERBATIM — the format travels
-    with the text; never paraphrase a letter into slang on the way out.
+  - Default: a TEAM-CHAT.org entry
+    - keep the local MSG headline grammar exactly,
+    - set :KIND: letter,
+    - add the drawer fields,
+    - write the body in the skeleton below.
+  - A client deliverable or standalone letter file
+    - one Org headline per letter, tagged :letter:<from>:<to>:,
+    - same drawer and body.
+  - Relayed through chat/email
+    - relayed VERBATIM — the format travels with the text,
+    - never paraphrase a letter into slang on the way out.
 
 * THE LETTER SKELETON (every field mandatory, every time)
 #+BEGIN_EXAMPLE
@@ -55,13 +69,19 @@
   <PURPOSE — one short paragraph, 1-3 sentences: why you write and what
   you ask for. No warm-up, no filler.>
 
-  <BODY — the substance. Facts in order, each anchored to an artifact:
-  path:line, commit sha, command + pasted output, or URL. Measured
-  numbers beat adjectives. One idea per paragraph.>
+  <BODY — the substance, structured with nested Org lists where more
+  than one fact travels together. Every claim is anchored to an
+  artifact: path:line, commit sha, command + pasted output, or URL.
+  Measured numbers beat adjectives.>
 
-  <ACTION REQUESTED — numbered list; each item states what + who + by
-  when. If the letter asks nothing, write exactly: "No action requested
-  — this letter is for the record.">
+  <ACTION REQUESTED — numbered list. Each item = one ask, then nested
+  sub-lines carry the contract:>
+  1. <the ask, one sentence>
+     - owner: <role or team who executes>,
+     - by: <YYYY-MM-DD | "no deadline">,
+     - evidence expected: <what a correct fulfilment looks like>.
+  <If the letter asks nothing, write exactly: "No action requested —
+  this letter is for the record.">
 
   Regards,
   <team-name> — <signing seat/agent>
@@ -69,49 +89,66 @@
   Standalone letter files replace the MSG headline with:
   =* LETTER <subject> — <from> -> @<to> :letter:   :letter:<from>:<to>:=
 
-* THE TEN MUSTS
-  1. Every drawer field is present, every time — including one-line
-     letters.
-  2. The letter OPENS with the salutation and CLOSES with the signature.
-     An unsigned message is not a letter; it is a stray note.
-  3. The PURPOSE lands inside the first three sentences.
-  4. ONE subject per letter. A second subject is a second letter.
-  5. Every claim carries an artifact anchor. "Obviously" is not an
-     anchor.
-  6. Every ask is an explicit, numbered action with an owner and a date.
-     "Please look into this" is forbidden — say what, who, by when. If
-     there is truly no deadline, the letter says "no deadline" in words.
-  7. PROFESSIONAL REGISTER: complete sentences, no slang, no emoji, no
-     chat abbreviations, no ALL-CAPS shouting, no sarcasm, no blame.
-     Neutral, courteous, addressed to the team, not the person.
-  8. APPEND-ONLY HISTORY: a correction is a NEW letter whose :REF: names
-     the letter it corrects. Never edit or delete a sent letter.
-  9. STATUS LIFECYCLE: the sender marks :STATUS: answered or closed in
-     the NEXT letter it sends on that :REF: — never by rewriting
-     history.
-  10. CHANNEL-AGNOSTIC: the format travels with the text — TEAM-CHAT.org
-      entry, letter file, chat relay, all identical.
+* THE MUSTS (eleven)
+  1. Every drawer field is present, every time
+     - including one-line letters.
+  2. Salutation opens, signature closes
+     - an unsigned message is not a letter; it is a stray note.
+  3. PURPOSE lands inside the first three sentences.
+  4. ONE subject per letter
+     - a second subject is a second letter with its own :REF:.
+  5. Every claim carries an artifact anchor
+     - "obviously" is not an anchor.
+  6. Every ask is an explicit, numbered action
+     - with the nested contract: owner, by-date, evidence expected,
+     - "please look into this" is forbidden — say what, who, by when,
+     - if there is truly no deadline, the item says "no deadline".
+  7. PROFESSIONAL REGISTER
+     - complete sentences, no slang, no emoji, no chat abbreviations,
+     - no ALL-CAPS shouting, no sarcasm, no blame,
+     - neutral and courteous: address the team, not the person.
+  8. APPEND-ONLY HISTORY
+     - a correction is a NEW letter whose :REF: names the letter it
+       corrects,
+     - never edit or delete a sent letter.
+  9. STATUS LIFECYCLE
+     - the sender marks :STATUS: answered or closed in the NEXT letter
+       it sends on that :REF:,
+     - never by rewriting history.
+  10. CHANNEL-AGNOSTIC
+     - the format travels with the text: TEAM-CHAT.org entry, letter
+       file, chat relay — all identical.
+  11. STRUCTURE (Owner order 2026-10-26: nested lists)
+     - top level = one idea per bullet,
+     - sub-details nested underneath their parent,
+     - never a prose wall, never a flat ten-line list.
 
 * MUST-NOTS (reviewers reject on sight)
-  - unsigned, salutation-less, or bottom-buried-ask letters;
-  - mixed-subject letters;
-  - deadline-free asks (say "no deadline" explicitly if truly none);
-  - internal slang, seat names, or board codes in a client-facing letter
-    — the client does not know our jargon; expand it or drop it;
-  - promises of dates, numbers, or deliverables not already anchored in
-    the repo;
-  - emoji, stickers, or exclamation-mark enthusiasm in client letters.
+  - Format violations
+    - unsigned, salutation-less, or bottom-buried-ask letters,
+    - mixed-subject letters,
+    - deadline-free asks (say "no deadline" explicitly if truly none).
+  - Register violations
+    - internal slang, seat names, or board codes in a client-facing
+      letter — the client does not know our jargon; expand it or drop
+      it,
+    - emoji, stickers, or exclamation-mark enthusiasm in client letters.
+  - Substance violations
+    - promises of dates, numbers, or deliverables not already anchored
+      in the repo.
 
 * ENFORCEMENT
-  - TRIGGER CASE: the Owner ordered this standard in #hq on 2026-10-26
-    after a team message to Freshorama went out non-formal. The FIRST
-    application: the next message to Freshorama is re-issued in this
-    format before it leaves the team.
-  - Reviewers and leads reject a non-conforming letter the same way they
-    reject a red test suite; the reject reason cites this file.
-  - A conforming letter that passed review becomes the precedent; when
-    in doubt, copy the most recent :STATUS: closed letter.
-  - This file is Lead-owned. Changes require the Owner's sign-off.
+  - TRIGGER CASE
+    - the Owner ordered this standard in #hq on 2026-10-26 after a team
+      message to Freshorama went out non-formal,
+    - FIRST APPLICATION: the next message to Freshorama is re-issued in
+      this format before it leaves the team.
+  - Reviewers and leads reject a non-conforming letter the same way
+    they reject a red test suite; the reject reason cites this file.
+  - Precedent
+    - a conforming letter that passed review becomes the precedent,
+    - when in doubt, copy the most recent :STATUS: closed letter.
+  - This file is Lead-owned; changes require the Owner's sign-off.
 
 * WORKED EXAMPLE (illustrative; values are placeholders)
 #+BEGIN_EXAMPLE
@@ -132,16 +169,24 @@
   We confirm that the branding fixtures you requested are merged and
   available on your staging environment as of today.
 
-  The handover covers app/brands/freshorama/brand.json (palette, logo
-  paths, tagline) at commit <sha>, verified by plugin/tests/test_branding.py
-  (75 passed; landing gate GREEN 4/4). The runtime route
-  branding/asset/<name> serves logo.svg and icon.png for this brand;
-  the regression is covered by test_branding_api.py.
+  The handover covers the brand identity end to end, all anchored on
+  ai/main:
+  - app/brands/freshorama/brand.json (palette, logo paths, tagline) at
+    commit <sha>,
+  - plugin/tests/test_branding.py — 75 passed; landing gate GREEN 4/4,
+  - the runtime route branding/asset/<name> serves logo.svg and
+    icon.png; regression covered by test_branding_api.py.
 
   1. Load the staging build and confirm the Freshorama identity renders
-     as specified — owner: Freshorama release manager — by 2026-10-30.
+     as specified.
+     - owner: Freshorama release manager,
+     - by: 2026-10-30,
+     - evidence expected: the staging URL or a screenshot.
   2. Reply "accepted", or send a defect list as a letter referencing
-     this one — owner: Freshorama team lead — by 2026-10-30.
+     this one.
+     - owner: Freshorama team lead,
+     - by: 2026-10-30,
+     - evidence expected: the reply letter's :REF: naming this letter.
 
   No action beyond the two items above is requested.
 

@@ -357,10 +357,10 @@ drift apart (this is the setup command's core invariant)."
          (slots (agent-team--default-slots root "khaalidrafi/testrepo"))
          (filled (agent-team--fill-slots tpl slots)))
     (should (equal '() (agent-team--unfilled-slots filled)))
-    ;; the fill is project-aware: project name, repo slug; no chat-mirror
-    ;; secret since 2026-10-26 (Discord retired after Telegram)
+    ;; the fill is project-aware: project name, repo slug (bare slug is
+    ;; the canonical form); no chat-mirror secret since 2026-10-26
+    ;; (Discord retired after Telegram)
     (should (string-match-p "testrepo — CI agent-team chain" filled))
-    (should (string-match-p "khaalidrafi/testrepo" filled))
     (should-not (string-match-p "DISCORD_WEBHOOK" filled))
     ;; engine defaults ride inside: gomodel health step + Jev judgment
     (should (string-match-p "GoModel lane health" filled))
@@ -404,7 +404,9 @@ drift apart (this is the setup command's core invariant)."
     (should (file-exists-p wf))
     (let ((yml (with-temp-buffer (insert-file-contents wf) (buffer-string))))
       (should (equal '() (agent-team--unfilled-slots yml)))
-      (should (string-match-p "khaalidrafi/testrepo" yml))
+      ;; the fill is slug-aware (bare slug is the canonical form; the
+      ;; full owner/slug pair rides github.repository at run time)
+      (should (string-match-p "testrepo — CI agent-team chain" yml))
       (should (string-match-p "secrets.GROQ_API_KEY" yml))
       (should-not (string-match-p "TELEGRAM_" yml))
       (should-not (string-match-p "api.telegram.org" yml)))
@@ -565,10 +567,16 @@ prompt)."
                    "none" "<<<FILL>>>" nil)
                   (with-current-buffer "*agent-team prompt*"
                     (buffer-string)))))
+    ;; the candidates file is Fetched, never inlined: a prompt snapshot
+    ;; goes stale, so PART 3 lands the canonical file by URL + sanity
+    ;; greps (no-dup law)
     (should (string-match-p
-             "PART 3 — CANDIDATES SEED" prompt))
+             "PART 3 — CANDIDATES FILE: land agent-team/CANDIDATES.org" prompt))
     (should (string-match-p
-             "CANDIDATES.org — ALL available model@platform options" prompt))
+             "raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/"
+             prompt))
+    (should (string-match-p
+             "grep -m1 '^#[+]TITLE: CANDIDATES\\.org'" prompt))
     ;; the FILE TARGETS define the seed file (and the chat file);
     ;; TEAMIFY's own sections are demoted one level under PART 1, so the
     ;; targets live at three stars
@@ -608,7 +616,7 @@ header and no build timestamp survives into the prompt (Owner
       (should (string-prefix-p "* TEAM CI (how the chain runs" (nth 2 tops)))
       (should (string-prefix-p "* PART 1 — TEAMIFY: the task" (nth 3 tops)))
       (should (string-prefix-p "* PART 2 — COMMON: the master law" (nth 4 tops)))
-      (should (string-prefix-p "* PART 3 — CANDIDATES SEED" (nth 5 tops))))
+      (should (string-prefix-p "* PART 3 — CANDIDATES FILE" (nth 5 tops))))
     (with-temp-buffer
       (insert prompt)
       ;; src blocks balanced
@@ -717,7 +725,7 @@ sketch bytes are exactly what the teamify must produce."
     (should (cdr res))
     (should (string-match-p "^\\*\\* ONGOING wire the export pass$" text))
     (should (string-match-p
-             ":LOGBOOK:\\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]\\n   :END:" text))
+             ":LOGBOOK:\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]\n   :END:" text))
     (should (string-match-p "^\\*\\* REVIEW half-reviewed thing$" text))
     (should (string-match-p "^\\*\\* DONE already closed$" text))))
 
@@ -728,7 +736,7 @@ sketch bytes are exactly what the teamify must produce."
          (text (car res)))
     (should (string-match-p "^\\*\\* ONGOING paint the graph$" text))
     (should (string-match-p
-             ":LOGBOOK:\\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]" text))))
+             ":LOGBOOK:\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]" text))))
 
 (ert-deftest agent-team-clock-apply-idempotent-on-open-clock ()
   (should (equal (agent-team-clock--apply

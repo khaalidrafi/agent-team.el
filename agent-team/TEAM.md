@@ -471,10 +471,12 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   reason
 - inter-team letters follow COMMS-FORMAT.org: non-conforming letters
   bounce at review, same as red suites
-- time discipline (Owner 2026-10-26 #hq): strict, Org-powered —
-  lead-assigned TODOs set :EFFORT: (Effort_ALL ladder); members clock
-  actual work with :LOGBOOK: CLOCK entries; a TODO closed without clock
-  evidence bounces at review
+- time discipline (Owner 2026-10-26 10:42 #hq): strict, Org-powered —
+  lead-assigned TODOs set :EFFORT: (Effort_ALL ladder); a task's
+  BEGINNING is the exact prompt-send time and AUTOMATION marks it
+  (agent-org prompt-send hook / CI clock_in.py — never the member;
+  web/cloud lanes are the one manual exception); a TODO closed without
+  clock evidence bounces at review
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone

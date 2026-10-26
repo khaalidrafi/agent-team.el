@@ -17,6 +17,27 @@
 #    the exact send time.
 # 4. A TODO closed without clock evidence bounces at review.
 # 5. The closing report carries one line: :EFFORT: vs clocked variance.
+# REVIEW CLOCK LAW (Owner 2026-10-26 10:55 #hq; Org manual "Breaking
+# down tasks" + clocking: child TODOs nest one level under the parent,
+# statistics cookies count the subtree, a parent's clocksum aggregates
+# its subtree's clocks):
+# 1. Every lead-assigned work TODO carries a REVIEW TODO nested
+#    underneath it — one Org level deeper, headline
+#    `*** TODO review: <parent title>', with its own :EFFORT: (inside
+#    its :PROPERTIES: drawer, the reviewer's rung of the Effort_ALL
+#    ladder) and its own :LOGBOOK: clock.
+# 2. FINISH time and REVIEW time are SEPARATE clocks: work clock on the
+#    parent, review clock on the child; the variance line reports them
+#    apart (columnview rolls the child's clock into the parent's
+#    %CLOCKSUM).
+# 3. The REVIEWER sets DONE — on the review TODO first, then on the
+#    parent — when everything is clear: verdict + green gate + evidence.
+#    The author never grades their own work; CANCELLED/DEFERRED stay
+#    Lead-only.
+# 4. Automation: work dispatches clock the parent (clock_in.py work
+#    mode — never a review child); review dispatches clock the review
+#    child (review mode; the marker may match the child's evidence
+#    lines, so cite branch=/author= in its body).
 
 * Board
 

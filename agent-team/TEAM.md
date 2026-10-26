@@ -477,6 +477,12 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   (agent-org prompt-send hook / CI clock_in.py — never the member;
   web/cloud lanes are the one manual exception); a TODO closed without
   clock evidence bounces at review
+- review clocks (Owner 2026-10-26 10:55 #hq): finish time and review
+  time are separate clocks, each on its own TODO with its own :EFFORT:;
+  the review TODO nests one level under its parent (`review: <parent
+  title>'); the REVIEWER sets DONE on the review TODO first, then the
+  parent, when everything is clear — the author never grades their own
+  work
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone

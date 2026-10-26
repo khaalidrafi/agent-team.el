@@ -88,7 +88,7 @@ jobs:
         # Fails the job on a real error; warnings (free functions under -Q) are
         # informational, matching how we compile locally.
         run: |
-          for f in agent-team.el agent-team-sessions.el; do
+          for f in agent-team.el agent-team-sessions.el agent-team-clock.el; do
             emacs -Q --batch -L . --eval \
               "(unless (byte-compile-file \"$f\") (kill-emacs 1))"
           done

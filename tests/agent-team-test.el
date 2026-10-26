@@ -4,6 +4,7 @@
 
 (require 'ert)
 (require 'agent-team)
+(require 'agent-team-clock)
 
 (ert-deftest agent-team-format-header ()
   (should (equal
@@ -685,11 +686,76 @@ sketch bytes are exactly what the teamify must produce."
     (should (null leaks))
     ;; the TODOS.org sketch is byte-exact inside its src block
     (should (string-match-p
-             "#\\+BEGIN_SRC org\n#\\+TITLE: TODOS.org — team board (single source of truth)\n#\\+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED\n\n\\* Board\n"
+             "#\\+BEGIN_SRC org\n#\\+TITLE: TODOS.org — team board (single source of truth)\n#\\+TODO: TODO ONGOING PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED\n\n\\* Board\n"
              prompt))
     ;; the chat sketch ends with a bare #+END_SRC on its own line
     (should (string-match-p
              "\\* MSG <from> -> @<to> :<kind>:\n#\\+END_SRC\n" prompt))))
+
+;;; TIME LAW clock (agent-team-clock.el) — pure transformer tests
+
+(defconst agent-team-clock-test--board-plain
+  "#+TITLE: TODOS.org — team board\n\n* Board\n\n** TODO wire the export pass\n   Some body line.\n\n** REVIEW half-reviewed thing\n   Body.\n\n** DONE already closed\n   Body.\n")
+
+(defconst agent-team-clock-test--board-logbook
+  "#+TITLE: TODOS.org\n\n* Board\n\n** PENDING paint the graph\n   :LOGBOOK:\n   - Note taken on [2026-10-20 Tue 10:00] by lead: seeded\n   :END:\n")
+
+(defconst agent-team-clock-test--board-clocked
+  "#+TITLE: TODOS.org\n\n* Board\n\n** ONGOING paint the graph\n   :LOGBOOK:\n   CLOCK: [2026-10-25 Sat 09:00 UTC]\n   :END:\n")
+
+(ert-deftest agent-team-clock-ts-format ()
+  (should (string-match-p
+           "^\\[2[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] \\(Mon\\|Tue\\|Wed\\|Thu\\|Fri\\|Sat\\|Sun\\) [0-9][0-9]:[0-9][0-9] UTC\\]$"
+           (agent-team-clock--ts))))
+
+(ert-deftest agent-team-clock-apply-flips-todo-and-inserts-drawer ()
+  (let* ((res (agent-team-clock--apply
+               agent-team-clock-test--board-plain nil nil
+               "[2026-10-26 Mon 10:42 UTC]"))
+         (text (car res)))
+    (should res)
+    (should (cdr res))
+    (should (string-match-p "^\\*\\* ONGOING wire the export pass$" text))
+    (should (string-match-p
+             ":LOGBOOK:\\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]\\n   :END:" text))
+    (should (string-match-p "^\\*\\* REVIEW half-reviewed thing$" text))
+    (should (string-match-p "^\\*\\* DONE already closed$" text))))
+
+(ert-deftest agent-team-clock-apply-appends-into-existing-logbook ()
+  (let* ((res (agent-team-clock--apply
+               agent-team-clock-test--board-logbook nil nil
+               "[2026-10-26 Mon 10:42 UTC]"))
+         (text (car res)))
+    (should (string-match-p "^\\*\\* ONGOING paint the graph$" text))
+    (should (string-match-p
+             ":LOGBOOK:\\n   CLOCK: \\[2026-10-26 Mon 10:42 UTC\\]" text))))
+
+(ert-deftest agent-team-clock-apply-idempotent-on-open-clock ()
+  (should (equal (agent-team-clock--apply
+                  agent-team-clock-test--board-clocked nil nil
+                  "[2026-10-26 Mon 10:42 UTC]")
+                 (cons agent-team-clock-test--board-clocked nil))))
+
+(ert-deftest agent-team-clock-apply-task-marker-wins ()
+  (let* ((res (agent-team-clock--apply
+               agent-team-clock-test--board-plain nil "half-reviewed"
+               "[2026-10-26 Mon 10:42 UTC]"))
+         (text (car res)))
+    (should (string-match-p "^\\*\\* ONGOING half-reviewed thing$" text))
+    (should-not (string-match-p "ONGOING wire the export" text))))
+
+(ert-deftest agent-team-clock-apply-role-match ()
+  (let* ((board "#+TITLE: t\n\n* Board\n\n** TODO job one\n   :ASSIGNEE: builder\n\n** TODO job two\n   :ASSIGNEE: painter\n")
+         (res (agent-team-clock--apply board "painter" nil
+                                       "[2026-10-26 Mon 10:42 UTC]"))
+         (text (car res)))
+    (should (string-match-p "ONGOING job two" text))
+    (should-not (string-match-p "ONGOING job one" text))))
+
+(ert-deftest agent-team-clock-apply-no-match ()
+  (should (null (agent-team-clock--apply
+                 "#+TITLE: empty\n" nil nil
+                 "[2026-10-26 Mon 10:42 UTC]"))))
 
 (provide 'agent-team-test)
 

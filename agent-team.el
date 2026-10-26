@@ -137,7 +137,7 @@ carries no parsable id are skipped, so a role never gets a blank brain."
 
 (defvar agent-team--board-template
   "#+TITLE: TODOS.org — team board (single source of truth)
-#+TODO: TODO PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
+#+TODO: TODO ONGOING PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED
 # DISPATCH counter: 0
 
 * Board

@@ -1293,6 +1293,16 @@ Override when this team's harness bakes different bodies.")
   a failed paid attempt reports PAID LANE FAILED — a paid visit is
   never faked; no chat mirror since 2026-10-26 (Discord retired after
   Telegram) — the chat lives in agent-team/TEAM-CHAT.org
+- AGENT-ORG SEND LAW (Owner R-2-77 endgame 2026-10-26 #hq: team CI runs
+  through agent-org): CI sends drive the agent CLIs THROUGH agent-org —
+  the harness image bakes emacs-nox + agent-org-batch.el at a pinned
+  sha, one `emacs --batch' spawns the provider's ACP agent, sends ONE
+  prompt and fires the SAME `agent-org-prompt-send-hook' an interactive
+  Emacs send fires, so the CI clock-in (AGENT_ORG_CLOCK_CMD -> the
+  clock_in.py twin) lands at the EXACT prompt-send moment (TIME LAW).
+  Exit 42 = the batch lane is unavailable -> fall back to the direct
+  CLI lane: the batch path only ADDS a working send, never removes the
+  proven one.  Web/cloud lanes stay the ONE manual exception.
 - GoModel gateway (Jev judgment layer, khaalidrafi/llmfisher) rides as a
   HEALTH-GATED lane: turn health step + finalize judgment; the URL is
   RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL

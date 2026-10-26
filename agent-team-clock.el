@@ -55,7 +55,11 @@
 (defcustom agent-team-clock-open-states '("TODO" "PENDING" "WAIT" "PROGRESS")
   "Board keywords an open item may carry when the clock adopts it.
 ONGOING items are adopted too (a stale item without an open clock gets
-one).  REVIEW/DONE/CANCELLED/DEFERRED are never touched."
+one).  REVIEW is adopted ONLY by an explicit TASK pin (a review
+dispatch clocking its own review child, R-2-78) — the role and
+oldest-open fallbacks never touch a REVIEW item, because work clocks
+and review clocks are separate clocks.  DONE/CANCELLED/DEFERRED are
+never touched."
   :type '(repeat string)
   :group 'agent-team)
 
@@ -96,20 +100,25 @@ board law (`[YYYY-MM-DD Eee HH:MM UTC]')."
 
 (defun agent-team-clock--pick (lines role task)
   "Index of the board item to clock in LINES, or nil.
-TASK (a headline substring) wins; else the first open item whose section
-mentions ROLE; else the first open item.  REVIEW and closed states are
-never picked."
+TASK (a headline substring) wins — an explicit dispatcher pin may adopt
+any live keyword INCLUDING REVIEW (a review dispatch clocks its own
+review child), but never DONE/CANCELLED/DEFERRED.  Without a task hit:
+the first open item whose section mentions ROLE, else the first open
+item; those fallbacks never pick a REVIEW item, because work clocks and
+review clocks are separate clocks (R-2-78)."
   (let ((first-open nil) (role-hit nil) (task-hit nil) (i 0))
     (dolist (line lines)
       (let ((kw (agent-team-clock--match-headline line)))
         (cond
          ((null kw))                   ; not a headline
-         ((member kw '("REVIEW" "DONE" "CANCELLED" "DEFERRED")))
+         ((member kw '("DONE" "CANCELLED" "DEFERRED")))
+         ;; explicit TASK pin: any live keyword, REVIEW included —
+         ;; the dispatcher pinned this exact item on purpose
+         ((and task (null task-hit)
+               (string-match-p (regexp-quote task) line))
+          (setq task-hit i))
          ((member kw (append agent-team-clock-open-states '("ONGOING")))
           (unless first-open (setq first-open i))
-          (when (and task (null task-hit)
-                     (string-match-p (regexp-quote task) line))
-            (setq task-hit i))
           (when (and role (null role-hit)
                      (string-match-p
                       (regexp-quote role)

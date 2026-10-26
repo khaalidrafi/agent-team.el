@@ -52,7 +52,7 @@
 
 * THE LETTER SKELETON (every field mandatory, every time)
 #+BEGIN_EXAMPLE
-* MSG <from> -> @<to> :letter:                    :msg:<from>:<to>:letter:
+,* MSG <from> -> @<to> :letter:                    :msg:<from>:<to>:letter:
 :PROPERTIES:
 :FROM: <team-name> (signed by <seat/agent>)
 :TO: <team-name | client-name>
@@ -152,7 +152,7 @@
 
 * WORKED EXAMPLE (illustrative; values are placeholders)
 #+BEGIN_EXAMPLE
-* MSG admincraft -> @freshorama :letter:   :msg:admincraft:freshorama:letter:
+,* MSG admincraft -> @freshorama :letter:   :msg:admincraft:freshorama:letter:
 :PROPERTIES:
 :FROM: admincraft (signed by platform-engineer)
 :TO: freshorama

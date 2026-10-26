@@ -17,7 +17,7 @@
            brief now scans the chat tail instead of inboxes)
 
 :LOGBOOK:
-- [2026-10-21 Thu 02:45 +08] Lead glm-5.3-flash: Owner security order
+- [2026-10-21 Wed 02:45 +08] Lead glm-5.3-flash: Owner security order
   (#hq 18:27Z) — (1) FULL-REPO SECRET AUDIT: 162 commits + working tree,
   credential-shape scan (Qoder PAT / TG token / GH PATs / sk- / bearer /
   x-access-token): ZERO leaks, TEAM-CHAT.org clean — nothing to rotate
@@ -48,7 +48,7 @@
   "TO:" lines — ci.yml mirror rewritten accordingly; the bridge ingest
   appends v2-format entries. (3) Turn brief grammar block updated to the
   same standard (seats copy the block verbatim).
-- [2026-10-21 Thu 02:05 +08] Lead glm-5.3-flash: Owner security + harness
+- [2026-10-21 Wed 02:05 +08] Lead glm-5.3-flash: Owner security + harness
   law (#hq 17:47Z) — (1) TELEGRAM BRIDGE LOCKED: ingest accepts only the
   chat id in new secret TELEGRAM_OWNER_ID; every other chat DROPPED and
   counted in run logs (impersonation impossible); until the Lead verifies
@@ -59,7 +59,7 @@
   there is no novelty in any body — "any agent can ride APIs, no
   surprise" — so the brain is installed into the BODY THAT FITS the work.
   Dockerfile comment + TEAM-CHAT note updated to the same law.
-- [2026-10-21 Thu 01:50 +08] Lead glm-5.3-flash: Owner batch (#hq 17:27Z) —
+- [2026-10-21 Wed 01:50 +08] Lead glm-5.3-flash: Owner batch (#hq 17:27Z) —
   (1) Qoder PAT delivered -> repo secret QODER_PERSONAL_ACCESS_TOKEN set
   (HTTP 201); platform seat AUTH-READY; THIS turn = the Qoder-on-CI proof
   dispatch (one-off; ci.yml advance case returns rotation to Principal).
@@ -73,7 +73,7 @@
   + --model); baked into the harness image with Qoder. (4) Delegation law:
   Lead does not code; Lead assumes Platform-ops for CI plumbing; elisp
   dev stays with the seats.
-- [2026-10-20 Mon 17:10] Lead glm-5.3-flash: CHANNEL MIGRATION per Owner order
+- [2026-10-20 Tue 17:10] Lead glm-5.3-flash: CHANNEL MIGRATION per Owner order
   (Discord #hq 16:55) — team chat is now ONE file, agent-team/TEAM-CHAT.org
   (union-merged, append-only, direct @pings, no inbox relay); mailbox/
   frozen as archive; ci.yml turn brief rewired (read chat tail first, post

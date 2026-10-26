@@ -246,7 +246,7 @@ the box.
 - HANDOFF (member → member, inside agent-team/TODOS.org): a member whose task has
   a pre-declared next assignee flips the item into that member's queue with a
   structured handoff note — the API contract: :HANDOFF: drawer with :FROM:
-  model@platform · :CONTEXT: what was done + evidence refs (branch/sha, file:line)
+  model@platform · :CONTEXT: what was done + evidence refs (branch/sha, =file:line=)
   · :NEXT: the exact next step + its DOD remainder · :BOUNDARIES: what is NOT the
   receiver's · :OPEN-RISKS: known unknowns. Direct member-to-member contact IS allowed when
   necessary (clarify a handoff, unblock an urgent question) — but the board
@@ -286,7 +286,7 @@ P0|P1|P2 · RISK reads|writes|both) — by appending a section to the TARGET
 team's agent-team/TEAM-UPDATE.org on the team's main branch:
 
 #+BEGIN_SRC org
-* TEAM-UPDATE #<n> — <target-team>/<scope>: <title>
+,* TEAM-UPDATE #<n> — <target-team>/<scope>: <title>
   :FROM: Director of Engineering — <model@platform>
   :TO: <role> EM — <model@platform>
   REPO: <the target repo>
@@ -456,7 +456,7 @@ chat mirror since 2026-10-26) — Owner's
 words: clear enough language, well-structured with lists:
 
 - clear enough language: plain, direct, complete sentences — no cryptic
-  shorthand, no inside jargon, no raw log/JSON dumps (point at file:line
+  shorthand, no inside jargon, no raw log/JSON dumps (point at =file:line=
   or a sha instead)
 - well-structured with lists: a one-line lead (what this entry is about),
   then bullets/numbered lists — state → evidence → next step; NEVER a
@@ -477,7 +477,7 @@ words: clear enough language, well-structured with lists:
 - a member with an unset webhook skips the send and records that fact on
   the board — a missing bot never blocks the work
 - message shape: the MESSAGE STANDARD header (FROM: full role —
-  model@platform) + RESULT (DONE | PARTIAL | BLOCKED) + EVIDENCE (file:line
+  model@platform) + RESULT (DONE | PARTIAL | BLOCKED) + EVIDENCE (=file:line=
   or commit sha) + NEXT; short, scannable, no credentials in any body
 - the board file remains the ONLY source of truth: a Lark message that is
   not reflected on the board does not count
@@ -599,11 +599,11 @@ everyday English — no codename without a plain-word explanation
    "even glm 5.3 flash hallucinated")
 
 - only two kinds of statements exist: OBSERVED (a tool ran THIS session and
-  you can paste the proof: command + output, file:line, HTTP status) vs
+  you can paste the proof: command + output, =file:line=, HTTP status) vs
   REMEMBERED (training data, another chat, "I recall") — REMEMBERED is a
   lead to verify, never a fact to ship; a load-bearing claim must be OBSERVED
 - every external fact carries source + date: URL, pasted output, or
-  file:line; a number without a source (price, cap, RPD, benchmark score,
+  =file:line=; a number without a source (price, cap, RPD, benchmark score,
   latency, context size) is INVENTED until proven — write UNVERIFIED beside
   it or verify it now
 - quoting a page, doc, or message you did not open THIS session is
@@ -646,7 +646,7 @@ everyday English — no codename without a plain-word explanation
   * "probed" / "verified" with zero pasted output
   * stub or placeholder left behind ("the rest is straightforward")
   * acting on a file, board, or repo you never opened this session
-  * generic filler where a specific number, name, or file:line belongs
+  * generic filler where a specific number, name, or =file:line= belongs
 - work floor per task type: research = the batched rounds + a sources list;
   verification = the actual command + its output; code = the diff + the
   green gate run; docs = the exact files and sections changed

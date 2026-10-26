@@ -39,7 +39,7 @@ seat always starts from a fresh inbox. The union merge driver
 * Message grammar (one org headline per message, EXACTLY this shape)
 
 #+begin_example
-* MSG [2026-10-20 Tue 15:04] software-engineer -> quality-assurance-engineer :review:
+,* MSG [2026-10-20 Tue 15:04] software-engineer -> quality-assurance-engineer :review:
   :PROPERTIES:
   :STATUS: UNREAD
   :END:

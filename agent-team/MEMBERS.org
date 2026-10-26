@@ -35,9 +35,10 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     a deliberate Lead act; CI executes, the Lead decides.
   - NOT ACCOUNT SHARING: the Owner's own interactive use, one human, one
     session; no seat, script or CI job touches the z.ai subscription.
-  - fallbacks: 1. qwen3.8-max@chat.qwen.ai (proprietary, UNEXEMPTED)
-               2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769)
-               3. Owner-direct, team frozen until a brain is re-staffed
+  - fallbacks:
+    1. qwen3.8-max@chat.qwen.ai (proprietary, UNEXEMPTED)
+    2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769)
+    3. Owner-direct, team frozen until a brain is re-staffed
 
 * Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode
   - :last-dispatch: 0
@@ -57,11 +58,12 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     maximum reasoning depth plus reliable multi-file edits plus shell —
     max-brain × max-body, so the role's hardest duties get the best
     tools the pool offers. One CI turn segment per rotation.
-  - fallbacks: 1. openrouter/reflection/beam@opencode (vendor SWE-bench V
-                 80.9 · TB 80.1 · AA 30, Apache-2.0 promised, 5 days of
-                 public evidence)
-               2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
-               3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
+  - fallbacks:
+    1. openrouter/reflection/beam@opencode (vendor SWE-bench V
+       80.9 · TB 80.1 · AA 30, Apache-2.0 promised, 5 days of
+       public evidence)
+    2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
+    3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
 
 * Software Engineer — groq/qwen3.8-27b@goose (ACTIVE LANE: zai/glm-4.7-flash@goose — hired brain's lanes down, mesh/01 repair 2026-10-20)
   - :last-dispatch: 0
@@ -87,11 +89,12 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     daily cap — a proven agentic brain on a deterministic harness
     maximizes repeatable, unattended throughput per turn, and the
     published caps make the seat's cost predictable forever.
-  - fallbacks: 1. zai/glm-4.7-flash@opencode (MIT, proven alive, free)
-               2. openrouter/cohere/north-mini-code@opencode (Apache-2.0,
-                  AA coding 33.4)
-               3. openrouter/nvidia/nemotron-3.5-lightning@goose (OpenMDW-1.1,
-                  SWE-bench 51.6, free, 65,536-token output cap)
+  - fallbacks:
+    1. zai/glm-4.7-flash@opencode (MIT, proven alive, free)
+    2. openrouter/cohere/north-mini-code@opencode (Apache-2.0,
+       AA coding 33.4)
+    3. openrouter/nvidia/nemotron-3.5-lightning@goose (OpenMDW-1.1,
+       SWE-bench 51.6, free, 65,536-token output cap)
 
 * Quality Assurance Engineer — zai/glm-4.7-flash@goose (body swap from @opencode, mesh/01 repair 2026-10-20)
   - :last-dispatch: 0
@@ -117,9 +120,10 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     a scoped, honest brain on the most reliable editing harness turns
     "asserts green and reports it" into a repeatable, evidence-backed
     gate; it never chases flakes or judges diffs.
-  - fallbacks: 1. openrouter/nvidia/nemotron-3.5-lightning@goose
-               2. openrouter/cohere/north-mini-code@opencode
-               3. groq/qwen3.8-27b@goose
+  - fallbacks:
+    1. openrouter/nvidia/nemotron-3.5-lightning@goose
+    2. openrouter/cohere/north-mini-code@opencode
+    3. groq/qwen3.8-27b@goose
 
 * Release Engineer — groq/qwen3.8-27b@goose
   - :last-dispatch: 0
@@ -139,10 +143,11 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     deterministic harness makes every repair reproducible, and the
     shared cap is sized far above the work. OWNS harness repair: a
     failed harness in any seat is fixed on this member's next turn.
-  - fallbacks: 1. zai/glm-4.7-flash@opencode
-               2. qwen3.8-flash-next@opencode (AA 40, blended $0.088/M)
-               3. openrouter/poolside/laguna-s-2.1:free@opencode (do not:
-                  spends the Principal Engineer's pool)
+  - fallbacks:
+    1. zai/glm-4.7-flash@opencode
+    2. qwen3.8-flash-next@opencode (AA 40, blended $0.088/M)
+    3. openrouter/poolside/laguna-s-2.1:free@opencode (do not:
+       spends the Principal Engineer's pool)
 
 * Acting Platform Engineer — qwen3.8-flash@qoder (ACTING, EXPIRING ~2026-10-30)
   - :last-dispatch: 3
@@ -181,9 +186,10 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     fastest path to a working communication layer.
   - duties: Lark per-role bot wiring verification · secret hygiene ·
     runner images · gateway replacement research (box asleep)
-  - fallbacks: 1. groq/qwen3.8-27b@goose (acting, if Qoder-on-CI fails)
-               2. glm-5.3-flash@opencode (OpenCode free roster, rotating)
-               3. goose@qoder (box-bound, asleep with the box)
+  - fallbacks:
+    1. groq/qwen3.8-27b@goose (acting, if Qoder-on-CI fails)
+    2. glm-5.3-flash@opencode (OpenCode free roster, rotating)
+    3. goose@qoder (box-bound, asleep with the box)
 
 * Reviewer — glm-5.3@chat.z.ai
   - :last-dispatch: 0
@@ -198,10 +204,11 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     seat is forbidden to give itself on application code — a
     strongest-available reviewer brain on a zero-credential body means
     independent judgment with zero supply-chain risk.
-  - fallbacks: 1. qwen3.8-max@chat.qwen.ai
-               2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 ·
-                  DeepSWE 67.5; $3/$15, custom licence)
-               3. kimi-k2.6@kimi.com
+  - fallbacks:
+    1. qwen3.8-max@chat.qwen.ai
+    2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 ·
+       DeepSWE 67.5; $3/$15, custom licence)
+    3. kimi-k2.6@kimi.com
 
 * Build Engineer — BLOCKED (no Guix in CI, no local source builds by policy)
   - :last-dispatch: 0
@@ -209,7 +216,9 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
   - status: BLOCKED, not carried — not needed for the current goal
     (CI-based team operation); needs an Owner ruling only when Guix work
     returns: rent a Guix machine, or keep it box-only.
-  - when unblocked, rank: 1. glm-5.3-flash@chat.z.ai 2. qwen3.8-max@chat.qwen.ai
+  - when unblocked, rank:
+    1. glm-5.3-flash@chat.z.ai
+    2. qwen3.8-max@chat.qwen.ai
     3. kimi-k2.6@kimi.com
 
 * CI TURNS — how the team keeps running (the Owner's order, mechanics)
@@ -302,9 +311,10 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
   - duties: universal relief lane for every CI seat (fallback slot wired
     in ci.yml) · overflow segment absorption · lane liveness report
     after every run (:note: @lead with quota/HTTP evidence)
-  - fallbacks: 1. zai/glm-4.7-flash@goose (proven alive, MIT, free)
-             2. codebuddy@cli (Owner account; cred wired 835a1f9 + 334cf41)
-             3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN; body proven on CI)
+  - fallbacks:
+    1. zai/glm-4.7-flash@goose (proven alive, MIT, free)
+    2. codebuddy@cli (Owner account; cred wired 835a1f9 + 334cf41)
+    3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN; body proven on CI)
 
 * Acting Relief Engineer (Second Body) — openrouter/minimax/minimax-m3.1-flash@omp (ACTING — SAME PROMO EXPIRY 2026-10-25)
   - :last-dispatch: 0
@@ -335,10 +345,11 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     before any retry); OpenRouter minimax lane raw-HTTP 200 the same minute.
   - duties: relief probes · one-shot verification segments · body-depth
     backup for the Relief Engineer's duties
-  - fallbacks: 1. openrouter/minimax/minimax-m3.1-flash@goose (primary
-                Relief body — same brain, proven deterministic runner)
-             2. codebuddy@cli (Owner account cred, wired 835a1f9 + 334cf41)
-             3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN)
+  - fallbacks:
+    1. openrouter/minimax/minimax-m3.1-flash@goose (primary
+       Relief body — same brain, proven deterministic runner)
+    2. codebuddy@cli (Owner account cred, wired 835a1f9 + 334cf41)
+    3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN)
 
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may

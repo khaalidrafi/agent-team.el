@@ -10,17 +10,24 @@
 - COMMON TEMPLATE (Owner 2026-10-26 #hq): this ONE prompt teamifies
   ANY repo — the repo: line is the only per-repo input; no other
   hand-edits, no forks of this file.
-- NO PAT (Owner 2026-10-26 #hq): NO credential travels in this
-  prompt or in the chat.  Pushes authenticate OUT-OF-BAND (the
-  Director's own gh auth on the machine running the Lead, or repo
-  CI secrets).  Auth failure = the Lead STOPS and reports; it
-  never asks for tokens in chat and never stores one in
-  files/commits/board/logs.
+- NO PAT IN THE TEMPLATE (Owner 2026-10-26 #hq, clarified same day:
+  "I will append the PAT with prompt since paste.rs will make it
+  public"). paste.rs is PUBLIC — this file carries NO credential.
+  AUTH TRAVELS WITH THE PROMPT: the Director APPENDS the PAT to the
+  dispatched prompt, right after the repo: line. The Lead uses it
+  for git push ONLY: never echo it back, never store it in
+  files/commits/board/logs, never cite it in evidence. Auth
+  failure = the Lead STOPS and reports; it never asks for tokens
+  in chat.
 - Mode: TEAMIFY (existing project, no team setup)
 
 * FILL BLOCK (Director)
 - APPEND AS THE LAST LINE of the prompt: repo: <owner>/<slug>
   (the ONLY fill; a public GitHub repo; team-truth branch: ai/main)
+- AUTH APPENDIX (Director, at dispatch): the PAT appended right
+  after the repo: line — the prompt template itself never carries
+  one (paste.rs is public); the receiving Lead: push-only use,
+  never echo, never store, never cite.
 - REPO: derived from the repo: line — https://github.com/<owner>/<slug>
 - PROJECT: derived by the Lead from the repo itself (README, docs,
   code tree) and stated back in the Lead's first chat reply

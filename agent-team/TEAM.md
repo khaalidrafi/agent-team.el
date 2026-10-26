@@ -420,6 +420,12 @@ Every inter-member and EM message uses this header, in this order, no omissions:
   glance — AND precise for AI: unambiguous instructions, explicit acceptance
   criteria, context before instructions, named files over "it"/"that", bounded
   scope, no buried conditions
+- INTER-TEAM LETTERS (Owner 2026-10-26 #hq): any message a team addresses
+  to ANOTHER team or a CLIENT additionally follows agent-team/COMMS-FORMAT.org
+  — full letter skeleton (drawer fields SUBJECT/REF/PRIORITY/REPLY-BY/STATUS;
+  salutation -> purpose -> artifact-anchored body -> numbered action list ->
+  signature) and professional register. Reviewers reject non-conforming
+  letters.
 
 *** MESSAGE STANDARD
 
@@ -461,6 +467,8 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 - a task never closes with open children
 - escalation path: re-spec → backup model → scout (intern round) → DEFERRED with
   reason
+- inter-team letters follow COMMS-FORMAT.org: non-conforming letters
+  bounce at review, same as red suites
 - self-audit: the EM ranks below its senior hires on pure engineering; authority
   = context + judgment, never capability
 - RACI: one Accountable; owner decisions his alone

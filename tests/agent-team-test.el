@@ -672,8 +672,12 @@ messaging, execution, laws, and SETUP last as the session-boot coda."
 
 (ert-deftest agent-team-prompt-sketches-stay-byte-level ()
   "File-target sketches inside PART 1 live inside #+BEGIN_SRC org
-blocks: their own headings never leak into the prompt outline, and the
-sketch bytes are exactly what the teamify must produce."
+blocks: their own headings never leak into the prompt outline — inside
+or outside a src block — and the sketch bytes are exactly what the
+template carries.  Sketch headline lines are Org comma-escaped
+(,* headline; org-syntax pass 2026-10-26: a bare star-line at column 0
+breaks org's parse of the block); the guard note in each FILE TARGETS
+section is the un-escape law the teamify applies when writing the file."
   (let* ((agent-team-global-agents-md nil)
          (prompt (progn
                    (agent-team-teamify-prompt
@@ -684,21 +688,30 @@ sketch bytes are exactly what the teamify must produce."
          (p1a (string-match "^\\* PART 1 — " prompt))
          (p1 (1+ (string-match "\n" prompt p1a)))  ; skip the heading line
          (p2 (string-match "^\\* PART 2 — " prompt))
-         (in-src nil)
          (leaks ()))
     (dolist (line (split-string (substring prompt p1 p2) "\n"))
-      (cond ((string-match-p "^#[+]BEGIN_SRC" line) (setq in-src t))
-            ((string-match-p "^#[+]END_SRC" line) (setq in-src nil))
-            ((and (not in-src) (string-match-p "^\\* " line))
+      (cond ((string-match-p "^\\* " line)
+             ;; a bare star-line leaks whether the parser sees it as an
+             ;; outline heading (outside src) or a block-breaker (inside)
              (push line leaks))))
     (should (null leaks))
-    ;; the TODOS.org sketch is byte-exact inside its src block
+    ;; the un-escape law travels with every PRODUCED sketch: the five
+    ;; file targets (TODOS/MEMBERS/STATE/TEAM.md/TEAM-CHAT) each carry
+    ;; the guard note - the teamify knows ,* is an escaped headline,
+    ;; not literal bytes.  TEAM-UPDATE.org is exempt: DoE-supplied, the
+    ;; teamify never creates it.  Count pinned as the tripwire: a new
+    ;; produced target without its note fails here.
+    (should (= 5 (how-many "^File sketch (produce EXACTLY this skeleton"
+                           (string-match "^\\* PART 1 — " prompt)
+                           p2)))
+    ;; the TODOS.org sketch is byte-exact inside its src block,
+    ;; comma-escaped exactly as the template carries it
     (should (string-match-p
-             "#\\+BEGIN_SRC org\n#\\+TITLE: TODOS.org — team board (single source of truth)\n#\\+TODO: TODO ONGOING PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED\n\n\\* Board\n"
+             "#\\+BEGIN_SRC org\n#\\+TITLE: TODOS.org — team board (single source of truth)\n#\\+TODO: TODO ONGOING PROGRESS BLOCKED REVIEW | DONE CANCELLED DEFERRED\n\n,\\* Board\n"
              prompt))
     ;; the chat sketch ends with a bare #+END_SRC on its own line
     (should (string-match-p
-             "\\* MSG <from> -> @<to> :<kind>:\n#\\+END_SRC\n" prompt))))
+             ",\\* MSG <from> -> @<to> :<kind>:\n#\\+END_SRC\n" prompt))))
 
 ;;; TIME LAW clock (agent-team-clock.el) — pure transformer tests
 

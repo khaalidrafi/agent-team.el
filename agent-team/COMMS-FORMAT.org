@@ -89,7 +89,7 @@
   Standalone letter files replace the MSG headline with:
   =* LETTER <subject> — <from> -> @<to> :letter:   :letter:<from>:<to>:=
 
-* THE MUSTS (eleven)
+* THE MUSTS (twelve)
   1. Every drawer field is present, every time
      - including one-line letters.
   2. Salutation opens, signature closes
@@ -122,6 +122,13 @@
      - top level = one idea per bullet,
      - sub-details nested underneath their parent,
      - never a prose wall, never a flat ten-line list.
+  12. LANGUAGE — ENGLISH (Owner order 2026-10-26 #hq: "Use English,
+      bruh! Not Chinese!")
+     - every letter, report, and #hq reply a team or lead writes is
+       in English, whatever the model's or the seat's default language,
+     - code comments and commit messages follow the same rule,
+     - a non-English message is re-issued in English before it is
+       counted as delivered.
 
 * MUST-NOTS (reviewers reject on sight)
   - Format violations
@@ -132,7 +139,9 @@
     - internal slang, seat names, or board codes in a client-facing
       letter — the client does not know our jargon; expand it or drop
       it,
-    - emoji, stickers, or exclamation-mark enthusiasm in client letters.
+    - emoji, stickers, or exclamation-mark enthusiasm in client letters,
+    - any letter or report written in a language other than English
+      (MUST 12) — rejected and re-issued in English.
   - Substance violations
     - promises of dates, numbers, or deliverables not already anchored
       in the repo.

@@ -551,7 +551,7 @@ gets the chain's manual with every prompt, not just the team laws)."
     (should (string-match-p "SELF-DISPATCH while the objective is" prompt))
     (should (string-match-p "khaalidrafi/testrepo" prompt))
     (should (string-match-p
-             "PART 1 — TEAMIFY: the task (existing project, no team setup)"
+             "TEAMIFY — the task (existing project, no team setup)"
              prompt))))
 
 (ert-deftest agent-team-prompt-carries-candidates-seed ()
@@ -568,18 +568,18 @@ prompt)."
                   (with-current-buffer "*agent-team prompt*"
                     (buffer-string)))))
     ;; the candidates file is Fetched, never inlined: a prompt snapshot
-    ;; goes stale, so PART 3 lands the canonical file by URL + sanity
+    ;; goes stale, so CANDIDATES lands the canonical file by URL + sanity
     ;; greps (no-dup law)
     (should (string-match-p
-             "PART 3 — CANDIDATES FILE: land agent-team/CANDIDATES.org" prompt))
+             "CANDIDATES — land agent-team/CANDIDATES.org" prompt))
     (should (string-match-p
              "raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/"
              prompt))
     (should (string-match-p
              "grep -m1 '^#[+]TITLE: CANDIDATES\\.org'" prompt))
     ;; the FILE TARGETS define the seed file (and the chat file);
-    ;; TEAMIFY's own sections are demoted one level under PART 1, so the
-    ;; targets live at three stars
+    ;; TEAMIFY's own sections are demoted one level under the TEAMIFY
+    ;; heading, so the targets live at three stars
     (should (string-match-p "\\*\\*\\* agent-team/CANDIDATES.org" prompt))
     (should (string-match-p "\\*\\*\\* agent-team/TEAM-CHAT.org" prompt))
     ;; the state file lives in agent-team/, never agent-org/ (typo law)
@@ -591,9 +591,11 @@ prompt)."
 
 (ert-deftest agent-team-prompt-outline-is-well-ordered ()
   "The assembled prompt is a well-ordered outline, not a raw
-concatenation: level-1 headings are exactly the six parts in order,
-the mode layer nests under PART 1 with no stray level-1 headings
-outside src blocks, src blocks are balanced, no template-file metadata
+concatenation: level-1 headings are exactly the six sections in order,
+COMMON first under its bare template name and no PART-X labels (Owner
+2026-10-26 #hq), the mode layer nests under TEAMIFY with no stray
+level-1 headings outside src blocks, src blocks are balanced, no
+template-file metadata
 header and no build timestamp survives into the prompt (Owner
 2026-10-21: \"Does it look well-ordered?\")."
   (let* ((agent-team-global-agents-md nil)
@@ -614,9 +616,9 @@ header and no build timestamp survives into the prompt (Owner
       (should (string-prefix-p "* HOW TO USE (Director)" (nth 0 tops)))
       (should (string-prefix-p "* FILL BLOCK (Director)" (nth 1 tops)))
       (should (string-prefix-p "* TEAM CI (how the chain runs" (nth 2 tops)))
-      (should (string-prefix-p "* PART 1 — TEAMIFY: the task" (nth 3 tops)))
-      (should (string-prefix-p "* PART 2 — COMMON: the master law" (nth 4 tops)))
-      (should (string-prefix-p "* PART 3 — CANDIDATES FILE" (nth 5 tops))))
+      (should (string-prefix-p "* COMMON — the master law" (nth 3 tops)))
+      (should (string-prefix-p "* TEAMIFY — the task" (nth 4 tops)))
+      (should (string-prefix-p "* CANDIDATES — land agent-team" (nth 5 tops))))
     (with-temp-buffer
       (insert prompt)
       ;; src blocks balanced
@@ -633,8 +635,9 @@ header and no build timestamp survives into the prompt (Owner
                                     prompt))))))
 
 (ert-deftest agent-team-prompt-common-section-order ()
-  "COMMON's sections appear in the canonical reading order under
-PART 2 — the board first, then resources, people, collaboration,
+  "COMMON's sections appear in the canonical reading order in the
+COMMON section (COMMON goes FIRST in the prompt, Owner 2026-10-26
+#hq) — the board first, then resources, people, collaboration,
 messaging, execution, laws, and SETUP last as the session-boot coda."
   (let* ((agent-team-global-agents-md nil)
          (prompt (progn
@@ -671,7 +674,7 @@ messaging, execution, laws, and SETUP last as the session-boot coda."
           (setq last-pos pos))))))
 
 (ert-deftest agent-team-prompt-sketches-stay-byte-level ()
-  "File-target sketches inside PART 1 live inside #+BEGIN_SRC org
+  "File-target sketches inside TEAMIFY live inside #+BEGIN_SRC org
 blocks: their own headings never leak into the prompt outline — inside
 or outside a src block — and the sketch bytes are exactly what the
 template carries.  Sketch headline lines are Org comma-escaped
@@ -685,9 +688,9 @@ section is the un-escape law the teamify applies when writing the file."
                     "none" "<<<FILL>>>" nil)
                    (with-current-buffer "*agent-team prompt*"
                      (buffer-string))))
-         (p1a (string-match "^\\* PART 1 — " prompt))
+         (p1a (string-match "^\\* TEAMIFY — " prompt))
          (p1 (1+ (string-match "\n" prompt p1a)))  ; skip the heading line
-         (p2 (string-match "^\\* PART 2 — " prompt))
+         (p2 (string-match "^\\* CANDIDATES — " prompt))
          (leaks ()))
     (dolist (line (split-string (substring prompt p1 p2) "\n"))
       (cond ((string-match-p "^\\* " line)
@@ -702,7 +705,7 @@ section is the un-escape law the teamify applies when writing the file."
     ;; teamify never creates it.  Count pinned as the tripwire: a new
     ;; produced target without its note fails here.
     (should (= 5 (how-many "^File sketch (produce EXACTLY this skeleton"
-                           (string-match "^\\* PART 1 — " prompt)
+                           (string-match "^\\* TEAMIFY — " prompt)
                            p2)))
     ;; the TODOS.org sketch is byte-exact inside its src block,
     ;; comma-escaped exactly as the template carries it

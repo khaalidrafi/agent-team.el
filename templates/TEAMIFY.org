@@ -145,7 +145,7 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 ** agent-team/CANDIDATES.org
 
 Land the CURRENT file from the canonical repo — fetch, never copy
-from this prompt (a prompt snapshot goes stale; see PART 3).
+from this prompt (a prompt snapshot goes stale; see CANDIDATES).
 COMMON's MODELS + STAFFING laws point here.
 
 ADD-FREEZE (Owner 2026-10-25): the team NEVER adds rows to this file

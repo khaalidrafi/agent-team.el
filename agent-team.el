@@ -614,7 +614,7 @@ file-target sketches must stay byte-level."
      (split-string text "\n") "\n")))
 
 (defun agent-team--candidates-part ()
-  "PART 3 of the teamify prompt: land agent-team/CANDIDATES.org in the
+  "The CANDIDATES section of the teamify prompt: land agent-team/CANDIDATES.org in the
 repo by FETCHING the canonical file (khaalidrafi/agent-team.el
 templates/CANDIDATES.org @ ai/main). Never inline a snapshot in chat —
 a prompt copy goes stale; the fetched file is current. Mirrored by
@@ -644,12 +644,15 @@ scripts/build_teamify_prompt.py candidates_part()."
 Assembles: the USER's global AGENTS.md (when `agent-team-global-agents-md'
 points at a real file — the chat BEGINS under the user's global law,
 Owner order 2026-10-21) + FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT)
-+ the mode layer (templates/BOOTSTRAP.org for a FRESH project,
-templates/TEAMIFY.org for an existing one) + templates/COMMON.org (the
-canonical manual, inlined at build time from its canonical home — no
-per-repo copies drift) + templates/CANDIDATES.org (the candidate
-inventory as the SEED for agent-team/CANDIDATES.org — COMMON's MODELS
-+ STAFFING laws point at that file, so the prompt must carry it). Puts
++ templates/COMMON.org (the master law, FIRST — Owner 2026-10-26 #hq:
+common MUST go at first, everywhere, and the sections carry their bare
+template names, no PART-X labels; the canonical manual, inlined at
+build time from its canonical home — no per-repo copies drift) + the
+mode layer (templates/BOOTSTRAP.org for a FRESH project,
+templates/TEAMIFY.org for an existing one) + the CANDIDATES fetch law
+(agent-team/CANDIDATES.org is landed by FETCHING the canonical file —
+COMMON's MODELS + STAFFING laws point at it, so a teamify must not
+dangle). Puts
 the result in the *agent-team prompt* buffer AND the kill-ring, ready
 to paste into a fresh chat with the team's Lead. The PAT travels in
 the prompt only — never stored in files/commits/board (Owner order
@@ -697,17 +700,17 @@ the prompt only — never stored in files/commits/board (Owner order
                   "  (reuse the same token, no rotation; use immediately; NEVER\n"
                   "  store in files/commits/board/logs)\n\n"
                   agent-team--team-ci-brief "\n"
-                  "* PART 1 — " (if fresh "BOOTSTRAP" "TEAMIFY")
-                  ": the task (" (if fresh "fresh project"
-                                 "existing project, no team setup") ")\n\n"
-                  (agent-team--demote-headings
-                   (agent-team--strip-template-header layer)) "\n"
-                  "* PART 2 — COMMON: the master law (single source of truth;"
+                  "* COMMON — the master law (single source of truth;"
                   " canonical copy: khaalidrafi/agent-team.el"
                   " templates/COMMON.org; changes land there first, teams"
                   " receive them via TEAM UPDATE)\n\n"
                   (agent-team--strip-template-header manual) "\n"
-                  "* PART 3 — CANDIDATES FILE: land agent-team/CANDIDATES.org"
+                  "* " (if fresh "BOOTSTRAP" "TEAMIFY")
+                  " — the task (" (if fresh "fresh project"
+                                 "existing project, no team setup") ")\n\n"
+                  (agent-team--demote-headings
+                   (agent-team--strip-template-header layer)) "\n"
+                  "* CANDIDATES — land agent-team/CANDIDATES.org"
                   " in the repo (never inline it in chat — one canonical copy"
                   " lives in khaalidrafi/agent-team.el templates/CANDIDATES.org"
                   " @ ai/main; a snapshot inside a prompt goes stale, so fetch"

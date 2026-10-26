@@ -12,15 +12,26 @@ WORK ORDER will assign to ONGOING and stamps the send instant into the
 item's :LOGBOOK: as an OPEN Org clock.  Web/cloud models are the only
 manual exception (they never run through this path).
 
-Usage: clock_in.py BOARD MARKER
+Usage: clock_in.py BOARD MARKER [MODE]
 
   BOARD   the board org file (e.g. agent-team/TODOS.org)
   MARKER  a substring of the target headline (the dispatched item)
+  MODE    work (default) | review
+
+REVIEW CLOCK LAW (Owner 2026-10-26 10:55 #hq): finish time and review
+time are SEPARATE clocks, each on its own TODO with its own :EFFORT:;
+the review TODO nests one level UNDER its parent (`review: <parent
+title>').  MODE work clocks the parent and NEVER a review child; MODE
+review clocks only a review child, and its marker may also match the
+evidence lines in the child's body (branch names / author seats live
+there, not in the headline).
 
 Behaviour:
   - target = the first headline whose keyword is open
-    (TODO|ONGOING|PENDING|WAIT|PROGRESS) and whose line contains MARKER;
-    REVIEW/DONE/CANCELLED/DEFERRED are never touched
+    (TODO|ONGOING|PENDING|WAIT|PROGRESS) that MODE accepts and whose
+    headline (review mode: headline or body evidence lines) contains
+    MARKER; REVIEW-keyword and DONE/CANCELLED/DEFERRED items are never
+    touched
   - a non-ONGOING keyword is flipped to ONGOING (in place, rest of the
     headline preserved)
   - the item's :LOGBOOK: gains an OPEN clock at the current UTC instant;
@@ -45,6 +56,7 @@ PROPERTIES = re.compile(r"^\s*:PROPERTIES:\s*$")
 DRAWER_END = re.compile(r"^\s*:END:\s*$")
 PLANNING = re.compile(r"^\s*(?:SCHEDULED|DEADLINE|CLOSED):")
 OPEN_CLOCK = re.compile(r"^\s*CLOCK:\s*\[[^]]+\]\s*$")
+REVIEW_TITLE = re.compile(r"^\*+\s+[A-Z][A-Z-]*\s+review\b", re.IGNORECASE)
 
 
 def org_timestamp():
@@ -53,16 +65,39 @@ def org_timestamp():
     return (f"[{now:%Y-%m-%d} {WEEKDAYS[now.weekday()]} {now:%H:%M} UTC]")
 
 
-def clock_in(lines, marker, stamp):
-    """Pure transform. Returns (status, headline): clocked|already|None."""
+def clock_in(lines, marker, stamp, mode="work"):
+    """Pure transform. Returns (status, headline): clocked|already|None.
+
+    MODE work targets plain work items (review children are skipped);
+    MODE review targets only `review' children and extends the marker
+    match into the item's body evidence lines (branch/author citations
+    live there, not in the headline).
+    """
+
+    def is_review_headline(line):
+        return bool(REVIEW_TITLE.match(line))
+
     target = None
     for i, line in enumerate(lines):
         m = HEADLINE.match(line)
         if not m or m.group(2) not in OPEN_KEYWORDS:
             continue
+        if mode == "review" and not is_review_headline(line):
+            continue
+        if mode == "work" and is_review_headline(line):
+            continue
         if marker in line:
             target = i
             break
+        if mode == "review":
+            # extend the match into the child's body (up to the next
+            # headline): the evidence lines carry branch= / author=
+            end = i + 1
+            while end < len(lines) and not HEADLINE.match(lines[end]):
+                end += 1
+            if any(marker in b for b in lines[i + 1:end]):
+                target = i
+                break
     if target is None:
         return None, None
 
@@ -104,17 +139,21 @@ def clock_in(lines, marker, stamp):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("usage: clock_in.py BOARD MARKER", file=sys.stderr)
+    if len(sys.argv) not in (3, 4):
+        print("usage: clock_in.py BOARD MARKER [work|review]", file=sys.stderr)
         sys.exit(4)
     board, marker = sys.argv[1], sys.argv[2]
+    mode = sys.argv[3] if len(sys.argv) == 4 else "work"
+    if mode not in ("work", "review"):
+        print(f"clock-in: unknown mode {mode!r} (work|review)", file=sys.stderr)
+        sys.exit(4)
     try:
         with open(board, encoding="utf-8") as fh:
             lines = fh.read().split("\n")
     except OSError as exc:
         print(f"clock-in: cannot read {board}: {exc}", file=sys.stderr)
         sys.exit(4)
-    status, headline = clock_in(lines, marker, org_timestamp())
+    status, headline = clock_in(lines, marker, org_timestamp(), mode)
     if status is None:
         print(f"clock-in: no open item matches {marker!r}")
         sys.exit(3)

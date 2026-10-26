@@ -517,7 +517,10 @@ jobs:
           # git history. Redact in place, then commit.
           bash .github/scripts/secret-guard.sh file "$CHAT"
           git add "$CHAT"
-          git commit -m "tg-ingest: ${COUNT} Owner message(s) -> team chat" || echo "::notice::nothing to commit"
+          git commit -m "tg-ingest: ${COUNT} Owner message(s) -> team chat" \
+            -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
+            -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \
+            || echo "::notice::nothing to commit"
           # Race-proof push (Lead pushes move ai/main mid-run): rebase + retry.
           PUSHED=no
           for i in 1 2 3; do
@@ -911,8 +914,12 @@ jobs:
           git reset --hard origin/ai/main
           sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
           git add "$CTL"
-          git commit -m "ci-turn: ${TURN_SEAT:-unknown} done — next turn ${NEXT}" \
-            -m "result: ${TURN_RESULT:-unknown}" || echo "::notice::nothing to commit"
+          git commit -m "ci-turn: ${TURN_SEAT:-unknown} done" \
+            -m "next turn: ${NEXT}" \
+            -m "result: ${TURN_RESULT:-unknown}" \
+            -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
+            -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \
+            || echo "::notice::nothing to commit"
           git push origin "ai/main" || echo "::warning::control push failed"
 
   # SELF-CHAIN — the last link of every turn (Owner order 2026-10-20 #hq
@@ -1148,6 +1155,8 @@ jobs:
             sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
             git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \
+              -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
+              -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \
               || echo "::notice::stall commit empty"
             git push origin "ai/main" || echo "::warning::stall push failed"
           fi
@@ -1312,8 +1321,10 @@ jobs:
           git fetch origin ai/main && git reset --hard origin/ai/main
           write_markers
           git add "$CTL"
-          git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0
-          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" || exit 0; done
+          git commit -m "ci-chain: verdict ${VH} mirrored" \
+            -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
+            -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" || exit 0
+          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" || exit 0; done
 
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
       # Their GLM chats go to their respective Discord channels." This repo's

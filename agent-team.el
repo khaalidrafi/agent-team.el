@@ -1360,149 +1360,152 @@ Override when this team's harness bakes different bodies.")
 (defconst agent-team--team-ci-brief
   "* TEAM CI (how the chain runs — read before the first dispatch)
 
-- What runs, and where:
-  - The chain lives in .github/workflows/agent-team.yml (Lead-owned).
-  - The control file agent-team/TEAM-CONTROL.org drives it — one
-    keyword per line:
-    - #+OBJECTIVE — what the team is working on.
-    - #+OBJECTIVE-STATE — OPEN or COMPLETE.
-    - #+TURN — which seat runs next.
-    - #+KILL-SWITCH — ON stops everything.
-    - #+STALL-COUNT — at 4 or more, the run backs off 5 minutes.
-    - #+PAUSE-AFTER-TODO — ON or OFF (default ON).
-    - #+CHAIN-PAUSE — ON pauses the chain.
+This section explains the automation that runs the team, in plain words.
 
-- The four jobs, in order:
-  1. test — the landing gate. Red work never lands.
-  2. probe — is the seat alive. Never a quality signal.
-  3. turn — ONE work segment:
-     1. restore the session.
-     2. run ONE agent segment in the harness container.
-     3. scrub + upload the session.
-     4. push the branch, move #+TURN to the next seat.
-  4. finalize —
-     1. auto-merge behind the gate.
-     2. pause-after-TODO review.
-     3. Jev judgment.
-     4. stall accounting.
-     5. self-dispatch while the objective is OPEN and KILL-SWITCH is OFF.
+- The two files that matter:
+  - .github/workflows/agent-team.yml — the automation. Only the Lead
+    edits it.
+  - agent-team/TEAM-CONTROL.org — a small settings file. Each line
+    sets one thing:
+    - #+OBJECTIVE — the goal the team is working on right now.
+    - #+OBJECTIVE-STATE — OPEN (still working) or COMPLETE (finished).
+    - #+TURN — the name of the member who does the NEXT piece of work.
+    - #+KILL-SWITCH — ON means stop everything.
+    - #+STALL-COUNT — how many runs in a row ended with no new work.
+    - #+PAUSE-AFTER-TODO — ON or OFF (ON by default; see below).
+    - #+CHAIN-PAUSE — ON means the automation takes a break.
 
-- When the chain stops:
-  - ONLY on: kill switch ON, objective COMPLETE, red tests, or an
-    armed CHAIN-PAUSE.
-  - No progress is NOT failure — the run backs off and retries slower.
-  - The team decides how many runs the objective takes.
+- What happens in one cycle, in order:
+  1. test — the project's tests run. Work only counts when they pass.
+  2. probe — a tiny check that the next member's tool is reachable.
+     It never judges the quality of anyone's work.
+  3. turn — the named member does ONE piece of work:
+     1. their session is restored (they remember earlier work),
+     2. they work once, inside the prepared container,
+     3. their session is cleaned and saved,
+     4. their branch is uploaded, and #+TURN names the next member.
+  4. finalize — the results are collected:
+     1. finished work is merged automatically — but only when the
+        tests passed,
+     2. the after-delivery pause check runs,
+     3. Jev (the automatic review step) gives its opinion,
+     4. runs with no new work are counted,
+     5. the automation starts the next cycle by itself — as long as
+        the goal is OPEN and the kill switch is OFF.
 
-- Chain laws (follow them exactly):
-  - Unknown rotation pointer: the run REFUSES (BLOCKED). It never
-    silently runs the wrong lane.
-  - Zero commits: a lane that exits 0 with ZERO commits is NOT
-    progress. The commit count is a first-class signal.
-  - Pause after delivered work: #+PAUSE-AFTER-TODO defaults ON.
-    - after a :DELIVERED: TODO the chain halts cleanly (mode=paused).
-    - the Lead reviews, then clears #+CHAIN-PAUSE.
-    - a MISSING key also pauses — fail-safe against runaway burn.
-    - only an explicit Owner order sets OFF (one continuous
-      multi-TODO run).
-  - Honest fallbacks: a fallback chain names the lane that ACTUALLY ran.
-  - Paid attempts: a failed paid attempt reports PAID LANE FAILED.
-    A paid visit is never faked.
+- When does the automation stop?
+  - Only for: kill switch ON, goal marked COMPLETE, failed tests, or
+    a #+CHAIN-PAUSE break.
+  - A run that produces nothing is NOT a failure. It waits 5 minutes
+    and tries again.
+  - The team decides how many cycles the goal needs.
 
-- The two law files (DUAL LAW):
-  - Every repo consumes the kit as the ci/ submodule.
-  - GLOBAL law = ci/AGENTS.md (the canonical global AGENTS.md).
-  - LOCAL law = the repo's own root AGENTS.md.
-  - Every agent in Docker reads BOTH files:
-    - the global law is copied into each body's own config slot when
-      the harness image is built (7 of 10 bodies have a slot:
-      OpenCode, Goose, Qoder, CodeBuddy, OMP, pi, Copilot);
-    - 3 bodies have no slot (dsh, Cursor, mcode) — for those ONLY,
-      the run composes prompts with ci/bin/law_brief.sh;
-    - the harness Dockerfile (ci/docker/harness/Dockerfile)
-      preinstalls all TEN bodies: OpenCode, Goose, Qoder, CodeBuddy,
-      OMP, pi, dsh, Cursor, Copilot, mcode.
-  - The landing gate also runs ci/bin/commit_msg_guard.sh:
-    AGENTS.md owns the commit rules; the guard enforces them.
+- Safety rules (follow them exactly):
+  - If #+TURN names a member nobody knows, the run STOPS and reports
+    BLOCKED. It never guesses and runs someone else.
+  - A run that ends \"successfully\" but produced ZERO new commits is
+    NOT progress. The number of new commits is checked after every run.
+  - After a member delivers a TODO, the automation PAUSES. This is the
+    default (pause-after-todo):
+    - the run stops cleanly, nothing is spent,
+    - the Lead reviews the work, then clears #+CHAIN-PAUSE,
+    - if the setting is missing, it still pauses — safe by default,
+    - only the Owner can order it OFF, for one long multi-task run.
+  - Always name the tool that ACTUALLY did the work.
+  - If a paid tool failed, say so: \"PAID LANE FAILED — no credits were
+    spent\". Never pretend a paid run happened.
 
-- CI sends go THROUGH agent-org (the SAME tool you use by hand):
-  - agent-org already spawns the provider's ACP agent, sends prompts,
-    and keeps the agent sessions — batch mode adds nothing new;
-  - batch mode is just agent-org run without a window: the harness
-    image preinstalls emacs-nox + agent-org-batch.el;
-  - one batch run sends ONE prompt and fires the same send-hook an
-    interactive send fires; the clock-in lands at the exact
-    prompt-send moment;
-  - exit 42 = the batch lane is unavailable -> fall back to the
-    direct CLI lane;
-  - the batch path only ADDS a lane, it never removes the proven one;
-  - web/cloud lanes stay manual (the ONE exception).
+- How every AI tool gets both rule files:
+  - Each team repo carries the shared kit in a folder named ci/.
+  - Global rules = ci/AGENTS.md. Project rules = the repo's own
+    AGENTS.md at its root.
+  - When the tool image is built, the global rules are copied into
+    each tool's own settings file (7 of the 10 tools have one:
+    OpenCode, Goose, Qoder, CodeBuddy, OMP, pi, Copilot).
+  - The other 3 tools (dsh, Cursor, mcode) have no settings file —
+    for those ONLY, the run pastes the global rules in front of the
+    prompt (ci/bin/law_brief.sh).
+  - The tool image comes from ci/docker/harness/Dockerfile and
+    carries all 10 tools: OpenCode, Goose, Qoder, CodeBuddy, OMP, pi,
+    dsh, Cursor, Copilot, mcode.
+  - The tests job also checks every commit message against the rules
+    (ci/bin/commit_msg_guard.sh).
 
-- The GoModel gateway (khaalidrafi/llmfisher — the door to ALL our
-  models):
-  - one access point for every model the Owner runs. Jev's finalize
-    judgment is just ONE of its consumers;
-  - seat work still goes DIRECT to providers (2026-10-20 law): a
-    gateway model id stays unreachable until a resolve step proves it;
-  - health-gated: checked at turn health and at finalize judgment.
-  - The URL: first answer wins, in order:
-    1. the vars.GOMODEL_GATEWAY_URL override,
+- CI work goes through agent-org (the same program you use by hand):
+  - agent-org is the tool that starts a coding agent, sends it your
+    prompt, and keeps the conversation. It already does all of that.
+  - In CI, agent-org simply runs without a window. Nothing new — no
+    separate machinery.
+  - One CI run = one prompt sent, the same way a normal send works.
+    The work clock starts at the exact moment the prompt goes out.
+  - If agent-org cannot run there, the run calls the agent's own
+    command directly instead. The old way is never removed.
+  - Web/chat tools stay hands-on — the one thing CI does not automate.
+
+- The GoModel gateway (khaalidrafi/llmfisher):
+  - The single door to ALL the Owner's models. Jev's review step is
+    just one of the things that uses it.
+  - Normal member work still talks to the model companies DIRECTLY
+    (the 2026-10-20 law): a model behind the gateway counts as
+    unreachable until a check proves otherwise.
+  - The gateway is health-checked every run and at review time. Its
+    address is found by trying, in order:
+    1. the vars.GOMODEL_GATEWAY_URL setting, if set,
     2. https://ai.khalidrafi.tech,
     3. localhost:8080,
-    4. boot the enterpilot/gomodel container in the runner — ONLY
-       when nothing answered (no deployment active).
-  - Judgment is binary: gateway up -> Jev decides; down -> local
-    rules decide directly.
-  - Gateway DOWN never turns the run red.
+    4. only if nothing answered: start the enterpilot/gomodel
+       container right there in the runner.
+  - Review: gateway up = Jev decides; gateway down = simple local
+    rules decide. Either way the run stays green.
 
-- The team chat lives IN the repo (no chat mirrors):
-  - Telegram + Discord mirrors are retired.
-  - The chat file is agent-team/TEAM-CHAT.org — each message sits
-    under its real :FROM: seat.
-  - The Lead reads it there and copies Owner-bound entries to #hq.
-  - Every message is sent by a command, never hand-written:
+- The team chat lives IN the repo (no Telegram, no Discord):
+  - The chat file is agent-team/TEAM-CHAT.org. Every message sits
+    under the name of who sent it.
+  - The Lead reads the file and copies messages addressed to the
+    Owner into #hq, word for word.
+  - Every message is sent by a command — never typed into the file:
     - Emacs members: M-x agent-team-chat-send.
-    - CI seats: the harness-baked `team-chat' command (env:
-      AGENT_CHAT_FROM, AGENT_CHAT_TO, AGENT_CHAT_KIND,
-      AGENT_CHAT_BODY).
-  - The command enforces the ONE message format and appends at end
-    of file. Hand-writing a chat entry is a violation.
+    - CI members: the team-chat command (it reads AGENT_CHAT_FROM,
+      AGENT_CHAT_TO, AGENT_CHAT_KIND, AGENT_CHAT_BODY).
+  - The command checks the message shape and adds it at the end of
+    the file. Writing a chat entry by hand breaks the rules.
 
-- Ask-first bodies (they burn paid credit on every prompt):
+- Tools that cost money per prompt (ask the Owner FIRST):
   - Cursor (`agent -p'), Copilot CLI (`copilot -p'), mcode
     (`mcode exec').
-  - Use one ONLY on an explicit Owner order for that task (or a
-    standing OK the Lead records in TEAM-CONTROL.org).
-  - Otherwise pick a free body or one the Owner's keys already pay for.
-  - They stay preinstalled, so an approved run needs no rebuild.
+  - Use one only when the Owner ordered it for this task (or a
+    standing OK the Lead wrote into TEAM-CONTROL.org).
+  - Otherwise use a free tool, or one the Owner's keys already pay for.
+  - They stay installed in the tool image, so an approved run needs
+    no rebuild.
 
-- AGENTS.md care:
-  - Never invent a repo-root AGENTS.md during teamify.
-  - A repo's own AGENTS.md is its local law — keep it accurate,
-    never delete or overwrite it carelessly.
-  - Team law inside the repo lives in agent-team/TEAM-CONTROL.org
-    and TEAM.md.
+- The two rule files, handled with care:
+  - Never invent a root AGENTS.md while setting up the team.
+  - The project's own AGENTS.md is its law — keep it correct, never
+    delete or overwrite it carelessly.
+  - Team rules inside the repo live in agent-team/TEAM-CONTROL.org
+    and agent-team/TEAM.md.
 
-- Branches and files:
-  - Seats work in ai/turn-* branches; finalize auto-merges behind
-    the gate.
-  - agent-team/TEAM-CHAT.org is union-merged (.gitattributes), so
-    concurrent appends never conflict.
-  - Lead-owned (seats never edit): .github/workflows/*,
-    .github/scripts/*, agent-team/TEAM-CONTROL.org, .gitattributes,
-    the ci/ submodule pointer.
+- Branches and protected files:
+  - Members work on ai/turn-* branches; finished work merges only
+    after the tests pass.
+  - agent-team/TEAM-CHAT.org merges by union (both sides kept), so
+    two members appending at once never conflict.
+  - Only the Lead edits: .github/workflows/*, .github/scripts/*,
+    agent-team/TEAM-CONTROL.org, .gitattributes, and which ci/
+    commit the repo points at.
 
-- Repo secrets (write-only; values never copied across repos; only
-  their NAMES travel — the ENV-VAR LAW):
+- Repo secrets (write-only; never copy secret VALUES anywhere; only
+  their NAMES travel — that is the ENV-VAR LAW):
   - In use: QODER_PERSONAL_ACCESS_TOKEN, ZAI_API_KEY,
     OPENROUTER_API_KEY, GROQ_API_KEY, CODEBUDDY_AUTH_TOKEN,
-    GOMODEL_MASTER_KEY, LARK_WEBHOOK_<ROLE> (the per-role Lark bots
-    are the live reporting channel), CLINE_AUTH_JSON,
-    MCODE_AUTH_JSON.
-  - Retired, safe to delete: TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID,
+    GOMODEL_MASTER_KEY, LARK_WEBHOOK_<ROLE> (one Lark bot per role —
+    the live reporting channel), CLINE_AUTH_JSON, MCODE_AUTH_JSON.
+  - Old ones you may delete: TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID,
     every DISCORD_WEBHOOK_*.
-  - A missing key skips its lane gracefully.
-  - A missing SEAT key blocks that seat; the rotation advances; the
-    run stays green."
+  - One missing key: that tool is skipped, everything else goes on.
+  - A member's own key missing: that member sits out, the next member
+    takes the turn, the run stays green."
   "The TEAM CI block added to every teamify prompt the pkg builds — the
 prompt carries the chain's operating manual, not just the team laws.")
 

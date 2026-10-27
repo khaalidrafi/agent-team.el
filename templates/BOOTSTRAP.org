@@ -26,8 +26,8 @@ The project does not exist yet — no repo, no commits. You create everything.
 
 ** TASK
 
-1. Probe the environment (shell? net? git?) and report the answer in
-   one line. Never stall.
+1. Check what you have (terminal? internet? git?) and answer in one
+   line. Do not get stuck here.
 2. git init -b ai/main; write .gitignore; commit the team law under
    agent-team/. The teamify setup never creates a repo-root AGENTS.md
    on its own (Owner 2026-10-21) — if the Director's orders say this
@@ -43,16 +43,18 @@ The project does not exist yet — no repo, no commits. You create everything.
 
 ** STANDING LAWS (2026-10-22)
 
-- ID FORMAT v2: the PROVIDER/ prefix only for API models; platform-native
-  brains are bare model@platform.
+- Member names: always model@tool. A model the Owner rents by API key
+  also carries the company in front (for example groq/...). A model
+  that comes bundled with a tool does not.
 - CONSULT LAW: post the roles-with-members list to the Owner BEFORE
   activating any hire; re-share after every staffing change.
 - HR LEDGER: MEMBERS.org records hires WITH REASONS plus performance
   reviews (KEEP/WATCH/PROBE/RELEASE) at every pause window.
-- LANDING GATE = the only quality floor: red work never lands; a green
-  probe row hires nobody.
-- Rename a member id ATOMICALLY (pointer + both case arms in one
-  commit). An unknown rotation pointer REFUSES to run (BLOCKED).
+- The test check is the only quality floor: broken work never lands,
+  and a green liveness probe hires nobody.
+- Renaming a member? Change EVERY spot that names them — the next-up
+  line (#+TURN) and both turn lists — in ONE commit. If the next-up
+  line names a member nobody knows, the run STOPS and reports BLOCKED.
 
 ** FINAL INSTRUCTION
 

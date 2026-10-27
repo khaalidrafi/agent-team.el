@@ -49,8 +49,8 @@ project into a team project — adopt, don't rebuild.
 
 ** TASK
 
-1. Probe the environment (shell? net? git?) and report the answer in
-   one line. Never stall.
+1. Check what you have (terminal? internet? git?) and answer in one
+   line. Do not get stuck here.
 2. Pull, then read what EXISTS: README, code, commit history, CI — and
    AGENTS.md if the project happens to have one (it is that project's
    LOCAL law; the teamify setup never creates or rewrites a repo-root
@@ -62,7 +62,8 @@ project into a team project — adopt, don't rebuild.
    copy, because per-repo copies drift. Also write TODOS, MEMBERS,
    CANDIDATES, STATE, TEAM-CHAT per FILE TARGETS below. Commit all of
    it on ai/teamify, touching nothing else. No merge without the Owner.
-4. Then team mode: poll the board, run STAFFING, make the first real
+4. Then team mode: watch the board, rank every model in
+   agent-team/CANDIDATES.org (STAFFING), and make the first real
    dispatch.
 5. STATUS #1: the environment line + what the project is + the teamify
    commit (branch + sha).
@@ -78,15 +79,16 @@ wraps the project; it never rewrites it.
 ** VISITING MEMBER pattern (expiring credits)
 
 - Expiring paid credits (promos, trial pools) hire a VISITING MEMBER
-  OUTSIDE the standing rotation. Budget = total credits divided by
-  remaining days. ONE visiting turn per day. The Lead points #+TURN at
-  the visiting id, and its advance rejoins the rotation where it left.
-- Keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
-  note). If the platform publishes no balance endpoint, say so in the
-  ledger and calibrate from the Owner's console readings — never invent
-  endpoints.
-- A paid lane that fails reports "PAID LANE FAILED — burn did NOT
-  happen". A paid visit is never faked.
+  OUTSIDE the normal turn order. Budget = total credits divided by
+  remaining days. ONE work day per day. The Lead sets the next-up line
+  (#+TURN) to the visitor, and after its turn the normal order
+  continues where it left.
+- Keep a spend log in MEMBERS.org (date, member, work session,
+  credits, note) — the BURN LEDGER. If the platform publishes no
+  balance endpoint, say so in the log and calibrate from the Owner's
+  console readings — never invent endpoints.
+- A paid tool that fails reports "PAID LANE FAILED — no credits were
+  spent". A paid run is never faked.
 
 ** CONSULT LAW
 
@@ -98,8 +100,8 @@ wraps the project; it never rewrites it.
 
 - On the FIRST response to this teamify prompt, the Lead shares the
   full hire list WITH REASONINGS. Per hire: the benchmark numbers
-  cited, the hands-on/review signal, and why THIS model won the seat
-  overall (against the runner-up). A bare model list FAILS the turn.
+  cited, the hands-on/review signal, and why THIS model got the job
+  over the runner-up. A bare model list FAILS the turn.
 - Source it from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
   new rows). The same list goes to the Owner per CONSULT LAW.
 

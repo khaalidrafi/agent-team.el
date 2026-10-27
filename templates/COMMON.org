@@ -574,6 +574,16 @@ everyday English — no codename without a plain-word explanation
     "works but nobody knows why" is a defect — state the rationale or refactor it
   - release gate: DONE requires docs + tests + architectural rationale in the
     status report; green suite without them = PARTIAL
+- COMPLIANCE AUDIT (Owner 2026-10-27 #hq: "EVERY team MUST audit their
+  whole repo for compliance with global AGENTS.md and refactor the code
+  if necessary!"): every team sweeps its WHOLE repo against the global
+  AGENTS.md (canonical copy: khaalidrafi/vault AGENTS.md @ main) —
+  commit discipline, code law, search tools, docs — and REFACTORS what
+  violates it: dedicated small commits on ai/main, one concern per
+  commit, one model's authorship, full trailers; the teamify commit
+  stays agent-team/-only; findings the team cannot fix alone are
+  reported BLOCKED with paths, never hidden; the verdict is restated at
+  every HR REVIEW window
 
 ** MEMBER LAWS
 

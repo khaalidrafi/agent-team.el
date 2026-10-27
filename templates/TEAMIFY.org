@@ -27,6 +27,10 @@ project into a team project — adopt, don't rebuild.
 ** OBJECTIVES
 
 - Adopt the existing project: read it fully before touching anything.
+- Audit the WHOLE repo for compliance with the global AGENTS.md law
+  (canonical copy: khaalidrafi/vault AGENTS.md @ main) and REFACTOR
+  what violates it — dedicated small commits on ai/main, never inside
+  the teamify commit (COMMON LAWS: COMPLIANCE AUDIT).
 - Add the team layer (agent-team/ files) without disturbing existing code.
 - Run the project as a team from the first board poll onward.
 

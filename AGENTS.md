@@ -111,13 +111,23 @@ real work segments and self-chain until the objective completes.
 - `M-x agent-team-jev-ask` / `agent-team-gateway-ping` — Owner gateway
   (key = GOMODEL_MASTER_KEY env; command refuses to run when unset)
 
-## CI chain in one paragraph
+## CI chain (jobs run in order)
 
-`test` (byte-compile + ert) → `probe` (seat liveness) → `harness` (build
-the preinstalled image) → `turn` (session restore → one agent
-segment in the container → session scrub+upload → branch push + rotation
-advance) → `finalize` (auto-merge behind the byte-compile gate → stall
-accounting → SELF-DISPATCH the next run while the objective is open).
+The chain lives in .github/workflows/ci.yml. Five jobs run in order:
+
+1. `test` — the landing gate (byte-compile + ert).
+2. `probe` — seat liveness, never a quality gate.
+3. `harness` — build the preinstalled image.
+4. `turn` — one agent segment, in order:
+   1. session restore
+   2. one agent segment in the preinstalled harness container
+   3. session scrub + upload
+   4. branch push + rotation advance
+5. `finalize`:
+   1. auto-merge behind the byte-compile gate
+   2. stall accounting
+   3. SELF-DISPATCH the next run while the objective is open.
+
 The chain stops only on KILL-SWITCH ON, OBJECTIVE-STATE COMPLETE, no
 objective, or tests red; a no-progress streak shifts to backoff, never
 to failure. No chat mirror anywhere (Telegram retired 2026-10-25; Discord

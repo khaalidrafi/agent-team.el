@@ -1424,17 +1424,25 @@ Override when this team's harness bakes different bodies.")
   - The landing gate also runs ci/bin/commit_msg_guard.sh:
     AGENTS.md owns the commit rules; the guard enforces them.
 
-- CI sends go THROUGH agent-org:
-  - the harness image preinstalls emacs-nox + agent-org-batch.el;
-  - one `emacs --batch' run spawns the provider's ACP agent, sends
-    ONE prompt, and fires the same send-hook an interactive send fires;
-  - the clock-in lands at the exact prompt-send moment;
+- CI sends go THROUGH agent-org (the SAME tool you use by hand):
+  - agent-org already spawns the provider's ACP agent, sends prompts,
+    and keeps the agent sessions — batch mode adds nothing new;
+  - batch mode is just agent-org run without a window: the harness
+    image preinstalls emacs-nox + agent-org-batch.el;
+  - one batch run sends ONE prompt and fires the same send-hook an
+    interactive send fires; the clock-in lands at the exact
+    prompt-send moment;
   - exit 42 = the batch lane is unavailable -> fall back to the
     direct CLI lane;
   - the batch path only ADDS a lane, it never removes the proven one;
   - web/cloud lanes stay manual (the ONE exception).
 
-- The GoModel gateway (Jev's judgment brain):
+- The GoModel gateway (khaalidrafi/llmfisher — the door to ALL our
+  models):
+  - one access point for every model the Owner runs. Jev's finalize
+    judgment is just ONE of its consumers;
+  - seat work still goes DIRECT to providers (2026-10-20 law): a
+    gateway model id stays unreachable until a resolve step proves it;
   - health-gated: checked at turn health and at finalize judgment.
   - The URL: first answer wins, in order:
     1. the vars.GOMODEL_GATEWAY_URL override,
@@ -1727,7 +1735,8 @@ the teamify prompt (Owner order 2026-10-21 10:12Z).
 In the git repo at ROOT this scaffolds the CI chain
 (.github/workflows/agent-team.yml from templates/agent-team.yml —
 landing gate auto-detected, engine rotation + lane defaults, GoModel
-health-gated lane + Jev judgment; no chat mirror since 2026-10-26),
+gateway lane (health-gated; used for Jev judgment at finalize; no
+chat mirror since 2026-10-26),
 the harness agent configs (opencode.json, goose-config.yaml),
 the secret guard, and a harness Dockerfile when it has none (NO
 AGENTS.md is ever created — the CI law bake uses the project's own

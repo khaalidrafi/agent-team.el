@@ -1,3 +1,4 @@
 *~
 *.elc
-.agent-org/
+# .agent-org/ is the PRESERVED record (Owner 2026-10-27): session
+# transcripts + per-seat session ids are committed, never ignored.

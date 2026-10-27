@@ -230,11 +230,53 @@ PRIORITY: P1 · ORDER: 2")))
     (should (equal ":FROM: platform-engineer" (nth 2 lines)))
     (should (equal ":TO: lead" (nth 3 lines)))
     (should (equal ":KIND: report" (nth 4 lines)))
-    (should (equal ":WHEN: [2026-10-21 Wed 09:00 UTC]" (nth 5 lines)))
-    (should (equal ":END:" (nth 6 lines)))
+    ;; the unique protocol: chat entries carry the TEAM-UPDATE fields
+    ;; (Owner 2026-10-27 #hq: TEAM-UPDATE everywhere, one protocol)
+    (should (equal ":REPO: unset" (nth 5 lines)))
+    (should (equal ":PRIORITY: P1" (nth 6 lines)))
+    (should (equal ":RISK: reads" (nth 7 lines)))
+    (should (equal ":WHEN: [2026-10-21 Wed 09:00 UTC]" (nth 8 lines)))
+    (should (equal ":END:" (nth 9 lines)))
     ;; body lines indented two spaces
-    (should (equal "  RESULT: DONE" (nth 7 lines)))
-    (should (equal "  EVIDENCE: file:12" (nth 8 lines)))))
+    (should (equal "  RESULT: DONE" (nth 10 lines)))
+    (should (equal "  EVIDENCE: file:12" (nth 11 lines)))))
+
+(ert-deftest agent-team-chat-protocol-fields ()
+  "Explicit protocol fields ride the drawer when the sender names them
+(the one comms protocol: chat entries = TEAM-UPDATE fields)."
+  (let* ((msg (agent-team--chat-format
+               "platform-engineer" "@lead" "report" "body"
+               "[2026-10-27 Tue 05:00 UTC]"
+               "khaalidrafi/admincraft" "P0" "writes"))
+         (lines (split-string msg "\n")))
+    (should (equal ":REPO: khaalidrafi/admincraft" (nth 5 lines)))
+    (should (equal ":PRIORITY: P0" (nth 6 lines)))
+    (should (equal ":RISK: writes" (nth 7 lines)))))
+
+(ert-deftest agent-team-chat-send-batch-appends ()
+  "The batch sender appends a protocol entry from env — the CI-seat
+path (TEAM-CHAT.org is command-maintained, never hand-written)."
+  (let* ((tmpdir (make-temp-file "team-chat-test" t))
+         (file (expand-file-name "TEAM-CHAT.org" tmpdir)))
+    (write-region "#+TITLE: TEAM-CHAT.org\n" nil file nil 'quiet)
+    (let ((process-environment
+           (append (list "AGENT_CHAT_FROM=software-engineer"
+                         "AGENT_CHAT_TO=@lead"
+                         "AGENT_CHAT_KIND=report"
+                         "AGENT_CHAT_BODY=RESULT: DONE"
+                         "AGENT_CHAT_REPO=khaalidrafi/test"
+                         (concat "AGENT_CHAT_FILE=" file))
+                   process-environment)))
+      (with-temp-buffer (agent-team-chat-send-batch)))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (goto-char (point-min))
+      (should (re-search-forward
+               "^\\* MSG software-engineer -> @lead :report:" nil t))
+      (should (re-search-forward "^:REPO: khaalidrafi/test$" nil t))
+      (should (re-search-forward "^:PRIORITY: P1$" nil t))
+      (should (re-search-forward "^  RESULT: DONE$" nil t)))
+    (delete-directory tmpdir t)))
 
 ;; --- live team chat viewer (Owner order 2026-10-21 09:16Z: view team chat
 ;; live on Emacs on Android) — offline tests, no network. ---

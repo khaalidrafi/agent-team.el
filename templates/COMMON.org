@@ -504,22 +504,43 @@ language. I struggle to understand their current language")
   rewrite before posting.
 - Shorthand stays allowed in code, commits, and machine files.
 
-** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner order 2026-10-21)
+** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner orders 2026-10-21
+   + 2026-10-27: the chat is COMMAND-MAINTAINED)
 
-Every `* MSG <from> -> @<to> :<kind>:' entry is written for a HUMAN reader
-(the Lead couriers every Owner-bound entry to him verbatim on #hq; no
-chat mirror since 2026-10-26) — Owner's
-words: clear enough language, well-structured with lists:
+Every `* MSG <from> -> @<to> :<kind>:' entry is written by the
+agent-team.el chat command — never by hand (Owner order 2026-10-27 #hq:
+"TEAM-CHAT.org was never meant to be hand-written. It was meant to be
+auto-maintained by agent-team.el in Emacs. Agents should be provided
+with an Emacs command for chatting"). The command enforces the ONE
+comms protocol: the headline carries FROM; the :PROPERTIES: drawer
+carries FROM/TO/KIND/REPO/PRIORITY/RISK/WHEN — the same MESSAGE
+STANDARD fields a TEAM-UPDATE carries. The Lead couriers every
+Owner-bound entry to him verbatim on #hq (no chat mirror since
+2026-10-26).
 
-- clear enough language: plain, direct, complete sentences — no cryptic
-  shorthand, no inside jargon, no raw log/JSON dumps (point at =file:line=
-  or a sha instead)
-- well-structured with lists: a one-line lead (what this entry is about),
-  then bullets/numbered lists — state → evidence → next step; NEVER a
-  prose wall
-- one topic per entry; a new topic = a new entry
-- keep the header exact (FROM seat, @target, :kind:) — the Lead uses it
-  to route and courier entries (no chat mirror since 2026-10-26)
+- HOW TO SEND (the only way):
+  - Emacs members: `M-x agent-team-chat-send' — prompts for TO, KIND,
+    PRIORITY, RISK, and the body; FROM and REPO fill themselves.
+  - CI seats: the harness-baked `team-chat' command (env-driven:
+    AGENT_CHAT_FROM, AGENT_CHAT_TO, AGENT_CHAT_KIND, AGENT_CHAT_BODY —
+    the turn brief carries the exact line).
+  - Reading: `M-x agent-team-chat-open' opens the chat session buffer
+    (an Org buffer backed by the TEAM-CHAT.org file, auto-revert tail —
+    the agent-org session pattern); `M-x agent-team-chat-tail' echoes
+    the last headlines; `M-x agent-team-chat-pings-to' lists your
+    pings; `agent-team-chat-live-mode' is the remote GitHub viewer.
+- Append-only: the command appends at EOF and never edits existing
+  entries. Hand-editing a chat entry is a violation.
+- Entry shape (what the command emits — for parsers and reviewers):
+  - clear enough language: plain, direct, complete sentences — no
+    cryptic shorthand, no inside jargon, no raw log/JSON dumps (point
+    at =file:line= or a sha instead)
+  - well-structured with lists: a one-line lead (what this entry is
+    about), then bullets or numbered lists — state → evidence → next
+    step; NEVER a prose wall
+  - one topic per entry; a new topic = a new entry
+  - keep the header exact (FROM seat, @target, :kind:) — the Lead uses
+    it to route and courier entries
 
 ** LARK (team communication — per-role bots, Owner order 2026-10-20)
 

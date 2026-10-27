@@ -710,13 +710,14 @@ scripts/build_teamify_prompt.py candidates_part()."
    "grep -m1 '^#+EXPIRY-LAW:' agent-team/CANDIDATES.org\n"
    "wc -l agent-team/CANDIDATES.org   # hundreds of lines expected\n"
    "#+END_SRC\n\n"
-   "  - sanity greps fail, or curl is unavailable -> WebFetch the GitHub\n"
-   "    blob page (khaalidrafi/agent-team.el @ ai/main,\n"
-   "    templates/CANDIDATES.org) and write the file from that view\n"
-   "  - still failing -> STOP, name it, ask the Owner — NEVER proceed with\n"
-   "    a dangling pointer (COMMON would point at nothing)\n"
-   "  - the file is inventory, not endorsement: staffing filters per\n"
-   "    COMMON; commit the file in the teamify commit (ai/teamify)\n"))
+   "  Fetch fallback, in order:\n"
+   "  1. sanity greps fail, or curl is unavailable — WebFetch the GitHub\n"
+   "     blob page (khaalidrafi/agent-team.el @ ai/main,\n"
+   "     templates/CANDIDATES.org) and write the file from that view\n"
+   "  2. still failing — STOP, name it, ask the Owner. NEVER proceed with\n"
+   "     a dangling pointer (COMMON would point at nothing)\n\n"
+   "  The file is inventory, not endorsement: staffing filters per\n"
+   "  COMMON; commit the file in the teamify commit (ai/teamify)\n"))
 
 ;;;###autoload
 (defun agent-team-teamify-prompt (&optional repo project not-touch pat fresh)
@@ -1355,17 +1356,30 @@ Override when this team's harness bakes different bodies.")
 (defconst agent-team--team-ci-brief
   "* TEAM CI (how the chain runs — read before the first dispatch)
 
-- The chain lives in .github/workflows/agent-team.yml (Lead-owned). The
-  jobs run in order: test (the landing gate) -> probe (seat liveness,
-  never a quality gate) -> turn (session restore -> ONE agent segment
-  in the preinstalled harness container -> session scrub + upload ->
-  branch push + rotation advance) -> finalize (auto-merge behind the
-  gate -> Jev judgment -> stall accounting ->
-  SELF-DISPATCH while the objective is open and KILL-SWITCH is OFF).
-- The control file agent-team/TEAM-CONTROL.org drives everything:
-  #+OBJECTIVE / #+OBJECTIVE-STATE (OPEN|COMPLETE) / #+TURN (rotation
-  pointer) / #+KILL-SWITCH (ON|OFF) / #+STALL-COUNT (>=4 -> 5-min backoff)
-  / #+PAUSE-AFTER-TODO (ON|OFF) / #+CHAIN-PAUSE (ON|OFF).
+- The chain lives in .github/workflows/agent-team.yml (Lead-owned).
+  Four jobs run in order:
+  1. `test' — the landing gate.
+  2. `probe' — seat liveness, never a quality gate.
+  3. `turn' — ONE agent segment:
+     1. session restore
+     2. ONE agent segment in the preinstalled harness container
+     3. session scrub + upload
+     4. branch push + rotation advance
+  4. `finalize' —
+     1. auto-merge behind the gate
+     2. pause-after-TODO review
+     3. Jev judgment
+     4. stall accounting
+     5. SELF-DISPATCH while the objective is open and KILL-SWITCH is OFF.
+- The control file agent-team/TEAM-CONTROL.org drives everything — one
+  keyword per line:
+  - #+OBJECTIVE — the objective the team is working
+  - #+OBJECTIVE-STATE — OPEN or COMPLETE
+  - #+TURN — the rotation pointer (the seat that runs next)
+  - #+KILL-SWITCH — ON or OFF
+  - #+STALL-COUNT — at 4 or more, the run shifts to 5-min backoff
+  - #+PAUSE-AFTER-TODO — ON or OFF
+  - #+CHAIN-PAUSE — ON or OFF.
 - The team decides how many runs the objective takes. The chain stops
   ONLY on a kill switch, an objective marked complete, red tests, or an
   armed CHAIN-PAUSE. A no-progress streak shifts to backoff, never to
@@ -1396,18 +1410,22 @@ Override when this team's harness bakes different bodies.")
   the harness image bakes emacs-nox + agent-org-batch.el at a pinned
   sha, one `emacs --batch' spawns the provider's ACP agent, sends ONE
   prompt and fires the SAME `agent-org-prompt-send-hook' an interactive
-  Emacs send fires, so the CI clock-in (AGENT_ORG_CLOCK_CMD -> the
+  Emacs send fires, so the CI clock-in (AGENT_ORG_CLOCK_CMD, the
   clock_in.py twin) lands at the EXACT prompt-send moment (TIME LAW).
-  Exit 42 means the batch lane is unavailable -> fall back to the
-  direct CLI lane: the batch path only ADDS a working send, it never
+  Exit 42 means the batch lane is unavailable: fall back to the
+  direct CLI lane. The batch path only ADDS a working send, it never
   removes the proven one. Web/cloud lanes stay the ONE manual exception.
 - GoModel gateway (the Jev judgment layer, khaalidrafi/llmfisher) runs
   as a HEALTH-GATED lane: checked at turn health and at finalize
-  judgment. The URL is RESOLVED per job (Owner order 2026-10-22):
-  vars.GOMODEL_GATEWAY_URL override -> https://ai.khalidrafi.tech ->
-  localhost:8080 -> in-runner boot (the gateway-up step starts the
-  enterpilot/gomodel container ONLY when nothing answered = no
-  deployment active). The judgment lane is BINARY (Jev through the
+  judgment. The URL is RESOLVED per job (Owner order 2026-10-22) —
+  first answer wins, in priority order:
+  1. the vars.GOMODEL_GATEWAY_URL override
+  2. https://ai.khalidrafi.tech
+  3. localhost:8080
+  4. in-runner boot — the gateway-up step starts the
+     enterpilot/gomodel container ONLY when nothing answered (= no
+     deployment active)
+  The judgment lane is BINARY (Jev through the
   gateway when up, otherwise local rules decide directly). DOWN means
   the lane-fallback law, never a red run.
 - NO chat mirror (Telegram retired 2026-10-25; Discord retired too —

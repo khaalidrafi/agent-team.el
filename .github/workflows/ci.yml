@@ -430,13 +430,24 @@ jobs:
             echo "gomodel lane: DOWN (HTTP $CODE) — lane-fallback law active (turn proceeds on direct provider lanes; auto-reuses gomodel the moment the box answers)" >> "$SUMMARY"
           fi
 
-      - name: Build harness image (preinstalled agents — cached, no installs)
+      - name: Build harness image (canonical kit base + thin repo layer)
         if: steps.control.outputs.mode == 'work'
         run: |
+          # INTEGRATION.md section 2: the canonical kit image builds from
+          # THIS repo's root (context = repo root, so ci/AGENTS.md bakes
+          # into every body's law slot); the thin repo layer adds emacs +
+          # acp + agent-org on top (docker/harness/Dockerfile FROMs the
+          # base tag).
           docker buildx build --load \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
             -f ci/docker/harness/Dockerfile \
+            -t agent-team-harness-base:local \
+            .
+          docker buildx build --load \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            -f docker/harness/Dockerfile \
             -t agent-team-harness:local \
             .
 
@@ -724,6 +735,63 @@ jobs:
               cp -a /sessions-restore/. "$HOME/" 2>/dev/null || true
             fi
           fi
+          # AGENT-ORG BATCH LANE — the PRIMARY send (Owner R-2-77 endgame:
+          # CI sends go THROUGH agent-org; Owner 2026-10-27 #hq: REUSE the
+          # SAME agent-org session per team member so context survives
+          # turns, and the auto-generated .agent-org/ transcripts are
+          # preserved + committed). Best-effort by contract: exit 42 (or a
+          # missing bake) falls through to the proven direct CLI case
+          # below — the batch path only ADDS a working send.
+          SID_DIR=/workspace/.agent-org/sessions
+          SID_FILE="$SID_DIR/${SEAT}.sid"
+          SID=""; [ -s "$SID_FILE" ] && SID="$(cat "$SID_FILE")"
+          mkdir -p "$SID_DIR"
+          printf '%s\n' "$BRIEF" > /tmp/segment-brief.txt
+          case "$SEAT" in
+            principal-engineer)
+              BATCH_PROVIDER=opencode
+              BATCH_MODEL="openrouter/poolside/laguna-s-2.1:free"
+              BATCH_CMD="opencode acp" ;;
+            software-engineer|release-engineer)
+              BATCH_PROVIDER=goose
+              BATCH_MODEL="glm-4.7-flash"
+              BATCH_CMD="env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash OPENAI_API_KEY=$ZAI_API_KEY OPENAI_HOST=https://api.z.ai OPENAI_BASE_PATH=/api/paas/v4/chat/completions goose acp" ;;
+            quality-assurance-engineer)
+              BATCH_PROVIDER=opencode
+              BATCH_MODEL="zai/glm-4.7-flash"
+              BATCH_CMD="opencode acp" ;;
+            platform-engineer)
+              BATCH_PROVIDER=qoder
+              BATCH_MODEL=""
+              BATCH_CMD="env HOME=/usr/local/lib/qoder-home qoder --acp" ;;
+            *) BATCH_PROVIDER="" ;;
+          esac
+          if [ -n "$BATCH_PROVIDER" ] && command -v emacs >/dev/null 2>&1 \
+             && [ -f /opt/acp-site/acp.el ] && [ -f /opt/agent-org/agent-org-batch.el ]; then
+            if env AGENT_ORG_PROVIDER="$BATCH_PROVIDER" \
+                   AGENT_ORG_PROVIDER_COMMAND="$BATCH_CMD" \
+                   AGENT_ORG_MODEL="$BATCH_MODEL" \
+                   AGENT_ORG_PROMPT=/tmp/segment-brief.txt \
+                   AGENT_ORG_OUT=/tmp/.batch-out.txt \
+                   AGENT_ORG_SESSION_ID="$SID" \
+                   AGENT_ORG_SESSION_OUT="$SID_FILE" \
+                   AGENT_ORG_TRANSCRIPT_DIR=/workspace/.agent-org \
+                   AGENT_ORG_LOAD_PATH=/opt/acp-site:/opt/agent-org \
+                   AGENT_ORG_TIMEOUT=720 \
+                   emacs --batch -l /opt/agent-org/agent-org-batch.el \
+                     --eval '(agent-org-batch-send)' \
+                   > /tmp/.batch-log.txt 2>&1; then
+              echo "TURN_RESULT=agent-org batch OK (lane: ${BATCH_PROVIDER} ACP through agent-org; session reuse ON, transcripts preserved)"
+              sed -n '1,40p' /tmp/.batch-out.txt
+              BATCH_DONE=1
+            else
+              echo "agent-org batch lane unavailable (exit 42) — falling back to the direct CLI lane"
+              tail -3 /tmp/.batch-log.txt 2>/dev/null || true
+            fi
+          else
+            echo "agent-org batch lane not baked in this image — direct CLI lane"
+          fi
+          if [ "${BATCH_DONE:-0}" != "1" ]; then
           case "$SEAT" in
             principal-engineer)
               # OpenCode body + poolside: OpenCode cannot host the model
@@ -820,6 +888,7 @@ jobs:
               fi
               ;;
           esac
+          fi
           # SESSION COLLECT (Owner order 18:27Z): persist THIS turn's CLI
           # session files — the container is --rm, they die here unless
           # captured. Scrubbing happens on the host before upload.

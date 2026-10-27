@@ -727,8 +727,8 @@ points at a real file — the chat BEGINS under the user's global law,
 Owner order 2026-10-21) + FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT)
 + templates/COMMON.org (the master law, FIRST — Owner 2026-10-26 #hq:
 common MUST go at first, everywhere; section headings are FUNCTIONAL
-descriptions, never template names — Owner 2026-10-27 #hq: "Remove
-COMMON... and similar template name headings from prompts"; the
+descriptions, never template names — Owner 2026-10-27 #hq: \"Remove
+COMMON... and similar template name headings from prompts\"; the
 canonical manual, inlined at build time from its canonical home — no
 per-repo copies drift) + the mode layer (templates/BOOTSTRAP.org for a
 FRESH project, templates/TEAMIFY.org for an existing one) + the

@@ -590,7 +590,7 @@ gets the chain's manual with every prompt, not just the team laws)."
                   (with-current-buffer "*agent-team prompt*"
                     (buffer-string)))))
     (should (string-match-p "TEAM CI (how the chain runs" prompt))
-    (should (string-match-p "SELF-DISPATCH while the objective is" prompt))
+    (should (string-match-p "starts the next cycle by itself" prompt))
     (should (string-match-p "khaalidrafi/testrepo" prompt))
     (should (string-match-p
              "THE TASK — teamify an existing project (no team setup)"
@@ -731,25 +731,43 @@ section is the un-escape law the teamify applies when writing the file."
                     "none" "<<<FILL>>>" nil)
                    (with-current-buffer "*agent-team prompt*"
                      (buffer-string))))
-         (p1a (string-match "^\\* TEAMIFY — " prompt))
-         (p1 (1+ (string-match "\n" prompt p1a)))  ; skip the heading line
-         (p2 (string-match "^\\* CANDIDATES — " prompt))
-         (leaks ()))
-    (dolist (line (split-string (substring prompt p1 p2) "\n"))
-      (cond ((string-match-p "^\\* " line)
-             ;; a bare star-line leaks whether the parser sees it as an
-             ;; outline heading (outside src) or a block-breaker (inside)
-             (push line leaks))))
-    (should (null leaks))
+         ;; the six FUNCTIONAL top-level headings are the only bare
+         ;; star-lines allowed outside src blocks (the outline test pins
+         ;; their exact order; Owner 2026-10-27: functional headings, no
+         ;; template names)
+         (expected '("* HOW TO USE (Director)"
+                     "* FILL BLOCK (Director)"
+                     "* TEAM CI (how the chain runs"
+                     "* MASTER LAW"
+                     "* THE TASK"
+                     "* HIRING POOL"))
+         (outside ()) (inside ()))
+    (let ((in-src nil))
+      (dolist (line (split-string prompt "\n"))
+        (cond ((string-match-p "^#[+]BEGIN_SRC" line) (setq in-src t))
+              ((string-match-p "^#[+]END_SRC" line) (setq in-src nil))
+              ((string-match-p "^\\* " line)
+               ;; a bare star-line leaks whether the parser sees it as
+               ;; an outline heading (outside src) or a block-breaker
+               ;; (inside); the six functional headings are the whitelist
+               (if in-src
+                   (push line inside)
+                 (unless (seq-some
+                          (lambda (p) (string-prefix-p p line)) expected)
+                   (push line outside)))))))
+    (should (null outside))
+    (should (null inside))
     ;; the un-escape law travels with every PRODUCED sketch: the five
     ;; file targets (TODOS/MEMBERS/STATE/TEAM.md/TEAM-CHAT) each carry
     ;; the guard note - the teamify knows ,* is an escaped headline,
     ;; not literal bytes.  TEAM-UPDATE.org is exempt: DoE-supplied, the
     ;; teamify never creates it.  Count pinned as the tripwire: a new
     ;; produced target without its note fails here.
-    (should (= 5 (how-many "^File sketch (produce EXACTLY this skeleton"
-                           (string-match "^\\* TEAMIFY — " prompt)
-                           p2)))
+    (should (= 5 (seq-count
+                  (lambda (l)
+                    (string-match-p
+                     "^File sketch (produce EXACTLY this skeleton" l))
+                  (split-string prompt "\n"))))
     ;; the TODOS.org sketch is byte-exact inside its src block,
     ;; comma-escaped exactly as the template carries it
     (should (string-match-p

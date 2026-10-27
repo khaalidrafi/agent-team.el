@@ -5,15 +5,25 @@ name: Agent Team Chain
 # One canonical architecture, proven on khaalidrafi/agent-team.el and
 # khaalidrafi/admincraft (Owner orders 2026-10-20 -> 2026-10-21).
 #
-# Structure per run: test (landing gate) -> probe (seat liveness, never
-# gates) -> turn (session restore -> ONE agent
-# segment in the preinstalled harness container -> session scrub+upload ->
-# branch push + rotation advance) -> finalize (auto-merge behind the gate
-# -> pause-after-TODO review -> Jev judgment -> stall accounting ->
-# SELF-DISPATCH while the objective is open and KILL-SWITCH is OFF). The
-# team decides how many runs the objective takes; the chain stops ONLY on
-# kill switch, objective complete, tests red, or the CHAIN-PAUSE arm; a
-# no-progress streak shifts to backoff, never to failure. Admincraft
+# Structure per run — four jobs, in order:
+#   1. test — the landing gate.
+#   2. probe — seat liveness, never a quality gate.
+#   3. turn — ONE agent segment:
+#        a. session restore
+#        b. ONE agent segment in the preinstalled harness container
+#        c. session scrub + upload
+#        d. branch push + rotation advance
+#   4. finalize:
+#        a. auto-merge behind the gate
+#        b. pause-after-TODO review
+#        c. Jev judgment
+#        d. stall accounting
+#        e. SELF-DISPATCH while the objective is open and KILL-SWITCH
+#           is OFF
+# The team decides how many runs the objective takes; the chain stops
+# ONLY on kill switch, objective complete, tests red, or the CHAIN-PAUSE
+# arm; a no-progress streak shifts to backoff, never to failure.
+# Admincraft
 # laws backported 2026-10-22 (khaalidrafi/agent-team.el
 # agent-team/ADMINCRAFT-LESSONS.org): an unknown rotation pointer REFUSES
 # (BLOCKED) instead of silently running a wrong lane; a lane exiting 0
@@ -27,10 +37,14 @@ name: Agent Team Chain
 # agent-team/TEAM-CHAT.org on the repo; the Lead couriers Owner-bound
 # entries to #hq by hand. GoModel (llmfisher gateway) rides as
 # a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
-# RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
-# override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
-# boot (last resort = no deployment active). DOWN -> lane-fallback law,
-# never red. Judgment lane is BINARY: Jev via the gateway when it is up,
+# RESOLVED per job (Owner order 2026-10-22) — first answer wins, in
+# priority order:
+#   1. vars.GOMODEL_GATEWAY_URL override
+#   2. https://ai.khalidrafi.tech
+#   3. localhost:8080
+#   4. in-runner boot (last resort = no deployment active)
+# Gateway DOWN means the lane-fallback law, never red. The judgment lane
+# is BINARY: Jev via the gateway when it is up,
 # else the chain decides directly (local rules) — no provider chain.
 #
 # TASK BRANCHES (Owner order 2026-10-25 #hq — "run multiple CI with
@@ -923,7 +937,7 @@ jobs:
           # #+PAUSE-AFTER-TODO: OFF runs the chain CONTINUOUSLY across
           # multiple TODOs (no halting between deliveries). With ON (or
           # missing) + the segment diff carrying a :DELIVERED: marker on
-          # the board -> decision=paused-todo-review -> arm
+          # the board: the decision is paused-todo-review — arm
           # #+CHAIN-PAUSE: ON. The next run halts in mode=paused (clean,
           # no burn); the LEAD reviews and clears the marker to resume.
           CTL=agent-team/TEAM-CONTROL.org

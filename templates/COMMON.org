@@ -39,7 +39,7 @@ only for what blocks or is his alone.
 - Space out your calls to the box. Bursts of requests slow it down for
   everyone.
 
-** GATEWAY AUTH (Owner gateway + Jev) — STATUS: RESOLVED LANE (override -> deployment -> local -> boot)
+** GATEWAY AUTH (Owner gateway + Jev) — STATUS: RESOLVED LANE (override, then deployment, then local, then boot)
 
 - 2026-10-22 (second order, 16:25Z), Owner: the gateway URL is RESOLVED
   per job, never assumed. Try these in order: (1) the
@@ -363,11 +363,15 @@ team's agent-team/TEAM-UPDATE.org on the team's main branch:
   POST /v1/systemone (state plus typed questions returns calibrated
   answers; the chat endpoints REJECT jev ids). Pin jev-1.13.0. The SDK
   base URL TYPESAFE_BASE_URL is the RESOLVED gateway URL (Owner
-  resolution law 2026-10-22: vars.GOMODEL_GATEWAY_URL override ->
-  https://ai.khalidrafi.tech -> localhost:8080 -> in-runner boot; the CI
-  chain's resolve step owns this — probe, never assume). The judgment
-  lane is BINARY: gateway up means Jev, down means decide directly.
-  Standalone fallback: api.typesafe.ai directly, with TYPESAFE_API_KEY.
+  resolution law 2026-10-22) — first answer wins, in priority order:
+  1. the vars.GOMODEL_GATEWAY_URL override
+  2. https://ai.khalidrafi.tech
+  3. localhost:8080
+  4. in-runner boot
+  The CI chain's resolve step owns this — probe, never assume. The
+  judgment lane is BINARY: gateway up means Jev, down means decide
+  directly. Standalone fallback: api.typesafe.ai directly, with
+  TYPESAFE_API_KEY.
   Jev ids are NEVER chat models — dispatch prose to an LLM, then judge
   with Jev. Time calls out at 90 seconds (the slow failover legs).
 - Batching law: ONE call with MANY questions per state — 12.2x cheaper
@@ -536,8 +540,8 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
     cryptic shorthand, no inside jargon, no raw log/JSON dumps (point
     at =file:line= or a sha instead)
   - well-structured with lists: a one-line lead (what this entry is
-    about), then bullets or numbered lists — state → evidence → next
-    step; NEVER a prose wall
+    about), then bullets or numbered lists — state the situation, then
+    the evidence, then the next step; NEVER a prose wall
   - one topic per entry; a new topic = a new entry
   - keep the header exact (FROM seat, @target, :kind:) — the Lead uses
     it to route and courier entries
@@ -743,7 +747,8 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   * Read the served identity back: ask the model to name itself AND
     read the response's model field. Identical answers or fields across
     different requested ids mean ONE backend, not many.
-  * Report access as a table: requested id → HTTP → resp.model →
+  * Report access as a table with one row per probe and the columns in
+    this order: the requested id, the HTTP status, resp.model, the
     verdict (routed / FELL BACK / failed). No table, no claim.
   * A lane that accepts arbitrary ids without erroring is NOT a catalog.
     Team model access means the WIRED lanes (gateway config rows and
@@ -796,10 +801,15 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 
 ** SETUP (session start, in order)
 
-AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
-TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org
-(Owner pastes back) → agent-team/TEAM-UPDATE.org (empty = no cross-team
-mail, never a STOP)
+1. AGENTS.md
+2. .github/copilot-instructions.md
+3. HANDOFF.org
+4. RECHECK.org
+5. TODOs.org
+6. agent-team/TEAM.md
+7. agent-team/MEMBERS.org
+8. STATE.org (Owner pastes back)
+9. agent-team/TEAM-UPDATE.org (empty = no cross-team mail, never a STOP)
 
 - Any file missing or empty means STOP, name it, and wait — never
   proceed on assumption.

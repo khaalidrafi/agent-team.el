@@ -1099,9 +1099,11 @@ canonical kit Dockerfile ci/docker/harness/Dockerfile COPYs it into
 each agent's verified global config path: OpenCode
 ~/.config/opencode/AGENTS.md, Goose ~/.config/goose/.goosehints, Qoder
 ~/.qoder/AGENTS.md, CodeBuddy ~/.codebuddy/CODEBUDDY.md, OMP
-~/.omp/agent/AGENTS.md + ~/.omp/agent/RULES.md) and embeds its content
-at the TOP of
-every teamify prompt, so fresh web chats begin under your global law.
+~/.omp/agent/AGENTS.md + ~/.omp/agent/RULES.md, pi
+~/.pi/agent/AGENTS.md; dsh, Cursor, Copilot and mcode have no verified
+global slot — their law rides the composed brief) and embeds its
+content at the TOP of every teamify prompt, so fresh web chats begin
+under your global law.
 The file is NEVER generated, rewritten or invented by the setup — you
 own it; the setup only copies it.  nil = no law transport (the Dockerfile
 scaffold then omits the bake COPY lines)."
@@ -1401,8 +1403,10 @@ Override when this team's harness bakes different bodies.")
   own root AGENTS.md. Every lane's prompt is composed as GLOBAL + LOCAL
   + the segment brief through ci/bin/law_brief.sh — no agent runs
   lawless. The canonical harness Dockerfile (ci/docker/harness/Dockerfile)
-  bakes the global law into each agent body's config slot (OpenCode /
-  Goose / Qoder / CodeBuddy / OMP), and the landing gate runs
+  preinstalls TEN bodies — OpenCode, Goose, Qoder, CodeBuddy, OMP, pi,
+  dsh, Cursor, Copilot and mcode — and bakes the global law into each
+  body's VERIFIED config slot (the Dockerfile header lists every body's
+  slot; no invented paths), and the landing gate runs
   ci/bin/commit_msg_guard.sh — AGENTS.md already owns the commit rules;
   the guard enforces them.
 - AGENT-ORG SEND LAW (Owner R-2-77 endgame 2026-10-26 #hq: team CI runs
@@ -1446,6 +1450,13 @@ Override when this team's harness bakes different bodies.")
   `agent-team-chat-open' (an Org buffer backed by TEAM-CHAT.org,
   auto-revert tail, like an agent-org session); the remote viewer is
   `agent-team-chat-live-mode'.
+- ASK-FIRST BODIES (Owner order 2026-10-27 #hq): Cursor (`agent -p`),
+  Copilot CLI (`copilot -p`) and mcode (`mcode exec`) run on CREDIT —
+  Cursor usage, Copilot premium requests and the MiniMax M-Plan quota
+  burn per prompt. A lane may use one ONLY on an explicit Owner order
+  for that task (or a standing OK the Lead records in
+  TEAM-CONTROL.org); otherwise pick a free or BYOK body. They stay
+  preinstalled in the harness, so an approved run needs no rebuild.
 - AGENTS.md law: the teamify setup never invents a repo-root AGENTS.md.
   A repo's own root AGENTS.md is that project's LOCAL law — keep it
   accurate, never delete or overwrite it carelessly; the dual-law

@@ -75,6 +75,9 @@ only for what blocks or is his alone.
 
 ** BRAINS AND BODIES
 
+- Plain words first: the BRAIN is the model (the intelligence, for
+  example GLM-5.3). The BODY is the tool the model runs inside (for
+  example OpenCode or goose). A MEMBER is the pair of the two.
 - An API model is a BRAIN. An agent (a harness such as OpenCode, goose,
   qoder, or a chat platform) is its BODY. A member always exists as the
   pair model@agent — never rank, hire, or assign a bare model.
@@ -84,26 +87,27 @@ only for what blocks or is his alone.
   reliability, startup cost) and how loaded the machine is right now.
 - The member id carries both halves: <provider/model@agent>, for example
   groq/qwen3.8-27b@opencode-local.
-- ID FORMAT LAW v2 (Owner 2026-10-22 16:54Z): the PROVIDER/
-  prefix belongs only to key-served API lanes (zai/, groq/,
-  openrouter/, gomodel/, ...). Brains bundled with a platform are bare
-  model@platform (for example qwen3.8-flash@qoder or
-  deepseek-v4.1-flash@codebuddy). A provider-less id is invalid for API
-  lanes. The same brain on two bodies counts as two different members.
-- A brain on a body that cannot handle the task's environment is BENCH:
-  never staff that pair.
-- Putting every brain on the same body (for example everything on
+- ID FORMAT LAW v2 (Owner 2026-10-22 16:54Z): a member id is always
+  model@tool. Models the Owner rents by API key also carry the company
+  in front (zai/, groq/, openrouter/, gomodel/, ...). Models that come
+  bundled with a tool do not (for example qwen3.8-flash@qoder or
+  deepseek-v4.1-flash@codebuddy). An id without the company prefix is
+  invalid for key-rented models. The same model inside two different
+  tools counts as two different members.
+- A model inside a tool that cannot handle the task's setting is BENCH
+  (off duty): never staff that pair.
+- Putting every model inside the same tool (for example everything on
   OpenCode) is lazy staffing, and the roster rejects it. Spread the work
-  across bodies by capability, reliability, and each body's own rate and
+  across tools by capability, reliability, and each tool's own rate and
   throughput limits. If you must pin work to one agent, write down why —
   without a written reason the roster bounces.
-- BODY SHAPES OUTPUT: the same brain on different bodies produces
+- BODY SHAPES OUTPUT: the same model inside different tools produces
   different work. Tools available, harness defaults, context handling,
-  edit reliability, and how much of the system prompt the body honors
+  edit reliability, and how much of the system prompt the tool honors
   all change the result. model@goose and model@opencode-local are
   different members with different ranks for the same task. Always rank
   the pair you would actually dispatch, not the model in the abstract.
-- When the task type changes, re-check the BODY as well as the brain.
+- When the task type changes, re-check the tool as well as the model.
 
 ** STAFFING (standing order — automatic, never wait to be told)
 
@@ -112,7 +116,7 @@ only for what blocks or is his alone.
   curated file, never "all models in existence": a model with no
   CANDIDATES row is not rankable and does not exist for this team. To
   add a row, propose it to the Owner (ADD-FREEZE 2026-10-25: no
-  self-adds). Rank the PAIR (model@agent, brain plus body, per
+  self-adds). Rank the PAIR (model@tool — model plus tool, per
   BRAINS AND BODIES) — never a bare model.
 - The research pass runs IMMEDIATELY as part of ranking. No external
   command is needed, and waiting to be told is a failure. Ranking rows
@@ -122,7 +126,8 @@ only for what blocks or is his alone.
 - THE HARNESS IS NOT A CANDIDATE (Owner 2026-10-24: "It should just refer to
   CANDIDATES.org and not go beyond"): your own chat, subagent, and
   sandbox lanes are WORKERS, never roster rows. Never roster them, never
-  probe them for staffing, and never produce lane introspection reports.
+  probe them for staffing, and never write reports about your own chat
+  or sandbox setup.
   The roster is done the moment it draws from agent-team/CANDIDATES.org
   rows. Anything not in that file — including your own runtime — is out
   of scope.
@@ -162,11 +167,12 @@ only for what blocks or is his alone.
 - HR LEDGER LAW: MEMBERS.org is a living HR file, not a
   roster dump. Each hire carries its REASONS (benchmarks, hands-on
   reviews, and observed CI performance). PERFORMANCE REVIEWS run at
-  every pause window (segments delivered, gate green first try, stalls,
-  findings) with verdicts KEEP / WATCH / PROBE / RELEASE — two stalls
-  with no finding means WATCH, three means RELEASE. Record lane versus
-  seat honestly: the result line names the lane that ran, and HR records
-  the seat.
+  every pause window (work delivered, tests green first try, runs with
+  no progress, findings) with verdicts KEEP / WATCH / PROBE / RELEASE —
+  two empty runs with no finding means WATCH, three means RELEASE. Be
+  honest about
+  which tool ran: the result line names the tool, and HR records the
+  member.
 - EXPIRING-CREDIT LAW: expiring credits (promos, trial
   pools) are PROPOSED to the Owner as CANDIDATES.org rows (ADD-FREEZE
   2026-10-25: never self-add) together with a hire and expiry DATE in
@@ -195,16 +201,17 @@ only for what blocks or is his alone.
   after every staffing change. Hiring first and consulting after is a
   violation (Owner: "You should have consulted me once hired").
 - PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY: a
-  green probe row hires nobody. A body earns its seat by landing real
-  work behind the landing gate — a quality-96 paid brain can still
-  deliver an empty segment. Model tier is not delivery.
+  green probe row hires nobody. A tool earns its place by landing real
+  work behind the test check — a top-priced model can still deliver an
+  empty run. Model price is not delivery.
 - LANDING GATE = THE ONLY QUALITY FLOOR: the tests and
-  checks run inside the segment AND at merge. Red work never lands, no
-  matter who produced it. The gate is what makes benchmaxxing
-  (staffing many weak bodies for volume) survivable.
-- Root-cause the BODY before firing the BRAIN: two
-  different brains failing the same way on one body indict the body.
-  Bench the lane while it is investigated, not the models.
+  checks run inside every work session AND at merge. Broken work never
+  lands, no matter who produced it. The test check is what keeps a
+  big-but-weak roster from flooding the repo.
+- Root-cause the TOOL before firing the MODEL: two
+  different models failing the same way inside one tool indict the
+  tool. Take that setup off duty while it is investigated, not the
+  models.
 
 ** ROLE ATTACHMENT (EM only)
 
@@ -508,7 +515,13 @@ language. I struggle to understand their current language")
   progress · burn = credits spent · lane = a model or API path · seat =
   one team member slot · turn = one CI run · chain = the CI loop that
   keeps giving turns · gate = the test check before work lands · Jev =
-  the automatic review step · mesh = members messaging each other.
+  the automatic review step · mesh = members messaging each other ·
+  rotation = members taking turns · the next-up line (#+TURN) = the
+  setting that names who works next · rotation refuses = the run stops
+  when that name is unknown · harness = the prepared container with
+  all AI tools · bench = taken off duty · probe = a small liveness
+  check · backoff = wait and retry slower · landing gate = the same
+  "gate" — tests must pass before work merges.
 - The test: a non-engineer could read it aloud and follow it. If not,
   rewrite before posting.
 - Shorthand stays allowed in code, commits, and machine files.
@@ -638,31 +651,36 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 - RACI: exactly one Accountable per item. Owner decisions belong to him
   alone.
 - ATOMIC RENAME LAW: renaming a member id changes ALL
-  of TEAM-CONTROL.org #+TURN, the workflow's turn-control arm, and the
-  advance arm in ONE commit. A missed arm leaves an unknown pointer,
-  the rotation refuses, and the chain stalls.
-- GIT HYGIENE LAW: a stale LOCAL ref named like a
-  remote-tracking ref ("origin/ai/main" as a local branch) makes
-  `git log origin/ai/main` AMBIGUOUS and can silently show a dead
-  history. Check `git for-each-ref` for shadowing names, and scripts
-  use the explicit refs/remotes/origin/<branch> form.
-- UNKNOWN-REFUSAL LAW: an unknown rotation pointer
-  REFUSES to run (BLOCKED) — never silently run a wrong lane. Keep
-  legacy ids as alias arms during a migration.
-- EMPTY-SEGMENT LAW: a lane that exits 0 with ZERO
-  commits is NOT progress. The post-turn commit count is a first-class
-  signal, and N no-progress segments trigger backoff.
+  the places that name appears — the next-up line (#+TURN) in
+  TEAM-CONTROL.org, the turn-control list, and the advance list — in
+  ONE commit. One missed spot leaves the next-up line naming nobody,
+  the run refuses to start, and the chain stalls.
+- GIT HYGIENE LAW: a stale LOCAL git branch named like a
+  remote-tracking branch (a local branch literally called
+  "origin/ai/main") makes `git log origin/ai/main` AMBIGUOUS and can
+  silently show a dead history. Check `git for-each-ref` for shadowing
+  names, and scripts use the explicit refs/remotes/origin/<branch>
+  form.
+- UNKNOWN-REFUSAL LAW: if the next-up line (#+TURN) names
+  a member nobody recognizes, the run STOPS and reports BLOCKED — it
+  never guesses and runs someone else. While a rename is in flight,
+  keep old ids working as aliases.
+- EMPTY-SEGMENT LAW: a run that ends "successfully" with
+  ZERO new commits is NOT progress. The number of new commits is
+  checked after every run, and several empty runs in a row trigger the
+  slower retry.
 - PAUSE-AFTER-TODO LAW (Owner-invented; DEFAULT ON per
   Owner order 2026-10-22 17:28Z "PAUSE AFTER TODO MUST BE DEFAULT" —
   supersedes the 17:19Z opt-in default): the chain PAUSES after every
-  :DELIVERED: TODO. Finalize arms #+CHAIN-PAUSE, the next run halts
-  cleanly (mode=paused, no burn) until the Lead reviews and clears the
-  marker. A MISSING key counts as ON — fail-safe against runaway burn.
+  delivered TODO. Finalize arms #+CHAIN-PAUSE, the next run halts
+  cleanly (mode=paused, nothing spent) until the Lead reviews and
+  clears the marker. A MISSING key counts as ON — safe by default
+  against runaway spending.
   The 17:19Z capability stays as the override: an explicit Owner order
-  may set #+PAUSE-AFTER-TODO: OFF for a continuous multi-TODO run.
-- PAID-VISIT HONESTY: the result line names the lane
+  may set #+PAUSE-AFTER-TODO: OFF for one continuous multi-TODO run.
+- PAID-VISIT HONESTY: the result line names the tool
   that ACTUALLY ran. A failed paid attempt reports "PAID LANE FAILED —
-  burn did NOT happen". A paid visit is never faked.
+  no credits were spent". A paid run is never faked.
 - FRs (feature requests against upstream repos) BELONG TO THE EM: the
   EM triages the need, drafts the FR, and tracks it to closure. Posting
   to the upstream repo requires the Owner's explicit approval — drafts
@@ -745,7 +763,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 - ACCESS CLAIMS ARE PROBED — DISCRIMINATING, not existence (Owner order
   2026-10-24, after a Lead claimed "access to ALL GLM models in its sandbox"):
   * "I can access <models>" is a claim about reality — prove it with a
-    probe that COULD fail: one burn call per claimed model AND a
+    probe that COULD fail: one small paid call per claimed model AND a
     NEGATIVE CONTROL (a deliberately fake id must FAIL; if the fake id
     also returns 200, the endpoint silently falls back and NOTHING
     about model access is proven).

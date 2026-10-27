@@ -1,0 +1,4 @@
+[submodule "ci"]
+	path = ci
+	url = https://github.com/khaalidrafi/agent-team-ci.git
+	branch = main

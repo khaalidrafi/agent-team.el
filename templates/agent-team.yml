@@ -192,6 +192,10 @@ jobs:
     continue-on-error: true
     env:
 {{SEAT_ENV}}
+      # SEAT_ENV in EVERY repo must also map:
+      #   GH_TOKEN: ${{ secrets.GH_PAT }}  — Copilot CLI auth
+      # (the harness run passes -e GH_TOKEN; step-level
+      # GH_TOKEN: ${{ github.token }} overrides stay intact).
     steps:
       - uses: actions/checkout@v4
         with:
@@ -655,10 +659,15 @@ jobs:
           # the inner case matched nothing and exited silently. Pass values
           # explicitly instead.
           mkdir -p "$PWD/.sessions-restore"
+          # GH_TOKEN rides the seat env (secrets.GH_PAT) — Copilot
+          # CLI auth for the ask-first body (fine-grained PAT with
+          # the Copilot Requests permission, live-verified
+          # 2026-10-27); env-injected per run, NEVER baked.
           if docker run --rm --user 1001:1001 \
             -v "$PWD":/workspace -w /workspace \
             -v "$PWD/.sessions-restore":/sessions-restore:ro \
             -e SEAT="${SEAT}" -e BRIEF="${BRIEF}" \
+            -e GH_TOKEN \
             {{DOCKER_RUN_ENV}} \
             {{HARNESS_TAG}}:local bash /workspace/.turn-inside.sh \
             > /tmp/.turn-out.txt 2>&1; then

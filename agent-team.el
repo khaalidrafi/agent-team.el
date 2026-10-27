@@ -1272,30 +1272,42 @@ Override when this team's harness bakes different bodies.")
 (defconst agent-team--team-ci-brief
   "* TEAM CI (how the chain runs — read before the first dispatch)
 
-- the chain lives in .github/workflows/agent-team.yml (Lead-owned):
-  test (landing gate) -> probe (seat liveness, never gates) -> turn
-  (session restore -> ONE agent segment
-  in the preinstalled harness container -> session scrub+upload -> branch
-  push + rotation advance) -> finalize (auto-merge behind the gate -> Jev
-  judgment -> stall accounting -> SELF-DISPATCH while the objective is
-  open and KILL-SWITCH is OFF)
-- control file agent-team/TEAM-CONTROL.org drives everything:
+- The chain lives in .github/workflows/agent-team.yml (Lead-owned). The
+  jobs run in order: test (the landing gate) -> probe (seat liveness,
+  never a quality gate) -> turn (session restore -> ONE agent segment
+  in the preinstalled harness container -> session scrub + upload ->
+  branch push + rotation advance) -> finalize (auto-merge behind the
+  gate -> Jev judgment -> stall accounting ->
+  SELF-DISPATCH while the objective is open and KILL-SWITCH is OFF).
+- The control file agent-team/TEAM-CONTROL.org drives everything:
   #+OBJECTIVE / #+OBJECTIVE-STATE (OPEN|COMPLETE) / #+TURN (rotation
   pointer) / #+KILL-SWITCH (ON|OFF) / #+STALL-COUNT (>=4 -> 5-min backoff)
-  / #+PAUSE-AFTER-TODO (ON|OFF) / #+CHAIN-PAUSE (ON|OFF)
-- the team decides how many runs the objective takes; the chain stops
-  ONLY on kill switch, objective complete, tests red, or an armed
-  CHAIN-PAUSE; a no-progress streak shifts to backoff, never to failure
-- admincraft laws (backported 2026-10-22, ADMINCRAFT-LESSONS.org):
+  / #+PAUSE-AFTER-TODO (ON|OFF) / #+CHAIN-PAUSE (ON|OFF).
+- The team decides how many runs the objective takes. The chain stops
+  ONLY on a kill switch, an objective marked complete, red tests, or an
+  armed CHAIN-PAUSE. A no-progress streak shifts to backoff, never to
+  failure.
+- Admincraft laws (backported 2026-10-22, ADMINCRAFT-LESSONS.org):
   an unknown rotation pointer REFUSES (BLOCKED) — never a silent wrong
-  lane; a lane exiting 0 with ZERO commits is NOT progress (the commit
-  count is a first-class signal); PAUSE-AFTER-TODO DEFAULTS ON (a clean
+  lane. A lane exiting 0 with ZERO commits is NOT progress (the commit
+  count is a first-class signal). PAUSE-AFTER-TODO DEFAULTS ON (a clean
   halt after a :DELIVERED: TODO, mode=paused, the Lead clears
   #+CHAIN-PAUSE; a missing key pauses — fail-safe; an explicit Owner
-  order may set OFF for a continuous multi-TODO run); fallback chains name the lane that ACTUALLY ran and
-  a failed paid attempt reports PAID LANE FAILED — a paid visit is
-  never faked; no chat mirror since 2026-10-26 (Discord retired after
-  Telegram) — the chat lives in agent-team/TEAM-CHAT.org
+  order may set OFF for a continuous multi-TODO run). Fallback chains
+  name the lane that ACTUALLY ran, and a failed paid attempt reports
+  PAID LANE FAILED — a paid visit is never faked.
+- DUAL LAW (Owner orders 2026-10-27 #hq: the CI kit is a reusable
+  submodule named agent-team-ci, and ALL agents in Docker read BOTH
+  AGENTS.md files): every repo consumes the kit as the ci/ submodule.
+  GLOBAL LAW is ci/AGENTS.md — the canonical global AGENTS.md,
+  byte-identical to khaalidrafi/vault @ main. LOCAL LAW is the repo's
+  own root AGENTS.md. Every lane's prompt is composed as GLOBAL + LOCAL
+  + the segment brief through ci/bin/law_brief.sh — no agent runs
+  lawless. The canonical harness Dockerfile (ci/docker/harness/Dockerfile)
+  bakes the global law into each agent body's config slot (OpenCode /
+  Goose / CodeBuddy), and the landing gate runs
+  ci/bin/commit_msg_guard.sh — AGENTS.md already owns the commit rules;
+  the guard enforces them.
 - AGENT-ORG SEND LAW (Owner R-2-77 endgame 2026-10-26 #hq: team CI runs
   through agent-org): CI sends drive the agent CLIs THROUGH agent-org —
   the harness image bakes emacs-nox + agent-org-batch.el at a pinned
@@ -1303,45 +1315,45 @@ Override when this team's harness bakes different bodies.")
   prompt and fires the SAME `agent-org-prompt-send-hook' an interactive
   Emacs send fires, so the CI clock-in (AGENT_ORG_CLOCK_CMD -> the
   clock_in.py twin) lands at the EXACT prompt-send moment (TIME LAW).
-  Exit 42 = the batch lane is unavailable -> fall back to the direct
-  CLI lane: the batch path only ADDS a working send, never removes the
-  proven one.  Web/cloud lanes stay the ONE manual exception.
-- GoModel gateway (Jev judgment layer, khaalidrafi/llmfisher) rides as a
-  HEALTH-GATED lane: turn health step + finalize judgment; the URL is
-  RESOLVED per job (Owner order 2026-10-22): vars.GOMODEL_GATEWAY_URL
-  override -> https://ai.khalidrafi.tech -> localhost:8080 -> in-runner
-  boot (gateway-up step starts the enterpilot/gomodel container ONLY
-  when nothing answered = no deployment active); judgment lane is
-  BINARY (Jev via the gateway when up, else local rules decide
-  directly); DOWN -> lane-fallback law, never red
+  Exit 42 means the batch lane is unavailable -> fall back to the
+  direct CLI lane: the batch path only ADDS a working send, it never
+  removes the proven one. Web/cloud lanes stay the ONE manual exception.
+- GoModel gateway (the Jev judgment layer, khaalidrafi/llmfisher) runs
+  as a HEALTH-GATED lane: checked at turn health and at finalize
+  judgment. The URL is RESOLVED per job (Owner order 2026-10-22):
+  vars.GOMODEL_GATEWAY_URL override -> https://ai.khalidrafi.tech ->
+  localhost:8080 -> in-runner boot (the gateway-up step starts the
+  enterpilot/gomodel container ONLY when nothing answered = no
+  deployment active). The judgment lane is BINARY (Jev through the
+  gateway when up, otherwise local rules decide directly). DOWN means
+  the lane-fallback law, never a red run.
 - NO chat mirror (Telegram retired 2026-10-25; Discord retired too —
-  Owner order 2026-10-26 #hq: \"remv discord, too.\"). The team chat lives
-  in the repo (each message under its actual :FROM: seat); the Lead
-  reads it there and couriers Owner-bound entries (FROM:/TO: lines) to
-  #hq verbatim.
-- NO AGENTS.md is ever created or generated by the setup (Owner
-  2026-10-21: \"It shouldn't be made!\"); a repo's own repo-root
-  AGENTS.md is left untouched and is the CI global-law bake source;
-  when a project has none, the USER's global AGENTS.md
-  (pkg variable `agent-team-global-agents-md') is transported
-  byte-identical (docker/harness/AGENTS.md) and baked into each agent's
-  global config at image build — the same user file also opens the
-  teamify prompt, so web chats BEGIN under their global law; in-repo
-  team law lives in agent-team/TEAM-CONTROL.org + TEAM.md
-- seats work in ai/turn-* branches; finalize auto-merges behind the
-  landing gate (red work never lands); agent-team/TEAM-CHAT.org is
-  union-merged (.gitattributes) so concurrent appends never conflict
+  Owner order 2026-10-26 #hq: \"remv discord, too.\"). The team chat
+  lives in the repo (each message under its actual :FROM: seat); the
+  Lead reads it there and couriers Owner-bound entries (FROM:/TO:
+  lines) to #hq verbatim.
+- AGENTS.md law: the teamify setup never invents a repo-root AGENTS.md.
+  A repo's own root AGENTS.md is that project's LOCAL law — keep it
+  accurate, never delete or overwrite it carelessly; the dual-law
+  wiring reads it from the repo root. In-repo team law lives in
+  agent-team/TEAM-CONTROL.org + TEAM.md.
+- Seats work in ai/turn-* branches. Finalize auto-merges behind the
+  landing gate (red work never lands). agent-team/TEAM-CHAT.org is
+  union-merged (.gitattributes) so concurrent appends never conflict.
 - Lead-owned files (seats never edit them): .github/workflows/*,
-  agent-team/TEAM-CONTROL.org, .gitattributes, .github/scripts/*
-- repo secrets (write-only; values never copied across repos; names
-  only travel per the ENV-VAR LAW): QODER_PERSONAL_ACCESS_TOKEN ·
-  ZAI_API_KEY · OPENROUTER_API_KEY · GROQ_API_KEY ·
-  CODEBUDDY_AUTH_TOKEN · GOMODEL_MASTER_KEY ·
-  LARK_WEBHOOK_<ROLE> (retired 2026-10-25, no Telegram communication:
-  TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID — safe to delete; retired
-  2026-10-26 \"remv discord, too\": every DISCORD_WEBHOOK_* — safe to delete)
-  (missing keys skip their lane gracefully; a missing SEAT key blocks
-  that seat, the rotation advances, the run stays green)
+  agent-team/TEAM-CONTROL.org, .gitattributes, .github/scripts/*, and
+  the ci/ submodule pointer.
+- Repo secrets (write-only; values never copied across repos; only
+  their NAMES travel, per the ENV-VAR LAW): QODER_PERSONAL_ACCESS_TOKEN
+  · ZAI_API_KEY · OPENROUTER_API_KEY · GROQ_API_KEY ·
+  CODEBUDDY_AUTH_TOKEN · GOMODEL_MASTER_KEY · LARK_WEBHOOK_<ROLE> (the
+  per-role Lark bots are the live reporting channel) · CLINE_AUTH_JSON
+  · MCODE_AUTH_JSON. Retired and safe to delete from repo settings:
+  TELEGRAM_BOT_TOKEN + TELEGRAM_OWNER_ID (2026-10-25, no Telegram
+  communication) and every DISCORD_WEBHOOK_* (2026-10-26, \"remv
+  discord, too\"). A missing key skips its lane gracefully; a missing
+  SEAT key blocks that seat, the rotation advances, and the run stays
+  green.
 "
   "The TEAM CI block added to every teamify prompt the pkg builds — the
 prompt carries the chain's operating manual, not just the team laws.")

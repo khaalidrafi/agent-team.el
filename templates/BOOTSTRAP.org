@@ -10,44 +10,51 @@ The project does not exist yet — no repo, no commits. You create everything.
 ** OBJECTIVES
 
 - Create the repo (git init -b ai/main) and push it.
-- Charter the team: commit agent-team/ files (TEAM.md, TODOS.org,
+- Charter the team: commit the agent-team/ files (TEAM.md, TODOS.org,
   MEMBERS.org, ROSTER.org, CANDIDATES.org, TEAM-CHAT.org — see
-  templates/TEAMIFY.org §FILE TARGETS; TEAM.md wraps the canonical manual
-  khaalidrafi/agent-team.el templates/COMMON.org by one pointer line).
+  templates/TEAMIFY.org §FILE TARGETS). TEAM.md wraps the canonical
+  manual (khaalidrafi/agent-team.el templates/COMMON.org) with one
+  pointer line.
 - Ship the first real task on the board within this session.
 
 ** CONTEXT PACK (filled by the Director)
 
 - repo name: <Owner approves> · host: <github>
-- PAT: the FILL BLOCK's PAT (use immediately, never store in files/commits)
+- PAT: the FILL BLOCK's PAT (use immediately, never store in
+  files/commits)
 - roster: <initial members with roles>
 
 ** TASK
 
-1. Probe environment (shell? net? git?); report one line. Never stall.
+1. Probe the environment (shell? net? git?) and report the answer in
+   one line. Never stall.
 2. git init -b ai/main; write .gitignore; commit the team law under
-   agent-team/ — NEVER a repo-root AGENTS.md (Owner 2026-10-21).
-3. Teamify-scaffold per this file + MASTER; commit (MODEL author + trailers).
-4. Push; ROSTER DUTY over the initial members; first dispatch.
-5. STATUS #1: env line + repo URL + what's starting.
+   agent-team/. The teamify setup never creates a repo-root AGENTS.md
+   on its own (Owner 2026-10-21) — if the Director's orders say this
+   project carries one, that order names it explicitly.
+3. Teamify-scaffold per this file + MASTER; commit (MODEL author +
+   trailers).
+4. Push; run ROSTER DUTY over the initial members; make the first
+   dispatch.
+5. STATUS #1: the environment line + the repo URL + what is starting.
 
 ** DEFINITION OF DONE
 - as agreed per dispatch (see COMMON anatomy)
 
 ** STANDING LAWS (admincraft backport, 2026-10-22)
 
-- ID FORMAT v2: PROVIDER/ prefix only for API models; platform-native
-  brains are bare model@platform
+- ID FORMAT v2: the PROVIDER/ prefix only for API models; platform-native
+  brains are bare model@platform.
 - CONSULT LAW: post the roles-with-members list to the Owner BEFORE
-  activating any hire; re-share after every staffing change
-- HR LEDGER: MEMBERS.org records hires WITH REASONS + performance
-  reviews (KEEP/WATCH/PROBE/RELEASE) at every pause window
+  activating any hire; re-share after every staffing change.
+- HR LEDGER: MEMBERS.org records hires WITH REASONS plus performance
+  reviews (KEEP/WATCH/PROBE/RELEASE) at every pause window.
 - LANDING GATE = the only quality floor: red work never lands; a green
-  probe row hires nobody
-- rename a member id ATOMICALLY (pointer + both case arms in one
-  commit); unknown rotation pointers REFUSE (BLOCKED)
+  probe row hires nobody.
+- Rename a member id ATOMICALLY (pointer + both case arms in one
+  commit). An unknown rotation pointer REFUSES to run (BLOCKED).
 
 ** FINAL INSTRUCTION (FRESH)
 
-The master prompt binds from the moment the repo exists — your first commits
-are the team's constitution.
+The master prompt binds from the moment the repo exists. Your first
+commits are the team's constitution.

@@ -13,7 +13,9 @@ name: CI
 # PREINSTALLED IN A DOCKER CONTAINER (Owner order 2026-10-20 #hq: "Use
 # Docker containers with agents preinstalled. Don't install in CI. That's
 # a waste of time. You'll have to make agent configs, too, and reuse
-# them."): the `harness` job builds docker/harness/ (OpenCode + Goose +
+# them."): the `harness` job builds ci/docker/harness/ (the canonical
+# harness Dockerfile from the agent-team-ci SUBMODULE — Owner order 2026-10-27
+# #hq: the CI kit is a submodule every repo consumes) (OpenCode + Goose +
 # baked configs, NO keys baked) and pushes ghcr.io/khaalidrafi/
 # agent-team-harness:latest; every turn runs its segment inside that image
 # (local rebuild hits the gha layer cache, ~seconds).  (5) A real agent,
@@ -80,6 +82,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install Emacs
         run: sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox
@@ -180,6 +184,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - uses: docker/setup-buildx-action@v3
 
@@ -192,7 +198,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/harness/Dockerfile
+          file: ci/docker/harness/Dockerfile
           push: true
           tags: |
             ghcr.io/khaalidrafi/agent-team-harness:latest
@@ -249,6 +255,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
 
       - name: Read control file (kill switch / objective / turn)
         id: control
@@ -429,7 +436,7 @@ jobs:
           docker buildx build --load \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \
-            -f docker/harness/Dockerfile \
+            -f ci/docker/harness/Dockerfile \
             -t agent-team-harness:local \
             .
 
@@ -587,29 +594,31 @@ jobs:
           TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
           Law: templates/COMMON.org. Board: agent-team/TODOS.org.
           Roster: agent-team/MEMBERS.org. Repo facts: README.org, STATE.org.
-          PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
-          to each other — work, share reports, take each other's help, get
-          dispatches; 16:55: team chat is ONE Org file, direct pings, no
-          mailbox; 17:55 FORMAT LAW: standard Org format — the headline
-          carries the FROM, fields ride Org tags + a :PROPERTIES: drawer):
-          agent-team/TEAM-CHAT.org. Append one message AT EOF in this
-          EXACT format:
-          * MSG ${SEAT} -> @<to|all> :<kind>:      :msg:${SEAT}:<to-sans-at>:<kind>:
-          :PROPERTIES:
-          :FROM: ${SEAT}
-          :TO: <to|all>
-          :KIND: <dispatch|report|request|escalation|review|note>
-          :WHEN: [YYYY-MM-DD Eee HH:MM UTC]
-          :END:
-          <indented body lines>
-          The headline MUST carry the FROM (Owner: \"Org headings should
-          contain the FROM content\"); tags + properties drawer = Org
-          syntax; WHEN is an Org inactive timestamp. Never edit existing
-          entries — append only. Any Telegram-bound message MUST open with
-          \"FROM: <seat>\" and \"TO: @owner\" lines (Owner law 17:55).
-          Handles: @principal-engineer @software-engineer
-          @quality-assurance-engineer @release-engineer @lead @owner.
-          mailbox/ is a frozen archive — NEVER write there.
+          PEER MESH — ONE CHAT, COMMAND-MAINTAINED (Owner orders
+          2026-10-20 + 2026-10-27: members talk to each other through
+          agent-team/TEAM-CHAT.org; the file is auto-maintained by
+          agent-team.el — NEVER hand-written. You send chat through
+          the command, which enforces the ONE comms protocol: the
+          headline carries FROM; the :PROPERTIES: drawer carries
+          FROM/TO/KIND/REPO/PRIORITY/RISK/WHEN — the same fields as a
+          TEAM-UPDATE):
+          - Send a message (CLI seats — this includes you):
+            AGENT_CHAT_FROM=${SEAT} AGENT_CHAT_TO=<to|all> AGENT_CHAT_KIND=<dispatch|report|request|escalation|review|note> AGENT_CHAT_BODY=\"<message body>\" team-chat
+            (the harness bakes team-chat — a batch emacs call of
+            agent-team-chat-send-batch; the entry lands at EOF).
+          - Emacs members: M-x agent-team-chat-send (prompts for TO,
+            KIND, PRIORITY, RISK, body; FROM and REPO fill themselves).
+          - Read first: scan the chat tail for @${SEAT} pings before
+            picking work (Emacs: M-x agent-team-chat-tail or
+            M-x agent-team-chat-pings-to; CLI: read the file tail).
+          Never edit or delete existing entries — append only (the
+          command does the appending). Any Owner-bound message MUST
+          open its body with \"FROM: <seat>\" and \"TO: @owner\" lines
+          (Owner law 17:55) — the Lead reads the chat and couriers it
+          to #hq verbatim. Handles: @principal-engineer
+          @software-engineer @quality-assurance-engineer
+          @release-engineer @lead @owner. mailbox/ is a frozen
+          archive — NEVER write there.
           TOP BOARD ITEMS:
           ${TOP}
           WORK ONE SEGMENT (time-boxed, max 3 self-attempts per MEMBER LAWS):
@@ -632,7 +641,13 @@ jobs:
           5. Append a :LOGBOOK: note to the board item you touched: what
              changed + evidence (file:line, commit sha). Never mark DONE
              (that is the Lead's gate).
-          6. Commit everything on this branch with message 'turn(${SEAT}): ...'.
+          6. Commit everything on this branch. WRITE THE COMMIT MESSAGE
+             YOURSELF: subject <= 72 chars naming WHAT changed (files/
+             behavior + effect) — never 'turn(${SEAT})', 'ci turn', 'wip',
+             'stall' or any label that could head any commit; the body
+             adds what the diff cannot say. The finalize gate rejects
+             mechanical subjects and undoes the merge (global AGENTS.md
+             commit-substance law, Owner order 2026-10-27).
           7. REPORT: append your report to agent-team/TEAM-CHAT.org as
              '${SEAT} -> @lead :report:' (RESULT: DONE | PARTIAL | BLOCKED,
              evidence included).
@@ -673,6 +688,14 @@ jobs:
           before you run — resume your context (codebuddy -c / goose /
           opencode session files) instead of starting cold."
 
+          # DUAL-LAW BRIEF (Owner order 2026-10-27 #hq: ALL agents in
+          # Docker read BOTH laws): the segment brief rides as a FILE
+          # (env-var quoting must never carry law text), composed by
+          # ci/bin/law_brief.sh from the agent-team-ci submodule = GLOBAL LAW
+          # (ci/AGENTS.md) + LOCAL LAW (root AGENTS.md) + segment brief.
+          printf '%s\n' "$BRIEF" > /tmp/segment-brief.txt
+          bash ci/bin/law_brief.sh /tmp/segment-brief.txt "$PWD" > /tmp/segment-brief.txt
+
           # Seat -> body command. Brains come from the baked configs; keys
           # come from repo secrets via env. The harness image has BOTH
           # bodies preinstalled (Owner order: containers, not CI installs).
@@ -683,6 +706,12 @@ jobs:
           cat > "$PWD/.turn-inside.sh" <<'INNER'
           #!/usr/bin/env bash
           set +e
+          # DUAL-LAW BRIEF: the host composed global + local + segment
+          # via ci/bin/law_brief.sh into /tmp/segment-brief.txt (mounted
+          # read-only). Env BRIEF stays as the fallback only.
+          if [ -s /tmp/segment-brief.txt ]; then
+            BRIEF="$(cat /tmp/segment-brief.txt)"
+          fi
           # SESSION RESTORE (Owner order 18:27Z: session files are
           # important — resume with context): the host mounted the seat's
           # previous SCRUBBED session tree at /sessions-restore; drop it
@@ -816,6 +845,7 @@ jobs:
           if docker run --rm --user 1001:1001 \
             -v "$PWD":/workspace -w /workspace \
             -v "$PWD/.sessions-restore":/sessions-restore:ro \
+            -v /tmp/segment-brief.txt:/tmp/segment-brief.txt:ro \
             -e SEAT="${SEAT}" -e BRIEF="${BRIEF}" \
             -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
             -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN \
@@ -914,9 +944,9 @@ jobs:
           git reset --hard origin/ai/main
           sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
           git add "$CTL"
-          git commit -m "ci-turn: ${TURN_SEAT:-unknown} done" \
-            -m "next turn: ${NEXT}" \
-            -m "result: ${TURN_RESULT:-unknown}" \
+          git commit -m "control: rotate #+TURN to next seat after ${TURN_SEAT:-unknown} segment" \
+            -m "next seat: ${NEXT}" \
+            -m "segment result: ${TURN_RESULT:-unknown}" \
             -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
             -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \
             || echo "::notice::nothing to commit"
@@ -950,6 +980,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ai/main
+          submodules: recursive
 
       - name: Auto-merge the turn branch (peer mail propagation)
         id: merge
@@ -984,10 +1015,19 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq emacs-nox
           if emacs -Q --batch -L . --eval \
             '(unless (byte-compile-file "agent-team.el") (kill-emacs 1))'; then
-            echo "gate=green" >> "$GITHUB_OUTPUT"
-            bash .github/scripts/secret-guard.sh staged
-            git push origin "ai/main"
-            git push origin --delete "${{ steps.merge.outputs.branch }}" || true
+            # COMMIT-MSG GUARD (Owner order 2026-10-27: subjects describe
+            # the change — mechanical subjects undo the merge, same as a
+            # red byte-compile). Range = everything the merge landed.
+            if bash ci/bin/commit_msg_guard.sh \
+                 "${{ needs.turn.outputs.base_sha }}..HEAD"; then
+              echo "gate=green" >> "$GITHUB_OUTPUT"
+              bash .github/scripts/secret-guard.sh staged
+              git push origin "ai/main"
+              git push origin --delete "${{ steps.merge.outputs.branch }}" || true
+            else
+              git reset --hard origin/ai/main
+              echo "gate=red-commit-msg-merge-undone" >> "$GITHUB_OUTPUT"
+            fi
           else
             git reset --hard origin/ai/main
             echo "gate=red-merge-undone" >> "$GITHUB_OUTPUT"
@@ -1154,7 +1194,8 @@ jobs:
             git reset --hard origin/ai/main
             sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
-            git commit -m "ci-chain: stall=${NEW} (segment ${OUTCOME}, result ${RESULT:-none})" \
+            git commit -m "control: set #+STALL-COUNT to ${NEW} after ${OUTCOME} segment" \
+              -m "segment result: ${RESULT:-none}" \
               -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
               -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \
               || echo "::notice::stall commit empty"
@@ -1321,10 +1362,10 @@ jobs:
           git fetch origin ai/main && git reset --hard origin/ai/main
           write_markers
           git add "$CTL"
-          git commit -m "ci-chain: verdict ${VH} mirrored" \
+          git commit -m "control: record segment verdict ${VH} in #+LAST-VERDICT" \
             -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
             -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" || exit 0
-          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "ci-chain: verdict ${VH} mirrored" -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" || exit 0; done
+          for i in 1 2 3; do git push origin "ai/main" && break; git fetch origin ai/main && git reset --hard origin/ai/main; write_markers; git add "$CTL"; git commit -m "control: record segment verdict ${VH} in #+LAST-VERDICT" -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" || exit 0; done
 
       # Owner order 2026-10-20 19:56Z: "You serve as the lead of both repos.
       # Their GLM chats go to their respective Discord channels." This repo's

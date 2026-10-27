@@ -1094,9 +1094,12 @@ them.  Works on Android (Emacs 28+, no git needed).  Keys: `g' refresh,
 (Owner order 2026-10-21 ~12:44Z).  When the target project has no
 repo-root AGENTS.md of its own, the setup transports THIS file
 byte-identical into the harness bake (docker/harness/AGENTS.md; the
-Dockerfile COPYs it into each agent's verified global config path:
-OpenCode ~/.config/opencode/AGENTS.md, Goose ~/.config/goose/.goosehints,
-CodeBuddy ~/.codebuddy/CODEBUDDY.md) and embeds its content at the TOP of
+canonical kit Dockerfile ci/docker/harness/Dockerfile COPYs it into
+each agent's verified global config path: OpenCode
+~/.config/opencode/AGENTS.md, Goose ~/.config/goose/.goosehints, Qoder
+~/.qoder/AGENTS.md, CodeBuddy ~/.codebuddy/CODEBUDDY.md, OMP
+~/.omp/agent/AGENTS.md + ~/.omp/agent/RULES.md) and embeds its content
+at the TOP of
 every teamify prompt, so fresh web chats begin under your global law.
 The file is NEVER generated, rewritten or invented by the setup — you
 own it; the setup only copies it.  nil = no law transport (the Dockerfile
@@ -1385,7 +1388,7 @@ Override when this team's harness bakes different bodies.")
   + the segment brief through ci/bin/law_brief.sh — no agent runs
   lawless. The canonical harness Dockerfile (ci/docker/harness/Dockerfile)
   bakes the global law into each agent body's config slot (OpenCode /
-  Goose / CodeBuddy), and the landing gate runs
+  Goose / Qoder / CodeBuddy / OMP), and the landing gate runs
   ci/bin/commit_msg_guard.sh — AGENTS.md already owns the commit rules;
   the guard enforces them.
 - AGENT-ORG SEND LAW (Owner R-2-77 endgame 2026-10-26 #hq: team CI runs

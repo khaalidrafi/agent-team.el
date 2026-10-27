@@ -543,6 +543,12 @@ everyday English — no codename without a plain-word explanation
   `git log origin/ai/main` AMBIGUOUS and can silently show a dead
   history — check `git for-each-ref` for shadowing names; scripts use
   explicit refs/remotes/origin/<branch>
+- COMMIT SUBSTANCE LAW (Owner 2026-10-27 #hq: "Commits will be written
+  by the agents inside CI"; this rule lives in THIS template, never in
+  AGENTS.md): every commit subject names WHAT changed in the code and
+  why — never turn metadata or placeholders ("ci turn", "ci-chain:
+  stall=N", "turn(<seat>): done", bare "update"/"fix"/"wip");
+  pointer/state commits name the field that moved and the reason
 - UNKNOWN-REFUSAL LAW (admincraft 2a): an unknown rotation pointer
   REFUSES (BLOCKED) — never silently run a wrong lane; keep legacy ids
   as alias arms during migration

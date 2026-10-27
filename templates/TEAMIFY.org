@@ -40,61 +40,66 @@ project into a team project — adopt, don't rebuild.
   PAT (use immediately, never store)
 - the project's purpose, in one line: the FILL BLOCK's PROJECT
 
-- this prompt is SELF-CONTAINED: every instruction you need is here — do
-  not fetch any other repo to execute it. (The canonical manual lives in
-  khaalidrafi/agent-team.el templates/COMMON.org for reference and
-  versioning; it is not a prerequisite.)
+- This prompt is SELF-CONTAINED: every instruction you need is here.
+  Do not fetch any other repo to execute it. (The canonical manual
+  lives in khaalidrafi/agent-team.el templates/COMMON.org for reference
+  and versioning; it is not a prerequisite.)
 
 ** TASK
 
-1. Probe environment (shell? net? git?); report one line. Never stall.
-2. Pull; read what EXISTS: README, code, commit history, CI — and
-   AGENTS.md only if the project happens to have one (the setup NEVER
-   creates one; NEVER create or rewrite a repo-root AGENTS.md).
+1. Probe the environment (shell? net? git?) and report the answer in
+   one line. Never stall.
+2. Pull, then read what EXISTS: README, code, commit history, CI — and
+   AGENTS.md if the project happens to have one (it is that project's
+   LOCAL law; the teamify setup never creates or rewrites a repo-root
+   AGENTS.md on its own).
 3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION (purpose,
-   standing team laws, role scopes, conventions, and one pointer line to
-   the canonical manual, khaalidrafi/agent-team.el templates/COMMON.org —
-   NEVER embed the manual; one canonical copy, per-repo copies drift).
-   Plus TODOS, MEMBERS, CANDIDATES, STATE, TEAM-CHAT — commit on
-   ai/teamify, touching nothing else; no merge without the Owner.
-4. Then team mode: poll the board, STAFFING, first real dispatch.
-5. STATUS #1: env line + what the project is + teamify commit (branch + sha).
+   standing team laws, role scopes, conventions, and one pointer line
+   to the canonical manual, khaalidrafi/agent-team.el
+   templates/COMMON.org). NEVER embed the manual itself: one canonical
+   copy, because per-repo copies drift. Also write TODOS, MEMBERS,
+   CANDIDATES, STATE, TEAM-CHAT per FILE TARGETS below. Commit all of
+   it on ai/teamify, touching nothing else. No merge without the Owner.
+4. Then team mode: poll the board, run STAFFING, make the first real
+   dispatch.
+5. STATUS #1: the environment line + what the project is + the teamify
+   commit (branch + sha).
 
 ** DEFINITION OF DONE
 - as agreed per dispatch (see COMMON anatomy)
 
 ** FINAL INSTRUCTION (TEAMIFY)
 
-Existing code and conventions outrank the master prompt; the team layer wraps
-the project, never rewrites it.
+Existing code and conventions outrank the master prompt. The team layer
+wraps the project; it never rewrites it.
 
 ** VISITING MEMBER pattern (expiring credits — admincraft 3a)
 
-- expiring paid credits (promos, trial pools) hire a VISITING MEMBER
-  OUTSIDE the standing rotation: budget = total credits / remaining
-  days; ONE visiting turn per day; the Lead points #+TURN at the
-  visiting ID and its advance rejoins the rotation where it left
-- keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
-  note); if the platform publishes no balance endpoint, say so in the
-  ledger and calibrate from the Owner's console readings — never
-  invent endpoints
-- a paid lane that fails reports "PAID LANE FAILED — burn did NOT
-  happen"; a paid visit is never faked
+- Expiring paid credits (promos, trial pools) hire a VISITING MEMBER
+  OUTSIDE the standing rotation. Budget = total credits divided by
+  remaining days. ONE visiting turn per day. The Lead points #+TURN at
+  the visiting id, and its advance rejoins the rotation where it left.
+- Keep a BURN LEDGER in MEMBERS.org (date, member, segment, credits,
+  note). If the platform publishes no balance endpoint, say so in the
+  ledger and calibrate from the Owner's console readings — never invent
+  endpoints.
+- A paid lane that fails reports "PAID LANE FAILED — burn did NOT
+  happen". A paid visit is never faked.
 
 ** CONSULT LAW (admincraft 1c)
 
-- every hire is posted to the Owner as a roles-with-members list
-  BEFORE activation, and the list is re-shared after every staffing
-  change — never hire first and consult after
+- Every hire is posted to the Owner as a roles-with-members list BEFORE
+  it activates, and the list is re-shared after every staffing change.
+  Never hire first and consult after.
 
 ** FIRST-RESPONSE HIRE LIST (Owner 2026-10-25 04:23Z)
 
-- on the FIRST response to this teamify prompt the Lead shares the
-  full hire list WITH REASONINGS — per hire: the benchmark numbers
+- On the FIRST response to this teamify prompt, the Lead shares the
+  full hire list WITH REASONINGS. Per hire: the benchmark numbers
   cited, the hands-on/review signal, and why THIS model won the seat
-  overall (vs the runner-up). Bare model lists FAIL the turn
-- sourced from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
-  new rows); the same list goes to the Owner per CONSULT LAW
+  overall (against the runner-up). A bare model list FAILS the turn.
+- Source it from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
+  new rows). The same list goes to the Owner per CONSULT LAW.
 
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 
@@ -148,19 +153,19 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 
 ** agent-team/CANDIDATES.org
 
-Land the CURRENT file from the canonical repo — fetch, never copy
-from this prompt (a prompt snapshot goes stale; see CANDIDATES).
-COMMON's MODELS + STAFFING laws point here.
+Land the CURRENT file from the canonical repo — fetch it, never copy it
+from this prompt (a prompt snapshot goes stale; see the CANDIDATES
+section). COMMON's MODELS and STAFFING laws point there.
 
-ADD-FREEZE (Owner 2026-10-25): the team NEVER adds rows to this file
-— additions require the Owner's explicit permission; propose them in
-the dispatch instead.
+ADD-FREEZE (Owner 2026-10-25): the team NEVER adds rows to this file.
+Additions require the Owner's explicit permission; propose them in the
+dispatch instead.
 
 ** agent-team/ROSTER.org
 
 Created by ROSTER DUTY at first staffing (COMMON STAFFING): the full
-live GET /v1/models dump with the proven-vs-refused split — the dump
-CANDIDATES' evidence sections cite. Not in the teamify commit.
+live GET /v1/models dump with the proven-versus-refused split — the
+dump CANDIDATES' evidence sections cite. Not in the teamify commit.
 
 ** agent-team/STATE.org
 
@@ -214,20 +219,20 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 ,* MSG <from> -> @<to> :<kind>:
 #+END_SRC
 
-- seed the file ONLY when it does not exist yet — an existing chat is
-  history: append, never rewrite
-- one topic per entry; the body follows the TEAM CHAT ENTRY FORMAT
+- Seed the file ONLY when it does not exist yet. An existing chat is
+  history: append to it, never rewrite it.
+- One topic per entry. The body follows the TEAM CHAT ENTRY FORMAT
   (COMMON): simple plain language (the PLAIN LANGUAGE law),
-  well-structured with lists — the Lead couriers Owner-bound entries
-  to the Owner verbatim (no chat mirror since 2026-10-26)
-- the exact header line routes the entry (FROM seat, @target, :kind:);
-  never reformat another member's entry
+  well-structured with lists. The Lead couriers Owner-bound entries to
+  the Owner verbatim (no chat mirror since 2026-10-26).
+- The exact header line routes the entry (FROM seat, @target, :kind:).
+  Never reformat another member's entry.
 
 ** agent-team/TEAM-UPDATE.org
 
 Cross-team inbox from the Director of Engineering (COMMON's DOE UPDATES
 law pins the section format and the EM's ACK duty). The file is SUPPLIED
-by the DoE (z.ai-agent) — you never create it; if it is missing, flag
+by the DoE (z.ai-agent) — you never create it. If it is missing, flag
 that to the DoE in TEAM-CHAT.org and keep working. Your only writes are
 ACK lines appended in place; updates arrive as sections.
 

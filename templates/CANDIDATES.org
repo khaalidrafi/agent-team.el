@@ -4,38 +4,41 @@
         time. IDs: PROVIDER/MODEL@AGENT/PLATFORM. API roster authority:
         live GET /v1/models (names rotate; this file is character, not catalog)
 #+EXPIRY-LAW: Owner order 2026-10-20 — EVERY candidate row carries its FREE-TIER
-        EXPIRY DATE when one exists. "No dated expiry" is not "permanent": an
-        undated free tier is recorded as undated with its cap/rotation risk,
-        never silently treated as unlimited. Dated promos (e.g.
-        minimax-m3.1-flash, free through 2026-10-25) are RE-HIRE DATES — the
-        seat using one must carry a fallback that is independent of the promo.
+        EXPIRY DATE when one exists. "No dated expiry" does not mean
+        "permanent": record an undated free tier as undated, together with its
+        cap and rotation risk — never silently treat it as unlimited. Dated
+        promos (e.g. minimax-m3.1-flash, free through 2026-10-25) are RE-HIRE
+        DATES: the seat using one must carry a fallback that does not depend
+        on the promo.
 
 #+BURN-LAW: Owner order 2026-10-24 17:01Z — "burn Minimax m3.1 to the ground,
         according to its performance!" EVERY minimax-m3.1-flash lane in this
         inventory is PERSONA NON GRATA: no hire, no probe, no fallback, no
-        staged-needs-key revival, superseding every earlier order that named
-        M3.1 (incl. the 2026-10-22 consume-ALL mandate and the 2026-10-20
-        free-through-10-25 promo). Evidence class: hallucination weak spot
-        (mandate note below), openrouter delist at source 2026-10-22 18:16Z,
-        promo already dying 10-25. The mcode body's only free brain WAS M3.1
-        Flash -> the mcode lane is DORMANT and MCODE_AUTH_JSON sealing is
-        CANCELLED. minimax-m2 and minimax-m3 are SEPARATE models - m2 stays
-        hireable inventory; m3 remains undelivered vapor.
+        staged-needs-key revival. This supersedes every earlier order that
+        named M3.1 (including the 2026-10-22 consume-ALL mandate and the
+        2026-10-20 free-through-10-25 promo). Evidence: a hallucination weak
+        spot (mandate note below), the openrouter delist at source
+        2026-10-22 18:16Z, and the promo already dying on 10-25. The mcode
+        body's only free brain WAS M3.1 Flash, so the mcode lane went DORMANT
+        and MCODE_AUTH_JSON sealing was CANCELLED. minimax-m2 and minimax-m3
+        are SEPARATE models: m2 stays hireable inventory; m3 remains
+        undelivered vapor.
 
-#+CARVE-OUT: Owner order 2026-10-24 17:11Z — the BURN narrows to API/gateway
-        lanes; the mcode body's OAuth M-Plan-Free m3.1-flash leg is
-        LANE-ALIVE and MCODE_AUTH_JSON sealing is RE-INSTATED (token-keeper
-        refreshes it). Everything else in BURN-LAW stands.
+#+CARVE-OUT: Owner order 2026-10-24 17:11Z — the BURN narrows to the API and
+        gateway lanes ONLY. The mcode body's OAuth M-Plan-Free m3.1-flash leg
+        is LANE-ALIVE and MCODE_AUTH_JSON sealing is RE-INSTATED (the
+        token-keeper workflow refreshes it). Everything else in BURN-LAW
+        stands.
 
 * OWNER-KEYS — the REAL inventory (2026-10-24, Owner order: "Where are ALL my
-  real models?"). These are the lanes with keys ALREADY IN HAND — sealed as
-  GitHub Actions secrets (24 names) on docneural/admincraft/agent-team.el and
-  wired in llmfisher (config/config.yaml is the machine-readable registry).
-  EVERY hire draws from HERE FIRST. Any lane not in this section needs a
-  signup the Owner has NOT done — recommending it is recommending work he
-  never asked for. STANDING ORDER (Owner 2026-10-25): list NOTHING he has no
-  account for; a row naming an unregistered platform is deleted on sight
-  (aiHubMix/GitHub-Models/CommandCode incident).
+  real models?"). These are the lanes whose keys are ALREADY IN HAND — sealed
+  as GitHub Actions secrets (24 names) on docneural/admincraft/agent-team.el
+  and wired in llmfisher (config/config.yaml is the machine-readable
+  registry). EVERY hire draws from HERE FIRST. A lane outside this section
+  needs a signup the Owner has NOT done — recommending it means recommending
+  work he never asked for. STANDING ORDER (Owner 2026-10-25): list NOTHING he
+  has no account for. A row naming an unregistered platform is deleted on
+  sight (the aiHubMix/GitHub-Models/CommandCode incident).
 
   API-key lanes (secret name → provider; model counts from llmfisher config,
   2026-10-24):
@@ -80,15 +83,15 @@
   DISCORD_WEBHOOK_* (TEAM, TEAM_DOCNEURAL, TEAM_HQ, TEAM_ADMINCRAFT).
 
   NO-ACCOUNT-DEAD LAW (Owner 2026-10-24/25): a platform the Owner has no
-  account on is NOT inventory — never listed, never probed, never
-  recommended, no "intel rows for context", no exceptions. Every model row
-  in THIS file traces to a secret above, an OAuth credential, or a wired
-  llmfisher provider WITH ITS KEY ON FILE; anything else is deleted on
-  sight.
+  account on is NOT inventory. Never list it, never probe it, never
+  recommend it — including as an "intel row for context". No exceptions.
+  Every model row in THIS file traces to a secret above, an OAuth
+  credential, or a wired llmfisher provider WITH ITS KEY ON FILE.
+  Anything else is deleted on sight.
 
   ADD-FREEZE (Owner 2026-10-25 04:23Z): NOTHING is ever added to this
   file without the Owner's explicit permission — agents propose in #hq
-  or the dispatch; only the Owner's fiat adds. Removals need no
+  or the dispatch, and only the Owner's fiat adds. Removals need no
   permission.
 
 * Web (brains-only chat, one-shot couriers)

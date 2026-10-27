@@ -677,7 +677,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 - COMPLIANCE AUDIT (Owner 2026-10-27 #hq: "EVERY team MUST audit their
   whole repo for compliance with global AGENTS.md and refactor the code
   if necessary!"): every team sweeps its WHOLE repo against the global
-  AGENTS.md (canonical copy: khaalidrafi/vault AGENTS.md @ main) —
+  AGENTS.md (canonical copy: ci/AGENTS.md in this kit) —
   commit discipline, code law, search tools, docs — and REFACTORS what
   violates it. Dedicated small commits on ai/main, one concern per
   commit, one model's authorship, full trailers. The teamify commit

@@ -54,7 +54,7 @@ The project does not exist yet — no repo, no commits. You create everything.
 - Rename a member id ATOMICALLY (pointer + both case arms in one
   commit). An unknown rotation pointer REFUSES to run (BLOCKED).
 
-** FINAL INSTRUCTION (FRESH)
+** FINAL INSTRUCTION
 
 The master prompt binds from the moment the repo exists. Your first
 commits are the team's constitution.

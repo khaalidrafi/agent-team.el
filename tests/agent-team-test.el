@@ -593,7 +593,7 @@ gets the chain's manual with every prompt, not just the team laws)."
     (should (string-match-p "SELF-DISPATCH while the objective is" prompt))
     (should (string-match-p "khaalidrafi/testrepo" prompt))
     (should (string-match-p
-             "TEAMIFY — the task (existing project, no team setup)"
+             "THE TASK — teamify an existing project (no team setup)"
              prompt))))
 
 (ert-deftest agent-team-prompt-carries-candidates-seed ()
@@ -613,7 +613,7 @@ prompt)."
     ;; goes stale, so CANDIDATES lands the canonical file by URL + sanity
     ;; greps (no-dup law)
     (should (string-match-p
-             "CANDIDATES — land agent-team/CANDIDATES.org" prompt))
+             "HIRING POOL — land agent-team/CANDIDATES.org" prompt))
     (should (string-match-p
              "raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/"
              prompt))
@@ -634,8 +634,9 @@ prompt)."
 (ert-deftest agent-team-prompt-outline-is-well-ordered ()
   "The assembled prompt is a well-ordered outline, not a raw
 concatenation: level-1 headings are exactly the six sections in order,
-COMMON first under its bare template name and no PART-X labels (Owner
-2026-10-26 #hq), the mode layer nests under TEAMIFY with no stray
+COMMON first under a FUNCTIONAL heading — never a template name (Owner
+2026-10-27 #hq: \"Remove COMMON... and similar template name headings
+from prompts\"), the mode layer nests under THE TASK with no stray
 level-1 headings outside src blocks, src blocks are balanced, no
 template-file metadata
 header and no build timestamp survives into the prompt (Owner
@@ -658,9 +659,9 @@ header and no build timestamp survives into the prompt (Owner
       (should (string-prefix-p "* HOW TO USE (Director)" (nth 0 tops)))
       (should (string-prefix-p "* FILL BLOCK (Director)" (nth 1 tops)))
       (should (string-prefix-p "* TEAM CI (how the chain runs" (nth 2 tops)))
-      (should (string-prefix-p "* COMMON — the master law" (nth 3 tops)))
-      (should (string-prefix-p "* TEAMIFY — the task" (nth 4 tops)))
-      (should (string-prefix-p "* CANDIDATES — land agent-team" (nth 5 tops))))
+      (should (string-prefix-p "* MASTER LAW" (nth 3 tops)))
+      (should (string-prefix-p "* THE TASK" (nth 4 tops)))
+      (should (string-prefix-p "* HIRING POOL — land agent-team" (nth 5 tops))))
     (with-temp-buffer
       (insert prompt)
       ;; src blocks balanced

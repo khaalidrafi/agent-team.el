@@ -726,14 +726,15 @@ Assembles: the USER's global AGENTS.md (when `agent-team-global-agents-md'
 points at a real file — the chat BEGINS under the user's global law,
 Owner order 2026-10-21) + FILL BLOCK (REPO / PROJECT / NOT-TOUCH / PAT)
 + templates/COMMON.org (the master law, FIRST — Owner 2026-10-26 #hq:
-common MUST go at first, everywhere, and the sections carry their bare
-template names, no PART-X labels; the canonical manual, inlined at
-build time from its canonical home — no per-repo copies drift) + the
-mode layer (templates/BOOTSTRAP.org for a FRESH project,
-templates/TEAMIFY.org for an existing one) + the CANDIDATES fetch law
-(agent-team/CANDIDATES.org is landed by FETCHING the canonical file —
-COMMON's MODELS + STAFFING laws point at it, so a teamify must not
-dangle). Puts
+common MUST go at first, everywhere; section headings are FUNCTIONAL
+descriptions, never template names — Owner 2026-10-27 #hq: "Remove
+COMMON... and similar template name headings from prompts"; the
+canonical manual, inlined at build time from its canonical home — no
+per-repo copies drift) + the mode layer (templates/BOOTSTRAP.org for a
+FRESH project, templates/TEAMIFY.org for an existing one) + the
+CANDIDATES fetch law (agent-team/CANDIDATES.org is landed by FETCHING
+the canonical file — COMMON's MODELS + STAFFING laws point at it, so a
+teamify must not dangle). Puts
 the result in the *agent-team prompt* buffer AND the kill-ring, ready
 to paste into a fresh chat with the team's Lead. The PAT travels in
 the prompt only — never stored in files/commits/board (Owner order
@@ -781,17 +782,18 @@ the prompt only — never stored in files/commits/board (Owner order
                   "  (reuse the same token, no rotation; use immediately; NEVER\n"
                   "  store in files/commits/board/logs)\n\n"
                   agent-team--team-ci-brief "\n"
-                  "* COMMON — the master law (single source of truth;"
+                  "* MASTER LAW (single source of truth;"
                   " canonical copy: khaalidrafi/agent-team.el"
                   " templates/COMMON.org; changes land there first, teams"
                   " receive them via TEAM UPDATE)\n\n"
                   (agent-team--strip-template-header manual) "\n"
-                  "* " (if fresh "BOOTSTRAP" "TEAMIFY")
-                  " — the task (" (if fresh "fresh project"
-                                 "existing project, no team setup") ")\n\n"
+                  "* THE TASK — "
+                  (if fresh "bootstrap a fresh project"
+                    "teamify an existing project (no team setup)")
+                  "\n\n"
                   (agent-team--demote-headings
                    (agent-team--strip-template-header layer)) "\n"
-                  "* CANDIDATES — land agent-team/CANDIDATES.org"
+                  "* HIRING POOL — land agent-team/CANDIDATES.org"
                   " in the repo (never inline it in chat — one canonical copy"
                   " lives in khaalidrafi/agent-team.el templates/CANDIDATES.org"
                   " @ ai/main; a snapshot inside a prompt goes stale, so fetch"
@@ -1398,15 +1400,20 @@ Override when this team's harness bakes different bodies.")
 - DUAL LAW (Owner orders 2026-10-27 #hq: the CI kit is a reusable
   submodule named agent-team-ci, and ALL agents in Docker read BOTH
   AGENTS.md files): every repo consumes the kit as the ci/ submodule.
-  GLOBAL LAW is ci/AGENTS.md — the canonical global AGENTS.md,
-  byte-identical to khaalidrafi/vault @ main. LOCAL LAW is the repo's
-  own root AGENTS.md. Every lane's prompt is composed as GLOBAL + LOCAL
-  + the segment brief through ci/bin/law_brief.sh — no agent runs
-  lawless. The canonical harness Dockerfile (ci/docker/harness/Dockerfile)
+  GLOBAL LAW is ci/AGENTS.md — the canonical global AGENTS.md (relocated
+  from vault into this kit, Owner 2026-10-27 #hq). LOCAL LAW is the repo's
+  own root AGENTS.md. The global law is BAKED into every body's global
+  slot at harness build; composing prompts via ci/bin/law_brief.sh is
+  REQUIRED ONLY for the three bodies without a baked slot (dsh,
+  Cursor, mcode) — baked bodies run prepend-free (Owner 2026-10-27
+  #hq: \"no need to prepend with law_brief.sh\"). The canonical harness
+  Dockerfile (ci/docker/harness/Dockerfile)
   preinstalls TEN bodies — OpenCode, Goose, Qoder, CodeBuddy, OMP, pi,
-  dsh, Cursor, Copilot and mcode — and bakes the global law into each
-  body's VERIFIED config slot (the Dockerfile header lists every body's
-  slot; no invented paths), and the landing gate runs
+  dsh, Cursor, Copilot and mcode — and bakes the global law into the
+  VERIFIED config slot of every body that has one (7 of 10: OpenCode,
+  Goose, Qoder, CodeBuddy, OMP, pi, Copilot; the Dockerfile header
+  lists every slot and names the three slot-less bodies), and the
+  landing gate runs
   ci/bin/commit_msg_guard.sh — AGENTS.md already owns the commit rules;
   the guard enforces them.
 - AGENT-ORG SEND LAW (Owner R-2-77 endgame 2026-10-26 #hq: team CI runs

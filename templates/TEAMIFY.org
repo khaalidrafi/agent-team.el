@@ -1,12 +1,14 @@
 #+TITLE: TEAMIFY.org — existing project, no team setup
 #+ROLE: the TEAMIFY-specific layer; everything common lives in COMMON.org
 
-* COMMON TEMPLATE — VAULT ONLY (Owner 2026-10-26 #hq: "No more paste.rs!"
-  + "store TEAMIFY-COMMON.org in vault, not here")
+* THE ONE TEMPLATE — CI KIT ONLY (Owner 2026-10-27 #hq: "move AGENTS.md and
+  the prompt from vault to khaalidrafi/agent-team-ci"; earlier:
+  "No more paste.rs!")
 - The ONE common teamify template (any repo via an appended
-  `repo:` line) lives in the VAULT, never in a public file and never
+  `repo:` line) lives in the CI KIT, never in a public file and never
   on a paste service:
-  - khaalidrafi/vault (private repo), path TEAMIFY-COMMON.org @ main,
+  - khaalidrafi/agent-team-ci, path templates/TEAMIFY-COMMON.org
+    (relocated from vault),
   - sealed Actions secret TEAMIFY_COMMON_ORG on agent-team.el,
     docneural, admincraft (the CI-facing copy of the same bytes).
 - Zero-credential law unchanged: the template carries NO PAT — the
@@ -28,7 +30,7 @@ project into a team project — adopt, don't rebuild.
 
 - Adopt the existing project: read it fully before touching anything.
 - Audit the WHOLE repo for compliance with the global AGENTS.md law
-  (canonical copy: khaalidrafi/vault AGENTS.md @ main) and REFACTOR
+  (canonical copy: ci/AGENTS.md in the kit) and REFACTOR
   what violates it — dedicated small commits on ai/main, never inside
   the teamify commit (COMMON LAWS: COMPLIANCE AUDIT).
 - Add the team layer (agent-team/ files) without disturbing existing code.
@@ -68,7 +70,7 @@ project into a team project — adopt, don't rebuild.
 ** DEFINITION OF DONE
 - as agreed per dispatch (see COMMON anatomy)
 
-** FINAL INSTRUCTION (TEAMIFY)
+** FINAL INSTRUCTION
 
 Existing code and conventions outrank the master prompt. The team layer
 wraps the project; it never rewrites it.

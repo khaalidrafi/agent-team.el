@@ -9,8 +9,8 @@
   on a paste service:
   - khaalidrafi/agent-team-ci, path templates/TEAMIFY-COMMON.org
     (relocated from vault),
-  - sealed Actions secret TEAMIFY_COMMON_ORG on agent-team.el,
-    docneural, admincraft (the CI-facing copy of the same bytes).
+  - sealed Actions secret TEAMIFY_COMMON_ORG on every team repo
+    (the CI-facing copy of the same bytes).
 - Zero-credential law unchanged: the template carries NO PAT — the
   Director appends the PAT to the dispatched prompt right after the
   repo: line; the Lead uses it for git push ONLY: never echo it back,
@@ -75,7 +75,7 @@ project into a team project — adopt, don't rebuild.
 Existing code and conventions outrank the master prompt. The team layer
 wraps the project; it never rewrites it.
 
-** VISITING MEMBER pattern (expiring credits — admincraft 3a)
+** VISITING MEMBER pattern (expiring credits)
 
 - Expiring paid credits (promos, trial pools) hire a VISITING MEMBER
   OUTSIDE the standing rotation. Budget = total credits divided by
@@ -88,7 +88,7 @@ wraps the project; it never rewrites it.
 - A paid lane that fails reports "PAID LANE FAILED — burn did NOT
   happen". A paid visit is never faked.
 
-** CONSULT LAW (admincraft 1c)
+** CONSULT LAW
 
 - Every hire is posted to the Owner as a roles-with-members list BEFORE
   it activates, and the list is re-shared after every staffing change.

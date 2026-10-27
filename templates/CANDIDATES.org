@@ -32,7 +32,7 @@
 
 * OWNER-KEYS — the REAL inventory (2026-10-24, Owner order: "Where are ALL my
   real models?"). These are the lanes whose keys are ALREADY IN HAND — sealed
-  as GitHub Actions secrets (24 names) on docneural/admincraft/agent-team.el
+  as GitHub Actions secrets (24 names) on every team repo
   and wired in llmfisher (config/config.yaml is the machine-readable
   registry). EVERY hire draws from HERE FIRST. A lane outside this section
   needs a signup the Owner has NOT done — recommending it means recommending
@@ -80,7 +80,7 @@
   delete from repo settings): TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID.
   Retired 2026-10-26 (Owner: "remv discord, too." — the Discord mirror is
   removed from CI; safe to delete from repo settings): every
-  DISCORD_WEBHOOK_* (TEAM, TEAM_DOCNEURAL, TEAM_HQ, TEAM_ADMINCRAFT).
+  DISCORD_WEBHOOK_* (one per team channel, all retired).
 
   NO-ACCOUNT-DEAD LAW (Owner 2026-10-24/25): a platform the Owner has no
   account on is NOT inventory. Never list it, never probe it, never

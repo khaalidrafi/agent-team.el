@@ -41,7 +41,7 @@ The project does not exist yet — no repo, no commits. You create everything.
 ** DEFINITION OF DONE
 - as agreed per dispatch (see COMMON anatomy)
 
-** STANDING LAWS (admincraft backport, 2026-10-22)
+** STANDING LAWS (2026-10-22)
 
 - ID FORMAT v2: the PROVIDER/ prefix only for API models; platform-native
   brains are bare model@platform.

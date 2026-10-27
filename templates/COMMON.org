@@ -79,7 +79,7 @@ only for what blocks or is his alone.
   reliability, startup cost) and how loaded the machine is right now.
 - The member id carries both halves: <provider/model@agent>, for example
   groq/qwen3.8-27b@opencode-local.
-- ID FORMAT LAW v2 (admincraft, Owner 2026-10-22 16:54Z): the PROVIDER/
+- ID FORMAT LAW v2 (Owner 2026-10-22 16:54Z): the PROVIDER/
   prefix belongs only to key-served API lanes (zai/, groq/,
   openrouter/, gomodel/, ...). Brains bundled with a platform are bare
   model@platform (for example qwen3.8-flash@qoder or
@@ -154,7 +154,7 @@ only for what blocks or is his alone.
   the previous member table, and show the counts plus the added and
   removed ids. A "no change" report without that comparison is a false
   report.
-- HR LEDGER LAW (admincraft 1d): MEMBERS.org is a living HR file, not a
+- HR LEDGER LAW: MEMBERS.org is a living HR file, not a
   roster dump. Each hire carries its REASONS (benchmarks, hands-on
   reviews, and observed CI performance). PERFORMANCE REVIEWS run at
   every pause window (segments delivered, gate green first try, stalls,
@@ -162,7 +162,7 @@ only for what blocks or is his alone.
   with no finding means WATCH, three means RELEASE. Record lane versus
   seat honestly: the result line names the lane that ran, and HR records
   the seat.
-- EXPIRING-CREDIT LAW (admincraft 1e): expiring credits (promos, trial
+- EXPIRING-CREDIT LAW: expiring credits (promos, trial
   pools) are PROPOSED to the Owner as CANDIDATES.org rows (ADD-FREEZE
   2026-10-25: never self-add) together with a hire and expiry DATE in
   the roster. An approved row activates the moment its key lands, and is
@@ -185,19 +185,19 @@ only for what blocks or is his alone.
 - prompt-fix law: when a task type fails across 2 or more capable
   models, the spec or the task type is at fault, not the prompt —
   re-spec before re-hiring.
-- CONSULT LAW (admincraft 1c): every hire is posted to the Owner as a
+- CONSULT LAW: every hire is posted to the Owner as a
   roles-with-members list BEFORE it activates, and the list is re-shared
   after every staffing change. Hiring first and consulting after is a
   violation (Owner: "You should have consulted me once hired").
-- PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY (admincraft 3b): a
+- PROBE IS EVIDENCE OF THE RUNTIME, NEVER OF QUALITY: a
   green probe row hires nobody. A body earns its seat by landing real
   work behind the landing gate — a quality-96 paid brain can still
   deliver an empty segment. Model tier is not delivery.
-- LANDING GATE = THE ONLY QUALITY FLOOR (admincraft 3c): the tests and
+- LANDING GATE = THE ONLY QUALITY FLOOR: the tests and
   checks run inside the segment AND at merge. Red work never lands, no
   matter who produced it. The gate is what makes benchmaxxing
   (staffing many weak bodies for volume) survivable.
-- Root-cause the BODY before firing the BRAIN (admincraft 1d): two
+- Root-cause the BODY before firing the BRAIN: two
   different brains failing the same way on one body indict the body.
   Bench the lane while it is investigated, not the models.
 
@@ -632,22 +632,22 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   Authority comes from context and judgment, never capability.
 - RACI: exactly one Accountable per item. Owner decisions belong to him
   alone.
-- ATOMIC RENAME LAW (admincraft 1b): renaming a member id changes ALL
+- ATOMIC RENAME LAW: renaming a member id changes ALL
   of TEAM-CONTROL.org #+TURN, the workflow's turn-control arm, and the
   advance arm in ONE commit. A missed arm leaves an unknown pointer,
   the rotation refuses, and the chain stalls.
-- GIT HYGIENE LAW (admincraft 3d): a stale LOCAL ref named like a
+- GIT HYGIENE LAW: a stale LOCAL ref named like a
   remote-tracking ref ("origin/ai/main" as a local branch) makes
   `git log origin/ai/main` AMBIGUOUS and can silently show a dead
   history. Check `git for-each-ref` for shadowing names, and scripts
   use the explicit refs/remotes/origin/<branch> form.
-- UNKNOWN-REFUSAL LAW (admincraft 2a): an unknown rotation pointer
+- UNKNOWN-REFUSAL LAW: an unknown rotation pointer
   REFUSES to run (BLOCKED) — never silently run a wrong lane. Keep
   legacy ids as alias arms during a migration.
-- EMPTY-SEGMENT LAW (admincraft 2c): a lane that exits 0 with ZERO
+- EMPTY-SEGMENT LAW: a lane that exits 0 with ZERO
   commits is NOT progress. The post-turn commit count is a first-class
   signal, and N no-progress segments trigger backoff.
-- PAUSE-AFTER-TODO LAW (admincraft 2b, Owner-invented; DEFAULT ON per
+- PAUSE-AFTER-TODO LAW (Owner-invented; DEFAULT ON per
   Owner order 2026-10-22 17:28Z "PAUSE AFTER TODO MUST BE DEFAULT" —
   supersedes the 17:19Z opt-in default): the chain PAUSES after every
   :DELIVERED: TODO. Finalize arms #+CHAIN-PAUSE, the next run halts
@@ -655,7 +655,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   marker. A MISSING key counts as ON — fail-safe against runaway burn.
   The 17:19Z capability stays as the override: an explicit Owner order
   may set #+PAUSE-AFTER-TODO: OFF for a continuous multi-TODO run.
-- PAID-VISIT HONESTY (admincraft 2e): the result line names the lane
+- PAID-VISIT HONESTY: the result line names the lane
   that ACTUALLY ran. A failed paid attempt reports "PAID LANE FAILED —
   burn did NOT happen". A paid visit is never faked.
 - FRs (feature requests against upstream repos) BELONG TO THE EM: the

@@ -2,8 +2,7 @@ name: Agent Team Chain
 
 # {{PROJECT}} — CI agent-team chain, scaffolded by agent-team.el
 # (M-x agent-team-setup-project) from templates/agent-team.yml.
-# One canonical architecture, proven on khaalidrafi/agent-team.el and
-# khaalidrafi/admincraft (Owner orders 2026-10-20 -> 2026-10-21).
+# One canonical architecture (Owner orders 2026-10-20 -> 2026-10-21).
 #
 # Structure per run — four jobs, in order:
 #   1. test — the landing gate.
@@ -23,9 +22,7 @@ name: Agent Team Chain
 # The team decides how many runs the objective takes; the chain stops
 # ONLY on kill switch, objective complete, tests red, or the CHAIN-PAUSE
 # arm; a no-progress streak shifts to backoff, never to failure.
-# Admincraft
-# laws backported 2026-10-22 (khaalidrafi/agent-team.el
-# agent-team/ADMINCRAFT-LESSONS.org): an unknown rotation pointer REFUSES
+# Chain laws (2026-10-22): an unknown rotation pointer REFUSES
 # (BLOCKED) instead of silently running a wrong lane; a lane exiting 0
 # with ZERO commits is not progress; PAUSE-AFTER-TODO DEFAULTS ON — a
 # clean halt after a :DELIVERED: TODO (mode=paused, the Lead clears
@@ -175,7 +172,7 @@ jobs:
   #   #+KILL-SWITCH: ON           -> stop everything, exit green.
   #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, exit green.
   #   #+CHAIN-PAUSE: ON           -> paused-todo-review: halt cleanly, no
-  #                                  burn (admincraft pause law); the Lead
+  #                                  burn (pause law); the Lead
   #                                  clears the marker to resume.
   #   #+OBJECTIVE: empty          -> no work defined; gate stays green, skip.
   #   otherwise                   -> run the on-turn member's REAL agent
@@ -233,7 +230,7 @@ jobs:
           # post-merge HEAD — THIS segment's new GLM chats (no chat mirror
           # since 2026-10-26; the Lead reads them in the repo and couriers).
           echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          # GIT HYGIENE (admincraft 3d): a stale LOCAL ref named like a
+          # GIT HYGIENE LAW: a stale LOCAL ref named like a
           # remote-tracking ref ("origin/ai/main" as a local branch) makes
           # git log origin/ai/main AMBIGUOUS and can silently show a dead
           # history. Warn loudly; scripts use explicit refs/remotes/.
@@ -254,7 +251,7 @@ jobs:
             echo "mode=no-objective" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # PAUSE-AFTER-TODO law (admincraft, Owner-invented): while the
+          # PAUSE-AFTER-TODO LAW (Owner-invented): while the
           # pause is armed the chain halts CLEANLY after a delivered TODO —
           # no segment runs, nothing burns, the Lead reviews and clears
           # #+CHAIN-PAUSE to resume. Green, not failed.
@@ -763,7 +760,7 @@ jobs:
             || { git rebase --abort 2>/dev/null || true; echo "::warning::branch rebase skipped"; }
           git push origin "${TURN_BRANCH:-ai/turn-orphan}" || echo "::notice::no work branch to push"
           echo "branch=${TURN_BRANCH:-}" >> "$GITHUB_OUTPUT"
-          # EMPTY-SEGMENT law (admincraft 2c): a lane exiting 0 with ZERO
+          # EMPTY-SEGMENT LAW: a lane exiting 0 with ZERO
           # commits is NOT progress — the commit count is a first-class
           # chain signal, consumed by finalize's stall accounting.
           COMMITS=0
@@ -926,11 +923,11 @@ jobs:
               echo "gate=conflict-branch-kept" >> "$GITHUB_OUTPUT" ;;
           esac
 
-      - name: Pause-after-TODO review (admincraft pause law 2b)
+      - name: Pause-after-TODO review
         id: pause
         if: always() && steps.gate.outputs.gate == 'green'
         run: |
-          # Owner-invented in admincraft; DEFAULT ON per Owner order
+          # Owner-invented; DEFAULT ON per Owner order
           # 2026-10-22 17:28Z ("PAUSE AFTER TODO MUST BE DEFAULT"): a
           # MISSING key pauses — fail-safe against runaway burn. The
           # 17:19Z capability stands as the override: an explicit

@@ -293,11 +293,29 @@ DONE is terminal (EM-only by convention; this command does not enforce roles)."
   "The control file (turn pointer, objective, kill switch, stall count)."
   (agent-team--file "TEAM-CONTROL.org"))
 
-(defun agent-team--chat-format (from to kind body when)
-  "Render one chat message per the FORMAT LAW (Owner 17:55Z).
-Headline carries FROM; routing rides Org tags + a :PROPERTIES: drawer;
-WHEN is an Org inactive timestamp string like \"[2026-10-21 Wed 09:00 UTC]\".
-BODY lines are indented two spaces (Org list-friendly)."
+(defun agent-team--chat-repo ()
+  "owner/slug of the current project's git origin — the chat entry's
+:REPO: protocol field. \"unset\" when it cannot be derived."
+  (condition-case nil
+      (let* ((root (agent-team--root))
+             (remote (string-trim
+                      (shell-command-to-string
+                       "git -C . remote get-url origin 2>/dev/null"))))
+        (if (string-match "[:/]\([^/]+/[^/]+\)\(\.git\)?/?$" remote)
+            (replace-regexp-in-string "\.git$" "" (match-string 1 remote))
+          "unset"))
+    (error "unset")))
+
+(defun agent-team--chat-format (from to kind body when
+                                &optional repo priority risk)
+  "Render one chat message per the UNIQUE COMMS PROTOCOL (Owner order
+2026-10-27 #hq: \"TEAM-UPDATE EVERYWHERE! We MUST have a unique protocol
+for comms\" — chat entries carry the same MESSAGE STANDARD fields as a
+TEAM-UPDATE). Headline carries FROM; routing rides Org tags + a
+:PROPERTIES: drawer with FROM/TO/KIND/REPO/PRIORITY/RISK/WHEN; WHEN is
+an Org inactive timestamp string like \"[2026-10-21 Wed 09:00 UTC]\".
+BODY lines are indented two spaces (Org list-friendly). REPO defaults
+to \"unset\", PRIORITY to P1, RISK to reads."
   (let* ((from-tok (replace-regexp-in-string "[ \t]+" "-" (downcase from)))
          (to-tok   (string-remove-prefix
                     "@" (replace-regexp-in-string "[ \t]+" "-" (downcase to))))
@@ -314,28 +332,22 @@ BODY lines are indented two spaces (Org list-friendly)."
      (format ":FROM: %s\n" from)
      (format ":TO: %s\n" to-tag)
      (format ":KIND: %s\n" kind)
+     (format ":REPO: %s\n" (or repo "unset"))
+     (format ":PRIORITY: %s\n" (or priority "P1"))
+     (format ":RISK: %s\n" (or risk "reads"))
      (format ":WHEN: %s\n" when)
      ":END:\n"
      indented)))
 
-(defun agent-team-chat-append (from to kind body)
-  "Append one chat message to agent-team/TEAM-CHAT.org (append-only:
-existing entries are never edited — the guard is Org motion + EOF insert).
-FROM defaults to `agent-team-em-id'.  Returns the inserted headline."
-  (interactive
-   (let ((from (read-string "FROM: " agent-team-em-id))
-         (to (completing-read "TO (@handle): "
-                              '("@lead" "@owner" "@all") nil nil))
-         (kind (completing-read "KIND: "
-                                '("dispatch" "report" "request"
-                                  "escalation" "review" "note")
-                                nil t nil nil "note"))
-         (body (read-string "Body: ")))
-     (list from to kind body)))
-  (let* ((file (agent-team--chat-file))
-         (msg (agent-team--chat-format
-               from to kind body
-               (format-time-string "[%Y-%m-%d %a %H:%M UTC]" nil t))))
+(defun agent-team--chat-append-1 (from to kind body repo priority risk file)
+  "Append one protocol chat message to FILE (append-only: existing
+entries are never edited — the guard is Org motion + EOF insert).
+The one implementation every sender shares; the interactive command is
+`agent-team-chat-send'."
+  (let ((msg (agent-team--chat-format
+              from to kind body
+              (format-time-string "[%Y-%m-%d %a %H:%M UTC]" nil t)
+              repo priority risk)))
     (make-directory (file-name-directory file) t)
     (with-current-buffer (find-file-noselect file)
       (save-excursion
@@ -345,10 +357,78 @@ FROM defaults to `agent-team-em-id'.  Returns the inserted headline."
     (kill-new msg)
     (message "agent-team: chat message appended (%s -> %s)" from to)))
 
+(defvar agent-team-chat-kinds
+  '("dispatch" "report" "request" "escalation" "review" "note")
+  "The one KIND vocabulary for chat entries (the unique comms
+protocol — same list everywhere, enforced by the sender commands).")
+
+(defun agent-team-chat-send (&optional from to kind body priority risk)
+  "Send one chat message to the team (THE command agents call — Owner
+order 2026-10-27 #hq: TEAM-CHAT.org is auto-maintained by agent-team.el,
+never hand-written). Composes the unique comms protocol entry (FROM/TO/
+KIND/REPO/PRIORITY/RISK drawer, like a TEAM-UPDATE) and appends it to
+agent-team/TEAM-CHAT.org. FROM defaults to `agent-team-em-id'; REPO is
+derived from the project's git origin. Interactively prompts for every
+field; called from Lisp, all arguments optional."
+  (interactive
+   (let ((to (completing-read "TO (@handle): "
+                              '("@lead" "@owner" "@all") nil nil))
+          (kind (completing-read "KIND: " agent-team-chat-kinds
+                                 nil t nil nil "note"))
+          (priority (completing-read "PRIORITY: " '("P0" "P1" "P2")
+                                     nil t nil nil "P1"))
+          (risk (completing-read "RISK: " '("reads" "writes" "both")
+                                 nil t nil nil "reads"))
+          (body (read-string "Body: ")))
+     (list nil to kind body priority risk)))
+  (agent-team--chat-append-1
+   (or from agent-team-em-id) to kind body
+   (agent-team--chat-repo) priority risk
+   (agent-team--chat-file)))
+
+(defun agent-team-chat-send-batch ()
+  "Non-interactive chat send for CI seats (Owner order 2026-10-27 #hq:
+TEAM-CHAT.org is maintained by commands, never hand-written). Reads the
+message from env — AGENT_CHAT_FROM, AGENT_CHAT_TO, AGENT_CHAT_KIND,
+AGENT_CHAT_BODY (or AGENT_CHAT_BODY_FILE), optional AGENT_CHAT_REPO,
+AGENT_CHAT_PRIORITY, AGENT_CHAT_RISK, and AGENT_CHAT_FILE (override the
+chat file path; default: the project's agent-team/TEAM-CHAT.org). The
+harness bakes this as the `team-chat' command. Fails loudly when a
+required field is missing; prints a confirmation line on success."
+  (let* ((env (lambda (v)
+                (let ((x (getenv v))) (and x (not (string-empty-p x)) x))))
+         (from (or (funcall env "AGENT_CHAT_FROM") "ci-seat"))
+         (to (or (funcall env "AGENT_CHAT_TO")
+                 (error "agent-team-chat-send-batch: AGENT_CHAT_TO is required")))
+         (kind (or (funcall env "AGENT_CHAT_KIND") "note"))
+         (body-file (funcall env "AGENT_CHAT_BODY_FILE"))
+         (body (or (funcall env "AGENT_CHAT_BODY")
+                   (and body-file
+                        (with-temp-buffer
+                          (insert-file-contents body-file)
+                          (buffer-string)))
+                   (error (concat "agent-team-chat-send-batch: "
+                                  "AGENT_CHAT_BODY or AGENT_CHAT_BODY_FILE"
+                                  " is required"))))
+         (repo (or (funcall env "AGENT_CHAT_REPO") (agent-team--chat-repo)))
+         (priority (funcall env "AGENT_CHAT_PRIORITY"))
+         (risk (funcall env "AGENT_CHAT_RISK"))
+         (file (or (funcall env "AGENT_CHAT_FILE")
+                   (condition-case nil
+                       (agent-team--chat-file)
+                     (error "agent-team/TEAM-CHAT.org")))))
+    (agent-team--chat-append-1 from to kind body repo priority risk file)
+    (princ (format "team-chat: appended (%s -> %s :%s:)\n" from to kind))))
+
 (defun agent-team-chat-open ()
-  "Open the team chat at the end (the live tail is where work is)."
+  "Open the team chat session buffer (Owner order 2026-10-27 #hq: like
+an agent-org session — an Org buffer backed by an Org file, here
+agent-team/TEAM-CHAT.org). Auto-revert-tail keeps new peer entries
+flowing in at the live tail; the remote view is
+`agent-team-chat-live-mode' (the GitHub-polling viewer)."
   (interactive)
   (find-file (agent-team--chat-file))
+  (auto-revert-tail-mode 1)
   (goto-char (point-max)))
 
 (defun agent-team-chat-tail (&optional n)
@@ -1332,6 +1412,19 @@ Override when this team's harness bakes different bodies.")
   lives in the repo (each message under its actual :FROM: seat); the
   Lead reads it there and couriers Owner-bound entries (FROM:/TO:
   lines) to #hq verbatim.
+- COMMAND-MAINTAINED CHAT (Owner order 2026-10-27 #hq: TEAM-CHAT.org
+  was never meant to be hand-written — it is auto-maintained by
+  agent-team.el): send every chat message through the command. Emacs
+  members: `M-x agent-team-chat-send'. CI seats: the harness-baked
+  `team-chat' batch command (env-driven: AGENT_CHAT_FROM,
+  AGENT_CHAT_TO, AGENT_CHAT_KIND, AGENT_CHAT_BODY). The command
+  enforces the ONE comms protocol — headline carries FROM; the
+  :PROPERTIES: drawer carries FROM/TO/KIND/REPO/PRIORITY/RISK/WHEN,
+  the same fields as a TEAM-UPDATE — and appends at EOF. Hand-writing
+  a chat entry is a violation. The session view is
+  `agent-team-chat-open' (an Org buffer backed by TEAM-CHAT.org,
+  auto-revert tail, like an agent-org session); the remote viewer is
+  `agent-team-chat-live-mode'.
 - AGENTS.md law: the teamify setup never invents a repo-root AGENTS.md.
   A repo's own root AGENTS.md is that project's LOCAL law — keep it
   accurate, never delete or overwrite it carelessly; the dual-law

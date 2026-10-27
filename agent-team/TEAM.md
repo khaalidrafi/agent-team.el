@@ -499,8 +499,16 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 
 *** SETUP (session start, in order)
 
-AGENTS.md → .github/copilot-instructions.md → HANDOFF.org → RECHECK.org →
-TODOs.org → agent-team/TEAM.md → agent-team/MEMBERS.org → STATE.org (Owner pastes back)
+Read, in order:
+
+1. AGENTS.md
+2. .github/copilot-instructions.md
+3. HANDOFF.org
+4. RECHECK.org
+5. TODOs.org
+6. agent-team/TEAM.md
+7. agent-team/MEMBERS.org
+8. STATE.org (Owner pastes back)
 
 - any file missing/empty → STOP, name it, wait — never proceed on assumption
 - STATE.org: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW / DEFERRED / BLOCKED /

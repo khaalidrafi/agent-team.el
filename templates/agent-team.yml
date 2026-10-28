@@ -31,7 +31,7 @@ name: Agent Team Chain
 # name the lane that ACTUALLY ran and never fake a paid visit. NO chat
 # mirror: Telegram retired (Owner 2026-10-25 #hq), Discord retired too
 # (Owner 2026-10-26 #hq: "remv discord, too."). The team chat lives in
-# agent-team/TEAM-CHAT.org on the repo; the Lead couriers Owner-bound
+# agent-team/CHAT.org on the repo; the Lead couriers Owner-bound
 # entries to #hq by hand. GoModel (llmfisher gateway) rides as
 # a HEALTH-GATED lane (turn health + finalize Jev). The gateway URL is
 # RESOLVED per job (Owner order 2026-10-22) — first answer wins, in
@@ -49,7 +49,7 @@ name: Agent Team Chain
 # team member. Update templates, too"): every branch
 # ai/task/<member-slug>-<task-slug> runs its OWN chain (the concurrency
 # group is per-ref) on a THIN branch = trunk tip + ONE control commit
-# holding the task's own fork of agent-team/TEAM-CONTROL.org with
+# holding the task's own fork of agent-team/CONTROL.org with
 # #+TASK-ID: + #+ASSIGNEE: and #+TURN: pinned to the assignee. Each
 # segment: sync the branch to a fresh trunk tip keeping the task control
 # (force push), cut the work branch, seat works, and the work lands on
@@ -168,7 +168,7 @@ jobs:
           echo "Law: a probe row is evidence of the RUNTIME, not of quality —" >> "$SUMMARY"
           echo "seat ranks live in agent-team/MEMBERS.org." >> "$SUMMARY"
 
-  # ONE TURN OF WORK. Reads agent-team/TEAM-CONTROL.org:
+  # ONE TURN OF WORK. Reads agent-team/CONTROL.org:
   #   #+KILL-SWITCH: ON           -> stop everything, exit green.
   #   #+OBJECTIVE-STATE: COMPLETE -> objective closed, exit green.
   #   #+CHAIN-PAUSE: ON           -> paused-todo-review: halt cleanly, no
@@ -204,14 +204,14 @@ jobs:
       - name: Read control file (kill switch / objective / turn)
         id: control
         run: |
-          CTL=agent-team/TEAM-CONTROL.org
+          CTL=agent-team/CONTROL.org
           KILL=$(grep -oP '^\#\+KILL-SWITCH:\s*\K\w+' "$CTL" | head -1 || true)
           OBJSTATE=$(grep -oP '^\#\+OBJECTIVE-STATE:\s*\K\w+' "$CTL" | head -1 || true)
           OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' "$CTL" | head -1 || true)
           TURN=$(grep -oP '^\#\+TURN:\s*\K.*' "$CTL" | head -1 | xargs)
           echo "kill=${KILL:-OFF} objstate=${OBJSTATE:-OPEN} turn='${TURN}'"
           # R-2-69 TASK-BRANCH LAW: every ai/task/** ref runs its OWN chain
-          # off ITS OWN agent-team/TEAM-CONTROL.org (thin branch: trunk tip
+          # off ITS OWN agent-team/CONTROL.org (thin branch: trunk tip
           # + task control). CHAIN_REF replaces every hardcoded branch from
           # here down; ai/main keeps the legacy single-team behavior.
           REF="${{ github.ref_name }}"
@@ -230,7 +230,7 @@ jobs:
           if [ "$REF" = "ai/main" ]; then SESS_PREFIX="sessions-"; else SESS_PREFIX="sessions-${REF_SLUG}-"; fi
           echo "sess_prefix=$SESS_PREFIX" >> "$GITHUB_OUTPUT"
           echo "chain ref: $REF (slug $REF_SLUG) task=${TASK_ID:-none} assignee=${ASSIGNEE:-none}"
-          # Pre-segment ai/main tip: base for diffing TEAM-CHAT.org to
+          # Pre-segment ai/main tip: base for diffing CHAT.org to
           # post-merge HEAD — THIS segment's new GLM chats (no chat mirror
           # since 2026-10-26; the Lead reads them in the repo and couriers).
           echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -282,12 +282,12 @@ jobs:
           case "$MODE" in
             killed)       MSG="TEAM STOPPED BY KILL SWITCH — no turns run until #+KILL-SWITCH: OFF" ;;
             complete)     MSG="OBJECTIVE COMPLETE — team standing down (set #+OBJECTIVE-STATE: OPEN with a new objective to restart)" ;;
-            no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/TEAM-CONTROL.org; rotation idle until then" ;;
+            no-objective) MSG="NO OBJECTIVE SET — write one line into #+OBJECTIVE in agent-team/CONTROL.org; rotation idle until then" ;;
           esac
           echo "$MSG" >> "$SUMMARY"
 
       # R-2-69 TASK-BRANCH SYNC: a task branch is THIN — trunk tip plus
-      # exactly one control commit (the task's own TEAM-CONTROL.org fork).
+      # exactly one control commit (the task's own CONTROL.org fork).
       # Every segment starts from a FRESH base: absorb origin/ai/main (peer
       # mesh + landed work), keep the task control, force-push. The per-ref
       # concurrency group serializes this chain; the seat's WORK travels
@@ -304,16 +304,16 @@ jobs:
           for i in 1 2 3; do
             git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main || true
             git fetch origin +refs/heads/"$CHAIN_REF":refs/remotes/origin/"$CHAIN_REF" || true
-            if ! git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > /tmp/.task-ctl.org 2>/dev/null; then
+            if ! git show "origin/${CHAIN_REF}:agent-team/CONTROL.org" > /tmp/.task-ctl.org 2>/dev/null; then
               echo "::warning::no task control on ${CHAIN_REF} — branch not armed; skipping sync"
               break
             fi
             git reset --hard origin/ai/main
-            cp /tmp/.task-ctl.org agent-team/TEAM-CONTROL.org
-            if git diff --quiet -- agent-team/TEAM-CONTROL.org; then
+            cp /tmp/.task-ctl.org agent-team/CONTROL.org
+            if git diff --quiet -- agent-team/CONTROL.org; then
               SYNCED=uptodate; break
             fi
-            git add agent-team/TEAM-CONTROL.org
+            git add agent-team/CONTROL.org
             git commit -m "ci-sync: ${CHAIN_REF} = trunk tip + task control (fresh segment base)"
             if git push --force origin "$CHAIN_REF"; then SYNCED=yes; break; fi
             sleep 10
@@ -501,7 +501,7 @@ jobs:
           # rendered into the script by the workflow template (mesh/01 turn
           # 1-5: quoted objective text broke bash parsing -> exit 127 before
           # any agent ran).
-          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/TEAM-CONTROL.org | head -1 || true)
+          OBJECTIVE=$(grep -oP '^\#\+OBJECTIVE:\s*\K.*' agent-team/CONTROL.org | head -1 || true)
           BOARD=agent-team/TODOS.org
           SUMMARY="$GITHUB_STEP_SUMMARY"
           TOP=$(grep -E {{TOP_GREP}} "$BOARD" | head -8 | sed 's/^\*\** //' || true)
@@ -510,7 +510,7 @@ jobs:
           echo "TURN_BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
           BRIEF="You are the on-turn member of the {{PROJECT}} Agent Team, seat ${SEAT}.
-          TEAM OBJECTIVE (from agent-team/TEAM-CONTROL.org): ${OBJECTIVE}
+          TEAM OBJECTIVE (from agent-team/CONTROL.org): ${OBJECTIVE}
           TASK BRANCH LAW (Owner order 2026-10-25 #hq): you are on branch
           ${CHAIN_REF:-ai/main} — this branch IS the task${TASK_ID:+ (task: ${TASK_ID})}${ASSIGNEE:+, assigned to ${ASSIGNEE}}.
           Work ONLY this task on this branch; tag your chat entries
@@ -518,13 +518,13 @@ jobs:
           ONE team chat (the trunk relays it every segment).
           Law: templates/COMMON.org (canonical manual, khaalidrafi/agent-team.el).
           Board: agent-team/TODOS.org. Roster: agent-team/MEMBERS.org.
-          Manual: agent-team/TEAM-CONTROL.org + agent-team/TEAM.md. Repo context: {{REPO_CONTEXT}}.
+          Manual: agent-team/CONTROL.org + agent-team/CHARTER.md. Repo context: {{REPO_CONTEXT}}.
           PEER MESH — ONE CHAT BUFFER (Owner orders 2026-10-20: members talk
           to each other — work, share reports, take each other's help, get
           dispatches; 16:55: team chat is ONE Org file, direct pings, no
           mailbox; 17:55 FORMAT LAW: standard Org format — the headline
           carries the FROM, fields ride Org tags + a :PROPERTIES: drawer):
-          agent-team/TEAM-CHAT.org. Append one message AT EOF in this
+          agent-team/CHAT.org. Append one message AT EOF in this
           EXACT format:
           * MSG ${SEAT} -> @<to|all> :<kind>:      :msg:${SEAT}:<to-sans-at>:<kind>:
           :PROPERTIES:
@@ -547,7 +547,7 @@ jobs:
           ${TOP}
 {{WORK_ORDER}}
           WORK ONE SEGMENT (time-boxed, max 3 self-attempts per MEMBER LAWS):
-          1. READ THE TEAM CHAT FIRST (agent-team/TEAM-CHAT.org): scan the
+          1. READ THE TEAM CHAT FIRST (agent-team/CHAT.org): scan the
              tail for @${SEAT} pings you have not answered — do the work,
              answer it, or reply BLOCKED with evidence, by appending your
              reply to the chat. Never edit or delete an existing entry;
@@ -559,7 +559,7 @@ jobs:
           3. Do the work IN THIS BRANCH. Small, verifiable, committed.
           4. VERIFY before finishing (the landing gate runs the same and
              finalize UNDOES the merge of a red tree — red work never lands).
-          5. POST TO THE TEAM CHAT (agent-team/TEAM-CHAT.org, append at
+          5. POST TO THE TEAM CHAT (agent-team/CHAT.org, append at
              EOF, one headline per message, direct @pings): dispatch
              downstream work to peers, report upstream results with
              evidence (file:line, commit sha), and send :request: /
@@ -569,7 +569,7 @@ jobs:
              changed + evidence (file:line, commit sha). Never mark DONE
              (that is the Lead's gate).
           7. Commit everything on this branch with message 'turn(${SEAT}): ...'.
-          8. REPORT: append your report to agent-team/TEAM-CHAT.org as
+          8. REPORT: append your report to agent-team/CHAT.org as
              '${SEAT} -> @lead :report:' (RESULT: DONE | PARTIAL | BLOCKED,
              evidence included). Real runs ALSO post it to YOUR role's Lark
              custom-bot webhook in env ROLE_LARK_WEBHOOK
@@ -585,7 +585,7 @@ jobs:
               branch right after the segment (your chat posts must
               propagate).
           11. LEAD-OWNED FILES — never edit, only read and cite:
-              .github/workflows/*, agent-team/TEAM-CONTROL.org,
+              .github/workflows/*, agent-team/CONTROL.org,
               .gitattributes, .github/scripts/*. Verify plumbing facts with
               file:line evidence in your mail/report instead. (Editing them
               breaks the chain's git permissions and the rotation pointer.)
@@ -778,7 +778,7 @@ jobs:
           fi
           echo "commits=${COMMITS:-0}" >> "$GITHUB_OUTPUT"
           echo "empty-segment check: ${COMMITS:-0} post-turn commit(s) on ${TURN_BRANCH:-no-branch}" >> "$GITHUB_STEP_SUMMARY"
-          CTL=agent-team/TEAM-CONTROL.org
+          CTL=agent-team/CONTROL.org
           case "${{ steps.control.outputs.seat }}" in
 {{NEXT_MAP}}
           esac
@@ -793,7 +793,7 @@ jobs:
             git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-              git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+              git show "origin/${CHAIN_REF}:agent-team/CONTROL.org" > "$CTL" 2>/dev/null || true
             fi
             sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
             git add "$CTL"
@@ -814,7 +814,7 @@ jobs:
   #   1. AUTO-MERGE the seat's work branch into ai/main behind the landing
   #      gate (re-merge race-proof vs moved main; branch deleted ONLY after
   #      a verified landing). Team chat and board notes propagate
-  #      seat-to-seat with NO Lead in the loop (TEAM-CHAT.org is
+  #      seat-to-seat with NO Lead in the loop (CHAT.org is
   #      union-merged via .gitattributes, so concurrent appends never
   #      conflict). Red work never lands (merge undone, branch stays).
   #   2. Jev judgment (health-gated): weighs the stall state for the
@@ -865,8 +865,8 @@ jobs:
             git fetch origin "$BRANCH"
             if git merge --no-ff --no-edit "origin/$BRANCH" 2>/dev/null; then
               OUTCOME="merged"
-            elif git checkout HEAD -- agent-team/TEAM-CONTROL.org 2>/dev/null \
-                 && git add agent-team/TEAM-CONTROL.org 2>/dev/null \
+            elif git checkout HEAD -- agent-team/CONTROL.org 2>/dev/null \
+                 && git add agent-team/CONTROL.org 2>/dev/null \
                  && git commit --no-edit >/dev/null 2>&1; then
               # R-2-69: the only legal cross-branch divergence is the
               # control file (task fork vs target) — the landing target
@@ -901,8 +901,8 @@ jobs:
             git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if ! git merge --no-ff --no-edit "origin/$BRANCH" 2>/dev/null; then
-              if ! git checkout HEAD -- agent-team/TEAM-CONTROL.org 2>/dev/null \
-                   || ! git add agent-team/TEAM-CONTROL.org 2>/dev/null \
+              if ! git checkout HEAD -- agent-team/CONTROL.org 2>/dev/null \
+                   || ! git add agent-team/CONTROL.org 2>/dev/null \
                    || ! git commit --no-edit >/dev/null 2>&1; then
                 git merge --abort || true
                 echo "attempt $i: merge conflict vs moved main — retrying"
@@ -946,7 +946,7 @@ jobs:
           # the board: the decision is paused-todo-review — arm
           # #+CHAIN-PAUSE: ON. The next run halts in mode=paused (clean,
           # no burn); the LEAD reviews and clears the marker to resume.
-          CTL=agent-team/TEAM-CONTROL.org
+          CTL=agent-team/CONTROL.org
           BASE="${{ needs.turn.outputs.base_sha }}"
           # R-2-69: task chains delivered board notes via the TRUNK landing —
           # diff trunk pre..post landing instead of the thin task branch.
@@ -967,7 +967,7 @@ jobs:
               git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
               git reset --hard origin/ai/main
               if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-                git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+                git show "origin/${CHAIN_REF}:agent-team/CONTROL.org" > "$CTL" 2>/dev/null || true
               fi
               grep -q '^#+CHAIN-PAUSE:' "$CTL" \
                 && sed -i "s|^#+CHAIN-PAUSE:.*|#+CHAIN-PAUSE: ON|" "$CTL" \
@@ -1130,13 +1130,13 @@ jobs:
 
       - name: Stall accounting + dispatch the next run (self-chain)
         run: |
-          CTL=agent-team/TEAM-CONTROL.org
+          CTL=agent-team/CONTROL.org
           if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
             # R-2-69: read THIS task's control state (the working tree may
             # be the trunk after the landing gate; the task state lives on
             # the task branch blob).
             git fetch origin +refs/heads/"${CHAIN_REF}":refs/remotes/origin/"${CHAIN_REF}" || true
-            git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+            git show "origin/${CHAIN_REF}:agent-team/CONTROL.org" > "$CTL" 2>/dev/null || true
           fi
           RESULT="${{ needs.turn.outputs.seg_result }}"
           OUTCOME="${{ steps.merge.outputs.outcome }}"
@@ -1152,7 +1152,7 @@ jobs:
             git fetch origin +refs/heads/ai/main:refs/remotes/origin/ai/main
             git reset --hard origin/ai/main
             if [ "${CHAIN_REF:-ai/main}" != "ai/main" ]; then
-              git show "origin/${CHAIN_REF}:agent-team/TEAM-CONTROL.org" > "$CTL" 2>/dev/null || true
+              git show "origin/${CHAIN_REF}:agent-team/CONTROL.org" > "$CTL" 2>/dev/null || true
             fi
             sed -i "s|^\#+STALL-COUNT:.*|\#+STALL-COUNT: ${NEW}|" "$CTL"
             git add "$CTL"
@@ -1222,6 +1222,6 @@ jobs:
       # (Discord mirror retired — Owner order 2026-10-26 #hq: "remv
       # discord, too." NO outbound chat mirror remains — Telegram retired
       # 2026-10-25, Discord retired 2026-10-26. The chain verdict lands in
-      # the run summary; the team chat lives in agent-team/TEAM-CHAT.org on
+      # the run summary; the team chat lives in agent-team/CHAT.org on
       # the repo. The Lead reads it there and couriers Owner-bound entries
       # (FROM:/TO: lines) to the Owner's #hq channel by hand.)

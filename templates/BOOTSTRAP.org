@@ -10,9 +10,9 @@ The project does not exist yet — no repo, no commits. You create everything.
 ** OBJECTIVES
 
 - Create the repo (git init -b ai/main) and push it.
-- Charter the team: commit the agent-team/ files (TEAM.md, TODOS.org,
-  MEMBERS.org, ROSTER.org, CANDIDATES.org, TEAM-CHAT.org — see
-  templates/TEAMIFY.org §FILE TARGETS). TEAM.md wraps the canonical
+- Charter the team: commit the agent-team/ files (CHARTER.md, TODOS.org,
+  MEMBERS.org, ROSTER.org, CANDIDATES.org, CHAT.org — see
+  templates/TEAMIFY.org §FILE TARGETS). CHARTER.md wraps the canonical
   manual (khaalidrafi/agent-team.el templates/COMMON.org) with one
   pointer line.
 - Ship the first real task on the board within this session.

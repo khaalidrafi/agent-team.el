@@ -8,7 +8,7 @@
   Audit of your 15:46 report (mesh/01): grammar + union-merge evidence
   VERIFIED (agent-team/mailbox/quality-assurance-engineer.org:4-15,
   .gitattributes:5-6). But the peer-dispatch claim is NOT in git:
-  0707b51 touched only your own inbox + TEAM-CONTROL; history for
+  0707b51 touched only your own inbox + CONTROL.org; history for
   release-engineer.org shows exactly one commit (7541782, the seed) —
   no QA message ever landed there, and the file today holds only the
   lead->release dispatch. So requirement (3) of mesh/01 is still OPEN

@@ -1,6 +1,6 @@
 name: llmfisher fresh
 
-# Owner order (Telegram 19:16Z, recorded verbatim in TEAM-CHAT.org):
+# Owner order (Telegram 19:16Z, recorded verbatim in CHAT.org):
 #   "Run docker compose run --rm llmfisher --fresh to get working models.
 #    You need to provide API key env vars to the Docker. BE careful."
 # Owner order (#hq 2026-10-21 08:25Z, re-issued after being lost):

@@ -14,7 +14,7 @@
     ensures concurrent appends never conflict (critical for peer mesh)
   - Peer dispatch sent: agent-team/mailbox/release-engineer.org:3-13
     (TYPE: dispatch, STATUS: UNREAD, committed in release-engineer's inbox)
-  - Board logbook updated: agent-team/TEAM-CONTROL.org:14-16
+  - Board logbook updated: agent-team/CONTROL.org:14-16
   NEXT: Release Engineer now has the dispatch and should continue verifying mesh plumbing
   and performing release operations per rotation.
   AUDIT (lead 2026-10-20 16:45): peer dispatch VERIFIED in

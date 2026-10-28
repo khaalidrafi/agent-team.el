@@ -16,7 +16,7 @@
 ;;
 ;; The board (agent-team/TODOS.org) stays the single source of
 ;; truth; chat handoffs never count (see the master prompt in
-;; agent-team/TEAM.md).
+;; agent-team/CHARTER.md).
 
 ;;; Code:
 
@@ -171,7 +171,7 @@ carries no parsable id are skipped, so a role never gets a blank brain."
 * READY-FOR-HUMAN-REVIEW
 * DEFERRED
 * BLOCKED
-* TEAM-STAFFING
+* STAFFING
 * HIRING-LOG
 * AUTONOMY
   AUTO
@@ -283,15 +283,15 @@ DONE is terminal (EM-only by convention; this command does not enforce roles)."
     (message "agent-team: %s -> %s" kw next)))
 
 
-;;; Team mesh: TEAM-CHAT.org (one chat buffer, mailbox deprecated)
+;;; Team mesh: CHAT.org (one chat buffer, mailbox deprecated)
 
 (defun agent-team--chat-file ()
   "The team chat file (ONE append-only Org buffer, Owner law 16:55)."
-  (agent-team--file "TEAM-CHAT.org"))
+  (agent-team--file "CHAT.org"))
 
 (defun agent-team--control-file ()
   "The control file (turn pointer, objective, kill switch, stall count)."
-  (agent-team--file "TEAM-CONTROL.org"))
+  (agent-team--file "CONTROL.org"))
 
 (defun agent-team--chat-repo ()
   "owner/slug of the current project's git origin — the chat entry's
@@ -364,10 +364,10 @@ protocol — same list everywhere, enforced by the sender commands).")
 
 (defun agent-team-chat-send (&optional from to kind body priority risk)
   "Send one chat message to the team (THE command agents call — Owner
-order 2026-10-27 #hq: TEAM-CHAT.org is auto-maintained by agent-team.el,
+order 2026-10-27 #hq: CHAT.org is auto-maintained by agent-team.el,
 never hand-written). Composes the unique comms protocol entry (FROM/TO/
 KIND/REPO/PRIORITY/RISK drawer, like a TEAM-UPDATE) and appends it to
-agent-team/TEAM-CHAT.org. FROM defaults to `agent-team-em-id'; REPO is
+agent-team/CHAT.org. FROM defaults to `agent-team-em-id'; REPO is
 derived from the project's git origin. Interactively prompts for every
 field; called from Lisp, all arguments optional."
   (interactive
@@ -388,11 +388,11 @@ field; called from Lisp, all arguments optional."
 
 (defun agent-team-chat-send-batch ()
   "Non-interactive chat send for CI seats (Owner order 2026-10-27 #hq:
-TEAM-CHAT.org is maintained by commands, never hand-written). Reads the
+CHAT.org is maintained by commands, never hand-written). Reads the
 message from env — AGENT_CHAT_FROM, AGENT_CHAT_TO, AGENT_CHAT_KIND,
 AGENT_CHAT_BODY (or AGENT_CHAT_BODY_FILE), optional AGENT_CHAT_REPO,
 AGENT_CHAT_PRIORITY, AGENT_CHAT_RISK, and AGENT_CHAT_FILE (override the
-chat file path; default: the project's agent-team/TEAM-CHAT.org). The
+chat file path; default: the project's agent-team/CHAT.org). The
 harness bakes this as the `team-chat' command. Fails loudly when a
 required field is missing; prints a confirmation line on success."
   (let* ((env (lambda (v)
@@ -416,14 +416,14 @@ required field is missing; prints a confirmation line on success."
          (file (or (funcall env "AGENT_CHAT_FILE")
                    (condition-case nil
                        (agent-team--chat-file)
-                     (error "agent-team/TEAM-CHAT.org")))))
+                     (error "agent-team/CHAT.org")))))
     (agent-team--chat-append-1 from to kind body repo priority risk file)
     (princ (format "team-chat: appended (%s -> %s :%s:)\n" from to kind))))
 
 (defun agent-team-chat-open ()
   "Open the team chat session buffer (Owner order 2026-10-27 #hq: like
 an agent-org session — an Org buffer backed by an Org file, here
-agent-team/TEAM-CHAT.org). Auto-revert-tail keeps new peer entries
+agent-team/CHAT.org). Auto-revert-tail keeps new peer entries
 flowing in at the live tail; the remote view is
 `agent-team-chat-live-mode' (the GitHub-polling viewer)."
   (interactive)
@@ -532,7 +532,7 @@ every credential-consuming command can demand its key up front)."
     (user-error "agent-team: env var %s is NOT set — ask the Lead/peer for the NAME, then export it" name))
   t)
 
-;;; Control plane: TEAM-CONTROL.org (turn pointer / objective / kill switch)
+;;; Control plane: CONTROL.org (turn pointer / objective / kill switch)
 
 (defun agent-team--control-apply (content key value)
   "Return CONTENT with its #+KEY: line replaced by VALUE (or the line
@@ -557,7 +557,7 @@ inserted into the header block when absent).  Pure — unit-tested."
     (string-join lines "\n")))
 
 (defun agent-team-control-get (key)
-  "Read the #+KEY: value from TEAM-CONTROL.org (nil when absent)."
+  "Read the #+KEY: value from CONTROL.org (nil when absent)."
   (let ((file (agent-team--control-file)))
     (when (file-exists-p file)
       (with-temp-buffer
@@ -567,7 +567,7 @@ inserted into the header block when absent).  Pure — unit-tested."
           (string-trim (match-string 1)))))))
 
 (defun agent-team-control-set (key value)
-  "Set #+KEY: to VALUE in TEAM-CONTROL.org (TURN / KILL-SWITCH /
+  "Set #+KEY: to VALUE in CONTROL.org (TURN / KILL-SWITCH /
 OBJECTIVE / OBJECTIVE-STATE / STALL-COUNT).  The CI chain reads these
 verbatim each run — this is how the Lead paces the rotation from Emacs."
   (interactive "sKey (TURN|KILL-SWITCH|OBJECTIVE|OBJECTIVE-STATE|STALL-COUNT): \nsValue: ")
@@ -578,7 +578,7 @@ verbatim each run — this is how the Lead paces the rotation from Emacs."
                         (buffer-string))
                     (progn
                       (make-directory (file-name-directory file) t)
-                      "#+TITLE: TEAM-CONTROL.org — chain control\n"))))
+                      "#+TITLE: CONTROL.org — chain control\n"))))
     (with-temp-file file
       (insert (agent-team--control-apply content key value)))
     (message "agent-team: %s -> %s" key value)))
@@ -810,7 +810,7 @@ the prompt only — never stored in files/commits/board (Owner order
     (message "agent-team: prompt built (%d chars) — *agent-team prompt* + kill-ring; paste into the Lead's fresh chat"
              (length prompt))))
 
-;;; Live team chat (TEAM-CHAT.org) --------------------------------------------
+;;; Live team chat (CHAT.org) --------------------------------------------
 ;;;
 ;;; Owner order 2026-10-21 09:16Z (#hq): "add a feature to view team chat
 ;;; live on my Emacs on Android."  Zero dependencies — url.el + timers, no
@@ -832,7 +832,7 @@ the prompt only — never stored in files/commits/board (Owner order
   :type 'string
   :group 'agent-team)
 
-(defcustom agent-team-chat-default-path "agent-team/TEAM-CHAT.org"
+(defcustom agent-team-chat-default-path "agent-team/CHAT.org"
   "Path of the chat file inside the repo (any board file works)."
   :type 'string
   :group 'agent-team)
@@ -1013,7 +1013,7 @@ via the Accept header set in `agent-team-chat--headers'."
 
 ;;;###autoload
 (defun agent-team-watch-chat (&optional repo branch path)
-  "View the team chat (TEAM-CHAT.org) LIVE in an Org buffer.
+  "View the team chat (CHAT.org) LIVE in an Org buffer.
 Polls REPO@BRANCH:PATH every `agent-team-chat-interval' seconds and
 follows the tail so new `* MSG' headlines arrive as the seats append
 them.  Works on Android (Emacs 28+, no git needed).  Keys: `g' refresh,
@@ -1369,7 +1369,7 @@ This section explains the automation that runs the team, in plain words.
 - The two files that matter:
   - .github/workflows/agent-team.yml — the automation. Only the Lead
     edits it.
-  - agent-team/TEAM-CONTROL.org — a small settings file. Each line
+  - agent-team/CONTROL.org — a small settings file. Each line
     sets one thing:
     - #+OBJECTIVE — the goal the team is working on right now.
     - #+OBJECTIVE-STATE — OPEN (still working) or COMPLETE (finished).
@@ -1460,7 +1460,7 @@ This section explains the automation that runs the team, in plain words.
     rules decide. Either way the run stays green.
 
 - The team chat lives IN the repo (no Telegram, no Discord):
-  - The chat file is agent-team/TEAM-CHAT.org. Every message sits
+  - The chat file is agent-team/CHAT.org. Every message sits
     under the name of who sent it.
   - The Lead reads the file and copies messages addressed to the
     Owner into #hq, word for word.
@@ -1475,7 +1475,7 @@ This section explains the automation that runs the team, in plain words.
   - Cursor (`agent -p'), Copilot CLI (`copilot -p'), mcode
     (`mcode exec').
   - Use one only when the Owner ordered it for this task (or a
-    standing OK the Lead wrote into TEAM-CONTROL.org).
+    standing OK the Lead wrote into CONTROL.org).
   - Otherwise use a free tool, or one the Owner's keys already pay for.
   - They stay installed in the tool image, so an approved run needs
     no rebuild.
@@ -1484,16 +1484,16 @@ This section explains the automation that runs the team, in plain words.
   - Never invent a root AGENTS.md while setting up the team.
   - The project's own AGENTS.md is its law — keep it correct, never
     delete or overwrite it carelessly.
-  - Team rules inside the repo live in agent-team/TEAM-CONTROL.org
-    and agent-team/TEAM.md.
+  - Team rules inside the repo live in agent-team/CONTROL.org
+    and agent-team/CHARTER.md.
 
 - Branches and protected files:
   - Members work on ai/turn-* branches; finished work merges only
     after the tests pass.
-  - agent-team/TEAM-CHAT.org merges by union (both sides kept), so
+  - agent-team/CHAT.org merges by union (both sides kept), so
     two members appending at once never conflict.
   - Only the Lead edits: .github/workflows/*, .github/scripts/*,
-    agent-team/TEAM-CONTROL.org, .gitattributes, and which ci/
+    agent-team/CONTROL.org, .gitattributes, and which ci/
     commit the repo points at.
 
 - Repo secrets (write-only; never copy secret VALUES anywhere; only
@@ -1771,7 +1771,7 @@ asked for by name (adoption is the EM's call)."
            "NOT-TOUCH (paths/ops the team must never touch; RET = lead-owned defaults): "))
     (when (string-empty-p not-touch)
       (setq not-touch
-            ".github/workflows/*, .github/scripts/*, agent-team/TEAM-CONTROL.org (lead-owned)")))
+            ".github/workflows/*, .github/scripts/*, agent-team/CONTROL.org (lead-owned)")))
   (unless pat
     (setq pat (read-passwd "PAT (github_pat_ scoped to this repo; RET = leave a FILL slot): "))
     (when (string-empty-p pat) (setq pat nil)))

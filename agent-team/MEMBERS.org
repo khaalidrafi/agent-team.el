@@ -1,5 +1,5 @@
 #+TITLE: MEMBERS.org — ranked members, ordered by roles
-#+UPDATED: 2026-10-20, hiring/01 round 4 — Team Lead + Director of Engineering
+#+UPDATED: 2026-10-28 — Build Engineer service staffed at khaalidrafi/packages (Owner ruling)
 #+ROUND-4-LAW: Owner orders 2026-10-20, ALL applied here: (1) NO @actions —
         every seat is a REAL model@agent pair; (2) per-seat hiring evidence
         is written as MODEL REASON and AGENT REASON SEPARATELY, plus how
@@ -210,13 +210,16 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
        DeepSWE 67.5; $3/$15, custom licence)
     3. kimi-k2.6@kimi.com
 
-* Build Engineer — BLOCKED (no Guix in CI, no local source builds by policy)
+* Build Engineer — SERVICE STAFFED AT khaalidrafi/packages (Owner ruling 2026-10-28)
   - :last-dispatch: 0
   - duties: guix packages for ALL teams (shared service)
-  - status: BLOCKED, not carried — not needed for the current goal
-    (CI-based team operation); needs an Owner ruling only when Guix work
-    returns: rent a Guix machine, or keep it box-only.
-  - when unblocked, rank:
+  - status: the Owner ruled 2026-10-28 04:02Z #hq ("Assign a role to
+    glm-5.3@chat.z.ai for defining Guix pkgs at khaalidrafi/packages") —
+    the shared Guix service is staffed THERE: Build Engineer =
+    glm-5.3@chat.z.ai, on that repo's own roster with its own Guix CI.
+    No seat here, no rotation change; the rank below is retired.
+  - when unblocked, rank (RETIRED 2026-10-28, superseded by the
+    assignment above):
     1. glm-5.3-flash@chat.z.ai
     2. qwen3.8-max@chat.qwen.ai
     3. kimi-k2.6@kimi.com

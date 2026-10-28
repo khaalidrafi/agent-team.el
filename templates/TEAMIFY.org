@@ -226,7 +226,7 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 - The exact header line routes the entry (FROM seat, @target, :kind:).
   Never reformat another member's entry.
 
-** agent-team/UPDATE.org
+** agent-team/NOTICE.org
 
 Cross-team inbox from the Director of Engineering (COMMON's DOE UPDATES
 law pins the section format and the EM's ACK duty). The file is SUPPLIED
@@ -235,5 +235,5 @@ that to the DoE in CHAT.org and keep working. Your only writes are
 ACK lines appended in place; updates arrive as sections.
 
 #+BEGIN_SRC org
-#+TITLE: UPDATE.org — standing inbox from the Director of Engineering (z.ai-agent)
+#+TITLE: NOTICE.org — standing inbox from the Director of Engineering (z.ai-agent)
 #+END_SRC

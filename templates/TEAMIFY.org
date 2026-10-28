@@ -87,23 +87,17 @@ wraps the project; it never rewrites it.
   credits, note) — the BURN LEDGER. If the platform publishes no
   balance endpoint, say so in the log and calibrate from the Owner's
   console readings — never invent endpoints.
-- A paid tool that fails reports "PAID LANE FAILED — no credits were
-  spent". A paid run is never faked.
-
-** CONSULT LAW
-
-- Every hire is posted to the Owner as a roles-with-members list BEFORE
-  it activates, and the list is re-shared after every staffing change.
-  Never hire first and consult after.
 
 ** FIRST-RESPONSE HIRE LIST (Owner 2026-10-25 04:23Z)
 
 - On the FIRST response to this teamify prompt, the Lead shares the
   full hire list WITH REASONINGS. Per hire: the benchmark numbers
   cited, the hands-on/review signal, and why THIS model got the job
-  over the runner-up. A bare model list FAILS the turn.
+  over the runner-up. A bare model list FAILS the turn. The same list
+  goes to the Owner BEFORE it activates (CONSULT LAW, COMMON HIRING
+  PROTOCOL) — never hire first and consult after.
 - Source it from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
-  new rows). The same list goes to the Owner per CONSULT LAW.
+  new rows).
 
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 

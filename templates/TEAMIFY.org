@@ -65,8 +65,9 @@ project into a team project — adopt, don't rebuild.
 4. Then team mode: watch the board, rank every model in
    agent-team/CANDIDATES.org (STAFFING), and make the first real
    dispatch.
-5. STATUS #1: the environment line + what the project is + the teamify
-   commit (branch + sha).
+5. STATUS #1 per the FIRST RESPONSE gate below: environment + project
+   line + HIRE LIST with reasonings + THE BOARD + the teamify commit
+   (branch + sha).
 
 ** DEFINITION OF DONE
 - as agreed per dispatch (see COMMON anatomy)
@@ -88,16 +89,25 @@ wraps the project; it never rewrites it.
   balance endpoint, say so in the log and calibrate from the Owner's
   console readings — never invent endpoints.
 
-** FIRST-RESPONSE HIRE LIST (Owner 2026-10-25 04:23Z)
+** FIRST RESPONSE — HARD GATE (Owner 2026-10-28 #hq: "Leads are still not
+  hiring properly and not providing hired list and things to do on the
+  repo, on first response to teamify prompt")
 
-- On the FIRST response to this teamify prompt, the Lead shares the
-  full hire list WITH REASONINGS. Per hire: the benchmark numbers
-  cited, the hands-on/review signal, and why THIS model got the job
-  over the runner-up. A bare model list FAILS the turn. The same list
-  goes to the Owner BEFORE it activates (CONSULT LAW, COMMON HIRING
-  PROTOCOL) — never hire first and consult after.
-- Source it from agent-team/CANDIDATES.org rows only (ADD-FREEZE: no
-  new rows).
+- STATUS #1 — the FIRST response to this teamify prompt — MUST carry
+  ALL FOUR, in order, each under its own heading. Missing any one
+  FAILS the turn and the response is re-run:
+  1. ENVIRONMENT — the terminal/internet/git line (TASK step 1).
+  2. THE PROJECT — what the repo is, stated back in one line.
+  3. HIRE LIST — the full hire list WITH REASONINGS, sent to the Owner
+     BEFORE it activates (CONSULT LAW, COMMON HIRING PROTOCOL — never
+     hire first and consult after). Per hire: the benchmark numbers
+     cited, the hands-on/review signal, and why THIS model got the job
+     over the runner-up. A bare model list FAILS. Sourced from
+     agent-team/CANDIDATES.org rows only (ADD-FREEZE: no new rows).
+  4. THE BOARD — the things to do on the repo: the initial TODOS.org
+     entries the teamify commit carries, each one line, derived from
+     the repo audit (what is broken, missing or unbuilt first). No
+     board, no pass.
 
 * FILE TARGETS (byte-level — every teamify produces these EXACTLY)
 

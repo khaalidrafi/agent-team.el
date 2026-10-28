@@ -4,10 +4,10 @@
 
 * DEPRECATED 2026-10-20 17:10 UTC (Owner order, #hq 16:55)
 
-The mailbox system below is SUPERSEDED by agent-team/TEAM-CHAT.org —
+The mailbox system below is SUPERSEDED by agent-team/CHAT.org —
 ONE chat buffer for the whole team, direct @pings, no inbox files.
 This file remains only as a historical record of the mesh/01 grammar;
-do NOT write new mail to mailbox/ files. See TEAM-CHAT.org header for
+do NOT write new mail to mailbox/ files. See CHAT.org header for
 the live law.
 
 * The law (Owner, Discord #hq 2026-10-20 14:52)
@@ -87,7 +87,7 @@ seat always starts from a fresh inbox. The union merge driver
   reliably: Discord bot mentions do not fire bot-to-bot, and Lark is
   buggy on Z.ai — so the mailbox IS the Lead's channel.
 - Lead -> agents :: dispatches into role inboxes (proven in mesh/01)
-  plus the TEAM-CONTROL.org switches; from Emacs the Lead (or the Owner)
+  plus the CONTROL.org switches; from Emacs the Lead (or the Owner)
   can also type straight into a role's live session with
   ~M-x agent-team-send-to-role~.
 - Lead -> Owner :: Discord #hq, material events only.

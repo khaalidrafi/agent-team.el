@@ -29,7 +29,7 @@
     - formal requests, offers, and reports of record,
     - quick #hq pings stay conversational; the Owner is exempt, teams
       are not.
-  Internal TEAM-CHAT.org dispatch/report/ask traffic keeps the existing
+  Internal CHAT.org dispatch/report/ask traffic keeps the existing
   headline + drawer FORMAT LAW untouched. An entry that is ALSO a letter
   satisfies BOTH grammars:
   - the local headline + drawer grammar,
@@ -38,7 +38,7 @@
   - the letter body skeleton.
 
 * WHERE A LETTER LIVES
-  - Default: a TEAM-CHAT.org entry
+  - Default: a CHAT.org entry
     - keep the local MSG headline grammar exactly,
     - set :KIND: letter,
     - add the drawer fields,
@@ -116,7 +116,7 @@
        it sends on that :REF:,
      - never by rewriting history.
   10. CHANNEL-AGNOSTIC
-     - the format travels with the text: TEAM-CHAT.org entry, letter
+     - the format travels with the text: CHAT.org entry, letter
        file, chat relay — all identical.
   11. STRUCTURE (Owner order 2026-10-26: nested lists)
      - top level = one idea per bullet,

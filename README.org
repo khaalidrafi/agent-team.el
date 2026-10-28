@@ -14,7 +14,7 @@ Emacs interface for the multi-model agent team system:
 - =agent-team-gateway-ping= — gateway health check
 
 The board (=agent-team/TODOS.org=) stays the single source of truth.
-The full operating manual lives in =agent-team/TEAM.md= of each repo
+The full operating manual lives in =agent-team/CHARTER.md= of each repo
 (master prompt embedded).
 
 * Install

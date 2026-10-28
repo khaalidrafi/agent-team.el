@@ -10,7 +10,7 @@ never committed here.
 
 `agent-team.el` — the Emacs package for the multi-model agent team: board
 (TODOS.org), dispatch composer, status flips, the team mesh
-(TEAM-CHAT.org), the control plane (TEAM-CONTROL.org), the secret law
+(CHAT.org), the control plane (CONTROL.org), the secret law
 commands, and the Owner's gateway client. The team ALSO runs on CI
 (.github/workflows/ci.yml): scheduled/dispatched turns rotate seats through
 real work segments and self-chain until the objective completes.
@@ -31,12 +31,12 @@ real work segments and self-chain until the objective completes.
 
 ## File map (source-of-truth chain)
 
-- `agent-team/TEAM-CONTROL.org` — chain switches: `#+KILL-SWITCH`,
+- `agent-team/CONTROL.org` — chain switches: `#+KILL-SWITCH`,
   `#+OBJECTIVE`, `#+OBJECTIVE-STATE`, `#+TURN` (seat pointer),
   `#+STALL-COUNT`. CI reads it verbatim every run.
 - `agent-team/TODOS.org` — the BOARD, single source of truth
   for work; chat handoffs never count.
-- `agent-team/TEAM-CHAT.org` — ONE append-only chat buffer (mailbox/ is a
+- `agent-team/CHAT.org` — ONE append-only chat buffer (mailbox/ is a
   frozen archive; never write there).
 - `agent-team/MEMBERS.org` — roster + ranks + SECRET/SESSION
   law text.
@@ -85,7 +85,7 @@ real work segments and self-chain until the objective completes.
    image (docker/harness/); CI never installs bodies at turn time. Keys
    are env-injected, never baked.
 7. SEAT BOUNDARIES: seats never edit Lead-owned files (.github/workflows/*,
-   agent-team/TEAM-CONTROL.org, .gitattributes) — read and cite them with
+   agent-team/CONTROL.org, .gitattributes) — read and cite them with
    file:line evidence instead. Seats never push to ai/main (the chain's
    finalize auto-merges their branch behind the gate).
 8. BOARD DISCIPLINE: work items live on the BOARD. Mark ONGOING at start,
@@ -131,5 +131,5 @@ The chain lives in .github/workflows/ci.yml. Five jobs run in order:
 The chain stops only on KILL-SWITCH ON, OBJECTIVE-STATE COMPLETE, no
 objective, or tests red; a no-progress streak shifts to backoff, never
 to failure. No chat mirror anywhere (Telegram retired 2026-10-25; Discord
-retired 2026-10-26) — the team chat lives in agent-team/TEAM-CHAT.org and
+retired 2026-10-26) — the team chat lives in agent-team/CHAT.org and
 the Lead couriers Owner-bound entries to #hq.

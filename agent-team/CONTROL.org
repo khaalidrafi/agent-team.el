@@ -1,18 +1,18 @@
-#+TITLE: TEAM-CONTROL.org — CI turn control (the Owner's switches)
+#+TITLE: CONTROL.org — CI turn control (the Owner's switches)
 #+ROLE: read by .github/workflows/ci.yml `turn` job every scheduled run.
         OBJECTIVE FLOW (Owner order 2026-10-20): the Owner does NOT edit
         this file — he states the objective to the Team Lead (Discord #hq)
         and the LEAD transcribes it into #+OBJECTIVE verbatim in intent.
         One line per switch, do not reformat the keywords.
 
-#+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"; channel migrated to ONE chat file per Owner order 2026-10-20 16:55 #hq): every rotation seat proves the mesh — on its turn it (1) FIRST scans the tail of the team chat agent-team/TEAM-CHAT.org and acts on every @ping addressed to it (or @all) that it has not answered, (2) verifies ONE fact about the mesh plumbing (TEAM-CHAT.org law header, .gitattributes union rule, TEAM-CONTROL chain switches, ci.yml self-chain) with file:line evidence, (3) appends at least one peer message to the chat (dispatch, report, request, or a direct @ping to a peer — no mailbox), (4) reports @lead in the chat with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
+#+OBJECTIVE: mesh/01 (Owner order 2026-10-20 14:52 #hq — peer mesh, "agents talk to each other, automatically send and receive messages, keep working, unlimited runs, until objective complete to its finest"; channel migrated to ONE chat file per Owner order 2026-10-20 16:55 #hq): every rotation seat proves the mesh — on its turn it (1) FIRST scans the tail of the team chat agent-team/CHAT.org and acts on every @ping addressed to it (or @all) that it has not answered, (2) verifies ONE fact about the mesh plumbing (CHAT.org law header, .gitattributes union rule, CONTROL.org chain switches, ci.yml self-chain) with file:line evidence, (3) appends at least one peer message to the chat (dispatch, report, request, or a direct @ping to a peer — no mailbox), (4) reports @lead in the chat with RESULT: DONE | PARTIAL | BLOCKED; the rotation self-chains (finalize re-dispatches) until all four seats have filed their report to lead; the Lead audits every landed branch and only the Lead sets this state to COMPLETE
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
 #+TURN: openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)
 #+STALL-COUNT: 0
 #+LAST-VERDICT: 1b7f989520c5
 #+LAST-BLOCKED-NOTIFY: 0
-#+CHANNEL: agent-team/TEAM-CHAT.org (single-buffer team chat, direct @pings —
+#+CHANNEL: agent-team/CHAT.org (single-buffer team chat, direct @pings —
            mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
            brief now scans the chat tail instead of inboxes)
 
@@ -20,7 +20,7 @@
 - [2026-10-21 Wed 02:45 +08] Lead glm-5.3-flash: Owner security order
   (#hq 18:27Z) — (1) FULL-REPO SECRET AUDIT: 162 commits + working tree,
   credential-shape scan (Qoder PAT / TG token / GH PATs / sk- / bearer /
-  x-access-token): ZERO leaks, TEAM-CHAT.org clean — nothing to rotate
+  x-access-token): ZERO leaks, CHAT.org clean — nothing to rotate
   on evidence. (2) SECRET LAW: credentials travel ONLY as ENV VAR NAMES
   between members ("ask another agent to look into the PAT env", reads
   its own env via (getenv "NAME")); all PATs already repo secrets —
@@ -38,7 +38,7 @@
   protocol armed (fresh 9-min live window + TG-delivered link on his
   word); CODEBUDDY_* secrets follow the moment it lands.
 - [2026-10-21 Wed 02:05 +08] Lead glm-5.3-flash: Owner FORMAT LAW (#hq
-  17:55Z) — (1) STANDARD FORMAT: TEAM-CHAT.org entries are Org headlines
+  17:55Z) — (1) STANDARD FORMAT: CHAT.org entries are Org headlines
   carrying the FROM ("<from> -> @<to>" IS the heading), routing in real
   Org tags (:msg:...:), structured fields in a :PROPERTIES: drawer
   (:FROM: :TO: :KIND: :WHEN: :CHANNEL:), WHEN as an Org inactive
@@ -58,15 +58,15 @@
   CodeBuddy credential exists — keys pro-only); for API-served brains
   there is no novelty in any body — "any agent can ride APIs, no
   surprise" — so the brain is installed into the BODY THAT FITS the work.
-  Dockerfile comment + TEAM-CHAT note updated to the same law.
+  Dockerfile comment + CHAT.org note updated to the same law.
 - [2026-10-21 Wed 01:50 +08] Lead glm-5.3-flash: Owner batch (#hq 17:27Z) —
   (1) Qoder PAT delivered -> repo secret QODER_PERSONAL_ACCESS_TOKEN set
   (HTTP 201); platform seat AUTH-READY; THIS turn = the Qoder-on-CI proof
   dispatch (one-off; ci.yml advance case returns rotation to Principal).
   (2) Telegram bot @agent_team_bridge_bot delivered -> secret
   TELEGRAM_BOT_TOKEN set; two-way bridge wired in ci.yml: INGEST records
-  every private Owner message verbatim into TEAM-CHAT.org as @owner before
-  the segment (his law: "my reply should get recorded in TEAM-CHAT.org"),
+  every private Owner message verbatim into CHAT.org as @owner before
+  the segment (his law: "my reply should get recorded in CHAT.org"),
   chat id auto-learned; MIRROR sends chain verdicts to him. He must /start
   the bot once (bots cannot initiate). (3) CodeBuddy keys are pro-only ->
   CLI rides third-party backends (CODEBUDDY_BASE_URL + CODEBUDDY_API_KEY
@@ -74,7 +74,7 @@
   Lead does not code; Lead assumes Platform-ops for CI plumbing; elisp
   dev stays with the seats.
 - [2026-10-20 Tue 17:10] Lead glm-5.3-flash: CHANNEL MIGRATION per Owner order
-  (Discord #hq 16:55) — team chat is now ONE file, agent-team/TEAM-CHAT.org
+  (Discord #hq 16:55) — team chat is now ONE file, agent-team/CHAT.org
   (union-merged, append-only, direct @pings, no inbox relay); mailbox/
   frozen as archive; ci.yml turn brief rewired (read chat tail first, post
   reports/peer pings there); QA's unread dispatch to Release Engineer
@@ -137,7 +137,7 @@
 #
 # DEMO RUN 2026-10-20 (demo/01) is CLOSED — REPORT #7 on the board.
 # CURRENT RUN mesh/01: mechanism-proof for the peer mesh; comms law: the
-# ONE team chat agent-team/TEAM-CHAT.org (mailbox/ retired). The Owner
+# ONE team chat agent-team/CHAT.org (mailbox/ retired). The Owner
 # reads the chat in-repo; he speaks in Discord #hq to the Lead, who
 # transcribes. (Telegram retired 2026-10-25; Discord mirror retired
 # 2026-10-26 — his orders: no bridge, no mirror, no chat automation.
@@ -146,6 +146,6 @@
 # current dispatch IS its Qoder-on-CI proof.
 :LOGBOOK:
 - [2026-10-20 Tue 15:40] QA Engineer: Peer mesh verified — grammar check passed (agent-team/mailbox/quality-assurance-engineer.org:4-15), union merge driver confirmed (agent-team/mailbox/*.org merge=union, .gitattributes:5-6). Dispatched to Release Engineer (agent-team/mailbox/release-engineer.org:3-13).
-- [2026-10-20 Tue 20:10] Lead: Owner confirmed DUAL-REPO LEAD (#hq 19:56Z) — this Lead serves khaalidrafi/agent-team.el AND khaalidrafi/admincraft. CHAT ROUTING LAW: each repo's GLM team chat mirrors to its RESPECTIVE Discord channel — finalize now posts the chain verdict + this segment's new TEAM-CHAT.org entries to secret DISCORD_WEBHOOK_TEAM_HQ (this repo -> #hq; admincraft -> DISCORD_WEBHOOK_TEAM_ADMINCRAFT). Silent until the Owner creates the channel webhook (one click) and sets the secret.
+- [2026-10-20 Tue 20:10] Lead: Owner confirmed DUAL-REPO LEAD (#hq 19:56Z) — this Lead serves khaalidrafi/agent-team.el AND khaalidrafi/admincraft. CHAT ROUTING LAW: each repo's GLM team chat mirrors to its RESPECTIVE Discord channel — finalize now posts the chain verdict + this segment's new CHAT.org entries to secret DISCORD_WEBHOOK_TEAM_HQ (this repo -> #hq; admincraft -> DISCORD_WEBHOOK_TEAM_ADMINCRAFT). Silent until the Owner creates the channel webhook (one click) and sets the secret.
 :END:
 #+LAST-CHAT: 6028b4702b70

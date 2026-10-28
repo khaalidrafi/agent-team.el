@@ -255,10 +255,10 @@ PRIORITY: P1 · ORDER: 2")))
 
 (ert-deftest agent-team-chat-send-batch-appends ()
   "The batch sender appends a protocol entry from env — the CI-seat
-path (TEAM-CHAT.org is command-maintained, never hand-written)."
+path (CHAT.org is command-maintained, never hand-written)."
   (let* ((tmpdir (make-temp-file "team-chat-test" t))
-         (file (expand-file-name "TEAM-CHAT.org" tmpdir)))
-    (write-region "#+TITLE: TEAM-CHAT.org\n" nil file nil 'quiet)
+         (file (expand-file-name "CHAT.org" tmpdir)))
+    (write-region "#+TITLE: CHAT.org\n" nil file nil 'quiet)
     (let ((process-environment
            (append (list "AGENT_CHAT_FROM=software-engineer"
                          "AGENT_CHAT_TO=@lead"
@@ -285,8 +285,8 @@ path (TEAM-CHAT.org is command-maintained, never hand-written)."
   ;; public repo → anonymous raw URL (Android: no credentials needed)
   (should (equal
            (agent-team-chat--url "khaalidrafi/agent-team.el" "ai/main"
-                                 "agent-team/TEAM-CHAT.org" nil)
-           "https://raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/agent-team/TEAM-CHAT.org"))
+                                 "agent-team/CHAT.org" nil)
+           "https://raw.githubusercontent.com/khaalidrafi/agent-team.el/ai/main/agent-team/CHAT.org"))
   ;; private repo → Contents API with the raw-media Accept + bearer
   (should (equal
            (agent-team-chat--url "o/r" "b" "p/a.org" "tok")
@@ -300,7 +300,7 @@ path (TEAM-CHAT.org is command-maintained, never hand-written)."
 
 (ert-deftest agent-team-chat-msg-count ()
   (should (= (agent-team-chat--msg-count
-              "#+TITLE: TEAM-CHAT.org
+              "#+TITLE: CHAT.org
 * MSG lead -> @release-engineer :dispatch:      :msg:lead:release-engineer:dispatch:
 * MSG release-engineer -> @lead :report:        :msg:release-engineer:lead:report:
 * MSG lead -> @all :note:                       :msg:lead:all:note:")
@@ -623,7 +623,7 @@ prompt)."
     ;; TEAMIFY's own sections are demoted one level under the TEAMIFY
     ;; heading, so the targets live at three stars
     (should (string-match-p "\\*\\*\\* agent-team/CANDIDATES.org" prompt))
-    (should (string-match-p "\\*\\*\\* agent-team/TEAM-CHAT.org" prompt))
+    (should (string-match-p "\\*\\*\\* agent-team/CHAT.org" prompt))
     ;; the state file lives in agent-team/, never agent-org/ (typo law)
     (should (string-match-p "\\*\\*\\* agent-team/STATE.org" prompt))
     (should-not (string-match-p "agent-org/STATE" prompt))
@@ -758,9 +758,9 @@ section is the un-escape law the teamify applies when writing the file."
     (should (null outside))
     (should (null inside))
     ;; the un-escape law travels with every PRODUCED sketch: the five
-    ;; file targets (TODOS/MEMBERS/STATE/TEAM.md/TEAM-CHAT) each carry
+    ;; file targets (TODOS/MEMBERS/STATE/CHARTER.md/CHAT.org) each carry
     ;; the guard note - the teamify knows ,* is an escaped headline,
-    ;; not literal bytes.  TEAM-UPDATE.org is exempt: DoE-supplied, the
+    ;; not literal bytes.  UPDATE.org is exempt: DoE-supplied, the
     ;; teamify never creates it.  Count pinned as the tripwire: a new
     ;; produced target without its note fails here.
     (should (= 5 (seq-count

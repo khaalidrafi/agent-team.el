@@ -247,7 +247,7 @@ only for what blocks or is his alone.
   latency-sensitive API calls go to the groq/ pool.
 - One role per concern. When mandates overlap, declare it and the EM
   names the active one.
-- Standing roles persist (scoped in agent-team/TEAM.md). Task roles
+- Standing roles persist (scoped in agent-team/CHARTER.md). Task roles
   attach at dispatch and detach at close (in :LOGBOOK:).
 - Segregation: author, verifier, and merger are three different models,
   and the EM is never any of the three on application code. Seat work is
@@ -256,7 +256,7 @@ only for what blocks or is his alone.
   diff ends "overall judgment: PASS" (OUTPUT RULE format). A review
   write-up never lands as its own repo file: findings go into the files
   they correct, and the verdict goes into the merge commit message.
-  Board REVIEW completion notes, TEAM-CHAT prose, and human review
+  Board REVIEW completion notes, CHAT.org prose, and human review
   queues (AI-REVIEW.org) are process outputs, not write-ups.
 - Roles are TAILORED PER PROJECT: derive them from the project's code,
   maturity, and workflow. A greenfield prototype needs builder and
@@ -331,7 +331,7 @@ Cross-team mail travels in REPO FILES (the board law owns why; chat is not
 an artifact). The DoE lands a TEAM UPDATE — MSG-TYPE TEAM-UPDATE with the
 MESSAGE STANDARD header (FROM/TO model@platform, REPO, DEPS, PRIORITY
 P0|P1|P2 · RISK reads|writes|both) — by appending a section to the TARGET
-team's agent-team/TEAM-UPDATE.org on the team's main branch:
+team's agent-team/UPDATE.org on the team's main branch:
 
 #+BEGIN_SRC org
 ,* TEAM-UPDATE #<n> — <target-team>/<scope>: <title>
@@ -345,7 +345,7 @@ team's agent-team/TEAM-UPDATE.org on the team's main branch:
   ACK: <EM appends: date — disposition — never the DoE>
 #+END_SRC
 
-- The EM reads TEAM-UPDATE.org beside the board at turn start. A MISSING
+- The EM reads UPDATE.org beside the board at turn start. A MISSING
   or EMPTY file means no cross-team mail — never a STOP.
 - The ACK line is the closure evidence: the EM appends it, and the
   section is append-only from then on. A new message is a new section.
@@ -390,7 +390,7 @@ team's agent-team/TEAM-UPDATE.org on the team's main branch:
   - PASSAGE TRIAGE — Score web-research snippets once, then read only
     the shortlist (a cheap model in front, an expensive brain after).
   - SELF-JUDGMENT — before any status report, check every standing
-    instruction (team law: TEAM-CONTROL.org + TEAM.md, the project's
+    instruction (team law: CONTROL.org + CHARTER.md, the project's
     AGENTS.md where it exists, and this prompt). Misses surface as
     blockers in the report, never as footnotes.
 - Dispatches that touch decisions-in-code carry one line: "JEV USAGE:
@@ -509,12 +509,12 @@ language. I struggle to understand their current language")
   rewrite before posting.
 - Shorthand stays allowed in code, commits, and machine files.
 
-** TEAM CHAT ENTRY FORMAT (agent-team/TEAM-CHAT.org — Owner orders 2026-10-21
+** TEAM CHAT ENTRY FORMAT (agent-team/CHAT.org — Owner orders 2026-10-21
    + 2026-10-27: the chat is COMMAND-MAINTAINED)
 
 Every `* MSG <from> -> @<to> :<kind>:' entry is written by the
 agent-team.el chat command — never by hand (Owner order 2026-10-27 #hq:
-"TEAM-CHAT.org was never meant to be hand-written. It was meant to be
+"CHAT.org was never meant to be hand-written. It was meant to be
 auto-maintained by agent-team.el in Emacs. Agents should be provided
 with an Emacs command for chatting"). The command enforces the ONE
 comms protocol: the headline carries FROM; the :PROPERTIES: drawer
@@ -530,7 +530,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
     AGENT_CHAT_FROM, AGENT_CHAT_TO, AGENT_CHAT_KIND, AGENT_CHAT_BODY —
     the turn brief carries the exact line).
   - Reading: `M-x agent-team-chat-open' opens the chat session buffer
-    (an Org buffer backed by the TEAM-CHAT.org file, auto-revert tail —
+    (an Org buffer backed by the CHAT.org file, auto-revert tail —
     the agent-org session pattern); `M-x agent-team-chat-tail' echoes
     the last headlines; `M-x agent-team-chat-pings-to' lists your
     pings; `agent-team-chat-live-mode' is the remote GitHub viewer.
@@ -575,7 +575,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   The order is always: spec, then plan, then tasks, then implement.
 - Preamble for every dispatch: local agents "git pull first"; web and
   cloud agents "clone/pull with PAT first, then read
-  agent-team/TEAM-CONTROL.org + agent-team/TEAM.md +
+  agent-team/CONTROL.org + agent-team/CHARTER.md +
   agent-team/TODOS.org". For AGENTS.md: read the repo's own root
   AGENTS.md when it exists — it is that project's LOCAL law and the
   dual-law CI wiring bakes it into every agent. The teamify setup never
@@ -635,7 +635,7 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   alone.
 - ATOMIC RENAME LAW: renaming a member id changes ALL
   the places that name appears — the next-up line (#+TURN) in
-  TEAM-CONTROL.org, the turn-control list, and the advance list — in
+  CONTROL.org, the turn-control list, and the advance list — in
   ONE commit. One missed spot leaves the next-up line naming nobody,
   the run refuses to start, and the chain stalls.
 - GIT HYGIENE LAW: a stale LOCAL git branch named like a
@@ -813,13 +813,13 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 3. HANDOFF.org
 4. RECHECK.org
 5. agent-team/TODOS.org
-6. agent-team/TEAM.md
+6. agent-team/CHARTER.md
 7. agent-team/MEMBERS.org
 8. STATE.org (Owner pastes back)
-9. agent-team/TEAM-UPDATE.org (empty = no cross-team mail, never a STOP)
+9. agent-team/UPDATE.org (empty = no cross-team mail, never a STOP)
 
 - Any file missing or empty means STOP, name it, and wait — never
   proceed on assumption.
 - STATE.org sections: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW /
-  DEFERRED / BLOCKED / TEAM-STAFFING / HIRING-LOG / AUTONOMY.
+  DEFERRED / BLOCKED / STAFFING / HIRING-LOG / AUTONOMY.
 - Poll agent-team/TODOS.org, then act.

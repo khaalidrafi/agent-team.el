@@ -55,12 +55,12 @@ project into a team project — adopt, don't rebuild.
    AGENTS.md if the project happens to have one (it is that project's
    LOCAL law; the teamify setup never creates or rewrites a repo-root
    AGENTS.md on its own).
-3. TEAMIFY: write agent-team/TEAM.md — the team CONSTITUTION (purpose,
+3. TEAMIFY: write agent-team/CHARTER.md — the team CONSTITUTION (purpose,
    standing team laws, role scopes, conventions, and one pointer line
    to the canonical manual, khaalidrafi/agent-team.el
    templates/COMMON.org). NEVER embed the manual itself: one canonical
    copy, because per-repo copies drift. Also write TODOS, MEMBERS,
-   CANDIDATES, STATE, TEAM-CHAT per FILE TARGETS below. Commit all of
+   CANDIDATES, STATE, CHAT.org per FILE TARGETS below. Commit all of
    it on ai/teamify, touching nothing else. No merge without the Owner.
 4. Then team mode: watch the board, rank every model in
    agent-team/CANDIDATES.org (STAFFING), and make the first real
@@ -178,19 +178,19 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 ,* READY-FOR-HUMAN-REVIEW
 ,* DEFERRED
 ,* BLOCKED
-,* TEAM-STAFFING
+,* STAFFING
 ,* HIRING-LOG
 ,* AUTONOMY
   AUTO
 #+END_SRC
 
-** agent-team/TEAM.md — the constitution; sections in this order:
+** agent-team/CHARTER.md — the constitution; sections in this order:
 
 File sketch (produce EXACTLY this skeleton — a line shown as ,* headline is
 Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 
 #+BEGIN_SRC org
-#+TITLE: TEAM.md — <project> team constitution
+#+TITLE: CHARTER.md — <project> team constitution
 #+REPO: <repo>
 
 ,* PURPOSE
@@ -206,13 +206,13 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
   - NEVER embed the manual here (one canonical copy)
 #+END_SRC
 
-** agent-team/TEAM-CHAT.org
+** agent-team/CHAT.org
 
 File sketch (produce EXACTLY this skeleton — a line shown as ,* headline is
 Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 
 #+BEGIN_SRC org
-#+TITLE: TEAM-CHAT.org — team chat (append-only; union-merged in CI)
+#+TITLE: CHAT.org — team chat (append-only; union-merged in CI)
 
 ,* MSG <from> -> @<to> :<kind>:
 #+END_SRC
@@ -226,14 +226,14 @@ Org comma-escaped inside this example: produce it WITHOUT the leading comma):
 - The exact header line routes the entry (FROM seat, @target, :kind:).
   Never reformat another member's entry.
 
-** agent-team/TEAM-UPDATE.org
+** agent-team/UPDATE.org
 
 Cross-team inbox from the Director of Engineering (COMMON's DOE UPDATES
 law pins the section format and the EM's ACK duty). The file is SUPPLIED
 by the DoE (z.ai-agent) — you never create it. If it is missing, flag
-that to the DoE in TEAM-CHAT.org and keep working. Your only writes are
+that to the DoE in CHAT.org and keep working. Your only writes are
 ACK lines appended in place; updates arrive as sections.
 
 #+BEGIN_SRC org
-#+TITLE: TEAM-UPDATE.org — standing inbox from the Director of Engineering (z.ai-agent)
+#+TITLE: UPDATE.org — standing inbox from the Director of Engineering (z.ai-agent)
 #+END_SRC

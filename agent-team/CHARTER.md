@@ -1,4 +1,4 @@
-#+TITLE: TEAM.md — agent-team.el team charter + operating manual
+#+TITLE: CHARTER.md — agent-team.el team charter + operating manual
 #+REPO: khaalidrafi/agent-team.el (PRIVATE)
 
 * REPO CHARTER
@@ -228,7 +228,7 @@ roster diff vs live GET /v1/models)
 - environment-fit: judgment/research → Web · shell work without repo secrets →
   Cloud · repo/machine work → Local · latency-sensitive API calls → groq/ pool
 - one role per concern; overlapping mandates declared, EM names the active one
-- standing roles persist (scoped in agent-team/TEAM.md); task roles attach at
+- standing roles persist (scoped in agent-team/CHARTER.md); task roles attach at
   dispatch, detach at close (:LOGBOOK:)
 - segregation: author, verifier, merger are three different models; the EM is
   never any of the three on application code
@@ -431,7 +431,7 @@ Every inter-member and EM message uses this header, in this order, no omissions:
 
 *** MESSAGE STANDARD
 
-- DISPATCH (task brief; EM → member, chat; worked example lives in agent-team/TEAM.md
+- DISPATCH (task brief; EM → member, chat; worked example lives in agent-team/CHARTER.md
   — few-shot is standing, format consistently):
   - Header: DISPATCH #n (counter in agent-team/TODOS.org header) —
     <project>/<task-id>: <title> · TO/FROM full role · model@platform ·
@@ -506,13 +506,13 @@ Read, in order:
 3. HANDOFF.org
 4. RECHECK.org
 5. TODOs.org
-6. agent-team/TEAM.md
+6. agent-team/CHARTER.md
 7. agent-team/MEMBERS.org
 8. STATE.org (Owner pastes back)
 
 - any file missing/empty → STOP, name it, wait — never proceed on assumption
 - STATE.org: DONE / IN-FLIGHT / READY-FOR-HUMAN-REVIEW / DEFERRED / BLOCKED /
-  TEAM-STAFFING / HIRING-LOG / AUTONOMY
+  STAFFING / HIRING-LOG / AUTONOMY
 - poll agent-team/TODOS.org, then act
 
 *** WORKFLOW (single board; Org cheat sheet at the file's bottom)
@@ -531,7 +531,7 @@ Read, in order:
   acceptance — living in-repo, versioned with the code; spec → plan → tasks →
   implement, in that order
 - preamble: local agents "git pull first" · web/cloud "clone/pull with PAT first,
-  then read AGENTS.md + agent-team/TEAM.md + agent-team/TODOS.org"
+  then read AGENTS.md + agent-team/CHARTER.md + agent-team/TODOS.org"
 - NEW-HIRE CONTEXT PACK (mandatory on a member's FIRST dispatch, and on
   request): repo URL + branch · PAT for clone/push · gateway URL +
   GOMODEL_MASTER_KEY · team file paths (agent-team/…, STATE.org) · the local
@@ -581,7 +581,7 @@ Read, in order:
 
 - Branch name: ~ai/task/<member-slug>-<task-slug>~ — the branch IS the task.
 - Each task branch is THIN: trunk tip (ai/main) + ONE control commit holding
-  the task's own ~agent-team/TEAM-CONTROL.org~ fork with =#+TASK-ID:=,
+  the task's own ~agent-team/CONTROL.org~ fork with =#+TASK-ID:=,
   =#+ASSIGNEE:=, the task =#+OBJECTIVE:=, and =#+TURN:= pinned to the assignee.
 - Every segment: the chain syncs the branch to a fresh trunk tip (peer mesh
   in, task control kept), the seat works, and the work lands on ai/main

@@ -19,7 +19,7 @@
 ;;  - a registry mapping role slugs to live agent-org chat buffers
 ;;    (`agent-team-session-register', `agent-team-session-start-role',
 ;;    `agent-team-sessions-adopt'),
-;;  - `agent-team-team-buffer' — one read-only view of TEAM-CONTROL.org's
+;;  - `agent-team-team-buffer' — one read-only view of CONTROL.org's
 ;;    switches, the board's active Org TODOs, every role's session status
 ;;    and mailbox UNREAD count, and the latest exchanges of each live chat
 ;;    (the cross-agent chat, merged in one place),
@@ -31,7 +31,7 @@
 ;;    view immediately (`agent-team-sessions-install').
 ;;
 ;; agent-org is a SOFT dependency: without it the team buffer still renders
-;; from TEAM-CONTROL.org, the board, the mailboxes and the registry, so CI
+;; from CONTROL.org, the board, the mailboxes and the registry, so CI
 ;; byte-compiles and tests this file with no agent-org and no live agents.
 
 ;;; Code:
@@ -138,7 +138,7 @@ Prompts for the role of each chat; empty input skips that chat."
         (string-trim (match-string 1 text))))))
 
 (defun agent-team-sessions--control (text)
-  "Parse TEAM-CONTROL.org TEXT into a plist of the Owner's switches."
+  "Parse CONTROL.org TEXT into a plist of the Owner's switches."
   (list :objective (agent-team-sessions--kw text "OBJECTIVE")
         :state     (agent-team-sessions--kw text "OBJECTIVE-STATE")
         :kill      (agent-team-sessions--kw text "KILL-SWITCH")
@@ -287,7 +287,7 @@ so the status is the last segment; nil when BUFFER has no header line."
       (erase-buffer)
       (insert (propertize "AGENT-TEAM — live sessions\n" 'face 'bold))
       (insert (format "%s\n\n" (format-time-string "%Y-%m-%d %H:%M")))
-      (let ((ctl-text (agent-team-sessions--read-file (agent-team--file "TEAM-CONTROL.org"))))
+      (let ((ctl-text (agent-team-sessions--read-file (agent-team--file "CONTROL.org"))))
         (if ctl-text
             (let ((ctl (agent-team-sessions--control ctl-text)))
               (insert (propertize "Control\n" 'face 'bold))
@@ -295,7 +295,7 @@ so the status is the last segment; nil when BUFFER has no header line."
               (insert (format "  state %s · kill %s · stall %s · turn %s\n\n"
                               (or (plist-get ctl :state) "—") (or (plist-get ctl :kill) "—")
                               (or (plist-get ctl :stall) "—") (or (plist-get ctl :turn) "—"))))
-          (insert "  (no TEAM-CONTROL.org under agent-team/)\n\n")))
+          (insert "  (no CONTROL.org under agent-team/)\n\n")))
       (let ((tasks (agent-team-sessions--board-tasks
                     (or (agent-team-sessions--read-file (agent-team--board)) ""))))
         (insert (propertize "Board — active tasks\n" 'face 'bold))

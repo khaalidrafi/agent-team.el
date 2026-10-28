@@ -226,7 +226,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
 
 * CI TURNS — how the team keeps running (the Owner's order, mechanics)
   - The Owner sets the OBJECTIVE and owns the switches in
-    agent-team/TEAM-CONTROL.org (editable in the GitHub web UI):
+    agent-team/CONTROL.org (editable in the GitHub web UI):
     #+OBJECTIVE (one-line goal) · #+OBJECTIVE-STATE (OPEN/COMPLETE) ·
     #+KILL-SWITCH (OFF/ON) · #+TURN (whose turn is next).
   - The scheduled workflow (SIX turns/day on the now-PUBLIC repo:
@@ -254,7 +254,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     process ENV VAR in CI (and setenv'd for local Emacs members). The
     audit of 2026-10-21 (all 162 commits + working tree) found ZERO
     leaked secrets — the repo is clean; keep it that way.
-  - NEVER write a credential value into TEAM-CHAT.org, the board, mail,
+  - NEVER write a credential value into CHAT.org, the board, mail,
     commits, or session files. A message carries only the ENV VAR NAME.
   - NEED A PEER'S CREDENTIAL? Ask in the chat: "peer, look into the
     <NAME> env" — the peer replies with the NAME + a has-it confirmation

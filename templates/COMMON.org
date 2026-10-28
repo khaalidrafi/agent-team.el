@@ -44,10 +44,11 @@ only for what blocks or is his alone.
 - What the gateway IS: the GoModel gateway (khaalidrafi/llmfisher) is
   the door to ALL the Owner's models — one access point for every
   model he runs. Jev's finalize judgment is just ONE of its consumers.
-  Seat work still goes DIRECT to providers (2026-10-20 law): a
-  gateway model id stays unreachable until a resolve step proves it.
-- 2026-10-22 (second order, 16:25Z), Owner: the gateway URL is RESOLVED
-  per job, never assumed. Try these in order: (1) the
+- SEAT WORK GOES DIRECT (Owner law): member work talks to the model
+  companies directly, with API keys from repo secrets. A gateway model
+  id stays unreachable until a resolve step proves it — the gateway is
+  never a seat dependency.
+- THE URL IS RESOLVED PER JOB, never assumed. Try in order: (1) the
   vars.GOMODEL_GATEWAY_URL override, when it is set; (2)
   https://ai.khalidrafi.tech — the deployed tunnel; (3)
   http://localhost:8080 — an already-running local listener; (4) only
@@ -56,21 +57,13 @@ only for what blocks or is his alone.
   Nothing answering means no deployment is active right now. Every tier
   uses the ping contract (agent-team-gateway-ping): GET / answering 404
   or 200 means the gateway is up.
-- 2026-10-22, Owner: the judgment lane is BINARY. If the gomodel gateway
-  is up, Jev runs from there. If it is down, the chain decides directly
-  with local rules. The judgment lane carries no provider fallback
-  chain: it degrades quietly and never blocks a chain step — it never
-  turns a run red.
-- 2026-10-20, Owner: GoModel is DOWN. Neither https://ai.khalidrafi.tech
-  nor http://127.0.0.1:8080 may be a dependency of any seat. All
-  provider access goes DIRECT, with API keys from repo secrets. The
-  2026-10-22 resolution law supersedes this for the CI chain (the chain
-  probes before it trusts). It still binds seat work: treat gateway
-  model ids as unreachable until a resolve step proves otherwise.
+- THE JUDGMENT LANE IS BINARY: gateway up = Jev decides; gateway down
+  = the chain decides directly with local rules. The judgment lane
+  carries no provider fallback chain — it degrades quietly, never
+  blocks a chain step, never turns a run red.
 - GOMODEL_MASTER_KEY comes from the Owner's shell environment. NEVER
   store it in files, commits, boards, or repos. A dispatch may carry it
-  to a member; a file never holds it.
-- Gateway calls authenticate with this header:
+  to a member; a file never holds it. Gateway calls authenticate with:
   Authorization: Bearer $GOMODEL_MASTER_KEY
 
 ** BRAINS AND BODIES
@@ -125,12 +118,9 @@ only for what blocks or is his alone.
   dispatching it.
 - THE HARNESS IS NOT A CANDIDATE (Owner 2026-10-24: "It should just refer to
   CANDIDATES.org and not go beyond"): your own chat, subagent, and
-  sandbox lanes are WORKERS, never roster rows. Never roster them, never
-  probe them for staffing, and never write reports about your own chat
-  or sandbox setup.
-  The roster is done the moment it draws from agent-team/CANDIDATES.org
-  rows. Anything not in that file — including your own runtime — is out
-  of scope.
+  sandbox lanes are WORKERS, never roster rows — never roster them,
+  never probe them for staffing. Anything not in agent-team/
+  CANDIDATES.org — including your own runtime — is out of scope.
 - Every rank entry needs evidence RESEARCHED NOW — actually performed,
   never assumed. Run BATCHED web searches (several models per query
   round, never one model at a time). Useful query shapes: "<model>
@@ -233,9 +223,8 @@ only for what blocks or is his alone.
   staff), parallel workstreams (independent tasks in parallel, at most 4
   active total), delivery pipeline (an ordered chain with gates: code,
   green suite, merge, UAT), code review (verification is a separate
-  critique pass), handoff (peers transfer through the board, structured
-  like API contracts — see TEAM LOOP), and the division-of-labor five:
-  specialization, focus, guardrails, shared memory, tools.
+  critique pass), and handoff (peers transfer through the board,
+  structured like API contracts — see TEAM LOOP).
 - CLASSIFY the task type (judgment, review, frontend/backend code,
   verification, docs) before hiring. Jev can pre-classify (see JEV).
 - MINIMUM VIABLE TEAM: use the fewest roles that cover the task. Trivial
@@ -374,16 +363,10 @@ team's agent-team/TEAM-UPDATE.org on the team's main branch:
 - Access (LIVE, verified): the Owner's gateway serves Jev natively —
   POST /v1/systemone (state plus typed questions returns calibrated
   answers; the chat endpoints REJECT jev ids). Pin jev-1.13.0. The SDK
-  base URL TYPESAFE_BASE_URL is the RESOLVED gateway URL (Owner
-  resolution law 2026-10-22) — first answer wins, in priority order:
-  1. the vars.GOMODEL_GATEWAY_URL override
-  2. https://ai.khalidrafi.tech
-  3. localhost:8080
-  4. in-runner boot
-  The CI chain's resolve step owns this — probe, never assume. The
-  judgment lane is BINARY: gateway up means Jev, down means decide
-  directly. Standalone fallback: api.typesafe.ai directly, with
-  TYPESAFE_API_KEY.
+  base URL TYPESAFE_BASE_URL is the RESOLVED gateway URL — the
+  GATEWAY AUTH resolution order above, probe never assume; the
+  judgment lane is BINARY (GATEWAY AUTH). Standalone fallback:
+  api.typesafe.ai directly, with TYPESAFE_API_KEY.
   Jev ids are NEVER chat models — dispatch prose to an LLM, then judge
   with Jev. Time calls out at 90 seconds (the slow failover legs).
 - Batching law: ONE call with MANY questions per state — 12.2x cheaper
@@ -822,13 +805,14 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   question costs his focus. Never ask twice what one message could
   carry.
 
-** SETUP (session start, in order)
+** SETUP (session start, in order — once the team exists; during
+   teamify, THE TASK's own step order applies)
 
 1. AGENTS.md
 2. .github/copilot-instructions.md
 3. HANDOFF.org
 4. RECHECK.org
-5. TODOs.org
+5. agent-team/TODOS.org
 6. agent-team/TEAM.md
 7. agent-team/MEMBERS.org
 8. STATE.org (Owner pastes back)

@@ -1219,6 +1219,8 @@ package's own shape) -> loud placeholder the Lead must fill."
       ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
       QODER_PERSONAL_ACCESS_TOKEN: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
       CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_PAT }}
+      CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
       GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
       LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
       LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
@@ -1226,6 +1228,8 @@ package's own shape) -> loud placeholder the Lead must fill."
       LARK_WEBHOOK_RELEASE_ENGINEER: ${{ secrets.LARK_WEBHOOK_RELEASE_ENGINEER }}"
   "Turn-job env block ({{SEAT_ENV}} default): repo secrets ride as env-var
 NAMES only — values live in each repo's secret store, never copied.
+GH_TOKEN (Copilot) + CURSOR_API_KEY (Cursor) ride the Owner's keys
+(live-verified 2026-10-27 / 2026-10-28); both ask-first bodies.
 No static GOMODEL_GATEWAY_URL since the 2026-10-22 resolution law:
 a static job-level env would OVERRIDE the resolve step's GITHUB_ENV
 value — the chain's resolve step is the single source of truth.")
@@ -1402,18 +1406,15 @@ This section explains the automation that runs the team, in plain words.
 
 - Safety rules (follow them exactly):
   - If #+TURN names a member nobody knows, the run STOPS and reports
-    BLOCKED. It never guesses and runs someone else.
+    BLOCKED — it never guesses (the rotation-refuses law).
   - A run that ends \"successfully\" but produced ZERO new commits is
-    NOT progress. The number of new commits is checked after every run.
-  - After a member delivers a TODO, the automation PAUSES. This is the
-    default (pause-after-todo):
-    - the run stops cleanly, nothing is spent,
-    - the Lead reviews the work, then clears #+CHAIN-PAUSE,
-    - if the setting is missing, it still pauses — safe by default,
-    - only the Owner can order it OFF, for one long multi-task run.
-  - Always name the tool that ACTUALLY did the work.
-  - If a paid tool failed, say so: \"PAID LANE FAILED — no credits were
-    spent\". Never pretend a paid run happened.
+    NOT progress (the empty-run law) — the count is checked every run.
+  - After a member delivers a TODO, the automation PAUSES
+    (pause-after-todo, ON by default; a missing setting still pauses —
+    safe by default; only the Owner orders it OFF).
+  - The result names the tool that ACTUALLY ran. A failed paid tool
+    reports: \"PAID LANE FAILED — no credits were spent\". A paid run is
+    never faked.
 
 - How every AI tool gets both rule files:
   - Each team repo carries the shared kit in a folder named ci/.
@@ -1497,10 +1498,13 @@ This section explains the automation that runs the team, in plain words.
 
 - Repo secrets (write-only; never copy secret VALUES anywhere; only
   their NAMES travel — that is the ENV-VAR LAW):
-  - In use: QODER_PERSONAL_ACCESS_TOKEN, ZAI_API_KEY,
-    OPENROUTER_API_KEY, GROQ_API_KEY, CODEBUDDY_AUTH_TOKEN,
+  - In use: GH_TOKEN (the Owner's fine-grained GH_PAT — Copilot CLI),
+    CURSOR_API_KEY (the Owner's Cursor key), QODER_PERSONAL_ACCESS_TOKEN,
+    ZAI_API_KEY, OPENROUTER_API_KEY, GROQ_API_KEY, CODEBUDDY_AUTH_TOKEN,
     GOMODEL_MASTER_KEY, LARK_WEBHOOK_<ROLE> (one Lark bot per role —
-    the live reporting channel), CLINE_AUTH_JSON, MCODE_AUTH_JSON.
+    the live reporting channel), CLINE_AUTH_JSON, MCODE_AUTH_JSON —
+    plus any per-repo extras the repo's workflow maps (for example
+    CLINE_API_KEY, OPENCODE_API_KEY, AA_API_KEY).
   - Old ones you may delete: TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_ID,
     every DISCORD_WEBHOOK_*.
   - One missing key: that tool is skipped, everything else goes on.
@@ -1530,7 +1534,7 @@ default constants."
      (cons "GATE_SH" (plist-get gate :cmd))
      (cons "SEAT_ENV" agent-team--seat-env-default)
      (cons "DOCKER_RUN_ENV"
-           "-e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN")
+           "-e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN -e GH_TOKEN -e CURSOR_API_KEY")
      (cons "HARNESS_TAG" "agent-team-harness")
      (cons "FROM_ID" (concat "team-lead (glm-5.3-flash, Agent Team @" slug ")"))
      (cons "ROTATION_CASE" agent-team--rotation-default)

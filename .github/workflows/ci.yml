@@ -241,6 +241,9 @@ jobs:
       # Copilot CLI auth — the Owner's fine-grained PAT (Copilot
       # Requests permission, live-verified 2026-10-27); ask-first body.
       GH_TOKEN: ${{ secrets.GH_PAT }}
+      # Cursor CLI body — the Owner's API key (key exchange + live probe
+      # verified 2026-10-28); ask-first body, env-injected, never baked.
+      CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
       # GoModel lane via the Owner's llmfisher gateway (Owner order, LONG
       # standing, re-issued 2026-10-21 08:25Z: "Use gomodel via
       # khaalidrafi/llmfisher on your CI"). Jev = the chain's judgment
@@ -921,7 +924,7 @@ jobs:
             -e SEAT="${SEAT}" -e BRIEF="${BRIEF}" \
             -e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY \
             -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN \
-            -e GH_TOKEN \
+            -e GH_TOKEN -e CURSOR_API_KEY \
             agent-team-harness:local bash /workspace/.turn-inside.sh \
             > /tmp/.turn-out.txt 2>&1; then
             echo "container verdict captured"

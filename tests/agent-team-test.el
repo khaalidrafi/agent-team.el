@@ -760,7 +760,7 @@ section is the un-escape law the teamify applies when writing the file."
     ;; the un-escape law travels with every PRODUCED sketch: the five
     ;; file targets (TODOS/MEMBERS/STATE/CHARTER.md/CHAT.org) each carry
     ;; the guard note - the teamify knows ,* is an escaped headline,
-    ;; not literal bytes.  UPDATE.org is exempt: DoE-supplied, the
+    ;; not literal bytes.  NOTICE.org is exempt: DoE-supplied, the
     ;; teamify never creates it.  Count pinned as the tripwire: a new
     ;; produced target without its note fails here.
     (should (= 5 (seq-count

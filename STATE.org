@@ -1,6 +1,12 @@
 #+TITLE: STATE.org — cross-session state
 
 * DONE
+  - umbrella/01 (Owner 2026-10-29 #hq): agent-org + agent-team.el
+    ONE umbrella, common Lead = z.ai-agent; hires fiat 05:19Z
+    ("do urself. Add devin.") — 4 seats + devin PROVISIONAL in
+    agent-team/MEMBERS.org (canonical HR file); devin row in
+    templates/CANDIDATES.org; NOTICE.org #1 filed; ACP parity
+    re-specced into agent-org WO-16 (agent-org beb6edb, ci 479480b)
   - v0.1 bootstrap (board, dispatches, Jev noul, gateway ping) + ert tests
   - teamify: agent-team/ files + templates committed
   - PR #1 (ci/01 parser grammar fix) merged to ai/main — fefd5a7, ert 7/7 +

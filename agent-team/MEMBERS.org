@@ -76,16 +76,27 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     1. openrouter/cohere/north-mini-code:free@cline
     2. zai/glm-4.7-flash@goose (proven alive)
     3. groq/qwen3.8-27b@goose
-
 * Cloud Agent — devin@devin.ai (PROVISIONAL — Owner fiat 2026-10-29)
   - :last-dispatch: 0
   - status: ADDED BY OWNER FIAT 2026-10-29 #hq ("Add devin") — a
-    written values-filter exception (closed + paid product). PROVISIONAL:
-    no secret/access sealed yet — the seat ACTIVATES when the Owner's
-    Devin access lands. Research on record: Devin CLI stable
-    v3000.11.205 (2026-10-22, local agent + handoff to cloud Devins),
-    Core $20/mo w/ 10 ACUs, Teams $500/mo 250 ACUs, ~1 ACU = 15 min
-    (docs.devin.ai/cli; digijaws 2026-10-11; techvernia 2026). Evidence:
+    written values-filter exception (closed + paid product). PLUMBING
+    DONE 2026-10-29 (Owner order "Add devin to docker with auth"):
+    Devin CLI body BAKED in the harness image (agent-team-ci b59ebba —
+    FATAL version check; global law slot ~/.config/devin/AGENTS.md
+    VERIFIED and baked); the ACP surface `devin acp' is CONFIRMED
+    (docs.devin.ai/cli/reference/commands — JSON-RPC over stdio, the
+    same subcommand Zed/JetBrains/Xcode spawn; initialize smoke-tested
+    in-sandbox, devin 3000.11.228); the agent-org provider `devin' is
+    LANDED (agent-org e816b33; 459/459 ERT + batch suite green on
+    emacs 30.1). AUTH (never baked): the ACP server reads
+    WINDSURF_API_KEY from the environment when set, else the
+    credentials stored by `devin auth login' (--force-manual-token-
+    flow pastes a token headlessly). PROVISIONAL: no secret sealed
+    yet — the seat ACTIVATES when the Owner seals WINDSURF_API_KEY
+    (or runs `devin auth login' once). Pricing refresh: Free tier
+    VERIFIED ($0, light usage quota; Pro $20/mo, Max $200/mo, Teams
+    from $80/mo; ACUs now Enterprise-only — docs checked 2026-10-22,
+    superseding the Core/Teams ACU figures below's source). Evidence:
     vendor-only — INTERN-grade here until it lands real work.
   - duties (when active): parallel cloud segments — long-running,
     well-scoped board items; report SHAs to the Lead
@@ -129,60 +140,6 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
   - QA + Docs: nemotron-3.5-lightning:free@cline ->
     north-mini-code:free@cline -> zai/glm-4.7-flash@goose
   - Lead: glm-5.3-flash@chat.z.ai -> glm-5.3@chat.z.ai -> Owner-direct
-
-* Quality Assurance Engineer — zai/glm-4.7-flash@goose (body swap from @opencode, mesh/01 repair 2026-10-20)
-  - :last-dispatch: 0
-  - BODY SWAP NOTE (Lead, mesh/01, 2026-10-20 15:45Z): OpenCode body is
-    headless-defective ("Unexpected server error" in CI, hangs headless
-    locally — demo/01 turn 1/turn 3 + mesh/01 evidence). QA keeps its
-    brain (zai/glm-4.7-flash) and moves to the Goose body, same lane as
-    Software/Release. Body swap only; segregation law unchanged
-    (author ≠ verifier ≠ merger — QA's brain is shared with no author).
-  - MODEL REASON: MIT licence, free API tier, PROVEN ALIVE from the
-    Owner's box; deliberately NOT any author's brain (segregation law:
-    author ≠ verifier ≠ merger). Honest weakness on the record: no AA or
-    LMArena figure, vendor Terminal-Bench 14.4 — so the role is scoped
-    to test suites, ert coverage and green verification ONLY. Expiry:
-    none published on the free tier; MIT weights make the brain low-risk.
-  - AGENT REASON (opencode): the pool's most guardrailed editor and
-    most reliable file operations — exactly what compensates the
-    weaker brain; headless with ZAI_API_KEY native. Harness shared with
-    the Principal Engineer under a WRITTEN JUSTIFICATION: only two
-    harnesses are CI-installable today (OpenCode, Goose), and test-file
-    editing needs the more reliable one.
-  - PAIR FIT FOR DUTIES: verification is reliability over brilliance —
-    a scoped, honest brain on the most reliable editing harness turns
-    "asserts green and reports it" into a repeatable, evidence-backed
-    gate; it never chases flakes or judges diffs.
-  - fallbacks:
-    1. openrouter/nvidia/nemotron-3.5-lightning@goose
-    2. openrouter/cohere/north-mini-code@opencode
-    3. groq/qwen3.8-27b@goose
-
-* Release Engineer — groq/qwen3.8-27b@goose
-  - :last-dispatch: 0
-  - MODEL REASON: the same proven brain as the Software Engineer,
-    deliberately — its BANKED RUNNER RECORD is release work already
-    shipped: ert 7/7 green + byte-compile clean ON THE RUNNER, the Lark
-    notify guard, and the parser fix landed through PR #1 (fefd5a7).
-    Proven history outranks fresh research (COMMON). Cap headroom:
-    shares 200K tokens/day with the Software Engineer; CI burns a
-    fraction. Expiry: none dated.
-  - AGENT REASON (goose): recipe-driven deterministic runs are the
-    right body for CI repair and packaging verification — same harness
-    as the Software Engineer, so a repair recipe written once serves
-    both seats.
-  - PAIR FIT FOR DUTIES: release duties are small, deterministic,
-    high-stakes-if-wrong CI edits — the proven record reduces risk, the
-    deterministic harness makes every repair reproducible, and the
-    shared cap is sized far above the work. OWNS harness repair: a
-    failed harness in any seat is fixed on this member's next turn.
-  - fallbacks:
-    1. zai/glm-4.7-flash@opencode
-    2. qwen3.8-flash-next@opencode (AA 40, blended $0.088/M)
-    3. openrouter/poolside/laguna-s-2.1:free@opencode (do not:
-       spends the Principal Engineer's pool)
-
 * Platform / CI Engineer — qwen3.8-flash@qoder (re-hired 2026-10-29)
   - :last-dispatch: 3
   - RE-HIRED 2026-10-29 (umbrella fiat "do urself"): the term is
@@ -317,42 +274,6 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     fallback chains (banked record preserved above).
   - zai/glm-4.7-flash@goose (QA seat) — folded into QA fallbacks
     (proven alive; gateway-served).
-
-* Acting Relief Engineer (Second Body) — openrouter/minimax/minimax-m3.1-flash@omp (ACTING — SAME PROMO EXPIRY 2026-10-25)
-  - :last-dispatch: 0
-  - status: HIRED per Owner orders 2026-10-21 05:24Z ("Then install a model
-    at an agent and hire accordingly") + 05:50Z ("Share me your hired
-    members list"). INSTALLED + PROVEN by the Lead 2026-10-21: oh-my-pi
-    (omp) v18.12.5 installed from npm (@oh-my-pi/pi-coding-agent), headless
-    `omp -p --no-session --no-tools --model minimax/minimax-m3.1-flash:free`
-    with OPENROUTER_API_KEY returned an exact-token reply (OMPGREEN).
-  - MODEL REASON: same brain as the Relief Engineer seat (AA intelligence
-    43, TB4.0 25.8, 1M-token free context, $0.00 lane) — deliberately the
-    proven free brain, so this hire tests a BODY, not a brain. EXPIRY
-    2026-10-25 on record; fallback chain below is promo-independent.
-  - AGENT REASON (omp = can1357/oh-my-pi): MIT, TypeScript+Rust, fork of
-    Pi; v18.12.5 shipping near-daily (~138K npm weekly downloads); FIRST-
-    CLASS headless `-p/--print` mode + RPC mode (`--mode rpc`) + ACP
-    (`omp acp`); 40+ providers BYOK; fuzzy --model matching. The pool's
-    third CI-installable body beside goose and the headless-defective
-    opencode (mesh/01).
-  - PAIR FIT FOR DUTIES: overflow absorption and lane liveness probes where
-    one-shot process isolation matters (omp -p exits clean, no session dir
-    to scrub); spreads bodies per the anti-lazy-staffing law instead of
-    pinning every brain on goose.
-  - MEASURED NEGATIVES (Lead, 2026-10-21, on record): groq/qwen3.8-27b@omp
-    = 403 role rejection (same family as goose's Groq failure — Groq stays
-    goose-only); zai glm-4.7-flash via openrouter@omp = 402 (free lane
-    cannot afford omp's 128K max_tokens request — set models.yml maxTokens
-    before any retry); OpenRouter minimax lane raw-HTTP 200 the same minute.
-  - duties: relief probes · one-shot verification segments · body-depth
-    backup for the Relief Engineer's duties
-  - fallbacks:
-    1. openrouter/minimax/minimax-m3.1-flash@goose (primary
-       Relief body — same brain, proven deterministic runner)
-    2. codebuddy@cli (Owner account cred, wired 835a1f9 + 334cf41)
-    3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN)
-
 * Intern bench — five this round (no-data ≠ rejected; one task, one REPORT)
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may
   now be used in ACTING roles (Owner order 2026-10-20) when capable

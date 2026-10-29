@@ -677,6 +677,12 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
     only what AGENTS.md does not say.
   - Provenance: every artifact logs model@platform, dispatch #, branch,
     and date — auditability is the only reviewer available.
+  - Commit authorship (Owner 2026-10-29 #hq): commits are authored by
+    the agent whose work they carry — never by the CI model. Commit
+    under your own agent id when you have git write; the harness
+    host-commit of your workspace diff sets YOUR agent id as git
+    author. A `turn(<seat>):` commit authored by the CI bot fails the
+    guard.
   - Debt rules: consolidate duplicates as you go; standardize error
     handling; "works but nobody knows why" is a defect — state the
     rationale or refactor it.

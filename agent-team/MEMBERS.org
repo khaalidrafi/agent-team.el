@@ -88,12 +88,17 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     same subcommand Zed/JetBrains/Xcode spawn; initialize smoke-tested
     in-sandbox, devin 3000.11.228); the agent-org provider `devin' is
     LANDED (agent-org e816b33; 459/459 ERT + batch suite green on
-    emacs 30.1). AUTH (never baked): the ACP server reads
-    WINDSURF_API_KEY from the environment when set, else the
-    credentials stored by `devin auth login' (--force-manual-token-
-    flow pastes a token headlessly). PROVISIONAL: no secret sealed
-    yet — the seat ACTIVATES when the Owner seals WINDSURF_API_KEY
-    (or runs `devin auth login' once). Pricing refresh: Free tier
+    emacs 30.1). AUTH (never baked; CORRECTED 2026-10-29 by Owner
+    intel + in-sandbox measurement): WINDSURF_API_KEY serves CLOUD
+    sessions only — with it set, local `devin acp' still exits
+    silently on initialize (no JSON-RPC response, exit 0) and
+    `devin models' reports "Not logged in". The ONLY credential the
+    local ACP server honors is the credentials.toml written by a
+    real `devin auth login' (browser PKCE; --force-manual-token-flow
+    pastes the browser-issued CODE, not the API key). Seat plan:
+    Owner completes one browser login (courier loop), the resulting
+    durable credentials seal as a GitHub secret and CI restores them
+    per run. PROVISIONAL: not active yet. Pricing refresh: Free tier
     VERIFIED ($0, light usage quota; Pro $20/mo, Max $200/mo, Teams
     from $80/mo; ACUs now Enterprise-only — docs checked 2026-10-22,
     superseding the Core/Teams ACU figures below's source). Evidence:

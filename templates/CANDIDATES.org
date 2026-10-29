@@ -141,12 +141,17 @@
     reference/commands; the same subcommand Zed/JetBrains/Xcode spawn;
     initialize smoke-tested 2026-10-29). EXECUTED 2026-10-29: body
     BAKED in the harness image (agent-team-ci b59ebba) + agent-org
-    provider `devin' landed (e816b33, 459/459 ERT green). AUTH:
-    WINDSURF_API_KEY env (the ACP server's documented non-interactive
-    credential) or `devin auth login' (--force-manual-token-flow for
-    headless paste). Seat: PROVISIONAL Cloud Agent on the umbrella
+    provider `devin' landed (e816b33, 459/459 ERT green). AUTH
+    (CORRECTED 2026-10-29, Owner intel + in-sandbox measurement):
+    WINDSURF_API_KEY serves CLOUD sessions only — local `devin acp'
+    ignores it (with the key set: initialize answers nothing, exit
+    0; `devin models': "Not logged in"). Local ACP honors ONLY the
+    credentials.toml from a real `devin auth login' (browser PKCE;
+    --force-manual-token-flow wants the browser-issued CODE, not the
+    API key). Seat: PROVISIONAL Cloud Agent on the umbrella
     roster (agent-team.el + agent-org) — ACTIVATES when the Owner
-    seals WINDSURF_API_KEY (or runs `devin auth login' once).
+    completes one `devin auth login' (courier loop: browser code
+    exchange) and the durable credentials are sealed for CI restore.
     OWNER-NOMINATED CANDIDATE MODEL 2026-10-29 #hq: SWE-2@devin —
     Cognition's in-house SWE model behind Devin, selectable via the
     `DEVIN_MODEL' pass-through the agent-org provider already
@@ -154,7 +159,10 @@
     law): "on par with recent frontier models at up to 70% lower
     cost; on FrontierCode 1.1 matches Fable 5.1 at 64% lower cost".
     Specs: proprietary, 1M context, explicit reasoning mode.
-    Pricing: included free with Devin Pro (community-verified).
+    Pricing: included free with Devin Pro (community-verified);
+    FREE-SWE-2 WINDOW EXPIRES 2026-11-30 (Owner-confirmed 2026-10-29)
+    — probe and ranking MUST land before that date; the seat carries
+    a non-SWE-2 fallback per EXPIRY-LAW.
     Independent evidence: THIN — one third-party review (catalins.tech
     2026-09-22) says "not on par with Fable 5.1 or GPT-6 Astra, but
     really good performance for a lot less money"; no public overall

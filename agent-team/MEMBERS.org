@@ -17,30 +17,81 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
         INSTALLED IN THE RUNNER (OpenCode or Goose — both open-source,
         headless-capable) and reaches the brain DIRECTLY by the provider
         key from repo secrets.
-
-* Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai (COMBINED SEAT)
-  - :last-dispatch: 2
-  - MODEL REASON: the Owner confirmed this exact brain ("YOU ARE
-    GLM-5.3-Flash, confirmed!", 2026-10-20); MIT open weights
-    (320B-A18B, weights + GGUF on HF); strongest verified agentic numbers
-    on a free web tier this round — DeepSWE 63.4, Terminal-Bench 84.3,
-    AA intelligence 42–57 (two AA pages disagree, both quoted);
-    $0.15/$0.50 per Mtok if ever API-served; no dated free-tier expiry.
-  - AGENT REASON (chat.z.ai web): one-shot courier shell the Owner
-    already operates via the Discord relay — zero extra credentials, zero
-    automation on the account, works with the box and gateway DOWN.
-  - PAIR FIT FOR DUTIES: directing needs judgment over tool access —
-    board ownership, dispatch, DOD verification, merge gates, staffing
-    law. The web pair keeps every claim evidence-pasted and every merge
-    a deliberate Lead act; CI executes, the Lead decides.
-  - NOT ACCOUNT SHARING: the Owner's own interactive use, one human, one
-    session; no seat, script or CI job touches the z.ai subscription.
+* Team Lead + Director of Engineering — z.ai-agent (COMBINED SEAT, umbrella)
+  - :last-dispatch: 0
+  - APPOINTMENT (Owner 2026-10-29 05:12Z #hq): "agent-org and
+    agent-team.el now comes under one umbrella and have common team
+    lead - YOU." The Lead seat is z.ai-agent — the Owner's relay
+    (GLM-5.3-Flash) in Discord #hq; the prior combined-seat holder
+    (glm-5.3-flash@chat.z.ai web) remains the relay's brain class and
+    the Owner's own interactive lane. NOT account sharing: no CI job,
+    script or member touches the z.ai subscription.
+  - DUTIES: mission + priorities across BOTH pkgs; dispatch; board
+    ownership; DOD verification; merge gates; staffing per this file;
+    DoE notices (NOTICE.org) to every umbrella repo.
   - fallbacks:
-    1. qwen3.8-max@chat.qwen.ai (proprietary, UNEXEMPTED)
+    1. glm-5.3-flash@chat.z.ai (same brain, web shell)
     2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769)
-    3. Owner-direct, team frozen until a brain is re-staffed
+    3. Owner-direct, team frozen until a Lead is re-staffed
 
-* Principal Engineer — openrouter/poolside/laguna-s-2.1:free@opencode
+* Senior Emacs Lisp Engineer — glm-5.3-flash-free@opencode (HIRED 2026-10-29)
+  - :last-dispatch: 0
+  - MODEL REASON: AA intelligence 57/42 (AA's two pages disagree — both
+    quoted), Terminal-Bench 84.3, DeepSWE 63.4 (CANDIDATES.org GLM batch
+    + ZEN refresh 2026-10-26); MIT, 320B-A18B, weights + GGUF on HF.
+    LIMITS: OpenCode ZEN -free lane is undated "dynamic" — revocable
+    without notice; the fallback chain is the contingency.
+  - AGENT REASON (opencode): the pool's strongest harness — full
+    file/shell toolset, headless `opencode run`, one-line install in a
+    runner; already the docneural FE seat body (proven pair).
+  - PAIR FIT FOR DUTIES: core elisp (agent-team.el clock/sessions/chat,
+    agent-org ACP rendering) needs the strongest free brain on the most
+    reliable editing body. Why over the runner-up (laguna-s-2.1, the
+    prior strongest): TB 84.3 vs 70.2, DeepSWE 63.4 vs 40.4 — same
+    free+MIT class, stronger numbers.
+  - duties: core package code + ERT in both repos · architecture ·
+    hardest port items · review of Implementer segments
+  - fallbacks:
+    1. openrouter/poolside/laguna-s-2.1:free@opencode
+    2. dots-studio/dots-3-note-preview:free@cline (intern until measured)
+    3. glm-5.2@chat.z.ai courier escalation (Owner-paced)
+
+* QA + Docs Engineer — nvidia/nemotron-3.5-lightning:free@cline (HIRED 2026-10-29)
+  - :last-dispatch: 0
+  - MODEL REASON: vendor SWE-bench V 51.6-52.8, TB2.1 24.6; the pool's
+    quoted real quota "$0/$0, 65,536 max-token cap" (OpenRouter free,
+    datacamp 2026-08-12) — pool-designated QA-grade. OpenMDW-1.1.
+  - AGENT REASON (cline): native ACP body (`cline --acp`), CI-capable
+    CLI, --data-dir isolates state; RISK on record: --auto-approve
+    defaults TRUE — set it off for accountable seats. FIRST TASK: the
+    cline-on-CI body proof (the qoder-proof pattern).
+  - PAIR FIT FOR DUTIES: verification is reliability over brilliance —
+    read-only ert/byte-compile sweeps + Org doc passes; segregation law
+    holds (author != verifier != merger). Why over the runner-up
+    (north-mini-code): real quoted quota vs unretrievable cap wording,
+    SWE-V ~52 vs AA coding 33.4.
+  - duties: ert + byte-compile sweeps · README/manual doc passes ·
+    cline-on-CI body proof
+  - fallbacks:
+    1. openrouter/cohere/north-mini-code:free@cline
+    2. zai/glm-4.7-flash@goose (proven alive)
+    3. groq/qwen3.8-27b@goose
+
+* Cloud Agent — devin@devin.ai (PROVISIONAL — Owner fiat 2026-10-29)
+  - :last-dispatch: 0
+  - status: ADDED BY OWNER FIAT 2026-10-29 #hq ("Add devin") — a
+    written values-filter exception (closed + paid product). PROVISIONAL:
+    no secret/access sealed yet — the seat ACTIVATES when the Owner's
+    Devin access lands. Research on record: Devin CLI stable
+    v3000.11.205 (2026-10-22, local agent + handoff to cloud Devins),
+    Core $20/mo w/ 10 ACUs, Teams $500/mo 250 ACUs, ~1 ACU = 15 min
+    (docs.devin.ai/cli; digijaws 2026-10-11; techvernia 2026). Evidence:
+    vendor-only — INTERN-grade here until it lands real work.
+  - duties (when active): parallel cloud segments — long-running,
+    well-scoped board items; report SHAs to the Lead
+  - fallbacks: n/a until active (not dispatchable while PROVISIONAL)
+
+* Implementer (port lane, both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29)
   - :last-dispatch: 0
   - MODEL REASON: the strongest PERMANENTLY-FREE open-weight agentic
     brain found in five research batches — vendor Terminal-Bench 2.1
@@ -54,6 +105,10 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     provider-agnostic (models.dev), first-class headless mode
     (`opencode run`), consumes OPENROUTER_API_KEY natively, one-line
     install in a runner.
+  - UMBRELLA NOTE (2026-10-29): re-titled Principal -> Implementer
+    (port lane); the Senior Emacs Lisp Engineer seat takes the hardest
+    items. This seat runs segments on agent-org WO-16 ACP parity and
+    the WO-1 unit series, and agent-team.el port items.
   - PAIR FIT FOR DUTIES: P0s, hard problems and architecture demand
     maximum reasoning depth plus reliable multi-file edits plus shell —
     max-brain × max-body, so the role's hardest duties get the best
@@ -64,37 +119,16 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
        public evidence)
     2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
     3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
-
-* Software Engineer — groq/qwen3.8-27b@goose (ACTIVE LANE: zai/glm-4.7-flash@goose — hired brain's lanes down, mesh/01 repair 2026-10-20)
-  - :last-dispatch: 0
-  - ACTIVE LANE NOTE (Lead, mesh/01, 2026-10-20 15:45Z): Groq lane rejects
-    the developer role Goose sends (400, req_01m5cqbghke9) and the
-    OpenRouter key's free-models-per-day quota is exhausted (chain log:
-    "Add 10 credits") — all lanes to the hired brain are down. Seat runs
-    its segments on zai/glm-4.7-flash via Goose's openai provider
-    (OPENAI_HOST=https://api.z.ai) until the Owner adds ~10 OpenRouter
-    credits or provides per-seat keys (harness/01 item 1). Hired brain
-    and lane law unchanged; this is a runtime lane, not a re-hire.
-  - MODEL REASON: PROVEN ALIVE (one real completion from the Owner's box,
-    2026-10-20); Apache-2.0 auditable weights; AA intelligence 34; user
-    sentiment strongly positive for agentic coding (HN: "beats
-    Haiku/Sonnet 4.5 locally" 2026-10-19, "better at coding than Opus
-    4.1" 2026-09-12); published caps sized for CI — 30 RPM · 1,000 RPD ·
-    8K TPM · 200K tokens/day (console.groq.com); expiry: none dated.
-  - AGENT REASON (goose): Block's open-source agent harness —
-    deterministic headless runs (`goose run --no-session`), recipe
-    repeatability, shell tools, groq provider support, one-line
-    install in a runner.
-  - PAIR FIT FOR DUTIES: feature iteration is many small writes under a
-    daily cap — a proven agentic brain on a deterministic harness
-    maximizes repeatable, unattended throughput per turn, and the
-    published caps make the seat's cost predictable forever.
-  - fallbacks:
-    1. zai/glm-4.7-flash@opencode (MIT, proven alive, free)
-    2. openrouter/cohere/north-mini-code@opencode (Apache-2.0,
-       AA coding 33.4)
-    3. openrouter/nvidia/nemotron-3.5-lightning@goose (OpenMDW-1.1,
-       SWE-bench 51.6, free, 65,536-token output cap)
+* FALLBACK CHAINS (rank-3, per seat — the retired 2026-10-29 seats live here)
+  - Senior Emacs Lisp / Implementer: laguna-s-2.1:free@opencode ->
+    dots-3-note-preview:free@cline (intern) -> glm-5.2 courier escalation
+  - Platform / CI: qwen3.8-flash@qoder -> deepseek-v4.1-flash@codebuddy
+    (wired 2026-10-28 fuel correction) -> groq/qwen3.8-27b@goose (PROVEN
+    ALIVE; banked runner record: ert 7/7 + byte-compile green, parser fix
+    PR #1 fefd5a7)
+  - QA + Docs: nemotron-3.5-lightning:free@cline ->
+    north-mini-code:free@cline -> zai/glm-4.7-flash@goose
+  - Lead: glm-5.3-flash@chat.z.ai -> glm-5.3@chat.z.ai -> Owner-direct
 
 * Quality Assurance Engineer — zai/glm-4.7-flash@goose (body swap from @opencode, mesh/01 repair 2026-10-20)
   - :last-dispatch: 0
@@ -149,9 +183,13 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     3. openrouter/poolside/laguna-s-2.1:free@opencode (do not:
        spends the Principal Engineer's pool)
 
-* Acting Platform Engineer — qwen3.8-flash@qoder (ACTING, EXPIRING ~2026-10-30)
+* Platform / CI Engineer — qwen3.8-flash@qoder (re-hired 2026-10-29)
   - :last-dispatch: 3
-  - status: ACTING per the Owner's order 2026-10-20 ("expiring models if
+  - RE-HIRED 2026-10-29 (umbrella fiat "do urself"): the term is
+    renewed; the free-access expiry risk stays on record and the
+    fallback chain is independent of it. Fuel correction 2026-10-28
+    holds: the brain is BUILT-IN FREE at Qoder.
+  - status (historical): ACTING per the Owner's order 2026-10-20 ("expiring models if
     capable enough, must be given acting role"). AUTH-READY (Owner
     delivered the Qoder PAT 2026-10-21 #hq; the Lead set repo secret
     QODER_PERSONAL_ACCESS_TOKEN, HTTP 201): the Qoder-on-CI proof
@@ -190,26 +228,6 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     1. groq/qwen3.8-27b@goose (acting, if Qoder-on-CI fails)
     2. glm-5.3-flash@opencode (OpenCode free roster, rotating)
     3. goose@qoder (box-bound, asleep with the box)
-
-* Reviewer — glm-5.3@chat.z.ai
-  - :last-dispatch: 0
-  - MODEL REASON: AA intelligence 60, GDPval-AA 1769, WebDev Elo 1621 —
-    the strongest web reviewer available; custom licence, $1.40/$4.40 if
-    API-served; complaint pattern "regressed vs GLM-5.2" noted. Expiry:
-    none published on the free web tier.
-  - AGENT REASON (chat.z.ai web): one-shot courier shell — no
-    filesystem, no git, no credentials; the Owner pastes the diff,
-    the review comes back as text. Structurally segregation-safe.
-  - PAIR FIT FOR DUTIES: the second opinion the combined Lead+Director
-    seat is forbidden to give itself on application code — a
-    strongest-available reviewer brain on a zero-credential body means
-    independent judgment with zero supply-chain risk.
-  - fallbacks:
-    1. qwen3.8-max@chat.qwen.ai
-    2. kimi-k3@workbuddy.ai (LMArena 1486 · WebDev #1 1679 ·
-       DeepSWE 67.5; $3/$15, custom licence)
-    3. kimi-k2.6@kimi.com
-
 * Build Engineer — SERVICE STAFFED AT khaalidrafi/packages (Owner ruling 2026-10-28)
   - :last-dispatch: 0
   - duties: guix packages for ALL teams (shared service)
@@ -238,11 +256,12 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     ONE time-boxed segment on the oldest board item serving the
     OBJECTIVE — on its own branch, never merging (merges are the Lead's
     gate on a green suite).
-  - ROTATION: Principal Engineer → Software Engineer → Quality
-    Assurance Engineer → Release Engineer → back. The Acting Platform
-    Engineer joins the rotation after its Qoder-on-CI body is proven.
-    The turn pointer advances EVEN WHEN a seat is dead — a dead seat
-    logs BLOCKED, the next member takes the next turn.
+  - ROTATION (umbrella 2026-10-29): Senior Emacs Lisp Engineer →
+    Implementer (port lane) → Platform / CI Engineer → QA + Docs
+    Engineer → back. The Cloud Agent (devin@devin.ai) joins only after
+    its access is sealed; the QA seat's cline body must pass its
+    CI proof first. The turn pointer advances EVEN WHEN a seat is
+    dead — a dead seat logs BLOCKED, the next member takes the turn.
   - LARK: no generic notifications exist. Each member writes its own
     DISPATCH/REPORT to the Lark Agent Team group through its role's
     custom-bot webhook (secrets LARK_WEBHOOK_<ROLE>, full-form names).
@@ -286,38 +305,18 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     audit trail. If a chat message leaks a value, the same guard
     redacts it before commit — and the credential should then be
     ROTATED by its owner (assume seen).
-
-* Relief Engineer — openrouter/minimax/minimax-m3.1-flash@goose (ACTING RELIEF — FREE THROUGH 2026-10-25)
-  - :last-dispatch: 0
-  - status: HIRED per Owner order 2026-10-21 05:33Z #hq ("MiniMax M3.1 Flash
-    is free across a number of platforms... Hire 'em all.") — fires the
-    intern-bench dispatch window BEFORE the 2026-10-25 promo expiry.
-    Lane: OpenRouter :free, $0.00 in/out/cache, 1,000,000-token context,
-    released 2026-10-19. Wired as a live fallback lane in EVERY seat case
-    of ci.yml (Lead, 2026-10-21).
-  - MODEL REASON: AA intelligence 43, Terminal-Bench 4.0 25.8 (research
-    on record, agent-team/CANDIDATES.org); the largest free
-    context window in the pool (1M); multimodal coding brain, tunable
-    thinking depth. Proprietary weights, dated promo — EXPIRY 2026-10-25
-    on record per Owner law; the fallback chain below is independent of
-    the promo, as the expiring-model law requires.
-  - AGENT REASON (goose): the proven deterministic headless body —
-    `goose run --no-session`, one CI segment per call. OpenRouter
-    normalizes Goose's developer role server-side (demo/01 evidence:
-    qwen3.8-27b worked via OpenRouter where Groq did not), so the pair
-    shape is CI-proven. NOT @opencode: that body is headless-defective
-    (mesh/01 evidence; demo/01 turns 1 and 3) — body swap justified.
-  - PAIR FIT FOR DUTIES: relief is absorption, not authorship — a
-    big-window free brain on the most deterministic body takes overflow
-    segments and dead-lane rescue turns for ANY seat, keeping the chain
-    moving when primary quotas die; it never owns a board item first.
-  - duties: universal relief lane for every CI seat (fallback slot wired
-    in ci.yml) · overflow segment absorption · lane liveness report
-    after every run (:note: @lead with quota/HTTP evidence)
-  - fallbacks:
-    1. zai/glm-4.7-flash@goose (proven alive, MIT, free)
-    2. codebuddy@cli (Owner account; cred wired 835a1f9 + 334cf41)
-    3. qwen3.8-flash@qoder (QODER_PERSONAL_ACCESS_TOKEN; body proven on CI)
+* RETIRED 2026-10-29 (umbrella re-staff — history in git + HIRING-LOG law)
+  - openrouter/minimax/minimax-m3.1-flash@goose (Relief Engineer) —
+    BURN-LAW 2026-10-24 + promo dead 2026-10-25.
+  - openrouter/minimax/minimax-m3.1-flash@omp (Acting Relief, Second
+    Body) — same burn + expiry.
+  - glm-5.3@chat.z.ai (Reviewer) — paid + custom licence; the second
+    opinion now rides the glm-5.2@chat.z.ai courier (MIT, free:
+    AA 51 · SWE-bench V 77.8 · TB 81.0).
+  - groq/qwen3.8-27b@goose (Software + Release seats) — folded into
+    fallback chains (banked record preserved above).
+  - zai/glm-4.7-flash@goose (QA seat) — folded into QA fallbacks
+    (proven alive; gateway-served).
 
 * Acting Relief Engineer (Second Body) — openrouter/minimax/minimax-m3.1-flash@omp (ACTING — SAME PROMO EXPIRY 2026-10-25)
   - :last-dispatch: 0
@@ -358,10 +357,15 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
   Expiry rule (Owner, 2026-10-20) applied per row. Expiring models may
   now be used in ACTING roles (Owner order 2026-10-20) when capable
   enough — the intern bench is still for the no-data ones.
-  - openrouter/minimax/minimax-m3.1-flash@opencode — HIRED 2026-10-21
-    05:33Z (Owner #hq: "Hire 'em all") — promoted to the RELIEF ENGINEER
-    seat above (@goose body per the mesh/01 opencode evidence). Acting
-    round MUST land before 2026-10-25 (promo expiry). Bench row retired.
+  - openrouter/minimax/minimax-m3.1-flash@opencode — retired
+    (BURN-LAW 2026-10-24 + promo dead 2026-10-25; the hire it fed is
+    retired above).
+  - dots-studio/dots-3-note-preview:free@cline — ADDED to the bench
+    2026-10-29 (umbrella consult runner-up): vendor SWE-V 78.4 · TB2.1
+    75.1, preview-tag caveat; intern round = one real segment.
+  - thinkingmachines/inkling-small:free@cline — ADDED 2026-10-29:
+    vendor SWE-V 80.2 · TB2.1 64.7, Apache-2.0, 276B-A12B; intern until
+    measured (no independent hands-on yet).
   - openrouter/liquid/lfm-2.5@opencode — the only family plausibly
     runnable on the 4 GB Celeron; NO agentic-coding benchmark exists.
     Task: prove it can run the ert suite unaided in a container.

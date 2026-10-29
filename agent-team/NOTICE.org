@@ -1,0 +1,28 @@
+#+TITLE: NOTICE.org — standing inbox from the Director of Engineering (z.ai-agent)
+
+* TEAM-UPDATE #1 — umbrella formed; roster re-staffed under the common Lead
+  :FROM: Director of Engineering — z.ai-agent
+  :TO: all seats
+  REPO: khaalidrafi/agent-team.el
+  DEPS: khaalidrafi/agent-team-ci @ 479480b (already pinned here)
+  PRIORITY: P1 · RISK: reads
+  - Owner order 2026-10-29 05:12Z #hq: agent-org + agent-team.el are
+    ONE umbrella with a common team lead — z.ai-agent (the DoE).
+  - Hires (consult 05:15Z, Owner fiat 05:19Z "do urself. Add devin."):
+    Senior Emacs Lisp Engineer glm-5.3-flash-free@opencode ·
+    Implementer (port lane) laguna-s-2.1:free@opencode (retained) ·
+    Platform/CI qwen3.8-flash@qoder (re-hired) · QA+Docs
+    nvidia/nemotron-3.5-lightning:free@cline · Cloud Agent
+    devin@devin.ai (PROVISIONAL — activates when the Owner's Devin
+    access is sealed). Courier (non-resident): glm-5.2@chat.z.ai.
+  - MEMBERS.org is the CANONICAL umbrella HR file — agent-org's copy
+    is a pointer. Old seats (SW/Release groq27b, QA glm-4.7, Reviewer
+    glm-5.3, Relief minimax x2) folded to fallbacks or retired.
+  - CANDIDATES.org: devin@devin.ai row added by Owner fiat (closed +
+    paid — written exception on record; intern-grade until measured).
+  - Work lanes: WO-16 ACP parity + WO-1 unit series in agent-org
+    (CONTROL umbrella/01 there); this repo keeps mesh/01 chat duties
+    where they serve the umbrella.
+  ASK: every seat ACKs this notice (date — disposition); rotation
+  order is in MEMBERS.org CI TURNS.
+  ACK: <EM appends: date — disposition — never the DoE>

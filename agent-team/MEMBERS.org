@@ -34,27 +34,25 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     2. glm-5.3@chat.z.ai (AA 60 · GDPval-AA 1769)
     3. Owner-direct, team frozen until a Lead is re-staffed
 
-* Senior Emacs Lisp Engineer — glm-5.3-flash-free@opencode (HIRED 2026-10-29)
+* Senior Emacs Lisp Engineer — glm-5.3@chat.z.ai (RE-STAFFED 2026-10-29, Owner fiat)
   - :last-dispatch: 0
-  - MODEL REASON: AA intelligence 57/42 (AA's two pages disagree — both
-    quoted), Terminal-Bench 84.3, DeepSWE 63.4 (CANDIDATES.org GLM batch
-    + ZEN refresh 2026-10-26); MIT, 320B-A18B, weights + GGUF on HF.
-    LIMITS: OpenCode ZEN -free lane is undated "dynamic" — revocable
-    without notice; the fallback chain is the contingency.
-  - AGENT REASON (opencode): the pool's strongest harness — full
-    file/shell toolset, headless `opencode run`, one-line install in a
-    runner; already the docneural FE seat body (proven pair).
-  - PAIR FIT FOR DUTIES: core elisp (agent-team.el clock/sessions/chat,
-    agent-org ACP rendering) needs the strongest free brain on the most
-    reliable editing body. Why over the runner-up (laguna-s-2.1, the
-    prior strongest): TB 84.3 vs 70.2, DeepSWE 63.4 vs 40.4 — same
-    free+MIT class, stronger numbers.
+  - MODEL REASON (Owner fiat 2026-10-29 #hq, verbatim: "Senior EL engineer
+    MUST be GLM-5.3@chat.z.ai"): the seat's brain is GLM-5.3 served on
+    chat.z.ai — the brain class the Lead fallback chain already ranks
+    (AA 60 · GDPval-AA 1769, see Lead fallbacks).  The prior staffing
+    (glm-5.3-flash-free@opencode, HIRED 2026-10-29) moves to fallback 1.
+    WIRING NOTE: no chat.z.ai CI lane is baked in the harness yet —
+    proving/wiring one (ZAI_API_KEY is on file) rides the provider
+    works-test campaign (agent-org WO-18); never invent a lane, REPORT
+    what the test proves.
   - duties: core package code + ERT in both repos · architecture ·
     hardest port items · review of Implementer segments
   - fallbacks:
-    1. openrouter/poolside/laguna-s-2.1:free@opencode
-    2. dots-studio/dots-3-note-preview:free@cline (intern until measured)
-    3. glm-5.2@chat.z.ai courier escalation (Owner-paced)
+    1. glm-5.3-flash-free@opencode (prior primary; TB 84.3, DeepSWE
+       63.4; OpenCode ZEN -free lane undated "dynamic")
+    2. openrouter/poolside/laguna-s-2.1:free@opencode
+    3. dots-studio/dots-3-note-preview:free@cline (intern until measured)
+    4. glm-5.2@chat.z.ai courier escalation (Owner-paced)
 
 * QA + Docs Engineer — nvidia/nemotron-3.5-lightning:free@cline (HIRED 2026-10-29)
   - :last-dispatch: 0

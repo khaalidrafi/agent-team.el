@@ -124,22 +124,29 @@
   - CodeBuddy: SAME model list as the WorkBuddy.ai cloud pool — one pool, two
     harnesses (Owner confirmation 2026-10-20; both entries in this file kept
     in sync from now on) [free-tier expiry: none published]
-
   - devin@devin.ai — Cognition's Devin: autonomous cloud SWE agent (own
     sandboxed cloud body, session-based) + a local Devin CLI (stable
-    v3000.11.205 2026-10-22; local coding agent with handoff to cloud
-    Devins; docs.devin.ai/cli). ADDED BY OWNER FIAT 2026-10-29 #hq
-    ("Add devin") — written values-filter exception on record: CLOSED
-    product, PAID (Core $20/mo w/ 10 ACUs · Teams $500/mo 250 ACUs ·
-    ~1 ACU = 15 min of work — digijaws 2026-10-11, techvernia 2026).
-    Free tier: unverified. Evidence: vendor-only (invalid for ranking
-    per law) -> INTERN-grade until it lands real work here. Seat:
-    PROVISIONAL Cloud Agent on the umbrella roster (agent-team.el +
-    agent-org) — activates when the Owner's Devin access is sealed.
-    VERIFY: the Devin CLI's Zed editor integration may be ACP-based —
-    if so, Devin becomes an agent-org provider candidate too.
-
-* Agent — Local (Owner's machine; no heavy builds)
+    v3000.11.228 as of 2026-10-27; local coding agent with handoff to
+    cloud Devins; docs.devin.ai/cli, CognitionAI/devin-cli). ADDED BY
+    OWNER FIAT 2026-10-29 #hq ("Add devin") — written values-filter
+    exception on record: CLOSED product. PRICING REFRESH 2026-10-29
+    (docs checked 2026-10-22, harshthummar): Free $0 with a light
+    usage quota (VERIFIED — supersedes the earlier "unverified" note),
+    Pro $20/mo, Max $200/mo, Teams from $80/mo; ACUs now
+    Enterprise-only (the Core $20 w/ 10 ACUs · Teams $500/mo 250 ACUs
+    figures from digijaws 2026-10-11 / techvernia are superseded).
+    Evidence: vendor-only (invalid for ranking per law) ->
+    INTERN-grade until it lands real work here. ACP: CONFIRMED —
+    `devin acp' speaks JSON-RPC over stdio (docs.devin.ai/cli/
+    reference/commands; the same subcommand Zed/JetBrains/Xcode spawn;
+    initialize smoke-tested 2026-10-29). EXECUTED 2026-10-29: body
+    BAKED in the harness image (agent-team-ci b59ebba) + agent-org
+    provider `devin' landed (e816b33, 459/459 ERT green). AUTH:
+    WINDSURF_API_KEY env (the ACP server's documented non-interactive
+    credential) or `devin auth login' (--force-manual-token-flow for
+    headless paste). Seat: PROVISIONAL Cloud Agent on the umbrella
+    roster (agent-team.el + agent-org) — ACTIVATES when the Owner
+    seals WINDSURF_API_KEY (or runs `devin auth login' once).
   - qoder: qwen3.8-flash (built-in; other models per Qoder settings)
     [free-tier expiry: none published — bundled with the Qoder harness]
   - opencode: free roster — glm-5 · glm-5-flash · glm-5.1 · glm-5.1-flash ·

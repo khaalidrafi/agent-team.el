@@ -1221,6 +1221,7 @@ package's own shape) -> loud placeholder the Lead must fill."
       CODEBUDDY_AUTH_TOKEN: ${{ secrets.CODEBUDDY_AUTH_TOKEN }}
       GH_TOKEN: ${{ secrets.GH_PAT }}
       CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+      WINDSURF_API_KEY: ${{ secrets.WINDSURF_API_KEY }}
       GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
       LARK_WEBHOOK_PRINCIPAL_ENGINEER: ${{ secrets.LARK_WEBHOOK_PRINCIPAL_ENGINEER }}
       LARK_WEBHOOK_SOFTWARE_ENGINEER: ${{ secrets.LARK_WEBHOOK_SOFTWARE_ENGINEER }}
@@ -1534,7 +1535,7 @@ default constants."
      (cons "GATE_SH" (plist-get gate :cmd))
      (cons "SEAT_ENV" agent-team--seat-env-default)
      (cons "DOCKER_RUN_ENV"
-           "-e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN -e GH_TOKEN -e CURSOR_API_KEY")
+           "-e OPENROUTER_API_KEY -e ZAI_API_KEY -e GROQ_API_KEY -e CODEBUDDY_AUTH_TOKEN -e QODER_PERSONAL_ACCESS_TOKEN -e GH_TOKEN -e CURSOR_API_KEY -e WINDSURF_API_KEY")
      (cons "HARNESS_TAG" "agent-team-harness")
      (cons "FROM_ID" (concat "team-lead (glm-5.3-flash, Agent Team @" slug ")"))
      (cons "ROTATION_CASE" agent-team--rotation-default)

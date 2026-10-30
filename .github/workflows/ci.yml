@@ -1003,13 +1003,16 @@ jobs:
           echo "branch=${TURN_BRANCH:-}" >> "$GITHUB_OUTPUT"
           CTL=agent-team/CONTROL.org
           case "${{ steps.control.outputs.seat }}" in
-            principal-engineer)          NEXT="groq/qwen3.8-27b@goose (Software Engineer)" ;;
+            principal-engineer)          NEXT="qwen3.8-flash@qoder (Platform Engineer)" ;;
             software-engineer)           NEXT="zai/glm-4.7-flash@opencode (Quality Assurance Engineer)" ;;
             quality-assurance-engineer)  NEXT="groq/qwen3.8-27b@goose (Release Engineer)" ;;
-            release-engineer)            NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
+            release-engineer)            NEXT="qwen3.8-flash@qoder (Platform Engineer)" ;;
             # One-off Lead-paced proof dispatch (AUTH-READY 2026-10-21):
             # after the Platform segment the rotation returns to the top.
-            platform-engineer)          NEXT="openrouter/poolside/laguna-s-2.1:free@opencode (Principal Engineer)" ;;
+            # Fuel law 2026-10-30: poolside@opencode is the documented-
+            # defective body — rotation re-arms the LIVE Qoder lane instead
+            # (paid qoder ids stay dead until the Owner refuels).
+            platform-engineer)          NEXT="qwen3.8-flash@qoder (Platform Engineer)" ;;
           esac
           git checkout -f ai/main
           # Race-proof the control commit: my (Lead's) pushes or another

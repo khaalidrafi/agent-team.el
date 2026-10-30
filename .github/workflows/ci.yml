@@ -436,20 +436,29 @@ jobs:
             echo "gomodel lane: DOWN (HTTP $CODE) — lane-fallback law active (turn proceeds on direct provider lanes; auto-reuses gomodel the moment the box answers)" >> "$SUMMARY"
           fi
 
-      - name: Build harness image (canonical kit base + thin repo layer)
+      - name: Build harness image (MODULAR — only this run's agent bodies)
         if: steps.control.outputs.mode == 'work'
+        env:
+          SEAT: ${{ steps.control.outputs.seat }}
         run: |
-          # INTEGRATION.md section 2: the canonical kit image builds from
-          # THIS repo's root (context = repo root, so ci/AGENTS.md bakes
-          # into every body's law slot); the thin repo layer adds emacs +
-          # acp + agent-org on top (docker/harness/Dockerfile FROMs the
-          # base tag).
-          docker buildx build --load \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
-            -f ci/docker/harness/Dockerfile \
-            -t agent-team-harness-base:local \
-            .
+          # Owner order 2026-10-30 #hq: "on each CI run, only agents needed
+          # by that run can be built/used." Seat map mirrors BOTH the
+          # agent-org batch lane (opencode/goose/qoder ACP per seat) AND
+          # the direct-CLI fallback chains below. Unknown seat -> empty
+          # list -> harness_run_build.sh fails safe to the FULL harness
+          # build. The kit union lands on agent-team-harness-base:local
+          # (what docker/harness/Dockerfile FROMs); the thin repo layer
+          # (emacs + acp + agent-org) stays unchanged.
+          case "$SEAT" in
+            principal-engineer)                                            BODIES="opencode goose codebuddy qoder" ;;
+            quality-assurance-engineer|software-engineer|release-engineer) BODIES="opencode goose codebuddy qoder" ;;
+            platform-engineer)                                             BODIES="qoder goose codebuddy" ;;
+            *)                                                             BODIES="" ;;
+          esac
+          bash ci/bin/harness_run_build.sh \
+            -b agent-team-el-kit-base:local \
+            -o agent-team-harness-base:local \
+            -- $BODIES
           docker buildx build --load \
             --cache-from type=gha \
             --cache-to type=gha,mode=max \

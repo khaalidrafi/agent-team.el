@@ -1,0 +1,57 @@
+#+TITLE: INTEGRATION-ADMINEVERYWHERE.org — agent-team behind admin apps
+#+STARTUP: overview
+
+Owner question 2026-10-31 #hq: how do admin apps built on
+khaalidrafi/admineverywhere integrate agent-team? This is the contract.
+Purity law holds: agent-team stays general; everything admin-specific
+(auth, RBAC, UI, hosting) lives in the panel repo.
+
+* Surface 1 — OpenAI-compatible serving gateway (PRIMARY, WO-22)
+
+Their ChatPanel + mock_openai already speak OpenAI-shaped chat. The WO-22
+gateway is a small HTTP process that replaces the mock:
+
+- =POST /v1/chat/completions= — streaming (SSE), OpenAI response shape;
+  =GET /v1/models= — one entry per seat persona the panel may pick.
+- One agent-org session per admin user (user→seat map from config), so
+  context, transcript and clocking stay per-user. Transcripts land in the
+  project's =.agent-org/= — that is the admin audit trail for free.
+- Auth: one bearer token from env for the panel; per-user identity stays
+  in the panel (RBAC never leaves admineverywhere).
+- Deployment: same host as the panel or a sidecar container; the only
+  config is URL, token, seat map, and the provider keys agent-org already
+  reads.
+- What the panel swaps: mock_openai base URL → gateway URL, mock token →
+  real token. No panel code changes beyond that.
+
+* Surface 2 — Agent Client Protocol (deep, later)
+
+agent-org already consumes ACP providers (WO-16). Exposing a seat AS an
+ACP agent gives the panel tool-level control (artifacts, tool approval
+UI). Ship after Surface 1 proves the transport; same purity rules.
+
+* Surface 3 — org-script batch jobs (fire-and-forget)
+
+WO-19's script runner: the panel (or a cron) drops an org script into a
+watched folder, agent-team executes the steps and writes results back —
+nightly reports, triage, backlog sweeps. No streaming UI needed.
+
+* Who provides what
+
+- agent-team provides: the chat engine (agent-org), the seats + roster
+  (MEMBERS.org), the control plane (CONTROL.org kill-switch, TURN, fuel
+  law), per-user transcripts, and the WO-22 gateway itself.
+- admineverywhere provides: hosting for the gateway process, the
+  user→seat map, the bearer secret in their secret channel, RBAC + audit
+  policy on their side, and answers to the six letter asks already in
+  their CHAT.org (transport, runtime + budget, identity scope, persona
+  injection point, secret names, staging contact).
+- Seam: config only. If a feature needs admin-specific code inside
+  agent-team, it is designed as a generic capability instead (the
+  openbot-port list is the source of such generic features).
+
+* Next mechanical step
+
+Seats build WO-22 (Owner 2026-10-31: "complete ALL via agents"); when the
+panel team answers the letter asks, the swap is a config change on their
+side and a deploy on ours.

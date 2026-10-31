@@ -1,0 +1,54 @@
+#+TITLE: OPENBOT-PORT.org — openbot.run features for agent-team.el (clean-room)
+#+STARTUP: overview
+
+* What openbot.run is
+
+A local-first desktop workspace for persistent AI teammates (nightly-labs/openbot):
+many agent seats (Codex, Claude Code, Gemini, Grok, OpenCode, Cursor, Cline and
+any Agent Client Protocol agent), each with its own workspace and conversation,
+plus queues, agent-to-agent messaging, shared channels, an embedded browser and
+mobile apps that connect to the desktop.
+
+* Licensing law — read before any seat touches this
+
+- Source license: PolyForm Noncommercial 1.0.0. Public source, but ZERO
+  commercial rights; commercial use needs a separate paid license.
+- Consequence for us: CLEAN-ROOM only. This spec is written from public site
+  docs (openbot.run pages and README prose), never from the source tree.
+  No seat reads openbot source, copies code, or reuses its names, logos or
+  doc text. Feature ideas and behaviors are not copyrightable; code and
+  prose are. agent-team.el stays unencumbered.
+- Name-collision trap: CopilotKit/OpenBot (a server product) and several
+  unrelated MIT-licensed "OpenBot" projects exist. They are NOT openbot.run.
+  Research cites openbot.run or nightly-labs/openbot only.
+
+* Port list (in order)
+
+1. Shared channel with one task owner. One room, one owner, explicit
+   delegation, controls: stop, resume, reassign, archive, restore.
+   Maps to: the umbrella relay — a shared Org channel where seats post and
+   the owner seat executes. Design owner: Software Architect glm-5.3.
+2. Agent-to-agent messages. Replies, reactions, managed file transfers
+   between seats. Reuses the transcript machinery from the cross-agent
+   design (TODOS.org). Lane: glm-5.3 design, poolside implementation.
+3. Queue controls. Pause, resume, cancel on the FIFO queue; crash-safe
+   persistence + reload already DONE in agent-org. Lane: poolside.
+4. Context monitor. Per-agent context watch with automatic compaction
+   before the model window exhausts; a chat note records the compaction.
+   Lane: poolside, review glm-5.3.
+5. Provider failover. On rate-limit or overload, the seat moves to a
+   backup model on another provider, keeps chat + workspace, and posts a
+   switch note. Extends the existing fallback lane. Lane: qwen3.8-flash.
+6. ACP as the universal client surface. Already covered by WO-16 — openbot
+   validates the direction; no new work, cite it in docs.
+7. Prompt-driven agent creation. Describe a teammate in one prompt, review
+   instructions + avatar, save as a MEMBERS.org profile. Lane: glm-5.3.
+8. NOT ported: embedded browser, computer-use driver, mobile apps (the
+   Discord relay IS the mobile surface), Cloudflare account stack.
+
+* Evidence per feature
+
+ERT tests first (CONVENTIONS.md discipline), one commit per feature, and a
+clean-room provenance note in README once the first feature lands: "Feature
+inspired by openbot.run public documentation; no source code or assets used;
+openbot.run is PolyForm Noncommercial 1.0.0 and remains unmodified by us."

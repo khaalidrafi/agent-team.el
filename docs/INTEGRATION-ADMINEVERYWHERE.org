@@ -6,23 +6,27 @@ khaalidrafi/admineverywhere integrate agent-team? This is the contract.
 Purity law holds: agent-team stays general; everything admin-specific
 (auth, RBAC, UI, hosting) lives in the panel repo.
 
-* Surface 1 — OpenAI-compatible serving gateway (PRIMARY, WO-22)
+* Surface 1 — Emacs-local bridge (PRIMARY, WO-22 v2, Owner 19:31 #hq)
 
-Their ChatPanel + mock_openai already speak OpenAI-shaped chat. The WO-22
-gateway is a small HTTP process that replaces the mock:
+The idea, verbatim from the Owner: the user should be able to VIEW and
+perform SIMPLE agent-team tasks from the admin apps by leveraging the Emacs
+installation containing agent-team.el on HIS machine. So the runtime is the
+user's own Emacs, and the bridge lives inside it:
 
-- =POST /v1/chat/completions= — streaming (SSE), OpenAI response shape;
-  =GET /v1/models= — one entry per seat persona the panel may pick.
-- One agent-org session per admin user (user→seat map from config), so
-  context, transcript and clocking stay per-user. Transcripts land in the
-  project's =.agent-org/= — that is the admin audit trail for free.
-- Auth: one bearer token from env for the panel; per-user identity stays
-  in the panel (RBAC never leaves admineverywhere).
-- Deployment: same host as the panel or a sidecar container; the only
-  config is URL, token, seat map, and the provider keys agent-org already
-  reads.
-- What the panel swaps: mock_openai base URL → gateway URL, mock token →
-  real token. No panel code changes beyond that.
+- An Elisp HTTP surface (loopback-only bind, bearer token, explicit
+  first-run consent) exposed by the running Emacs:
+  =GET /status= and =GET /tasks= — live board state parsed from
+  TODOS.org/CONTROL.org; =POST /dispatch= — queue a simple task to a seat
+  through the existing prompt-queue machinery; =GET /transcripts= — read
+  what the seats did (the audit trail).
+- The admin panel connects to the user's machine — localhost when the panel
+  runs beside Emacs, or a user-opted private tunnel (e.g. a tailnet) when
+  it is remote. Nothing listens on the public internet.
+- "Simple tasks" = view boards, read transcripts, dispatch a prompt to a
+  seat, check a WO. Heavy implementation work stays in the seats and CI.
+- The panel's auth/RBAC stays in admineverywhere; the bridge trusts the
+  local token only. Purity law: a general local control surface, no
+  admin-specific code in-tree.
 
 * Surface 2 — Agent Client Protocol (deep, later)
 

@@ -633,6 +633,35 @@
     north-mini-code@cohere — all on OpenRouter's :free lane, which is capped
     and rotating. "Permanent free" is doing a lot of work in that filter.
 
+* Evidence — Ant Ling family (batch 6, ELisp interning 2026-10-31,
+  Owner-ordered: "intern models to find out"; "We MUST use models that are
+  good at ELisp")
+
+  METHOD (reproducible): harness scripts/intern_elisp.py — 3 graded ELisp
+  trials per model (write a slugify defun to spec · fix a seeded bug in a
+  last-n defun · write an ERT suite for a clamp defun), graded by REAL
+  GNU Emacs 30.1 (user-space install) running HIDDEN ERT suites +
+  byte-compile audit. temperature 0.2, max_tokens 8192 (reasoning ids
+  burn tokens — headroom per the antling row). Bar: 15/19 = ELisp-lane
+  capable. Key read in-memory from the vault, never logged.
+  - Ling-3.0-flash — 19/19 CAPABLE (T1 8/8 · T2 7/7 · T3 4/4)
+  - Ling-3.1-flash — 19/19 CAPABLE (T1 8/8 · T2 7/7 · T3 4/4; 13 shoulds)
+  - Ling-3.0-tiny — 19/19 CAPABLE (T1 8/8 · T2 7/7 · T3 4/4)
+  - Ling-2.6-1T — 19/19 CAPABLE (T1 8/8 · T2 7/7 · T3 4/4)
+  - Ring-2.6-1T — 19/19 CAPABLE (T1 8/8 · T2 7/7 · T3 4/4; reasoning id)
+  - Ling-2.6-flash — 11/19 INTERN-GRADE (T1 0/8: unbalanced parens, the
+    file failed to load end-of-file; T2 7/7 · T3 4/4 — retry next round)
+  - glm-4.7-flash baseline — NO VERDICT: z.ai 429 on every call tonight
+    (matches the seats' BLOCKED report); re-probe when zai answers.
+  STAFFING CONSEQUENCE (Owner fiat 19:31/19:46 #hq): Ling-3.1-flash =
+  primary ELisp API brain (newest gen, perfect score); Ring-2.6-1T =
+  second reviewer on code landings (author≠reviewer); Ling-3.0-tiny =
+  sync/parse grunt lane; Ling-3.0-flash + Ling-2.6-1T = bench;
+  Ling-2.6-flash = INTERN POOL. Free tier = UNDATED DAILY GRANT
+  (burn-verified 2026-10-24, re-verified live 2026-10-31: GET /v1/models
+  = 13 ids) — re-hire risk per EXPIRY-LAW, never treated as unlimited.
+  Raw score JSONs: scripts/intern_results/ (Lead sandbox).
+
 * Free tiers vs the "Lead must be uncapped" gate — GATE FAILED (batch 5)
 
   HEADLINE, stated plainly because the alternative is a fiction: **no free tier

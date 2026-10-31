@@ -45,6 +45,14 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     proving/wiring one (ZAI_API_KEY is on file) rides the provider
     works-test campaign (agent-org WO-18); never invent a lane, REPORT
     what the test proves.
+  - 2026-10-31 RE-LIGHT (Owner fiat 19:31/19:46 #hq + interning batch 6):
+    the seat gains API-resident ELisp hands — Ling-3.1-flash@antling is
+    the ELisp API lane primary (interned 19/19 on hidden-ERT ELisp
+    trials), Ring-2.6-1T@antling reviews every landing (author≠reviewer),
+    Ling-3.0-tiny@antling takes sync/parse grunt lanes. glm-5.3@chat.z.ai
+    stays the Owner-mandated brain for the seat's hardest items (fiat
+    2026-10-29 stands) — web courier while its lane is down (zai 429
+    tonight); antling is the fuel fix for the BLOCKED seats.
   - duties: core package code + ERT in both repos · architecture ·
     hardest port items · review of Implementer segments
   - fallbacks:
@@ -135,8 +143,9 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
     3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
 * FALLBACK CHAINS (rank-3, per seat — the retired 2026-10-29 seats live here)
-  - Senior Emacs Lisp / Port Engineer: laguna-s-2.1:free@opencode ->
-    dots-3-note-preview:free@cline (intern) -> glm-5.2 courier escalation
+  - Senior Emacs Lisp / Port Engineer: Ling-3.0-flash@antling (19/19)
+    -> laguna-s-2.1:free@opencode -> dots-3-note-preview:free@cline
+    (intern) -> glm-5.2 courier escalation
   - Platform / CI: qwen3.8-flash@qoder -> deepseek-v4.1-flash@codebuddy
     (wired 2026-10-28 fuel correction) -> groq/qwen3.8-27b@goose (PROVEN
     ALIVE; banked runner record: ert 7/7 + byte-compile green, parser fix

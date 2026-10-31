@@ -354,7 +354,10 @@
    - [ ] LARK_WEBHOOK_URL secret still unset (Lark notify is guard-skipped)
    :RESULT: PARTIAL
    :END:
-** PROGRESS [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
+** CANCELLED [2026-10-20] lead/03: Team Lead seat — HANDOFF to glm-5.3-flash@opencode/local :HANDOFF:
+   CANCELLED by Lead 2026-10-31 #hq (Lead-only power): superseded by
+   lead/04 (combined Team Lead + Director seat); the opencode/local
+   handoff never activated.
    HANDOFF #1 — lead/03: assume the Team Lead seat (Agent Team)
    FROM: Team Lead (acting out) — qwen3.8-flash@qoder/local
    TO: Team Lead (acting in) — glm-5.3-flash@zai/web (WEB MODE; opencode/local
@@ -507,7 +510,11 @@
      one clobbering the other; adjudication raised to the Owner.
    :END:
 
-** PROGRESS [2026-10-20] lead/04: Team Lead + Director COMBINED — HANDOFF to glm-5.3-flash@chat.z.ai :HANDOFF:
+** DONE [2026-10-20] lead/04: Team Lead + Director COMBINED — HANDOFF to glm-5.3-flash@chat.z.ai :HANDOFF:
+   DONE 2026-10-31 (verdict by the handoff TARGET): operative —
+   glm-5.3-flash@chat.z.ai holds the combined seat now; evidence = this
+   session's dispatches on ai/quickstart (f5309ff, 9d210dd lineage) and
+   ai/main (45d4931) + the openbot clean-room spec.
    TO: Team Lead + Director of Engineering — glm-5.3-flash@chat.z.ai
    FROM: Platform Engineer — qwen3.8-flash@qoder (outgoing acting Lead, fired from
    the Lead seat by Owner order 15:4x; retains Platform)

@@ -105,7 +105,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     well-scoped board items; report SHAs to the Lead
   - fallbacks: n/a until active (not dispatchable while PROVISIONAL)
 
-* Implementer (port lane, both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29)
+* Port Engineer (both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29; re-titled per Owner 2026-10-31 #hq: "implementer ain't any real role")
   - :last-dispatch: 0
   - MODEL REASON: the strongest PERMANENTLY-FREE open-weight agentic
     brain found in five research batches — vendor Terminal-Bench 2.1
@@ -120,7 +120,8 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     (`opencode run`), consumes OPENROUTER_API_KEY natively, one-line
     install in a runner.
   - UMBRELLA NOTE (2026-10-29): re-titled Principal -> Implementer
-    (port lane); the Senior Emacs Lisp Engineer seat takes the hardest
+    (port lane) -> Port Engineer (Owner 2026-10-31: real role titles
+    only); the Senior Emacs Lisp Engineer seat takes the hardest
     items. This seat runs segments on agent-org WO-16 ACP parity and
     the WO-1 unit series, and agent-team.el port items.
   - PAIR FIT FOR DUTIES: P0s, hard problems and architecture demand
@@ -134,7 +135,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
     3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
 * FALLBACK CHAINS (rank-3, per seat — the retired 2026-10-29 seats live here)
-  - Senior Emacs Lisp / Implementer: laguna-s-2.1:free@opencode ->
+  - Senior Emacs Lisp / Port Engineer: laguna-s-2.1:free@opencode ->
     dots-3-note-preview:free@cline (intern) -> glm-5.2 courier escalation
   - Platform / CI: qwen3.8-flash@qoder -> deepseek-v4.1-flash@codebuddy
     (wired 2026-10-28 fuel correction) -> groq/qwen3.8-27b@goose (PROVEN
@@ -217,7 +218,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     OBJECTIVE — on its own branch, never merging (merges are the Lead's
     gate on a green suite).
   - ROTATION (umbrella 2026-10-29): Senior Emacs Lisp Engineer →
-    Implementer (port lane) → Platform / CI Engineer → QA + Docs
+    Port Engineer → Platform / CI Engineer → QA + Docs
     Engineer → back. The Cloud Agent (devin@devin.ai) joins only after
     its access is sealed; the QA seat's cline body must pass its
     CI proof first. The turn pointer advances EVEN WHEN a seat is

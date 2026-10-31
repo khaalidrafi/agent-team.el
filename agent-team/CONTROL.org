@@ -9,6 +9,10 @@
 #+OBJECTIVE-STATE: OPEN
 #+KILL-SWITCH: OFF
 #+TURN: qwen3.8-flash@qoder (Platform Engineer)
+#+DISPATCH: 2026-10-31 17:30 #hq — Owner: "complete ALL via agents";
+# integration target for agent-team = khaalidrafi/admineverywhere admin
+# apps via the WO-22 OpenAI-compatible gateway (design:
+# docs/INTEGRATION-ADMINEVERYWHERE.org this repo).
 #+STALL-COUNT: 0
 #+LAST-VERDICT: 1b7f989520c5
 #+LAST-BLOCKED-NOTIFY: 0

@@ -653,6 +653,11 @@
     file failed to load end-of-file; T2 7/7 · T3 4/4 — retry next round)
   - glm-4.7-flash baseline — NO VERDICT: z.ai 429 on every call tonight
     (matches the seats' BLOCKED report); re-probe when zai answers.
+  - COMPARISON ROWS attempted, both dark: poolside/laguna-s-2.1:free —
+    family DELISTED from OpenRouter tonight (live catalog = zero
+    poolside ids; 404 "no longer available") — Port Engineer body DEAD
+    until a live free lane reappears; nemotron-3.5-lightning:free —
+    still listed, daily-capped tonight (429 free-models-per-day).
   STAFFING CONSEQUENCE (Owner fiat 19:31/19:46 #hq): Ling-3.1-flash =
   primary ELisp API brain (newest gen, perfect score); Ring-2.6-1T =
   second reviewer on code landings (author≠reviewer); Ling-3.0-tiny =

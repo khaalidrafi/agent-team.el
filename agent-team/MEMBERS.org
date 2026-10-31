@@ -113,7 +113,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     well-scoped board items; report SHAs to the Lead
   - fallbacks: n/a until active (not dispatchable while PROVISIONAL)
 
-* Port Engineer (both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29; re-titled per Owner 2026-10-31 #hq: "implementer ain't any real role")
+* Port Engineer (both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29; re-titled per Owner 2026-10-31 #hq: "implementer ain't any real role") — BODY DEAD 2026-10-31: OpenRouter delisted the whole poolside/laguna family (404 "no longer available"); seat waits on a live free lane, the code queue moved to the antling ELisp API lane per dispatch v3
   - :last-dispatch: 0
   - MODEL REASON: the strongest PERMANENTLY-FREE open-weight agentic
     brain found in five research batches — vendor Terminal-Bench 2.1

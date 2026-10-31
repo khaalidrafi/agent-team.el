@@ -1062,7 +1062,7 @@ jobs:
           git reset --hard origin/ai/main
           sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
           git add "$CTL"
-          git commit -m "control: rotate #+TURN to next seat after ${TURN_SEAT:-unknown} segment" \
+          git commit -m "control: rotate #+TURN to next seat after ${TURN_SEAT:-previous seat} segment" \
             -m "next seat: ${NEXT}" \
             -m "segment result: ${TURN_RESULT:-unknown}" \
             -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \

@@ -658,14 +658,36 @@
     poolside ids; 404 "no longer available") — Port Engineer body DEAD
     until a live free lane reappears; nemotron-3.5-lightning:free —
     still listed, daily-capped tonight (429 free-models-per-day).
-  STAFFING CONSEQUENCE (Owner fiat 19:31/19:46 #hq): Ling-3.1-flash =
-  primary ELisp API brain (newest gen, perfect score); Ring-2.6-1T =
-  second reviewer on code landings (author≠reviewer); Ling-3.0-tiny =
-  sync/parse grunt lane; Ling-3.0-flash + Ling-2.6-1T = bench;
+  STAFFING CONSEQUENCE (Owner fiat 19:31/19:46 #hq, re-formed 00:08
+  2026-11-01 as REAL model+agent pairs — bare-API ids like "@antling"
+  were a Lead error, corrected): antling/Ling-3.1-flash@opencode = Port
+  Engineer (hired; code queue); antling/Ring-2.6-1T@opencode = Senior EL
+  API lane (reviewer, author≠reviewer); antling/Ling-3.0-tiny@opencode =
+  grunt lane; antling/Ling-3.0-flash@opencode + Ling-2.6-1T = bench;
   Ling-2.6-flash = INTERN POOL. Free tier = UNDATED DAILY GRANT
   (burn-verified 2026-10-24, re-verified live 2026-10-31: GET /v1/models
   = 13 ids) — re-hire risk per EXPIRY-LAW, never treated as unlimited.
   Raw score JSONs: scripts/intern_results/ (Lead sandbox).
+
+  REAL-AGENT PROOF 2026-11-01 (Owner: "Didn't you run it inside a coding
+  agent?" — the interning rig above is bare API; the SEAT body is a real
+  agent): opencode 1.19.5 headless turn on antling/Ling-3.1-flash —
+  agent read SPEC, wrote rev.el, ran the ERT verification itself, caught
+  its own pp-e failure and fixed it; artifact passes 5/5 under the
+  Lead's independent ERT run. Harness bugs noted against the LEAD (not
+  the model): pp-d contradicted the spec's own rotation wording, and the
+  spec's verify command omitted -l rev.el. Evidence: scripts/pair_proof/
+  (SPEC.md, tests.el, rev.el, proof.log).
+
+  LLMFISHER SYNC CENSUS 2026-11-01 (Owner: llmfisher finds the latest
+  free list; llmfisher a8096d0): OpenRouter DELISTS confirmed
+  independently — poolside/laguna family, thinkingmachines/inkling-
+  small:free, nvidia/nemotron-3-super-120b-a12b:free all dropped. NEW
+  free ids: recursive/flint-v1.0:free (no evidence -> INTERN next round,
+  never rejected) and inclusionai/ling-3.1-flash-1019-free (the proven
+  Port brain gains an independent second free lane). GOMODEL: zai retry
+  budget widened to 5 attempts x 10s (compose, same repo) — 429s are
+  absorbed at the gateway, never surfaced to seats.
 
 * Free tiers vs the "Lead must be uncapped" gate — GATE FAILED (batch 5)
 

@@ -767,7 +767,13 @@ jobs:
           # ci/bin/law_brief.sh from the agent-team-ci submodule = GLOBAL LAW
           # (ci/AGENTS.md) + LOCAL LAW (root AGENTS.md) + segment brief.
           printf '%s\n' "$BRIEF" > /tmp/segment-brief.txt
-          bash ci/bin/law_brief.sh /tmp/segment-brief.txt "$PWD" > /tmp/segment-brief.txt
+          # Compose to a DIFFERENT file then move: redirecting stdout onto
+          # the script's own input file truncates it mid-read and cat dies
+          # with "input file is output file" under bash -e — that exact bug
+          # failed every turn since before 2026-11-01 00:47 (runs
+          # 41258286434/41258716980/41271534879 evidence).
+          bash ci/bin/law_brief.sh /tmp/segment-brief.txt "$PWD" > /tmp/segment-brief.composed.txt
+          mv /tmp/segment-brief.composed.txt /tmp/segment-brief.txt
 
           # Seat -> body command. Brains come from the baked configs; keys
           # come from repo secrets via env. The harness image has BOTH

@@ -69,6 +69,8 @@ jobs:
           GMI_API_KEY: ${{ secrets.GMI_API_KEY }}
           NAVYAI_API_KEY: ${{ secrets.NAVYAI_API_KEY }}
           TOKENHARBOR_API_KEY: ${{ secrets.TOKENHARBOR_API_KEY }}
+          MOONMATH_API_KEY: ${{ secrets.MOONMATH_API_KEY }}
+          ANTLING_API_KEY: ${{ secrets.ANTLING_API_KEY }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |
           cd /tmp/llmfisher-src
@@ -85,6 +87,7 @@ jobs:
             -e CLOUDFLARE_API_KEY -e CLOUDFLARE_ACCOUNT_ID \
             -e AA_API_KEY -e BAI_API_KEY -e GMI_API_KEY \
             -e NAVYAI_API_KEY -e TOKENHARBOR_API_KEY \
+            -e MOONMATH_API_KEY -e ANTLING_API_KEY \
             -e TYPESAFE_API_KEY -e JEV_API_KEY \
             llmfisher --fresh
 
@@ -95,7 +98,7 @@ jobs:
             echo "## llmfisher --fresh — REAL census (khaalidrafi/llmfisher@${LLMFISHER_SHA:-unknown})"
             echo ""
             echo "- shape ordered by the Owner: \`docker compose run --rm llmfisher --fresh\`, keys as env vars only"
-            echo "- key NAMES offered to the census: GROQ OPENROUTER ZAI GEMINI OLLAMA_CLOUD CLOUDFLARE OPENCODE AA BAI GMI NAVYAI TOKENHARBOR TYPESAFE/JEV"
+            echo "- key NAMES offered to the census: GROQ OPENROUTER ZAI GEMINI OLLAMA_CLOUD CLOUDFLARE OPENCODE AA BAI GMI NAVYAI TOKENHARBOR MOONMATH ANTLING TYPESAFE/JEV"
             echo ""
             echo "Auto-written config.yaml header (what the gateway will serve):"
             echo '```'

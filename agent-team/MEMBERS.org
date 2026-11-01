@@ -45,14 +45,15 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     proving/wiring one (ZAI_API_KEY is on file) rides the provider
     works-test campaign (agent-org WO-18); never invent a lane, REPORT
     what the test proves.
-  - 2026-10-31 RE-LIGHT (Owner fiat 19:31/19:46 #hq + interning batch 6):
-    the seat gains API-resident ELisp hands — Ling-3.1-flash@antling is
-    the ELisp API lane primary (interned 19/19 on hidden-ERT ELisp
-    trials), Ring-2.6-1T@antling reviews every landing (author≠reviewer),
-    Ling-3.0-tiny@antling takes sync/parse grunt lanes. glm-5.3@chat.z.ai
+  - 2026-11-01 PAIR-FORMED (Owner 00:08 #hq: seats are model+agent
+    pairs, ids carry the company prefix): API-resident ELisp hands are
+    antling/Ring-2.6-1T@opencode — reviewer on every code landing
+    (author≠reviewer) + hardest items — with antling/Ling-3.0-tiny@
+    opencode on sync/parse grunt lanes; the Port Engineer seat (hired
+    same night) runs antling/Ling-3.1-flash@opencode. glm-5.3@chat.z.ai
     stays the Owner-mandated brain for the seat's hardest items (fiat
-    2026-10-29 stands) — web courier while its lane is down (zai 429
-    tonight); antling is the fuel fix for the BLOCKED seats.
+    2026-10-29 stands); zai rides the GoModel retry budget (5x10s,
+    llmfisher a8096d0) instead of surfacing 429s.
   - duties: core package code + ERT in both repos · architecture ·
     hardest port items · review of Implementer segments
   - fallbacks:
@@ -113,7 +114,7 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     well-scoped board items; report SHAs to the Lead
   - fallbacks: n/a until active (not dispatchable while PROVISIONAL)
 
-* Port Engineer (both repos) — openrouter/poolside/laguna-s-2.1:free@opencode (retained 2026-10-29; re-titled per Owner 2026-10-31 #hq: "implementer ain't any real role") — BODY DEAD 2026-10-31: OpenRouter delisted the whole poolside/laguna family (404 "no longer available"); seat waits on a live free lane, the code queue moved to the antling ELisp API lane per dispatch v3
+* Port Engineer (both repos) — antling/Ling-3.1-flash@opencode (HIRED 2026-11-01 00:08 #hq, capability-based per Owner: poolside/laguna family delisted from OpenRouter 2026-10-31, body dead; the hire is the strongest PROVEN free coding brain — interned 19/19 on hidden-ERT ELisp trials tonight + family evidence in CANDIDATES batch-6; body opencode = REAL agent pair, headless turn proven in the sandbox with tool use + self-corrected ERT loop)
   - :last-dispatch: 0
   - MODEL REASON: the strongest PERMANENTLY-FREE open-weight agentic
     brain found in five research batches — vendor Terminal-Bench 2.1
@@ -143,9 +144,11 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     2. groq/qwen3.8-27b@goose (proven alive; capacity downgrade)
     3. zai/glm-4.7-flash@opencode (proven alive; weakest brain)
 * FALLBACK CHAINS (rank-3, per seat — the retired 2026-10-29 seats live here)
-  - Senior Emacs Lisp / Port Engineer: Ling-3.0-flash@antling (19/19)
-    -> laguna-s-2.1:free@opencode -> dots-3-note-preview:free@cline
-    (intern) -> glm-5.2 courier escalation
+  - Senior Emacs Lisp / Port Engineer: antling/Ling-3.0-flash@opencode
+    (19/19) -> inclusionai/ling-3.1-flash-1019-free@opencode (same brain,
+    independent OpenRouter lane) -> groq/qwen3.8-27b@goose via gateway
+    (CI-proven ert 7/7; direct groq 403s tonight — key is gateway-scoped)
+    -> glm-5.2 courier escalation
   - Platform / CI: qwen3.8-flash@qoder -> deepseek-v4.1-flash@codebuddy
     (wired 2026-10-28 fuel correction) -> groq/qwen3.8-27b@goose (PROVEN
     ALIVE; banked runner record: ert 7/7 + byte-compile green, parser fix

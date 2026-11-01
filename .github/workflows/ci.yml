@@ -1441,15 +1441,18 @@ jobs:
           ADDED=""
           BASE="${{ needs.turn.outputs.base_sha }}"
           if [ -n "$BASE" ] && git cat-file -e "$BASE" 2>/dev/null; then
+            # grep no-match on a chat-less diff exits 1 -> pipefail+bash -e
+            # killed the mirror step silently (runs 41272748867 + 41272986014
+            # finalize evidence). Empty CHAT.org delta is a normal outcome.
             ADDED=$(git diff "$BASE" HEAD -- agent-team/CHAT.org 2>/dev/null \
-              | grep '^+' | grep -v '^+++' | sed 's/^+//')
+              | grep '^+' | grep -v '^+++' | sed 's/^+//' || true)
           fi
           CH=""
           if [ -n "$ADDED" ]; then
             CH=$(printf '%s' "$ADDED" | sha256sum | cut -c1-12)
             LASTC=$(grep -oP '^\#\+LAST-CHAT:\s*\K[0-9a-f]+' "$CTL" | head -1 || true)
             if [ "$CH" != "$LASTC" ]; then
-              SEAT=$(printf '%s\n' "$ADDED" | grep -oP '^\s*:FROM:\s*\K.*' | head -1)
+              SEAT=$(printf '%s\n' "$ADDED" | grep -oP '^\s*:FROM:\s*\K.*' | head -1 || true)
               SEAT="${SEAT:-team-lead}"
               export ADDED
               python3 -c 'import os,sys; added=os.environ["ADDED"]; sys.stdout.write("\x1f".join(added[i:i+3800] for i in range(0, len(added), 3800)))' > /tmp/tg-chunks.txt

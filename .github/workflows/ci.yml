@@ -388,6 +388,15 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ANTLING_API_KEY: ${{ secrets.ANTLING_API_KEY }}
+          MOONMATH_API_KEY: ${{ secrets.MOONMATH_API_KEY }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -u
           if [ -z "${GH_PAT:-}" ]; then
@@ -403,6 +412,10 @@ jobs:
           # verbatim (field types checked per the GoModel source; a wrong
           # shape is a crash loop, not a warning). Keys ride as env only
           # (env-var law): nothing baked, nothing printed, nothing in git.
+          # 2026-11-01 (Owner: "gomodel is used in agent-team-ci"): provider
+          # creds ride here too — zai/groq/openrouter/gemini/opencode-zen/
+          # antling/moonmath/cloudflare; retry 5x10s per the 00:08 order so
+          # 429s are absorbed at the gateway, never surfaced to seats.
           export JEV_API_KEY="${TYPESAFE_API_KEY:-}"
           docker run -d --name gomodel -p 127.0.0.1:8080:8080 \
             -v /tmp/llmfisher-src/config:/app/config:ro \
@@ -411,8 +424,8 @@ jobs:
             -e CONFIGURED_PROVIDER_MODELS_MODE=allowlist \
             -e FAILOVER_RETRY_ON_STATUSES=4xx,5xx \
             -e FAILOVER_MAX_ATTEMPTS=5 \
-            -e RETRY_MAX_RETRIES=1 \
-            -e RETRY_INITIAL_BACKOFF=3s \
+            -e RETRY_MAX_RETRIES=5 \
+            -e RETRY_INITIAL_BACKOFF=10s \
             -e CIRCUIT_BREAKER_SCOPE=model \
             -e HTTP_RESPONSE_HEADER_TIMEOUT=30 \
             -e CACHE_REFRESH_INTERVAL=21600 \
@@ -421,6 +434,10 @@ jobs:
             -e PROVIDER_PROMPT_CACHE_PLANNER_ENABLED=false \
             -e GOMODEL_DEMO_MODE=false \
             -e GOMODEL_MASTER_KEY -e JEV_API_KEY \
+            -e ZAI_API_KEY -e GROQ_API_KEY -e OPENROUTER_API_KEY \
+            -e GEMINI_API_KEY -e OPENCODE_API_KEY -e ANTLING_API_KEY \
+            -e MOONMATH_API_KEY -e CLOUDFLARE_API_KEY \
+            -e CLOUDFLARE_ACCOUNT_ID \
             enterpilot/gomodel >/dev/null
           ok=""
           for i in $(seq 1 30); do
@@ -1205,6 +1222,15 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           GOMODEL_MASTER_KEY: ${{ secrets.GOMODEL_MASTER_KEY }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ANTLING_API_KEY: ${{ secrets.ANTLING_API_KEY }}
+          MOONMATH_API_KEY: ${{ secrets.MOONMATH_API_KEY }}
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -u
           if [ -z "${GH_PAT:-}" ]; then
@@ -1220,6 +1246,10 @@ jobs:
           # verbatim (field types checked per the GoModel source; a wrong
           # shape is a crash loop, not a warning). Keys ride as env only
           # (env-var law): nothing baked, nothing printed, nothing in git.
+          # 2026-11-01 (Owner: "gomodel is used in agent-team-ci"): provider
+          # creds ride here too — zai/groq/openrouter/gemini/opencode-zen/
+          # antling/moonmath/cloudflare; retry 5x10s per the 00:08 order so
+          # 429s are absorbed at the gateway, never surfaced to seats.
           export JEV_API_KEY="${TYPESAFE_API_KEY:-}"
           docker run -d --name gomodel -p 127.0.0.1:8080:8080 \
             -v /tmp/llmfisher-src/config:/app/config:ro \
@@ -1228,8 +1258,8 @@ jobs:
             -e CONFIGURED_PROVIDER_MODELS_MODE=allowlist \
             -e FAILOVER_RETRY_ON_STATUSES=4xx,5xx \
             -e FAILOVER_MAX_ATTEMPTS=5 \
-            -e RETRY_MAX_RETRIES=1 \
-            -e RETRY_INITIAL_BACKOFF=3s \
+            -e RETRY_MAX_RETRIES=5 \
+            -e RETRY_INITIAL_BACKOFF=10s \
             -e CIRCUIT_BREAKER_SCOPE=model \
             -e HTTP_RESPONSE_HEADER_TIMEOUT=30 \
             -e CACHE_REFRESH_INTERVAL=21600 \
@@ -1238,6 +1268,10 @@ jobs:
             -e PROVIDER_PROMPT_CACHE_PLANNER_ENABLED=false \
             -e GOMODEL_DEMO_MODE=false \
             -e GOMODEL_MASTER_KEY -e JEV_API_KEY \
+            -e ZAI_API_KEY -e GROQ_API_KEY -e OPENROUTER_API_KEY \
+            -e GEMINI_API_KEY -e OPENCODE_API_KEY -e ANTLING_API_KEY \
+            -e MOONMATH_API_KEY -e CLOUDFLARE_API_KEY \
+            -e CLOUDFLARE_ACCOUNT_ID \
             enterpilot/gomodel >/dev/null
           ok=""
           for i in $(seq 1 30); do

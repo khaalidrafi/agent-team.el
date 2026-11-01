@@ -1154,7 +1154,10 @@ jobs:
                   -H "Content-Type: application/json" \
                   -d "$BODY" \
                   "${GOMODEL_GATEWAY_URL}/v1/systemone" || echo '{}')
-          P=$(echo "$RESP" | jq -r '.answers.q.noul // empty' 2>/dev/null)
+          # jq dies (exit 5) on a non-JSON gateway body — and pipefail+bash -e
+          # then kills the whole finalize (run 41272000332 finalize evidence,
+          # stale box tier answered garbage). Empty default = local rules.
+          P=$(echo "$RESP" | jq -r '.answers.q.noul // empty' 2>/dev/null) || P=""
           if [ -n "$P" ]; then
             VERDICT=$(awk -v p="$P" 'BEGIN{print (p>=0.5) ? "yes" : "no"}')
             echo "jev: ${P} -> ${VERDICT} (gomodel via llmfisher gateway, HTTP $CODE)" >> "$SUMMARY"

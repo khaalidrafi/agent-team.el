@@ -813,3 +813,39 @@
   Verdict: NOT a candidate, NOT a catalog, NOT "all GLM models" — one harness
   brain behind a lenient router. Team model access comes from wired lanes only
   (gateway config rows + context-pack keys).
+
+
+* Evidence — OpenCode Zen free pool (llmfisher census 2026-11-01, Owner
+  00:52 #hq: "opencode also has a lot of free models. Consider them.")
+
+  Method: llmfisher ~--providers opencode --fresh~, OPENCODE_API_KEY
+  env-injected from the vault (never logged); 7 of the 8 wired ids
+  answer live. Dead row: *jev-1.13-free* — Zen serves it on
+  ~/v1/systemone~, a decision API, not a chat route (llmfisher
+  providers.py, opencode.ai/docs/zen) — dropped from the kit zen block.
+  Client-only law: Zen's free tier answers ONLY inside the OpenCode
+  client (403 measured on 6/7 ids from other clients) — so the runner
+  is the kit's PREINSTALLED opencode body via agent-team-ci (Owner
+  00:42), never a gateway and never an ad-hoc install. Grant is
+  undated/dynamic — expiry law binds.
+
+  The 7 live ids (census descriptions verbatim):
+  - beam-free — sparse MoE reasoning, 23B active, coding + agentic
+  - deepseek-v4.1-flash-free — reasoning + agentic coding
+  - flint-40b-free — ~2.5B-active MoE for coding agents
+  - glm-5.3-flash-free — multimodal GLM, efficient coding, long-horizon
+    agent tasks
+  - mimo-v2.6-flash-free — multimodal coding agents, long context
+  - nemotron-3.5-lightning-free — fast NVIDIA Nemotron MoE, agentic
+  - nemotron-3.5-super-vl-free — NVIDIA vision-language reasoning
+    (text/image/video)
+
+  Staffing (capability law — NO hire without ELisp evidence):
+  - glm-5.3-flash-free: NO battery needed — same family as the Lead
+    lane; free backup for glm-5.3 hard items when zai 429s.
+  - nemotron-3.5-lightning-free: QA/Docs brain lane without the
+    OpenRouter daily cap (QA+Docs seat already runs nemotron).
+  - beam-free · deepseek-v4.1-flash-free · mimo-v2.6-flash-free ·
+    flint-40b-free: un-evidenced → kit ELisp battery, 15/19 bar (WO-27)
+    before any seat. nemotron-3.5-super-vl-free: vision-QA candidate,
+    optional 5th of the round.

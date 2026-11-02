@@ -724,9 +724,12 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 - REPORT VOCABULARY: every status line between dispatches leads with
   exactly one word — progress / waiting / ready / blocked / failed /
   dropped — on top of the MESSAGE STANDARD RESULT. A question that
-  needs the Owner is ONE concrete ATTENTION entry in CHAT.org —
-  structured, one at a time, never buried in prose.
-- HUMAN-RESERVED SLOT: an Owner or human message on CHAT.org outranks
+  needs the Owner is ONE concrete chat entry with KIND attention
+  (the KINDS vocabulary) — structured, one at a time, never buried in
+  prose. CHAT.org stays command-maintained: the chat command writes
+  every entry, never a hand edit.
+- HUMAN-RESERVED SLOT: a CHAT.org entry from the Owner or a human
+  (written by the chat command or a courier — never by hand) outranks
   ALL queued repo work in the same run — new work never delays a
   person's thread. Mirrors dsh's rule: "new work cannot prevent a
   person from continuing an existing ticket".
@@ -734,9 +737,10 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   failed push retries with backoff and is reported — never silently
   dropped. The record precedes the action; a crash never loses a
   decision.
-- RESUME UNDER MANDATE: a follow-up on a CHAT.org thread revives a DONE
-  item only if its mandate still validates against the CURRENT
-  CONTROL.org; otherwise it goes back through the gate as new work.
+- RESUME UNDER MANDATE: a follow-up chat entry on the item's thread
+  revives a DONE item only if its mandate still validates against the
+  CURRENT CONTROL.org; otherwise it goes back through the gate as new
+  work.
 - MERGE GUARDRAILS: auto-merge only the item's own PR, only when ready,
   additions plus deletions under 200 lines, approvals covering the head
   commit, withdrawn before any new push — and NEVER merged as the

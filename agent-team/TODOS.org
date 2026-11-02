@@ -856,6 +856,70 @@
    - State changed by Team Lead — groq/qwen3.8-27b@opencode/local on [2026-10-20]: investigate — no ai/elisp-glm branch exists on origin, no code artifact; v0.1 implements Jev noul only. PROGRESS without artifact = unverified claim; re-dispatch after CI green (critical path = CI first, handoff/01 ordering).
    :END:
 
+** TODO [2026-11-02] superagent/01: elisp schema bump — SUPERAGENT LAW features (Owner order 2026-11-02 #hq) :DISPATCH:
+   :PROPERTIES:
+   :EFFORT: 4:00
+   :END:
+   Owner order 2026-11-02 #hq: "Add best features from superagent to
+   agent-team.el". The SUPERAGENT LAW (templates/COMMON.org, section
+   SUPERAGENT LAW) needs real elisp, not prose. Design-before-code;
+   every feature ERT-gated; byte-compile clean; house commit law.
+   TO: the rotation (current #+TURN seat) · PRIORITY: P1 · RISK: writes
+   FROM: Team Lead — z.ai-agent (Lead, Owner dispatch)
+   SPEC (all in agent-team.el; ERT fixtures use TEMP copies of
+   CONTROL.org/CHAT.org — never the repo's own agent-team/ files):
+   1. ACCEPT-MODE: (agent-team--accept-mode) reads #+ACCEPT-MODE: from
+      CONTROL.org, returns off|observe|auto, off when the line is
+      absent or invalid; (agent-team-accept-mode-set) interactive
+      setter extending the agent-team-control-set key list. ERT:
+      absent, invalid, each of the three values.
+   2. GATE: (agent-team--gate-pass-p &optional kind) — deterministic
+      pre-work gate: nil when #+KILL-SWITCH: ON, or #+CHAIN-PAUSE set,
+      or the dial rejects the candidate kind (explicit passes always;
+      inferred only under auto); returns (t REASON) shape for logs.
+      ERT: every switch combination.
+   3. MANDATE: (agent-team-mandate-set repo paths max-commits rule)
+      writes the :MANDATE: property on the item at point and REFUSES
+      to overwrite an existing one (user-error — a scope change appends
+      MANDATE-2, MANDATE-3, ...); (agent-team-mandate-check paths)
+      validates touched files against the allowed paths (prefix
+      match). ERT: immutability + match matrix.
+   4. ATTENTION: add "attention" to agent-team-chat-kinds; a send guard
+      in agent-team-chat-send — a second attention entry from the same
+      FROM while an earlier one is unanswered warns and demands
+      confirmation (one concrete question at a time). ERT: guard logic
+      on a fixture chat.
+   5. RESULT vocabulary: kind=report entries must lead the body with
+      exactly one word — progress|waiting|ready|blocked|failed|dropped;
+      agent-team-chat-send validates interactively, send-batch reads
+      AGENT_CHAT_RESULT; a foreign word is a user-error. ERT:
+      valid/invalid.
+   6. HUMAN-RESERVED SLOT: (agent-team-human-pending-p &optional since)
+      scans the CHAT.org tail for entries TO @lead or @all from a human
+      courier (FROM prefixed Owner, or PRIORITY P0) newer than SINCE;
+      batch form (agent-team-human-pending) prints yes/no + entry id
+      for the harness. ERT on fixtures.
+   7. DURABLE OUTBOX: (agent-team-outbox-pending-p) — t when agent-team/
+      files carry uncommitted changes (record-before-act: new work
+      never starts on unpushed records). ERT: dirty/clean.
+   8. RESUME: (agent-team-resume) interactive on a DONE item — reopens
+      it only when the gate passes under the CURRENT CONTROL.org
+      (kill-switch off, dial permits, paths still allowed); otherwise
+      logs would-accept under observe / rejects under off. ERT: resume
+      under each dial value.
+   NOT in scope: ticket-vs-session chain-runner work (later FR); ci.yml
+   wiring of human-pending/outbox (harness lane, separate dispatch);
+   any secret handling.
+   DEFINITION OF DONE: full ert suite green in one run, byte-compile
+   clean, complete docstrings, branch ai/superagent-01 pushed, report
+   to @lead with RESULT: <vocabulary word>.
+   *** TODO review: superagent/01 elisp schema bump
+    :PROPERTIES:
+    :EFFORT: 0:50
+    :END:
+    Reviewer: run the FULL ert suite + byte-compile; verify all 8
+    features against their ERT sets; attempt at least one refutation.
+
 * Org cheat sheet
 
   - ONGOING + CLOCK start; notes in :LOGBOOK:; BLOCKED (:OWN: = owner ruling);

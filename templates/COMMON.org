@@ -700,6 +700,49 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   reported BLOCKED with paths, never hidden. The verdict is restated at
   every HR REVIEW window.
 
+** SUPERAGENT LAW (Owner order 2026-11-02 #hq — the best ideas from
+   deepseek-ai/dsh-superagent-prototype, docs 000-003, ported to the chain)
+
+- GATE BEFORE WORK: work is opened only by the Owner, the EM, or a
+  written rule the Owner approved — a seat never self-opens work. No
+  seat's model runs before the deterministic gate passes: #+KILL-SWITCH
+  and #+CHAIN-PAUSE are clear, the paths are not NOT-TOUCH, the sender
+  is allowed (an explicit Owner/EM order, or an inferred candidate
+  under the current #+ACCEPT-MODE), and the dial itself permits it.
+- ACCEPT DIAL: agent-team/CONTROL.org carries `#+ACCEPT-MODE:` with
+  exactly one value — off, observe, auto. off = explicit orders only
+  (the default everywhere). observe = an inferred candidate is assessed
+  and logged "would accept" on the board, and NOTHING is written. auto
+  = an inferred candidate may open work. Every newly teamified repo
+  starts at observe; the EM flips it only after a clean record, and the
+  Owner dials it back at any time.
+- MANDATE LINE: every work item carries ONE immutable mandate line
+  written at acceptance — repo, allowed paths, max commits, matched
+  rule, CONTROL version. A scope change appends a NEW mandate line with
+  its rule; the old one is never edited. It is the one-line audit
+  answer to "why did the agent do this?".
+- REPORT VOCABULARY: every status line between dispatches leads with
+  exactly one word — progress / waiting / ready / blocked / failed /
+  dropped — on top of the MESSAGE STANDARD RESULT. A question that
+  needs the Owner is ONE concrete ATTENTION entry in CHAT.org —
+  structured, one at a time, never buried in prose.
+- HUMAN-RESERVED SLOT: an Owner or human message on CHAT.org outranks
+  ALL queued repo work in the same run — new work never delays a
+  person's thread. Mirrors dsh's rule: "new work cannot prevent a
+  person from continuing an existing ticket".
+- DURABLE OUTBOX: write the board and CHAT.org FIRST, push after. A
+  failed push retries with backoff and is reported — never silently
+  dropped. The record precedes the action; a crash never loses a
+  decision.
+- RESUME UNDER MANDATE: a follow-up on a CHAT.org thread revives a DONE
+  item only if its mandate still validates against the CURRENT
+  CONTROL.org; otherwise it goes back through the gate as new work.
+- MERGE GUARDRAILS: auto-merge only the item's own PR, only when ready,
+  additions plus deletions under 200 lines, approvals covering the head
+  commit, withdrawn before any new push — and NEVER merged as the
+  seat's own account (GitHub attributes the merge to whoever enabled
+  it). The EM merges; the merge-gate law above applies in full.
+
 ** MEMBER LAWS
 
 - Work lands on ai/main only. Task branches rebase and push with

@@ -39,4 +39,9 @@ Source → Trigger → Thread → Eval → Decision → Mandate → Ticket → A
 * 5–8 need a CONTROL.org/TODOS.org schema bump (agent-team.el elisp).
 * 9 is the big one — chain-runner change; separate FR once 1–4 prove out.
 
-Status: waiting on Owner go for 1–4.
+Status: per Owner order 2026-11-02 #hq ("just add the best and most useful
+ideas"), ideas 1–8 are LANDED AS TEXT LAW — the SUPERAGENT LAW section in
+templates/COMMON.org (this repo) and the rebuilt kit copy
+TEAMIFY-COMMON-PROMPT.org (agent-team-ci 920edd0). The dial/mandate rules are
+EM-enforced until the elisp parses them (schema-bump FR); 9 (ticket ≠ session,
+chain-runner) stays the later FR.

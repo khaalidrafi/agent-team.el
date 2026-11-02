@@ -45,3 +45,12 @@ templates/COMMON.org (this repo) and the rebuilt kit copy
 TEAMIFY-COMMON-PROMPT.org (agent-team-ci 920edd0). The dial/mandate rules are
 EM-enforced until the elisp parses them (schema-bump FR); 9 (ticket ≠ session,
 chain-runner) stays the later FR.
+
+DISPATCHED 2026-11-02 ~07:4xZ per Owner follow-up ("CHAT.org is never meant
+to be manually edited! Add best features from superagent to agent-team.el"):
+the schema bump is board item superagent/01 (ERT-gated spec, 8 features —
+accept-mode, gate, mandate, attention kind, result vocabulary, human-pending,
+outbox-pending, gate-checked resume) and CONTROL.org #+OBJECTIVE re-pointed
+to it. The law text was corrected the same hour: every CHAT.org mechanism
+routes through the command-maintained chat (kinds vocabulary; never a hand
+edit).

@@ -39,6 +39,34 @@
 #    child (review mode; the marker may match the child's evidence
 #    lines, so cite branch=/author= in its body).
 
+# TIME DISCIPLINE LAW (Owner 2026-11-02 15:58 #hq): effort + deadline
+# on every lead-assigned TODO; the lead decides the time.
+# 1. :EFFORT: (Effort_ALL ladder) AND :DEADLINE: (Org timestamp, UTC)
+#    in the :PROPERTIES: drawer — no both, no dispatch.
+# 2. Show cause BEFORE the deadline passes: row flip + :LOGBOOK:
+#    cause + new ETA + chat report (waiting/blocked). Missed deadline
+#    with no prior show-cause escalates to the Owner.
+# 3. Extensions are Lead-only: the lead appends the new :DEADLINE:
+#    line; the old one is never edited.
+# 4. Owner notices/updates land under * NOTICES — read on every poll,
+#    never edited by the team.
+
+* NOTICES
+
+** [2026-11-02 15:58Z] TIME DISCIPLINE LAW — effort + deadline on every TODO; show-cause before any slip (Owner, #hq)
+
+- Every lead-assigned TODO carries :EFFORT: AND :DEADLINE: (Org
+  timestamp, UTC) in its :PROPERTIES: drawer. The member estimates;
+  the LEAD decides both. A TODO without both is not dispatchable.
+- Can't deliver in time? Show cause BEFORE the deadline passes: flip
+  the row, log the concrete cause + earliest realistic new ETA in the
+  :LOGBOOK:, report waiting/blocked via the chat command. A deadline
+  missed with no prior show-cause escalates to the Owner.
+- Extensions are Lead-only: the lead appends the new :DEADLINE: line;
+  the old one is never edited.
+- Owner notices/updates land in this section from now on. Read on
+  every poll; never edit.
+
 * Board
 
 ** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:
@@ -918,6 +946,61 @@
     :EFFORT: 0:50
     :END:
     Reviewer: run the FULL ert suite + byte-compile; verify all 8
+    features against their ERT sets; attempt at least one refutation.
+
+** TODO [2026-11-02] time-discipline/01: deadline + show-cause enforcement in the chain (Owner order 2026-11-02 15:58 #hq) :DISPATCH:
+   :PROPERTIES:
+   :EFFORT: 4:00
+   :DEADLINE: <2026-11-03 Tue 12:00>
+   :END:
+   Owner order 2026-11-02 15:58 #hq: "Each TODO from now on will
+   contain effort and deadline and assignees MUST show-cause if they
+   can't deliver in time. Lead decides the time." The TIME DISCIPLINE
+   LAW (templates/COMMON.org, section TIME DISCIPLINE LAW) needs
+   chain teeth. Design-before-code; every feature ERT-gated (TEMP
+   copies of the board — never the repo's own agent-team/ files);
+   byte-compile clean; house commit law.
+   TO: the rotation (current #+TURN seat) · PRIORITY: P1 · RISK: writes
+   FROM: Team Lead — z.ai-agent (Lead, Owner dispatch)
+   SPEC (all in agent-team.el):
+   1. DEADLINE READ: (agent-team--item-deadline) — the :DEADLINE:
+      property of the item at point parsed as an Org active timestamp
+      (encode-time); nil when absent or unparseable. ERT: absent,
+      malformed, valid.
+   2. DISPATCH REFUSAL: agent-team-insert-dispatch errors when the
+      target item lacks :EFFORT: or :DEADLINE: ("no both, no
+      dispatch" — the lead fixes the row first). ERT: refusal + pass
+      paths.
+   3. OVERDUE SWEEP: (agent-team-overdue-sweep) — scans the board for
+      items whose :DEADLINE: passed with state not in DONE/CANCELLED/
+      DEFERRED/REVIEW; per item writes ONE attention chat entry
+      (agent-team-chat-send, KIND attention, body leads with the
+      vocabulary word blocked + the row + the missed deadline) and
+      stamps :ESCALATED: with the deadline value so one deadline never
+      fires twice. ERT: sweep on fixtures, no-double-fire, a fresh
+      :DEADLINE: re-arms cleanly.
+   4. EXTENSION (LEAD-ONLY): (agent-team-deadline-extend time) —
+      appends a NEW :DEADLINE: line under the old one in the item's
+      drawer (history preserved — the old deadline is never edited or
+      removed); members ask, only the lead runs this. ERT:
+      append-not-edit, old deadline still present.
+   5. NOTICES SURFACE: (agent-team-notices-pending-p) — t when the
+      board's NOTICES section carries a timestamp newer than the
+      saved read marker (marker file beside the board, written by the
+      reader command agent-team-notices-read); the team buffer shows
+      a NOTICES badge. ERT: fresh/stale/marker-write.
+   NOT in scope: ci.yml wiring of the sweep (harness lane, separate
+   dispatch); any CHAT.org hand-write path (entries ride
+   agent-team-chat-send only).
+   DEFINITION OF DONE: full ert suite green in one run, byte-compile
+   clean, complete docstrings, branch ai/time-discipline-01 pushed,
+   report to @lead with RESULT: <vocabulary word>.
+   *** TODO review: time-discipline/01 chain enforcement
+    :PROPERTIES:
+    :EFFORT: 0:50
+    :DEADLINE: <2026-11-03 Tue 16:00>
+    :END:
+    Reviewer: run the FULL ert suite + byte-compile; verify all 5
     features against their ERT sets; attempt at least one refutation.
 
 * Org cheat sheet

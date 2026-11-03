@@ -52,6 +52,42 @@
 #    never edited by the team.
 
 * NOTICES
+** [2026-11-03 19:24Z] REAL ROLES ONLY + per-task ratings + time-discipline audit (Owner 19:20 #hq)
+
+- Owner orders: "REAL ROLES ONLY. INTERNS AREN'T RELIABLE. USE
+  WELL-KNOWN MEMBERS WITH PROVEN EL EXPERTISE." / per-task performance
+  ratings / "ARE LEADS FOLLOWING TIME DISCIPLINE? AUDIT AND WARN IF
+  NEEDED!"
+- RATING RULE (DoE decision): the ASSIGNING LEAD rates every member
+  per task — a =:RATING:= property (5 exceeded / 4 met-clean / 3 met /
+  2 late-or-partial / 1 failed) + a one-line reason in the item's
+  :LOGBOOK:, stamped when the item closes. No new rater seat (real
+  roles only). The DoE audits ratings + lead time-discipline in every
+  sweep; inflated or missing ratings are a lead fault.
+- TIME-DISCIPLINE AUDIT 19:23Z (all boards, script-measured):
+  OVERDUE superagent/02 (dl 18:00Z, unclaimed, no show-cause) and
+  time-discipline/01 (dl 12:00Z, unclaimed — the enforcement item
+  itself slipped) — both re-armed to <2026-11-04 Wed 14:00> with
+  :ESCALATED: stamps; WARNING to the rotation: P1 items unclaimed for
+  ~20h is a chain fault, claim or show-cause NOW. doe/01: work was
+  executed + push-verified at 04:4xZ but the state was never flipped —
+  bookkeeping miss on the DoE's own seat; now REVIEW (self-warning on
+  record). superagent/01 was dispatched 11-02 with NO :DEADLINE: (lead
+  fault, mine) — fixed, <2026-11-04 Wed 18:00>. agent-org board: 21
+  open items without deadlines + dead poolside assignees (delisted
+  10-31) — DoE fault, cleanup rides the next agent-org pass.
+  org-roadmap: 2 stale no-deadline items — flagged to its lead.
+  org-learn.el + docneural boards: clean (0 overdue).
+- CREW CHANGE for emacs-purple + telega-org (real roles only):
+  CANDIDATES.org v2 lands in both repos — implementer = Port Engineer
+  antling/Ling-3.1-flash@opencode (19/19 hidden-ERT ELisp proof);
+  senior = Senior Emacs Lisp Engineer seat glm-5.3@chat.z.ai with
+  antling/Ring-2.6-1T@opencode reviewing hands (author != reviewer);
+  QA = nvidia/nemotron-3.5-lightning:free@cline; final gate = the
+  Lead/DoE. INTERN pulse-alpha-free REMOVED from the crew (benched —
+  not reliable, Owner verdict). moonmath models are tools a seat may
+  run, never seats. All four gates now REQUIRED on every unit:
+  G1 rubric + G2 elisp + G3 tests + G4 lead gate.
 
 ** [2026-11-03 20:1xZ] Candidates + review roles for emacs-purple / telega-org; GLM 5.3 approved off-peak (Owner 19:15 #hq)
 
@@ -1057,6 +1093,7 @@
 ** TODO [2026-11-02] superagent/01: elisp schema bump — SUPERAGENT LAW features (Owner order 2026-11-02 #hq) :DISPATCH:
    :PROPERTIES:
    :EFFORT: 4:00
+   :DEADLINE: <2026-11-04 Wed 18:00>
    :END:
    Owner order 2026-11-02 #hq: "Add best features from superagent to
    agent-team.el". The SUPERAGENT LAW (templates/COMMON.org, section
@@ -1122,6 +1159,11 @@
    :PROPERTIES:
    :EFFORT: 4:00
    :DEADLINE: <2026-11-03 Tue 18:00>
+   :DEADLINE: <2026-11-04 Wed 14:00>
+   :ESCALATED: <2026-11-03 Tue 19:23>
+   :END:
+   :LOGBOOK:
+   - State changed by Team Lead — z.ai-agent on [2026-11-03 Tue 19:2x]: overdue sweep (manual audit): deadline 18:00Z passed UNCLAIMED, no show-cause — WARNING on record (Owner 19:20 #hq); deadline re-armed to <2026-11-04 Wed 14:00>, escalate again if unclaimed by then
    :END:
    Owner order 2026-11-03 00:40 #hq: "read the superagent philosophy
    from their repo". Canon verified from deepseek-ai/dsh-superagent-
@@ -1177,6 +1219,11 @@
    :PROPERTIES:
    :EFFORT: 4:00
    :DEADLINE: <2026-11-03 Tue 12:00>
+   :DEADLINE: <2026-11-04 Wed 14:00>
+   :ESCALATED: <2026-11-03 Tue 19:23>
+   :END:
+   :LOGBOOK:
+   - State changed by Team Lead — z.ai-agent on [2026-11-03 Tue 19:2x]: overdue sweep (manual audit): deadline 12:00Z passed UNCLAIMED, no show-cause — WARNING on record (Owner 19:20 #hq); the deadline-enforcement item itself slipped; re-armed to <2026-11-04 Wed 14:00>
    :END:
    Owner order 2026-11-02 15:58 #hq: "Each TODO from now on will
    contain effort and deadline and assignees MUST show-cause if they
@@ -1228,7 +1275,7 @@
     Reviewer: run the FULL ert suite + byte-compile; verify all 5
     features against their ERT sets; attempt at least one refutation.
 
-** TODO [2026-11-03] doe/01: DoE standing-inbox round — read-first NOTICE.org refresh on external teams (Owner order 2026-11-03 04:00 #hq) :DISPATCH:
+** REVIEW [2026-11-03] doe/01: DoE standing-inbox round — read-first NOTICE.org refresh on external teams (Owner order 2026-11-03 04:00 #hq) :DISPATCH:
    :PROPERTIES:
    :EFFORT: 1:30
    :DEADLINE: <2026-11-03 Tue 12:00>
@@ -1248,6 +1295,7 @@
      org-roadmap 2f6c193 (each: read-first pass clean —
      kill-switch OFF / chain-pause OFF / NOTICES section live;
      single-file append; push verified). Awaiting review.
+   - State changed by Team Lead — z.ai-agent on [2026-11-03 Tue 19:2x]: TODO -> REVIEW — time-discipline audit caught the flip lag: work was executed + push-verified at 04:4xZ but the state sat TODO past the 12:00Z deadline; bookkeeping miss on the DoE's own seat, warning taken. Review child (0:30) still open.
    :END:
    TO: DoE — z.ai-agent (self-assigned) · PRIORITY: P1 · RISK: writes
    FROM: Team Lead — z.ai-agent

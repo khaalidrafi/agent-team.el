@@ -14,7 +14,7 @@
 # integration target for agent-team = khaalidrafi/admineverywhere admin
 # apps via the WO-22 OpenAI-compatible gateway (design:
 # docs/INTEGRATION-ADMINEVERYWHERE.org this repo).
-#+STALL-COUNT: 37
+#+STALL-COUNT: 38
 #+LAST-VERDICT: 5165ca70afcd
 #+LAST-BLOCKED-NOTIFY: 1793718462
 #+CHANNEL: agent-team/CHAT.org (single-buffer team chat, direct @pings —

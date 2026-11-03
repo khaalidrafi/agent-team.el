@@ -1133,6 +1133,11 @@
    notice.org, it's on TODOS.org to share") — sharing
    surface is the target repo's TODOS.org `* NOTICES`;
    unclaimed at amend time, no seat work lost.
+   - State changed by DoE — z.ai-agent on [2026-11-03 04:4x]:
+     executed — docneural 52e6ed3, org-learn.el bbccb16,
+     org-roadmap 2f6c193 (each: read-first pass clean —
+     kill-switch OFF / chain-pause OFF / NOTICES section live;
+     single-file append; push verified). Awaiting review.
    :END:
    TO: DoE — z.ai-agent (self-assigned) · PRIORITY: P1 · RISK: writes
    FROM: Team Lead — z.ai-agent

@@ -69,12 +69,22 @@
 - senior-el/01 dispatched (c77c9f7) with the paste-ready GLM 5.3 prompt
   shared to the Owner; audit/01 re-assigned to the Senior EL seat
   (179bfeb).
-- emacs-purple Org chat list (standard sections 2-3+5-6+8) LANDED on
-  branch ai/port-01 (a92ab79, push verified): two-line entries, tag
-  pairs, preview = time + arrow + text (kind word when textless), the
-  five section-6 faces, read-only + undo-disabled, pluggable mock
-  index; 8/8 ERT + byte-compile clean on emacs 30.1. NOT merged to
-  ai/main — G2 senior + G3 QA seat passes pending.
+- emacs-purple Org chat list (standard sections 2-3+5-6+8) MERGED to
+  ai/main (75101f4, push + ls-remote verified 2026-11-04 04:5x tick):
+  two-line entries, tag pairs, preview = time + arrow + text (kind word
+  when textless), the five section-6 faces, read-only + undo-disabled,
+  pluggable mock index; 9/9 ERT + byte-compile clean on emacs 30.1.
+  ALL FOUR GATES LANDED (evidence trailers on the commit): G2 =
+  glm-4.7-flash@z.ai PASS-WITH-FINDINGS (Ring-2.6-1T not hosted
+  anywhere; opencode gateway stalled 3x; author != reviewer) — repairs:
+  O(N^2) grouping -> push/nreverse, buffer-local current-chat-id,
+  autoload cookies. G3 = deepseek-v4.1-flash@moonmath PASS-WITH-FINDINGS
+  (nemotron@opencode unreachable) — hardenings: explicit fixture
+  binding, org-mode/undo/reuse asserts, anchored tag asserts, new
+  faces-and-properties test, unknown-id touch safety.
+  :RATING: 4 — met-clean: all four gates passed after repair rounds,
+  9/9 ERT, byte-clean, merged with full evidence; not 5 (tool-run
+  proxy authored it, not the seat).
 - SEAT BRAIN AVAILABILITY 19:5xZ (recorded per fallback law): Port
   Engineer brain antling/Ling-3.1-flash UNREACHABLE tonight — openrouter
   ling lane out of credits (free tier), reflection/beam region-blocked,

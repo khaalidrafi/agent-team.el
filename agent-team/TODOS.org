@@ -52,6 +52,18 @@
 #    never edited by the team.
 
 * NOTICES
+** [2026-11-03 20:17Z] Free-tier scan notice — candidates reviewed per provider (Owner 20:12 #hq)
+
+- Implementer antling/Ling-3.1-flash = TWO-WEEK free trial (vendor X
+  post) + lane exhaustion — kilo keyless (200 req/h) + opencode
+  big-pickle promoted in the fallback chain (CANDIDATES.org, both repos).
+- QA lane rotation caught: cline free list no longer carries
+  nemotron-3.5-lightning (now solar-mini-4 + nemotron-3.5-super-vl);
+  same brain free on kilo/NIM/opencode — QA chain refreshed.
+- New lanes recorded: NVIDIA NIM 10k req/day (key registration +
+  probe pending), Gemini API (vault key; private-code warning),
+  Token Harbor, Alibaba 1M/model grants, Hetzner, CodeRabbit (G2
+  second opinion). Full scan: research/free-tiers-scan-2026-11-04.md.
 ** [2026-11-03 20:1xZ] Port unit 1 landed on branch; GLM 5.3 prompt shared (Owner 19:48 #hq)
 
 - senior-el/01 dispatched (c77c9f7) with the paste-ready GLM 5.3 prompt

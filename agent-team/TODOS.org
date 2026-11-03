@@ -53,6 +53,30 @@
 
 * NOTICES
 
+** [2026-11-03 05:5xZ] DoE audit: all lead repos vs global+local AGENTS.md — fixed (Owner 04:27 #hq)
+
+- Scope: agent-org, agent-shepherd, agent-team.el, packages, slave-agent,
+  unslop.el, kit (agent-team-ci). Checked: root AGENTS.md presence, commit
+  author identity + co-author trailers, spam subjects, branch law,
+  CONTROL.org kill/pause, TODO :EFFORT:/:DEADLINE: coverage.
+- Fixed NOW: (1) agent-org history squashed 1455 -> 792 commits (655
+  pure-control spam commits dropped; tree byte-identical, verified); chain
+  bookkeeping moves to Actions variables — CONTROL.org commits on milestones
+  only, short subjects; idle chains stop accounting; identical BLOCKED
+  verdict stops the 8-min self-dispatch loop. (2) CodeBuddy lane: cred was
+  always in the vault and set on the repo — the lane failed because the
+  harness image lacked the binary (no /usr/local/bin symlink, qoder-stage
+  pattern missing) — kit 6c7b414 fixes the body + pins --model hy3 (ds@cb
+  ended, only hy* free per Owner); vault token + hy3 probe = OK locally;
+  lane secrets re-synced from vault to all 4 chain repos. (3) Root
+  AGENTS.md added: agent-shepherd, unslop.el, slave-agent.
+- Open findings (not blocking): shepherd/unslop/team.el/packages historical
+  chain commits are machine-authored (pre author-law era, kept as history);
+  old TODO items predate the TIME DISCIPLINE LAW (effort/deadline gaps —
+  applies to new dispatches only); packages chain dormant, older workflow
+  generation — port of the quiet-bookkeeping patch deferred until the
+  agent-org patch proves out.
+
 ** [2026-11-02 15:58Z] TIME DISCIPLINE LAW — effort + deadline on every TODO; show-cause before any slip (Owner, #hq)
 
 - Every lead-assigned TODO carries :EFFORT: AND :DEADLINE: (Org

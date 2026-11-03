@@ -83,6 +83,19 @@
 - Chain consequence: the persistent side is filed as superagent/02
   (persistent tick + event rules + observe ledger + resume authority).
 
+** [2026-11-03 03:53Z] SCOPE CHANGE — admincraft is now admineverywhere, led by another agent (Owner, #hq)
+
+- Owner 2026-11-03 03:53 #hq: "admincraft is now admineverywhere, and
+  its led by another agent, not you."
+- The repo is renamed on GitHub: khaalidrafi/admineverywhere (old slug
+  redirects; origin URL already points at the new slug). This chain's
+  Lead no longer leads it — no dispatches, no notices, no watch
+  coverage there from this chain; its Lead owns its CHAIN-PAUSE state.
+- superagent-watch cron scope updated to the 10 remaining clones.
+- Historical references (CONTROL.org logbook entries, one-shot
+  scripts) stay as history; the local clone dir still sits at
+  /home/z/my-project/admincraft and tracks the renamed remote.
+
 * Board
 
 ** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:

@@ -53,6 +53,23 @@
 
 * NOTICES
 
+** [2026-11-03 20:1xZ] Candidates + review roles for emacs-purple / telega-org; GLM 5.3 approved off-peak (Owner 19:15 #hq)
+
+- Owner order: update candidates and review roles for both projects —
+  "I want them well-made"; GLM 5.3 usable once z.ai is less crowded.
+- CANDIDATES.org landed in both repos (byte-identical but the #+REPO:
+  line): telega-org b9e9149, emacs-purple cda939f (pushes verified).
+  Crew: intern opencode/pulse-alpha-free (supervised; probe OK); workers
+  moonmath/glm-5.3-flash + moonmath/deepseek-v4.1-flash (free daily,
+  probes OK 200); senior opencode/glm-5.3 — Owner-approved, OFF-PEAK use
+  (Asia/Dhaka ~00:00-09:00 or on free-tier throttle) for G1 reviews and
+  hard units; moonmath/glm-5.3 paid lane only on exhaustion.
+- GATES (all carry Reviewed-by trailers): G1 standard compliance
+  (section 9 rubric), G2 elisp quality, G3 tests, G4 lead final gate.
+  Worker units G2+G4; intern units G2+G3+G4; senior units G1+G4. Failed
+  gate returns the unit with findings inline — never silent.
+- Cron 500425 replaced by 500445 (same 30m Asia/Dhaka) with gate law +
+  GLM 5.3 senior lane folded into the payload.
 ** [2026-11-03 19:4xZ] Completion crew: 30-min cron + intern pulse-alpha-free@opencode + moonmath models (Owner 18:57 #hq)
 
 - Owner order: 30-min cron; complete emacs-purple + telega-org; intern

@@ -206,6 +206,19 @@
 4. Verify remote tip after push; report verdict one line to CHAT.org.
 - Review child (z.ai-agent): EFFORT 0:30, DEADLINE <2026-11-04 Wed 08:00>.
 - REASSIGNED by Team Lead — z.ai-agent on [2026-11-03 Tue 19:5x]: executor is now the Senior Emacs Lisp Engineer seat (glm-5.3@chat.z.ai) per REAL ROLES law (Owner 19:20 #hq); this audit = T1 of senior-el/01 below — track findings there.
+- STATUS [2026-11-04 Wed 04:5x +08]: FINDINGS.org landed on emacs-purple
+  ai/main (9ef01d9, push verified) — supervised tool-run draft (moonmath
+  glm-5.3-flash single-shot) + Lead G1 pass with empirical checks on
+  Emacs 30.1: 16 findings = 3 P0 (get_str escape mismatch vs json.c
+  encoder; broken test helper — send-emits-json FAILED in isolation;
+  LEAD-ADDED: dispatch-event-routes aborts the whole batch ERT run),
+  6 P1, 7 P2 (two downgrades empirically disproven: defgroup load
+  order loads clean, byte-compile 0 warnings). §9 table + 11-item gap
+  list. DEADLINE <2026-11-04 Wed 06:00> MET. Senior-seat confirmation
+  pending (Owner holds the paste-ready prompt).
+  :RATING: 3 — met before deadline via Lead-supervised tool-run proxy,
+  not the assigned seat; pending seat confirmation (not 4-clean, not
+  5; not 2 — nothing late or partial).
 
 ** [2026-11-03 05:5xZ] DoE audit: all lead repos vs global+local AGENTS.md — fixed (Owner 04:27 #hq)
 
@@ -1417,6 +1430,10 @@
    ready|blocked|failed, then your findings. The Lead (z.ai-agent)
    couriers your report to the Owner and gates the merges.
    ---
+   T1 PROGRESS [2026-11-04 Wed 04:5x]: audit/01 FINDINGS.org draft
+   landed on ai/main via supervised tool-run + Lead G1 empirical pass;
+   T2-T4 await the Senior web brain (Owner holds the paste-ready
+   prompt; z.ai API lane = no glm-5.3 balance, 4.7-flash throttled).
    *** TODO review: senior-el/01 senior package
     :PROPERTIES:
     :EFFORT: 0:50

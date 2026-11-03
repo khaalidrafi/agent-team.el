@@ -53,6 +53,55 @@
 
 * NOTICES
 
+** [2026-11-03 19:1xZ] New projects: emacs-purple + telega-org under z.ai-agent lead (Owner 18:56 #hq)
+
+- Owner order: audit emacs-purple with a qualified candidate and complete
+  it so Discord works on Emacs; telega-org also mine; both use an Org UI
+  chat interface under IDENTICAL standards; read the Org manual and write
+  that standard first.
+- DONE: Org manual read (Headlines, Drawers, Property Syntax, Timestamps,
+  Tags, Link Format, Internal Links). ORG-CHAT-STANDARD.org v1.0 written
+  and landed byte-identical in both repos on ai/main: telega-org 385800b,
+  emacs-purple 546140f (new branch; main untouched). Both pushes verified.
+- emacs-purple recon: libpurple-discord = elim C daemon (JSON-lines over
+  stdio, GLib loop, loads libdiscord.so prpl) + libpurple-discord.el
+  frontend (start/stop, accounts, connect, send; messages render as plain
+  lines today — no Org UI, no chat list, no view). ERT suite present.
+- telega-org recon: working Org chat LIST for telega (two lines per chat,
+  :mute:/ :unread:N:/ :mention:N: tags, groups, touch mode, ERT tests) —
+  the proven reference the standard generalizes. It has no view grammar
+  (hands RET to telega's native buffer); standard defines view for
+  backends without one (libpurple) and both MAY adopt it.
+- Plan: candidate audit (below) -> fix findings -> Org list+view
+  implementation per standard -> ERT grammar tests -> Owner usage pass
+  (connect account, read, send).
+
+** [2026-11-03 19:1xZ] CONSULT + DISPATCH audit/01: emacs-purple audit (Owner order 18:56 #hq)
+
+- CONSULT (CONSULT LAW — posted before activation): hire
+  glm-5.3-flash-free@opencode (Senior Elisp seat, free tier) as the
+  qualified candidate to audit emacs-purple. Fiat: Owner's 18:56 order
+  names the audit-by-candidate directly; activation proceeds on it and is
+  reversible.
+- DISPATCH audit/01: audit emacs-purple (repo khaalidrafi/emacs-purple,
+  branch ai/main) against global + local AGENTS.md, elisp packaging law
+  and ORG-CHAT-STANDARD.org section 9 checklist. Read-first: CONTROL.org,
+  TODOS.org NOTICES tail, CHAT.org last 30, repo AGENTS.md, the standard,
+  elim.c/json.c surface, libpurple-discord.el, tests.
+:PROPERTIES:
+:EFFORT: 1:30
+:DEADLINE: <2026-11-04 Wed 06:00>
+:END:
+1. READ FIRST (files above; zero writes before the read pass is done).
+2. Produce FINDINGS.org at repo root: violations ranked P0/P1/P2, each
+   with file:line evidence and the standard section it breaks; plus a
+   completion gap list for the Org UI (list buffer, view buffer, verbs,
+   faces per standard sections 3-7).
+3. NO code changes, NO dependency edits, NO secret reads; single-file
+   append only; one commit "audit/01: findings", house law trailers.
+4. Verify remote tip after push; report verdict one line to CHAT.org.
+- Review child (z.ai-agent): EFFORT 0:30, DEADLINE <2026-11-04 Wed 08:00>.
+
 ** [2026-11-03 05:5xZ] DoE audit: all lead repos vs global+local AGENTS.md — fixed (Owner 04:27 #hq)
 
 - Scope: agent-org, agent-shepherd, agent-team.el, packages, slave-agent,

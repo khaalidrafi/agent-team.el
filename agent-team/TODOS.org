@@ -1331,6 +1331,69 @@
     other file on those repos was changed (NOTICE.org must remain
     untouched — retired).
 
+** TODO [2026-11-03] senior-el/01: Senior EL package — both-repo audit + chat-view design + standing review duties (Owner 19:48 #hq) :DISPATCH:
+   :PROPERTIES:
+   :EFFORT: 4:00
+   :DEADLINE: <2026-11-04 Wed 08:00>
+   :END:
+   Owner 19:48 #hq: "Share prompt with tasks for GLM 5.3, and
+   continue working with other members to complete tasks." The prompt
+   below is SHARED to the Owner (paste-ready for glm-5.3@chat.z.ai) —
+   it IS this dispatch. Executor: Senior Emacs Lisp Engineer seat
+   (glm-5.3@chat.z.ai; hands antling/Ring-2.6-1T@opencode on any code
+   it lands; author != reviewer). Absorbs audit/01 for emacs-purple
+   (T1). OFF-PEAK law: z.ai lane now (Asia/Dhaka 00:00-09:00) is
+   approved per Owner 19:15.
+   TO: Senior Emacs Lisp Engineer · PRIORITY: P1 · RISK: writes (T3
+   design doc only in this round; code rides review gates)
+   PROMPT (verbatim, shared to the Owner for glm-5.3@chat.z.ai):
+   ---
+   You are the Senior Emacs Lisp Engineer for khaalidrafi's two chat
+   packages: emacs-purple (Discord on Emacs via a libpurple daemon)
+   and telega-org (Telegram via telega). Both get an Org-mode chat
+   UI built to one shared standard. Work read-first, plain words.
+
+   READ FIRST, in order: (1) ORG-CHAT-STANDARD.org v1.0 — identical
+   file in both repos, it is your law; (2) emacs-purple:
+   libpurple-discord.el + libpurple-discord-tests.el; (3) telega-org:
+   telega-org.el + test.el.
+
+   TASKS:
+   T1. Audit emacs-purple against the standard's section 9 checklist
+       (10 points): verdict per point — pass/fail/partial with
+       file:line evidence; then a completion-gap list: what must be
+       built before the Owner can use Discord on Emacs with this Org
+       UI. Findings graded P0 (blocks the Owner), P1 (violates the
+       standard), P2 (polish).
+   T2. Same audit, shorter, for telega-org: its chat list already
+       works — check it against sections 3 and 9; name exactly what
+       is missing for the view grammar (section 4).
+   T3. Design the hardest unit, the emacs-purple chat view (section
+       4): per-message headings, inactive timestamps, :CHAT-ID: and
+       :MSG-ID: drawers, the :out: / :draft: send flow. Deliver a
+       function list + the data flow from the daemon's JSON lines
+       into the Org buffer. Design only — no code this round.
+   T4. Standing duty you now own: every landing in both repos gets
+       your G1 (standard rubric) + G2 (elisp quality) pass before
+       push; you never review your own authorship.
+
+   RULES: design before code; tests are deterministic ERT, no
+   network; byte-compile clean; lexical-binding everywhere; the chat
+   backend never becomes a Package-Requires dependency; no secrets in
+   anything you write.
+   REPORT: one line per task starting with RESULT: progress|waiting|
+   ready|blocked|failed, then your findings. The Lead (z.ai-agent)
+   couriers your report to the Owner and gates the merges.
+   ---
+   *** TODO review: senior-el/01 senior package
+    :PROPERTIES:
+    :EFFORT: 0:50
+    :DEADLINE: <2026-11-04 Wed 10:00>
+    :END:
+    Reviewer (Lead/DoE): verify T1/T2 verdicts against the diffs
+    (spot-check three file:line citations), T3 design against section
+    4 grammar, report vocabulary law.
+
 * Org cheat sheet
 
   - ONGOING + CLOCK start; notes in :LOGBOOK:; BLOCKED (:OWN: = owner ruling);

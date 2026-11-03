@@ -115,6 +115,18 @@
 - doe/01 filed below: read-first NOTICE.org round on the external
   teams' repos.
 
+** [2026-11-03 04:07Z] NOTICE.org RETIRED — DoE/Owner sharing is TODOS.org `* NOTICES` (Owner, #hq)
+
+- Owner 2026-11-03 04:07 #hq: "no more notice.org, it's on TODOS.org
+  to share, told u earlier."
+- DoE/Owner notices and TEAM UPDATEs land on the target repo's
+  agent-team/TODOS.org under `* NOTICES` (newest-first; teams read,
+  never edit; ACKs go through the command-maintained chat, TO the
+  DoE). Leftover NOTICE.org files are historical archive only.
+- Law updated in templates/COMMON.org (DOE UPDATES + TIME DISCIPLINE
+  LAW) and templates/TEAMIFY.org; kit rebuilt (agent-team-ci
+  fa0c47e); doe/01 re-spec'd below.
+
 * Board
 
 ** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:
@@ -1116,6 +1128,12 @@
    admineverywhere). Seats on those repos may still know the old lead
    map. Refresh the DoE standing inbox on each EXTERNAL team's repo —
    read-first, no context no verdict.
+   :LOGBOOK:
+   - State changed by Team Lead — z.ai-agent on [2026-11-03 04:2x]: spec amended per Owner 04:07 #hq ("no more
+   notice.org, it's on TODOS.org to share") — sharing
+   surface is the target repo's TODOS.org `* NOTICES`;
+   unclaimed at amend time, no seat work lost.
+   :END:
    TO: DoE — z.ai-agent (self-assigned) · PRIORITY: P1 · RISK: writes
    FROM: Team Lead — z.ai-agent
    SPEC (per repo: docneural, org-learn.el, org-roadmap;
@@ -1123,28 +1141,32 @@
    1. READ FIRST: that repo's agent-team/CONTROL.org (kill-switch,
       chain-pause, accept-mode), TODOS.org NOTICES tail, CHAT.org last
       30 lines, MEMBERS.org — establish who commands the repo NOW.
-   2. APPEND to agent-team/NOTICE.org (newest-first, existing UPDATE
-      protocol): DoE role per Owner 04:00 #hq; the repo's Lead keeps
-      per-repo command; DoE = standards + cross-team coordination +
-      dispute rulings + escalations to the Owner; the DoE reads but
-      does not command that repo's seats.
-   3. No edits to that repo's TODOS.org, CONTROL.org, dispatches,
-      deadlines or members.
+   2. APPEND to the repo's agent-team/TODOS.org, under its
+      `* NOTICES` section, newest-first (NOTICE.org is RETIRED —
+      Owner 04:07 #hq — never touch a leftover file): DoE role per
+      Owner 04:00 #hq; the repo's Lead keeps per-repo command; DoE =
+      standards + cross-team coordination + dispute rulings +
+      escalations to the Owner; the DoE reads but does not command
+      that repo's seats.
+   3. No edits to that repo's CONTROL.org, dispatches, deadlines or
+      members; the `* NOTICES` append is the ONLY TODOS.org write.
    4. One commit per repo, house commit law, pull --rebase before
       push, verify each remote tip.
    NOT in scope: any dispatch/deadline/member change on external
    repos; admineverywhere unless invited.
-   DEFINITION OF DONE: NOTICE.org updated on the three repos (or a
-   waiting/blocked report per repo with the concrete read that stopped
-   it), pushes verified, RESULT: <vocabulary word> to @lead.
+   DEFINITION OF DONE: TODOS.org `* NOTICES` updated on the three
+   repos (or a waiting/blocked report per repo with the concrete read
+   that stopped it), pushes verified, RESULT: <vocabulary word> to
+   @lead.
    *** TODO review: doe/01 standing-inbox round
     :PROPERTIES:
     :EFFORT: 0:30
     :DEADLINE: <2026-11-03 Tue 14:00>
     :END:
-    Reviewer: verify each NOTICE.org append follows the repo's own
-    UPDATE protocol (newest-first, no headline edits) and that NO
-    other file on those repos was touched.
+    Reviewer: verify each `* NOTICES` append lands newest-first in
+    that repo's TODOS.org, touches no other section, and that NO
+    other file on those repos was changed (NOTICE.org must remain
+    untouched — retired).
 
 * Org cheat sheet
 

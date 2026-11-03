@@ -53,6 +53,26 @@
 
 * NOTICES
 
+** [2026-11-03 19:4xZ] Completion crew: 30-min cron + intern pulse-alpha-free@opencode + moonmath models (Owner 18:57 #hq)
+
+- Owner order: 30-min cron; complete emacs-purple + telega-org; intern
+  pulse-alpha (found: opencode/pulse-alpha-free, CLI probe OK); use
+  moonmath.ai models.
+- CREW LAW: intern seat = pulse-alpha-free@opencode (supervised sub-tasks
+  only; its output is reviewed before any commit carries it). Assistant
+  probes/work run on moonmath free daily tier: glm-5.3-flash and
+  deepseek-v4.1-flash (lowercase slugs, verified 200). opencode CLI at
+  ~/.opencode/bin/opencode — call with --pure and closed stdin; keys from
+  vault in-memory only, never echoed.
+- CRON: every 30 min Asia/Dhaka. Per run: pull --rebase + verify tips;
+  advance ONE work unit on the two packages (standard section 9 rubric is
+  the backlog); check audit/01 FINDINGS.org on emacs-purple; house commit
+  law; push + ls-remote verify; worklog entry. Reports ONLY milestones
+  (push verified) or blockers — silent otherwise; never fabricate.
+- Order of work: (1) audit findings review, (2) emacs-purple Org chat
+  list + view per standard sections 3-4, (3) telega-org alignment +
+  ERT grammar tests both repos, (4) Owner usage pass.
+
 ** [2026-11-03 19:1xZ] New projects: emacs-purple + telega-org under z.ai-agent lead (Owner 18:56 #hq)
 
 - Owner order: audit emacs-purple with a qualified candidate and complete

@@ -229,6 +229,19 @@
   :RATING: 3 — met before deadline via Lead-supervised tool-run proxy,
   not the assigned seat; pending seat confirmation (not 4-clean, not
   5; not 2 — nothing late or partial).
+- P0 TRIAGE [2026-11-04 Wed 05:4x +08] (tick 05:25): 2 of 3 P0s
+  CLEARED by Lead repair unit on libpurple-discord-tests.el (238d5a0,
+  push verified): helper arg-capture fixed, dispatch-event-routes
+  rewritten with cl-letf (advice :override + advice-remove arity was
+  aborting the whole batch runner), fake-daemon omission fixed (the
+  send test user-errored in a fresh batch session — broken by
+  omission since day one), byte-compile quieting added. Evidence:
+  daemon 5/5 + org 9/9 + byte-compile 0 warnings on all four files.
+  G2 PASS (glm-4.7-flash@z.ai, author != reviewer).
+  :RATING: 4 — P0 repairs met-clean: suite green, gates honored,
+  single small diff; remaining P0 (get_str C escape) queued with
+  show-cause — no libpurple toolchain in this sandbox, compile
+  verification belongs to the Owner's guix box.
 
 ** [2026-11-03 05:5xZ] DoE audit: all lead repos vs global+local AGENTS.md — fixed (Owner 04:27 #hq)
 

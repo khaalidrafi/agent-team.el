@@ -67,6 +67,22 @@
 - Owner notices/updates land in this section from now on. Read on
   every poll; never edit.
 
+** [2026-11-03 00:40Z] SUPERAGENT CANON READ — philosophy verified from source; persistent side filed as superagent/02 (Owner, #hq)
+
+- Owner order 2026-11-03 00:40 #hq: "read the superagent philosophy
+  from their repo". Done: deepseek-ai/dsh-superagent-prototype cloned;
+  docs/000-philosophy.md read in full (verbatim principle: "Take as
+  little human attention as possible, and give as much value as
+  possible." Closing line: "The goal is the right help at the right
+  time, and nothing at any other time.").
+- Canon: a persistent listener (GitHub/Feishu events become Triggers),
+  end-to-end handling to a PR in the original thread, and it speaks
+  only when a person must act or can use a result. Unasked work needs
+  a written rule and starts observe-only; autonomy dials up from a
+  clean would-accept record. Minimal attention, not zero.
+- Chain consequence: the persistent side is filed as superagent/02
+  (persistent tick + event rules + observe ledger + resume authority).
+
 * Board
 
 ** PROGRESS [2026-10-20] sessions/01: team session buffer on agent-org (Owner-ordered 15:56) :sessions/01:
@@ -946,6 +962,61 @@
     :EFFORT: 0:50
     :END:
     Reviewer: run the FULL ert suite + byte-compile; verify all 8
+    features against their ERT sets; attempt at least one refutation.
+
+** TODO [2026-11-03] superagent/02: persistent tick + event rules + observe ledger (Owner order 2026-11-03 00:40 #hq) :DISPATCH:
+   :PROPERTIES:
+   :EFFORT: 4:00
+   :DEADLINE: <2026-11-03 Tue 18:00>
+   :END:
+   Owner order 2026-11-03 00:40 #hq: "read the superagent philosophy
+   from their repo". Canon verified from deepseek-ai/dsh-superagent-
+   prototype docs/000-philosophy.md: the agent runs persistently,
+   handles an accepted event end-to-end, and spends human attention
+   only at decision points — unasked work needs a written rule and
+   starts observe-only. superagent/01 lands the dial + mandate +
+   attention elisp; /02 lands the PERSISTENT side. Design-before-code;
+   every feature ERT-gated (TEMP copies of CONTROL.org/CHAT.org —
+   never the repo's own agent-team/ files); byte-compile clean; house
+   commit law.
+   TO: the rotation (current #+TURN seat) · PRIORITY: P1 · RISK: writes
+   FROM: Team Lead — z.ai-agent (Lead, Owner dispatch)
+   SPEC (all in agent-team.el):
+   1. EVENT RULES: #+EVENT-RULE: lines in CONTROL.org —
+      (agent-team--event-rules) parses each into (kind repo-glob
+      strength); kinds issue-open|push|ci-fail|comment; strength
+      observe|auto; a malformed line is skipped with a warning, never
+      a hard error. ERT: valid, malformed, empty table.
+   2. OBSERVE LEDGER: (agent-team-observe-record kind reason) appends
+      a WOULD-ACCEPT entry (utc timestamp, kind, reason, rule) to
+      agent-team/observe-ledger.org WITHOUT dispatching;
+      (agent-team-observe-stats) returns per-rule counts — the clean
+      record the philosophy requires before any dial-up to auto.
+      ERT: append/count on a TEMP fixture.
+   3. PERSISTENT TICK: (agent-team-tick) — one idempotent chain step,
+      callable by CI cron with NO human message: gate (kill-switch /
+      chain-pause) → notices-pending → human-pending → overdue sweep
+      → event scan; an explicit request always dispatches; an inferred
+      kind dispatches only when a rule allows auto, else records to
+      the observe ledger; returns a one-line summary for CI logs; a
+      second identical tick in the same tick-window is a no-op.
+      ERT: idempotence + every dial path on TEMP fixtures.
+   4. RESUME AUTHORITY: extend the resume path — a person's message on
+      an ended item resumes it under its immutable MANDATE
+      revalidated against current CONTROL.org; messages attributed to
+      bots or CI never resume (they become observe records).
+      ERT: human/bot/CI matrix.
+   NOT in scope: real webhook/GitHub transport (harness lane, separate
+   dispatch); secrets; ticket-vs-session chain-runner (FR 9, later).
+   DEFINITION OF DONE: full ert suite green in one run, byte-compile
+   clean, complete docstrings, branch ai/superagent-02 pushed, report
+   to @lead with RESULT: <vocabulary word>.
+   *** TODO review: superagent/02 persistent tick + event rules
+    :PROPERTIES:
+    :EFFORT: 0:50
+    :DEADLINE: <2026-11-03 Tue 20:00>
+    :END:
+    Reviewer: run the FULL ert suite + byte-compile; verify all 4
     features against their ERT sets; attempt at least one refutation.
 
 ** TODO [2026-11-02] time-discipline/01: deadline + show-cause enforcement in the chain (Owner order 2026-11-02 15:58 #hq) :DISPATCH:

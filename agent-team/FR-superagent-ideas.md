@@ -54,3 +54,28 @@ outbox-pending, gate-checked resume) and CONTROL.org #+OBJECTIVE re-pointed
 to it. The law text was corrected the same hour: every CHAT.org mechanism
 routes through the command-maintained chat (kinds vocabulary; never a hand
 edit).
+
+## CANONICAL READ (2026-11-03 00:40Z — Owner: "read the superagent philosophy from their repo")
+
+* Full clone of deepseek-ai/dsh-superagent-prototype; docs/000-philosophy.md
+  read verbatim (33 lines), plus 001-domain, prompts/replies, subscriptions.
+* Principle line, exact: "Take as little human attention as possible, and
+  give as much value as possible." Closing line, exact: "The goal is the
+  right help at the right time, and nothing at any other time."
+* What the canon specifies: a persistent listener (GitHub Source: notifications,
+  subscribed issues/PRs, CI changes, merges; optionally every new issue/PR/
+  comment where switched on). Acts only when asked OR when a written rule
+  allows — unasked work starts observe-only. Speaks only when a person must
+  act or can use a result. Panel shows only what needs a person.
+* Report vocabulary confirmed from 001-domain glossary: progress / waiting /
+  ready / blocked / failed / dropped — matches the six-word set already in
+  the SUPERAGENT LAW.
+* Subscription canon: a person's message on a subscribed thread resumes an
+  ended ticket under the SAME mandate; bots and CI never resume and never
+  authorize work.
+* Persistently ≠ unconditionally: autonomy dials (off → observe → auto) from
+  a clean would-accept record; minimal attention ≠ zero (structured Attention
+  field, human-reserved slot).
+* Consequence → superagent/02 filed on the board: persistent tick
+  (cron-callable, no human message), event-rule table, observe ledger with
+  stats as dial-up evidence, resume-authority matrix.

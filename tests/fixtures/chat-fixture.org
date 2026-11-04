@@ -1,0 +1,41 @@
+#+TITLE: chat-fixture.org — deterministic U1 render fixture (ERT §9.9)
+# Three synthetic messages: a plain dispatch, an escalation with an
+# unknown-handle mention in the body, a reply carrying a URL + telegram
+# CHANNEL + zone suffix.  One legacy entry WITHOUT :WHEN: exercises the
+# positional-id degradation.  Byte-exact output is asserted by
+# tests/agent-team-chat-test.el.
+* MSG lead -> @senior-el :dispatch:                            :msg:lead:senior-el:dispatch:
+:PROPERTIES:
+:FROM: lead
+:TO: glm-5.3@chat.z.ai
+:KIND: dispatch
+:WHEN: [2026-11-04 Tue 09:15 UTC]
+:END:
+  Unit U1 is yours: CHAT.org reader, standard v1.1 section 10 kit.
+  Design is binding — docs/CHAT-KIT-ADAPTATION.org in agent-org.
+* MSG qa -> @lead :escalation:                                 :msg:qa:lead:escalation:
+:PROPERTIES:
+:FROM: qa
+:TO: lead
+:KIND: escalation
+:WHEN: [2026-11-04 Tue 11:42 UTC]
+:END:
+  Escalating per the 2-failed-attempts law, @qa is blocked on the flaky
+  fixture loader.  Run log: https://example.invalid/runs/42 — need eyes.
+  cc @unknown-seat
+* MSG owner (tg) -> @lead :note:                               :msg:owner:lead:note:
+:PROPERTIES:
+:FROM: owner
+:TO: lead
+:KIND: note
+:WHEN: [2026-11-04 Tue 12:07 +03]
+:CHANNEL: telegram
+:END:
+  >> ack the dispatch, ship the reader
+* MSG lead -> @all :note:                                      :msg:lead:all:note:
+:PROPERTIES:
+:FROM: lead
+:TO: all
+:KIND: note
+:END:
+  Legacy entry migrated before the WHEN law — no timestamp on purpose.

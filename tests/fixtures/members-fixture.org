@@ -1,0 +1,7 @@
+#+TITLE: members-fixture.org — two-seat subset for chat-member: tests
+* Senior Emacs Lisp Engineer — glm-5.3@chat.z.ai (RE-STAFFED 2026-10-29, Owner fiat)
+  - :last-dispatch: 0
+* Team Lead + Director of Engineering — z.ai-agent (COMBINED SEAT, umbrella)
+  - :last-dispatch: 0
+* QA + Docs Engineer — nvidia/nemotron-3.5-lightning:free@cline (QA seat)
+  - :last-dispatch: 0

@@ -239,3 +239,77 @@
 
 (provide 'agent-team-chat-test)
 ;;; agent-team-chat-test.el ends here
+
+;; ---- U2 additions (A5): verbs, follows, touch ----
+
+;; ---- U2 additions (A5): verbs, follows, touch ----
+
+(ert-deftest agent-team-chat-test/jump-latest ()
+  "U2 A5: verb j lands point on the newest message heading."
+  (let ((agent-team-chat-archive-file agent-team-chat-test--chat)
+        (agent-team-chat-live-buffer-function nil))
+    (unwind-protect
+        (progn
+          (agent-team-chat-open)
+          (with-current-buffer "*agent-team Chat*"
+            (goto-char (point-min))
+            (agent-team-chat-jump-latest)
+            (org-back-to-heading t)
+            ;; last fixture entry is the legacy one: no stamp
+            (should (looking-at "^\\*\\* lead -> @all :note:"))
+            (should (lookup-key agent-team-chat-archive-mode-map "j"))))
+      (when (get-buffer "*agent-team Chat*")
+        (let ((kill-buffer-query-functions nil))
+          (kill-buffer "*agent-team Chat*"))))))
+
+(ert-deftest agent-team-chat-test/chat-member-follow ()
+  "U2 A5: chat-member follow errors on unknown, resolves a known id."
+  (let ((agent-team-chat-members-file agent-team-chat-test--members))
+    (should-error (agent-team-chat-visit-member "unknown-id")
+                  :type 'user-error)
+    (unwind-protect
+        (progn
+          (agent-team-chat-visit-member "z.ai-agent")
+          (with-current-buffer
+              (find-buffer-visiting agent-team-chat-test--members)
+            (should (save-excursion
+                      (beginning-of-line)
+                      (looking-at-p "^\\* .*z\\.ai-agent")))))
+      (when (get-buffer "*MEMBERS.org*")
+        (let ((kill-buffer-query-functions nil))
+          (kill-buffer "*MEMBERS.org*"))))))
+
+(ert-deftest agent-team-chat-test/chat-msg-follow ()
+  "U2 A5: chat-msg follow jumps to the heading carrying the MSG-ID."
+  (let ((agent-team-chat-archive-file agent-team-chat-test--chat)
+        (agent-team-chat-live-buffer-function nil))
+    (unwind-protect
+        (progn
+          (agent-team-chat-open)
+          (with-current-buffer "*agent-team Chat*"
+            (goto-char (point-min))
+            (should (re-search-forward "^:MSG-ID: \\(msg-.+\\)$" nil t))
+            (let ((id (match-string 1)))
+              (goto-char (point-min))
+              (agent-team-chat-goto-msg id)
+              (org-back-to-heading t)
+              (should (string-prefix-p
+                       "** " (buffer-substring
+                              (point) (line-end-position)))))
+            (should-error (agent-team-chat-goto-msg "msg-nope")
+                          :type 'user-error)))
+      (when (get-buffer "*agent-team Chat*")
+        (let ((kill-buffer-query-functions nil))
+          (kill-buffer "*agent-team Chat*"))))))
+
+(ert-deftest agent-team-chat-test/touch-device-predicate ()
+  "U2 A5: touch predicate responds to the terminal touch-screen parameter."
+  (let ((original-param (terminal-parameter nil 'touch-screen)))
+    (unwind-protect
+        (progn
+          (set-terminal-parameter nil 'touch-screen t)
+          (should (agent-team-chat--touch-device-p)))
+      (set-terminal-parameter nil 'touch-screen original-param))))
+
+(provide 'agent-team-chat-test)
+;;; agent-team-chat-test.el ends here

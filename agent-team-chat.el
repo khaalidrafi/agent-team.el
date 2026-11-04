@@ -69,11 +69,18 @@
 ;; Hygiene (§8): undo disabled, read-only, all inserted file strings
 ;; pass through `substring-no-properties', `q' buries, killing the
 ;; buffer never touches the file.
+;;
+;; §7 deviations (C-c C-c N-A; unread face defined, unapplied) are
+;; DESIGN — state them in Commentary, one line each.
 
 ;;; Code:
 
 (require 'agent-team)
 (require 'org)
+
+(defgroup agent-team-chat nil
+  "Configuration for the CHAT.org archive reader."
+  :group 'agent-team)
 
 (defcustom agent-team-chat-archive-file nil
   "Absolute path of the CHAT.org archive to render.
@@ -81,7 +88,7 @@ Nil means resolve through `agent-team--chat-file' (the repo layout
 law).  Set this only for tests or out-of-tree archives."
   :type '(choice (const :tag "auto (agent-team-dir/CHAT.org)" nil)
                  (file :tag "path"))
-  :group 'agent-team)
+  :group 'agent-team-chat)
 
 (defcustom agent-team-chat-live-buffer-function nil
   "Function returning the live team chat buffer, or nil.
@@ -90,7 +97,7 @@ returns its buffer and `agent-team-chat-open' switches to it instead
 of building the archive render — the live surface is the only
 interactive surface (data-flow law v1.3)."
   :type '(choice (const :tag "no live seam yet" nil) function)
-  :group 'agent-team)
+  :group 'agent-team-chat)
 
 (defcustom agent-team-chat-members-file nil
   "Absolute path of MEMBERS.org for chat-member: link resolution.
@@ -98,7 +105,48 @@ Nil means resolve through `agent-team--file' (\"MEMBERS.org\").
 Unknown handles degrade to plain text either way."
   :type '(choice (const :tag "auto (agent-team-dir/MEMBERS.org)" nil)
                  (file :tag "path"))
-  :group 'agent-team)
+  :group 'agent-team-chat)
+
+(defcustom agent-team-chat-adapt-for-touch t
+  "Enable touch adaptation for the archive reader.
+When non-nil and on a touch device, `agent-team-chat-touch-mode' is
+activated, setting `scroll-conservatively' to 101 and `truncate-lines'
+to t, and binding [down-mouse-1] to a tap handler that acts like RET.
+See `agent-team-chat--touch-device-p' for device detection."
+  :type 'boolean
+  :group 'agent-team-chat)
+
+(defgroup agent-team-chat-faces nil
+  "Faces for the CHAT.org archive reader."
+  :group 'agent-team-chat)
+
+(defface agent-team-chat-unread-face
+  '((t :inherit org-warning))
+  "Unread role (section 6).  No archive anchor: the append-only log
+has no read state; the U4 live region applies it."
+  :group 'agent-team-chat-faces)
+
+(defface agent-team-chat-mention-face
+  '((t :inherit bold))
+  "Face for mentions (@handle) in the archive."
+  :group 'agent-team-chat-faces)
+
+(defface agent-team-chat-preview-face
+  '((t :inherit shadow))
+  "Preview role (section 6): message body lines, via font-lock."
+  :group 'agent-team-chat-faces)
+
+(defface agent-team-chat-time-face
+  '((t :inherit org-date))
+  "Time role (section 6): delivered by Org's native timestamp
+fontification (this face inherits org-date)."
+  :group 'agent-team-chat-faces)
+
+(defface agent-team-chat-current-face
+  '((t :inherit highlight))
+  "Current-chat name role (section 6): the * Team chat title, via
+font-lock."
+  :group 'agent-team-chat-faces)
 
 (defvar-local agent-team-chat-archive--file nil
   "File this render buffer was built from.")
@@ -107,15 +155,84 @@ Unknown handles degrade to plain text either way."
   (let ((map (make-sparse-keymap)))
     (define-key map "g" 'agent-team-chat-archive-refresh)
     (define-key map "q" 'agent-team-chat-archive-bury)
+    (define-key map "j" 'agent-team-chat-jump-latest)
     map)
-  "Keys for the archive reader: g re-render from file, q bury.
+  "Keys for the archive reader: g re-render from file, q bury, j jump to latest.
 The file is never locked (other seats append from CI).")
+
+(defvar agent-team-chat-touch-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [down-mouse-1] #'agent-team-chat-touch-ret)
+    map)
+  "Keymap for touch mode: single tap acts like RET.")
+
+(defun agent-team-chat--install-font-lock ()
+  "Install font-lock keywords for the archive mode faces.
+Applies mention, preview, and current faces according to design A1.
+Time and unread faces remain unapplied (Org-native)."
+  (font-lock-add-keywords
+   'agent-team-chat-archive-mode
+   '(("@\\([a-zA-Z0-9][a-zA-Z0-9.-]*\\)" 0 'agent-team-chat-mention-face t)
+     ("^\\(?:[^*#:\\n][^\\n]*\\)$" 0 'agent-team-chat-preview-face t)
+     ("^\\* Team chat$" 0 'agent-team-chat-current-face t))
+   t))
 
 ;;;###autoload
 (define-minor-mode agent-team-chat-archive-mode
   "Archive reader keys on the *agent-team Chat* render buffer."
   :lighter " chat-archive"
-  :keymap agent-team-chat-archive-mode-map)
+  :keymap agent-team-chat-archive-mode-map
+  (when agent-team-chat-archive-mode
+    (agent-team-chat--install-font-lock)))
+
+;;;###autoload
+(define-minor-mode agent-team-chat-touch-mode
+  "Minor mode for touch devices: tap acts like RET.
+Enabling sets `scroll-conservatively' to 101 and `truncate-lines' to t
+locally (the kit's touch law); only ever turned on when
+`agent-team-chat--touch-device-p' is true."
+  :lighter " touch"
+  :keymap agent-team-chat-touch-mode-map
+  (when agent-team-chat-touch-mode
+    (setq-local scroll-conservatively 101)
+    (setq-local truncate-lines t)))
+
+(defun agent-team-chat--touch-device-p ()
+  "Predicate for touch devices (U2).
+Checks system-type, TERMUX_VERSION env, and terminal-parameter touch-screen."
+  (or (eq system-type 'android)
+      (getenv "TERMUX_VERSION")
+      (terminal-parameter nil 'touch-screen)))
+
+(defun agent-team-chat-touch-ret (event)
+  "Handle a touch tap (U2).
+Moves point to the click position and invokes RET behavior:
+org-open-at-point on links, else org-return."
+  (interactive "e")
+  (let ((pos (posn-point (event-start event))))
+    (when pos
+      (goto-char pos)
+      (if (org-in-regexp org-link-any-re)
+          (org-open-at-point)
+        (org-return)))))
+
+(defun agent-team-chat--install-links ()
+  "Install Org link type handlers for `chat-member' and `chat-msg'.
+
+Idempotent: each type is registered only when absent, so re-eval
+never duplicates.  `chat-member' follows to
+`agent-team-chat-visit-member', `chat-msg' to
+`agent-team-chat-goto-msg' (design A2)."
+  (unless (assoc "chat-member" org-link-parameters)
+    (org-link-set-parameters
+     "chat-member"
+     :follow #'agent-team-chat-visit-member))
+  (unless (assoc "chat-msg" org-link-parameters)
+    (org-link-set-parameters
+     "chat-msg"
+     :follow #'agent-team-chat-goto-msg)))
+
+(agent-team-chat--install-links)
 
 (defun agent-team-chat--chat-file ()
   "The CHAT.org archive file (defcustom override, then layout law)."
@@ -360,6 +477,9 @@ Fresh buffer = fresh Org state; the file is only READ (§11.3)."
         (org-mode)
         (unless agent-team-chat-archive-mode
           (agent-team-chat-archive-mode 1))
+        (when (and agent-team-chat-adapt-for-touch
+                   (agent-team-chat--touch-device-p))
+          (agent-team-chat-touch-mode 1))
         (setq agent-team-chat-archive--file file
               buffer-read-only t
               header-line-format
@@ -417,6 +537,52 @@ buffer never locks the file and killing it would never touch the file
 either (§8)."
   (interactive)
   (bury-buffer))
+
+(defun agent-team-chat-visit-member (id)
+  "Follow a chat-member: link (design A2).
+Visit MEMBERS.org and move point to the `* <Role> -- <id>' heading —
+the member's registry entry, agent-team.el's own member path today
+(transport-aware dispatch waits for the U3 registry).  Unknown ID
+raises a user-error naming the handle."
+  (interactive "sMember ID: ")
+  (let ((file (agent-team-chat--members-file)))
+    (unless (and file (file-exists-p file))
+      (user-error "MEMBERS.org not found at %s" file))
+    (pop-to-buffer-same-window (find-file-noselect file))
+    (goto-char (point-min))
+    (if (re-search-forward (concat "^\\* .*— " (regexp-quote id)) nil t)
+        (goto-char (match-beginning 0))
+      (user-error "Member ID `%s' not found in MEMBERS.org" id))))
+
+(defun agent-team-chat-goto-msg (id)
+  "Follow a chat-msg: link (design A2).
+Resolve the derived :MSG-ID: drawer to its message heading and jump
+there.  From any other buffer the archive render is opened first;
+an unknown id raises a user-error naming it."
+  (interactive "sMessage ID: ")
+  (unless (derived-mode-p 'agent-team-chat-archive-mode)
+    (let ((file (agent-team-chat--chat-file)))
+      (unless (and file (file-exists-p file))
+        (user-error "No chat archive at %s" (or file "<unset>")))
+      (pop-to-buffer (agent-team-chat--build-buffer file))))
+  (goto-char (point-min))
+  (if (re-search-forward (format "^:MSG-ID: %s$" (regexp-quote id)) nil t)
+      (org-back-to-heading t)
+    (user-error "Message ID `%s' not found in the archive" id)))
+
+(defun agent-team-chat-jump-latest ()
+  "Jump to the newest message heading (verb `j').
+The archive degradation of jump-to-first-unread (no read state; every
+chat client resumes at the tail)."
+  (interactive)
+  (if (derived-mode-p 'agent-team-chat-archive-mode)
+      (goto-char (point-max))
+    (let ((file (agent-team-chat--chat-file)))
+      (unless (and file (file-exists-p file))
+        (user-error "No chat archive at %s" (or file "<unset>")))
+      (pop-to-buffer (agent-team-chat--build-buffer file))
+      (with-current-buffer "*agent-team Chat*"
+        (goto-char (point-max))))))
 
 (provide 'agent-team-chat)
 ;;; agent-team-chat.el ends here

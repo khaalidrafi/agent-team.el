@@ -1,0 +1,133 @@
+#+TITLE: CLOUD-BRIDGE-DESIGN.org — U3: §11 cloud-member bridge (binding design)
+#+UPDATED: 2026-11-05 — design-before-code for the standing-queue item 6 NEXT unit
+#+LAW: implements ORG-CHAT-STANDARD.org v1.1 §11 (membership registry,
+        addressing, delivery, visibility, loop law, failure, privacy) and
+        §9.11 of the compliance checklist.  Everything below is binding on
+        the implementation; deviations surface as gate findings.
+
+* 1. Scope
+
+- IN: the dispatch engine for cloud/web-model chat members
+  (=agent-team-bridge.el+): MEMBERS.org registry parsing, eligibility
+  (§11.2 loop law), queue/err lifecycle, the llm-api transport seam,
+  reply landing through the existing append path, privacy gate, ERT
+  fixtures — all offline-testable, no network in tests.
+- OUT (later units): the U4 live team-buffer chat region that will call
+  this engine from the interactive surface; real member registration in
+  MEMBERS.org (a governed team file — the Owner registers seats; the
+  bridge only reads it); any concrete provider credentials.
+
+* 2. Registry grammar (§11.1)
+
+- A chat member is a MEMBERS.org level-1 seat heading.  Its entry MAY
+  carry a =:PROPERTIES:= drawer declaring:
+
+  #+begin_example
+  * Senior Emacs Lisp Engineer — glm-5.3@chat.z.ai (seat note)
+  :PROPERTIES:
+  :TRANSPORT: llm-api
+  :ENDPOINT: zai/glm-5.3
+  :AUTH: zai-api
+  :PERSONA: ~/.agent-team/personas/glm53.org
+  :END:
+  #+end_example
+
+  (Property-drawer lines sit at column 0 — the Org properties
+  convention org-entry-put writes; the parser also tolerates leading
+  whitespace.)
+
+- =:TRANSPORT:= ∈ {=relay=, =acp=, =llm-api=}; =:ENDPOINT:= is
+  PROVIDER/MODEL; =:AUTH:= is a vault/authinfo ALIAS ONLY — a secret
+  VALUE in an Org file is a §9.10 violation the bridge refuses to read
+  (values are resolved at call time, in memory, via
+  =agent-team-bridge-auth-lookup-function=).
+- =:PRIVACY: training= marks a training-host lane (§11.7): the bridge
+  refuses dispatch to it outright (design decision D6: the deterministic
+  reading of "never receive private code" — chat bodies are not
+  classified, so the lane is closed until the Owner re-marks it).
+- Seats without =:TRANSPORT:= are not dispatchable; a message addressed
+  to one goes queued → =err= with the reason (never a silent drop,
+  §11.6).  Parsing is a deterministic regex walk (the U1 style — no
+  org-element cache dependencies).
+
+* 3. Addressing + eligibility (§11.2 + §11.5 loop law)
+
+- A message is deliverable to a member when its =:TO:= drawer names the
+  member's id exactly, or its body carries =[[chat-member:ID][...]]=.
+- =TO: all= is a broadcast — NEVER auto-dispatched to llm-api members.
+- Truth table (=agent-team-bridge--eligible-p=):
+
+  | FROM is llm-api member | :AUTOPILOT: | target             | dispatch? |
+  |------------------------+-------------+--------------------+-----------|
+  | no                     | any         | one llm-api member | YES       |
+  | yes                    | nil         | anything           | NO (one hop) |
+  | yes                    | non-nil     | another llm-api member | YES if hop budget remains |
+  | any                    | any         | =all= / no member  | NO (no stamp) |
+  | any                    | any         | member with :TRANSPORT: undeclared | queued → err (never silent, §11.6) |
+  | any                    | any         | member with relay/acp transport | NO — live-surface transports outside this engine, no stamp |
+  | any                    | any         | member with :PRIVACY: training | queued → err (privacy law §11.7) |
+
+- Reflexive member→member relay is barred by default; =:AUTOPILOT:= is
+  the chat's file-level =#+AUTOPILOT: t= keyword (default nil), read
+  through =agent-team-bridge-autopilot-function=.
+- Hop budget: =agent-team-bridge-max-hops= (default 4) — measured by a
+  bounded backward walk of the reply chain (TO→FROM links), no parallel
+  state (§11.3); over budget → =err= "hop budget exhausted".
+
+* 4. Dispatch lifecycle (§11.3 + §11.6; the one edit exception)
+
+- =agent-team-bridge-dispatch= (interactive, message at point) and
+  =agent-team-bridge-tick= (scan the tail) drive:
+  1. stamp =:queued:= on the message heading + =:MEMBER: <id>= and
+     =:CHANNEL: bridge= drawers — §9.11 grammar;
+  2. llm-api transport call (seam);
+  3. success → the reply lands via =agent-team--chat-append-1=
+     (FROM = member id, TO = original sender, KIND = note) and the
+     =:queued:= tag is dropped (delivered; the reply in-thread is the
+     receipt);
+  4. failure → the tag becomes =:err:= and one indented
+     =BRIDGE-ERR: <reason>= line is appended to the entry body;
+     =agent-team-bridge-retry= retags =:err:= → =:queued:= and
+     re-dispatches.
+- EDIT EXCEPTION (reconciling §11.3/§11.6 with the append-only law): the
+  bridge edits ONLY the lifecycle tag of a message it stamped and appends
+  only its own reason line / reply — it never rewrites or deletes an
+  existing entry's text, drawer fields, or tags it did not set.
+
+* 5. llm-api transport (§11.3)
+
+- system = persona file contents (from =:PERSONA:=, read only if the
+  file exists) + one fixed team-law paragraph
+  (=agent-team-bridge-team-law-summary=, a defcustom constant).
+- conversation = the transcript tail rendered FROM THE CHAT FILE ITSELF
+  (last =agent-team-bridge-context-messages=, default 20, author-labeled
+  single lines) — the Org file is the single source of truth; the bridge
+  keeps NO parallel chat state.
+- HTTP = OpenAI-compatible =POST {base}/{provider} /chat/completions=
+  behind =agent-team-bridge-http-post-function= (default
+  =url-retrieve-synchronously= + json.el; provider→base-URL table in
+  =agent-team-bridge-provider-base-urls=).  Tests stub the seam; CI is
+  network-free by law.
+- =:AUTH:= alias resolution: auth-source =:host ALIAS=, then the env
+  =AGENT_TEAM_BRIDGE_AUTH_<ALIAS-UPPERCASED>=; never logged, never
+  written to any file.
+
+* 6. ERT plan (§9.9 — offline, deterministic)
+
+1. registry parse: fixture seats → member plists (transport, endpoint,
+   auth alias, persona path, privacy); drawer-less seat → not
+   dispatchable.
+2. eligibility truth table rows 1-4 (incl. =all= never dispatched;
+   chat-member: link addressing; reflexive bar; autopilot + budget).
+3. queue stamping: =:queued:= tag + =:MEMBER:=/=:CHANNEL:= drawers.
+4. success path: stubbed http → reply appended at EOF (FROM = member,
+   TO = sender, KIND = note), =:queued:= dropped, earlier entries
+   byte-identical.
+5. failure path: stubbed http signals → =:err:= + =BRIDGE-ERR:= line;
+   retry re-queues.
+6. privacy: =:PRIVACY: training= → refused with err, zero http calls.
+7. transcript tail: N author-labeled lines from the file, newest last.
+8. no secret values: the auth alias stays an alias in every appended
+   string (grep the result file).
+9. no network: all provider traffic rides the stubbed seam (CI runs
+   offline).

@@ -166,15 +166,21 @@ The file is never locked (other seats append from CI).")
     map)
   "Keymap for touch mode: single tap acts like RET.")
 
+(defconst agent-team-chat--font-lock-keywords
+  '(("@\\([a-zA-Z0-9][a-zA-Z0-9.-]*\\)" 0 'agent-team-chat-mention-face t)
+    ("^\\(?:[^*#:\\n][^\\n]*\\)$" 0 'agent-team-chat-preview-face t)
+    ("^\\* Team chat$" 0 'agent-team-chat-current-face t))
+  "The kit's §6 font-lock keywords (one list, both chat surfaces:
+the archive reader mode and the live team chat mode — the U4 design's
+shared-faces law).")
+
 (defun agent-team-chat--install-font-lock ()
   "Install font-lock keywords for the archive mode faces.
 Applies mention, preview, and current faces according to design A1.
 Time and unread faces remain unapplied (Org-native)."
   (font-lock-add-keywords
    'agent-team-chat-archive-mode
-   '(("@\\([a-zA-Z0-9][a-zA-Z0-9.-]*\\)" 0 'agent-team-chat-mention-face t)
-     ("^\\(?:[^*#:\\n][^\\n]*\\)$" 0 'agent-team-chat-preview-face t)
-     ("^\\* Team chat$" 0 'agent-team-chat-current-face t))
+   agent-team-chat--font-lock-keywords
    t))
 
 ;;;###autoload

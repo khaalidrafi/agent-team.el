@@ -1,0 +1,177 @@
+#+TITLE: LIVE-TEAM-CHAT-DESIGN.org — U4: the live team chat surface (binding design)
+#+UPDATED: 2026-11-05 — design-before-code for standing-queue item 6 NEXT unit
+#+LAW: implements ORG-CHAT-STANDARD.org v1.1 §10.4 (the team buffer keeps its
+        status panels; its chat region renders per the kit) and §11 (the live
+        surface is the relay/acp dispatch lane the engine deliberately leaves
+        unstamped).  Implements the data-flow law v1.3 (docs/CHAT-KIT-ADAPTATION.org
+        in khaalidrafi/agent-org): the live team chat buffer is the ONLY
+        interactive surface; its send path IS the auto-save that APPENDS to
+        CHAT.org.  Everything below binds the implementation; deviations
+        surface as gate findings.
+
+* 1. Scope
+
+- IN: =agent-team-live.el= — the live team chat buffer (§10.4 team
+  buffer), §4 kit render of the LOCAL CHAT.org, status panel, local-file
+  live poll, unread marking (the U2-deferred live application), §7 verbs,
+  the U1 seam closure
+  (=agent-team-chat-live-buffer-function=), the §11 consumption verbs
+  (bridge dispatch + acp dispatch + relay no-op), touch parity, ERT.
+- OUT: the remote GitHub viewer =agent-team-watch-chat= (Owner's
+  no-git Android law — zero-dep raw view, unchanged); agent-org session
+  internals (the acp lane rides a seam, not a require); real MEMBERS.org
+  registration (Owner-governed file, bridge design §1); any network in
+  tests (CI is offline by law).
+
+* 2. Buffer and naming (§2, §10.1, §10.4)
+
+- Command =agent-team-live-open= builds/switches to =*agent-team
+  Live*= — one buffer, org-mode base, minor mode =agent-team-live-mode=.
+- Renders through =agent-team-chat--render-string= (the ONE kit
+  renderer, U1) — no second render law may exist.  Kill-rebuild on
+  every refresh (fresh Org element cache + fold registry — the
+  0882373/95b876c decision), never in-place patching.
+- The file is read; the buffer NEVER writes it.  Writes ride the send
+  path (§4 below) — the append IS the auto-save (v1.3).
+
+* 3. Status panel (stays) + live poll
+
+- Header line (the existing team-buffer status panel law): chat file
+  name · LIVE + interval · message count · last render time · status
+  (ok / waiting / stale).  The panel is display-only state, never a
+  second chat UI.
+- Local-file poll: =run-at-time= every =agent-team-live-interval=
+  (default 15 s); the tick compares
+  =file-attribute-modification-time= and re-renders only on change
+  (cheap, offline, Android-battery friendly).  Timer is buffer-lived;
+  =kill-buffer-hook= tears it down.  No network anywhere.
+- Follow rule: when point was at point-max (or first render) the
+  rebuild follows the tail; otherwise point goes to point-min with
+  =#+STARTUP: overview= folding (the kit render's own startup line).
+
+* 4. Unread (the §6 unread role, applied live) + verbs (§7)
+
+- New messages since the previous render get ONE overlay carrying
+  =agent-team-chat-unread-face= over the first-new-message-heading →
+  point-max region.  Overlays, never text properties — the render
+  string stays property-free (the U1 law the ERT pins).  Two laws the
+  ERT pins with it: the FIRST render of a session starts caught-up
+  (no previous render = nothing is "since" it — no unread overlay),
+  and unread ACCUMULATES across re-renders until the reader reaches
+  the tail (the old overlay start survives every rebuild while it
+  still sits on a message heading — the append-only law keeps the
+  render prefix byte-identical).  The accessor filters overlays by
+  their own property: Org's fold system puts ITS overlays on the same
+  buffer, so a bare =overlays-in= would return those.
+- =j= jumps to the first unread heading (the overlay start), else the
+  tail.  Reaching the tail marks everything read (overlay removed,
+  seen-count synced); a reader PINNED to the tail never accumulates
+  unread at all (the render's follow path clears fresh overlays — the
+  chat-client law, ERT-pinned both ways) — the live-surface form of
+  the §7 jump-to-first-unread verb; the append-only archive's =j= (U2)
+  stays the tail degradation.
+- =g= force re-render; =q= bury (never lock the file — CI seats append
+  from other machines); =TAB= cycling and narrowing are Org-native.
+- =c= and =C-c C-c= compose+send via =agent-team-live-send= →
+  =agent-team-chat-send= (the ONE sender; protocol fields REPO/
+  PRIORITY/RISK stay the comms-protocol law) then immediate re-render.
+  DEVIATION (documented): §7's "send draft on a draft heading" has no
+  draft state here — the send path is the append path (v1.3), so
+  C-c C-c composes via prompts instead of retagging an in-buffer draft;
+  the render buffer is read-only by construction (it is a derived
+  view, kill-rebuilt).
+
+* 5. The U1 seam closes
+
+- Loading this file sets =agent-team-chat-live-buffer-function= to
+  return the live buffer when =agent-team-live-mode= is on, else nil.
+  =agent-team-chat-open= (U1) then switches to the live surface and
+  only builds the archive render when no live session exists — the
+  data-flow law v1.3 "never forks state" clause, now with a real live
+  surface behind the seam.
+
+* 6. Dispatch consumption (§11 — the U3 OUT clause lands)
+
+- =agent-team-live-dispatch= (verb =d=): the interactive surface calls
+  the §11 engine.  Requires =agent-team-bridge.el= loaded
+  (=fboundp= guard — the live surface must work without the bridge for
+  view+compose; bridge-only features error loudly, never silently).
+- Resolution on the NEWEST chat entry (the one just sent):
+  - addressed member's =:TRANSPORT: = llm-api= →
+    =agent-team-bridge-dispatch= runs the engine (queue stamp,
+    transport call, reply landing, =:queued:= drop).  U4 only CALLS
+    the engine — the engine's selection/stamp law is U3's, unchanged.
+  - =:TRANSPORT: = acp= → =agent-team-live-acp-dispatch-function=
+    (ID BODY); nil seam = user-error naming the member (never a
+    silent drop, §11.6 spirit).  NO stamp — the §11 truth table rows
+    "relay/acp = live-surface transports outside this engine, no
+    stamp" are exactly this function.  The Owner's setup wires the
+    seam to the member's live ACP session dispatcher.
+  - =:TRANSPORT: = relay= → explicit no-op result (the relay lane
+    reads CHAT.org — visibility §11.4 is the delivery), reported, not
+    silent.
+  - member with no =:TRANSPORT:=, or no registry member addressed
+    (TO = all is a broadcast) → user-error (§11.2/§11.6).
+- After dispatch the buffer re-renders (a reply may have landed).
+- Return contract: =(STATUS . DETAIL)= with STATUS ∈
+  {delivered, err, acp, relay}; tests stub the engine's http/auth
+  seams and the acp seam — no network.
+
+* 7. Faces / touch / hygiene (§6, §7, §8)
+
+- Faces: the kit's five =agent-team-chat-*-face= via font-lock
+  keywords SHARED with the archive (one keyword list, two modes —
+  additive constant in agent-team-chat.el; its behavior is
+  byte-identical and the U2 suite must stay green).  unread is APPLIED
+  here (§4 above); mention/preview/current ride font-lock; time is
+  Org-native.
+- Touch: =agent-team-chat-touch-mode= + =agent-team-chat--touch-device-p=
+  reused verbatim (kit A3) when =agent-team-chat-adapt-for-touch=.
+- Hygiene (§8): =buffer-disable-undo=, read-only render,
+  =substring-no-properties= on every file string (the kit renderer
+  already strips), =q= buries, killing the buffer never touches the
+  file, no secret value ever enters the buffer (MEMBERS.org carries
+  aliases only, §11.1).
+
+* 8. ERT plan (§9.9 — offline, deterministic)
+
+tests/agent-team-live-test.el mirrors the bridge suite's fixture law
+(fresh temp dir per test; =agent-team-chat-archive-file= /
+=agent-team-chat-members-file= bound):
+
+1. build: fixture chat → =*agent-team Live*= renders the §4 grammar
+   (* Team chat title, AUTHOR/TO/MSG-ID drawers, KIND tag, inactive
+   stamp), mode on, read-only, undo disabled, status panel set.
+2. seam: =agent-team-chat-live-buffer-function= returns the live
+   buffer; =agent-team-chat-open= switches to it (no *agent-team
+   Chat* archive buffer is created while the live session exists).
+3. poll: append via =agent-team--chat-append-1= (the ONE sender), run
+   the tick body directly (no timer wait) → new heading rendered,
+   unread overlay covers the new region, =j= lands on the first
+   unread heading; reaching the tail clears unread.
+4. send: =agent-team-live-send= (non-interactive args) appends through
+   the one-sender law and re-renders (count grows).
+5. dispatch llm-api: engine seams stubbed → delivered, :queued:
+   dropped, reply in file, zero http to real hosts.
+6. dispatch acp: seam stub records (ID BODY); no :queued: stamp ever
+   lands (truth table).
+7. dispatch relay: explicit no-op result; file untouched by dispatch.
+8. broadcast / undeclared / bridge-unloaded → user-error (never
+   silent); nil acp seam → user-error naming the member.
+9. hygiene: render string property-free; =q= bury leaves the file
+   byte-identical; kill-buffer never writes.
+10. byte-compile error-on-warn 0/0 (new file + the shared-constant
+    touch in agent-team-chat.el); full existing suites stay green.
+
+* 9. CI wiring
+
+.github/workflows/ci.yml: =agent-team-live.el= joins the byte-compile
+list; =tests/agent-team-live-test.el= joins the ert load line.
+
+* 10. Gates
+
+G1 = §9 checklist points 1-11 (point 11 rows for §10/§11) + §10.4.
+G2 = Senior seat's reviewer hands, author ≠ reviewer (z.ai lane under
+the off-peak law, ring/groq fallback with disclosure).  G3 = ERT +
+byte-compile 0/0 on Emacs 30.1, offline.  G4 = house commit law,
+=pull --rebase=, push, =ls-remote= verify, =:RATING:= stamp.

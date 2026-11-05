@@ -93,7 +93,7 @@ jobs:
         # Fails the job on a real error; warnings (free functions under -Q) are
         # informational, matching how we compile locally.
         run: |
-          for f in agent-team.el agent-team-sessions.el agent-team-clock.el agent-team-chat.el agent-team-bridge.el; do
+          for f in agent-team.el agent-team-sessions.el agent-team-clock.el agent-team-chat.el agent-team-bridge.el agent-team-live.el; do
             emacs -Q --batch -L . --eval \
               "(unless (byte-compile-file \"$f\") (kill-emacs 1))"
           done
@@ -103,6 +103,7 @@ jobs:
           emacs -Q --batch -L . -L tests -l tests/agent-team-test.el \
             -l tests/agent-team-chat-test.el \
             -l tests/agent-team-bridge-test.el \
+            -l tests/agent-team-live-test.el \
             --eval '(ert-run-tests-batch-and-exit "agent-team")'
 
   # Seat-liveness heartbeat. One real completion per accountable API seat,

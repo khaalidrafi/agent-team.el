@@ -54,8 +54,18 @@ goose, qoder) or the model's own web chat (chat.z.ai). Never a "/" after "@".
     stays the Owner-mandated brain for the seat's hardest items (fiat
     2026-10-29 stands); zai rides the GoModel retry budget (5x10s,
     llmfisher a8096d0) instead of surfacing 429s.
-  - duties: core package code + ERT in both repos · architecture ·
-    hardest port items · review of Implementer segments
+  - 2026-11-05 19:07Z SCOPE EXPANSION (Owner, #hq): the seat is no
+    longer scoped to the two umbrella packages — glm-5.3 now serves
+    ALL repos under the Lead (comms pkgs telega-org/lark-org/emacs-purple,
+    admincraft, unslop.el, org-roadmap, docneural, mirrors) with the
+    SAME gate law (author≠reviewer, G1-G4, Reviewed-by trailers).
+    Per-repo CANDIDATES.org rosters defer to this file for the seat's
+    scope.  (Directive processed 2026-11-07 under "complete ALL
+    pending tasks".)
+  - duties: core package code + ERT in ALL repos under the Lead
+    (scope expanded 2026-11-05 19:07Z #hq; was: the two umbrella
+    repos) · architecture · hardest port items · review of
+    Implementer segments
   - fallbacks:
     1. glm-5.3-flash-free@opencode (prior primary; TB 84.3, DeepSWE
        63.4; OpenCode ZEN -free lane undated "dynamic")

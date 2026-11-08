@@ -16,7 +16,7 @@
 # docs/INTEGRATION-ADMINEVERYWHERE.org this repo).
 #+STALL-COUNT: 17
 #+LAST-VERDICT: 398fa32beb5c
-#+LAST-BLOCKED-NOTIFY: 1794130932
+#+LAST-BLOCKED-NOTIFY: 1794134754
 #+CHANNEL: agent-team/CHAT.org (single-buffer team chat, direct @pings —
            mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
            brief now scans the chat tail instead of inboxes)

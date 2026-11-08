@@ -499,9 +499,9 @@ jobs:
           # (what docker/harness/Dockerfile FROMs); the thin repo layer
           # (emacs + acp + agent-org) stays unchanged.
           case "$SEAT" in
-            principal-engineer)                                            BODIES="opencode goose codebuddy qoder" ;;
-            quality-assurance-engineer|software-engineer|release-engineer) BODIES="opencode goose codebuddy qoder" ;;
-            platform-engineer)                                             BODIES="qoder goose codebuddy" ;;
+            principal-engineer)                                            BODIES="opencode goose codebuddy qoder cursor" ;;
+            quality-assurance-engineer|software-engineer|release-engineer) BODIES="opencode goose codebuddy qoder cursor" ;;
+            platform-engineer)                                             BODIES="cursor qoder goose codebuddy" ;;
             *)                                                             BODIES="" ;;
           esac
           bash ci/bin/harness_run_build.sh \
@@ -891,8 +891,10 @@ jobs:
                    qoder -p "$BRIEF" --output-format json \
                    --permission-mode accept_edits --max-turns 100; then
                 echo "TURN_RESULT=qoder run OK (lane: fallback qwen3.8@qoder — poolside dead)"
+              elif cursor-agent -p "$BRIEF" --output-format text; then
+                echo "TURN_RESULT=cursor run OK (lane: rescue cursor@cursor-agent — Owner burn order 2026-11-08)"
               else
-                echo "TURN_RESULT=BLOCKED (poolside dead on opencode+goose, fallbacks codebuddy+qoder dead too — harness/01)"
+                echo "TURN_RESULT=BLOCKED (poolside dead on opencode+goose, fallbacks codebuddy+qoder+cursor dead too — harness/01)"
               fi
               ;;
             quality-assurance-engineer|software-engineer|release-engineer)
@@ -924,23 +926,27 @@ jobs:
                    qoder -p "$BRIEF" --output-format json \
                    --permission-mode accept_edits --max-turns 100; then
                 echo "TURN_RESULT=qoder run OK (lane: fallback qwen3.8@qoder — zai+openrouter dead)"
+              elif cursor-agent -p "$BRIEF" --output-format text; then
+                echo "TURN_RESULT=cursor run OK (lane: rescue cursor@cursor-agent — Owner burn order 2026-11-08)"
               else
-                echo "TURN_RESULT=BLOCKED (all rostered lanes dead: zai+openrouter+codebuddy+qoder — harness/01)"
+                echo "TURN_RESULT=BLOCKED (all rostered lanes dead: zai+openrouter+codebuddy+qoder+cursor — harness/01)"
               fi
               ;;
             platform-engineer)
-              # Acting Platform Engineer qwen3.8-flash@qoder — Qoder-on-CI
-              # PROOF dispatch (AUTH-READY 2026-10-21: Owner delivered the
-              # PAT; repo secret QODER_PERSONAL_ACCESS_TOKEN). The CLI
-              # auto-detects CI and uses the PAT — no browser. HOME is
-              # pinned to the install dir: the `qoder` launcher resolves
-              # its CLI under ITS HOME (proof run 39467719908 failed with
-              # the default /home/agent — "Qoder CLI is not installed").
-              # Fallback lane per roster: zai/glm-4.7-flash@goose (acting).
-              if env HOME=/usr/local/lib/qoder-home \
+              # PRIMARY lane = Cursor (Owner order 2026-11-08 #hq: "Cursor
+              # resets at 15 each month. Usage must be burned b4 that!!!" —
+              # the ask-first gate is GRANTED for this window; quota resets
+              # 2026-11-15, so it burns on real objective work, not idle).
+              # This seat's prior primary (qoder) was BLOCKED 33+ turns.
+              # Cursor is a brief-only body: the law rides $BRIEF (composed
+              # by ci/bin/law_brief.sh above). Fallbacks: qoder, then zai
+              # goose lanes, then codebuddy.
+              if cursor-agent -p "$BRIEF" --output-format text; then
+                echo "TURN_RESULT=cursor run OK (lane: cursor@cursor-agent — primary per Owner burn order 2026-11-08)"
+              elif env HOME=/usr/local/lib/qoder-home \
                    qoder -p "$BRIEF" --output-format json \
                    --permission-mode accept_edits --max-turns 100; then
-                echo "TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — body PROVEN on CI)"
+                echo "TURN_RESULT=qoder run OK (lane: qwen3.8-flash@qoder — cursor failed)"
               elif env GOOSE_PROVIDER=openai GOOSE_MODEL=glm-4.7-flash \
                    OPENAI_API_KEY="$ZAI_API_KEY" \
                    OPENAI_HOST="https://api.z.ai" \
@@ -955,7 +961,7 @@ jobs:
               elif codebuddy -p "$BRIEF"; then
                 echo "TURN_RESULT=codebuddy run OK (lane: fallback codebuddy@cli — qoder+zai dead)"
               else
-                echo "TURN_RESULT=BLOCKED (qoder+zai+codebuddy all failed — harness/01)"
+                echo "TURN_RESULT=BLOCKED (cursor+qoder+zai+codebuddy all failed — harness/01)"
               fi
               ;;
           esac
@@ -971,6 +977,7 @@ jobs:
             "${HOME#/}/.local/share/opencode" \
             "${HOME#/}/.codebuddy/projects" \
             "${HOME#/}/.codebuddy/sessions" \
+            "${HOME#/}/.cursor" \
             "usr/local/lib/qoder-home/.qoder" \
             2>/dev/null || true
           [ -s "$SESS" ] || echo "sessions: nothing collected this turn" >&2
@@ -1088,8 +1095,8 @@ jobs:
           git reset --hard origin/ai/main
           sed -i "s|^\#+TURN:.*|\#+TURN: ${NEXT}|" "$CTL"
           git add "$CTL"
-          git commit -m "control: rotate #+TURN to next seat after ${TURN_SEAT:-previous seat} segment" \
-            -m "next seat: ${NEXT}" \
+          git commit -m "control: rotate #+TURN to ${NEXT%% *}" \
+            -m "after ${TURN_SEAT:-previous seat} segment" \
             -m "segment result: ${TURN_RESULT:-unknown}" \
             -m "Co-authored-by: z.ai-agent <z.ai-agent@z.ai>" \
             -m "Co-authored-by: Khalid Rafi <khaalidrafi@gmail.com>" \

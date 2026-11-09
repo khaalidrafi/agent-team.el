@@ -15,8 +15,8 @@
 # apps via the WO-22 OpenAI-compatible gateway (design:
 # docs/INTEGRATION-ADMINEVERYWHERE.org this repo).
 #+STALL-COUNT: 3
-#+LAST-VERDICT: 12ad8d6c819b
-#+LAST-BLOCKED-NOTIFY: 1794232577
+#+LAST-VERDICT: 398fa32beb5c
+#+LAST-BLOCKED-NOTIFY: 1794236285
 #+CHANNEL: agent-team/CHAT.org (single-buffer team chat, direct @pings —
            mailbox/ DEPRECATED per Owner order 2026-10-20 16:55 #hq; the turn
            brief now scans the chat tail instead of inboxes)

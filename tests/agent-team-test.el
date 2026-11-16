@@ -845,3 +845,43 @@ section is the un-escape law the teamify applies when writing the file."
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here
+
+;;; Workflows (non-coding domains; Owner order 2026-11-17)
+
+(ert-deftest agent-team-workflow-defaults-to-coding ()
+  (should (eq (agent-team--workflow) 'coding))
+  (should (equal (agent-team--workflow-types)
+                 '("fix" "feature" "refactor" "test" "release"))))
+
+(ert-deftest agent-team-set-workflow-rewrites-line-and-section ()
+  (let ((agent-team-dir "test-workflow-team/")
+        (default-directory temporary-file-directory))
+    (unwind-protect
+        (progn
+          (make-directory (expand-file-name agent-team-dir) t)
+          (with-temp-file (agent-team--board)
+            (insert agent-team--board-template))
+          (agent-team-set-workflow "reporting")
+          (with-temp-buffer
+            (insert-file-contents (agent-team--board))
+            (goto-char (point-min))
+            (should (re-search-forward "^#\\+WORKFLOW: reporting$" nil t))
+            (should (re-search-forward
+                     "^\\* WORKFLOW: reporting — dispatch vocabulary: spike draft verify file" nil t))
+            ;; the cheat sheet stays last
+            (should (< (match-end 0)
+                       (progn (goto-char (point-min))
+                              (re-search-forward "^\\* Org cheat sheet" nil t)
+                              (match-beginning 0)))))
+          ;; re-setting rewrites instead of duplicating
+          (agent-team-set-workflow "writing")
+          (with-temp-buffer
+            (insert-file-contents (agent-team--board))
+            (goto-char (point-min))
+            (should (equal (count-matches "^#\\+WORKFLOW:") 1))
+            (should (equal (count-matches "^\\* WORKFLOW:") 1))))
+      (delete-directory (expand-file-name agent-team-dir) t))))
+
+(ert-deftest agent-team-unknown-workflow-falls-back-to-coding ()
+  (should (equal (cdr (assq 'types (agent-team--workflow-plist 'poetry)))
+                 '("fix" "feature" "refactor" "test" "release"))))

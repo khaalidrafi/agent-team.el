@@ -177,12 +177,102 @@ carries no parsable id are skipped, so a role never gets a blank brain."
   AUTO
 ")
 
+
+;;; Workflows: coding is the default; writing, reporting, research are
+;;; first-class non-coding domains (Owner order 2026-11-17).
+
+(defvar agent-team-workflows
+  '((coding . ((types . ("fix" "feature" "refactor" "test" "release"))
+               (roles . ("Software Engineer" "Quality Assurance Engineer"
+                         "Release Engineer" "Platform Engineer"))
+               (review . "a second seat code-reviews before REVIEW flips")))
+    (writing . ((types . ("draft" "edit" "fact-check" "publish"))
+                (roles . ("Researcher" "Drafter" "Editor" "Fact-Checker"))
+                (review . "an adversarial read by a second seat; every claim carries its source")))
+    (reporting . ((types . ("spike" "draft" "verify" "file"))
+                  (roles . ("Researcher" "Drafter" "Verifier" "Editor"))
+                  (review . "every non-witnessed claim attributed; anything unverified reads OPEN")))
+    (research . ((types . ("investigate" "synthesize" "review"))
+                 (roles . ("Investigator" "Synthesizer" "Skeptic"))
+                 (review . "the Skeptic argues the opposite before the report lands"))))
+  "Workflow domains a team can run. TYPES is the dispatch vocabulary, ROLES the
+MEMBERS.org skeletons, REVIEW the gate a dispatch must pass before REVIEW.
+templates/WORKFLOWS.org is the long-form contract; this table is what the
+commands read.")
+
+(defun agent-team--workflow ()
+  "The board's #+WORKFLOW: line, defaulting to `coding'."
+  (if (file-exists-p (agent-team--board))
+      (with-temp-buffer
+        (insert-file-contents (agent-team--board))
+        (goto-char (point-min))
+        (if (re-search-forward "^#\\+WORKFLOW: \\([a-z-]+\\)" nil t)
+            (let ((name (intern (match-string-no-properties 1))))
+              (if (assq name agent-team-workflows) name 'coding))
+          'coding))
+    'coding))
+
+(defun agent-team--workflow-plist (name)
+  "The plist for workflow NAME, or the coding default when unknown."
+  (or (cdr (assq name agent-team-workflows))
+      (cdr (assq 'coding agent-team-workflows))))
+
+(defun agent-team--workflow-types ()
+  "Dispatch type vocabulary of the active workflow."
+  (cdr (assq 'types (agent-team--workflow-plist (agent-team--workflow)))))
+
+(defun agent-team--workflow-line (name)
+  "The board header line for workflow NAME."
+  (format "#+WORKFLOW: %s" name))
+
+(defun agent-team-set-workflow (workflow)
+  "Set the board's workflow to WORKFLOW, refreshing its WORKFLOW section.
+Idempotent: re-setting a workflow rewrites the section, not the board."
+  (interactive
+   (list (completing-read "Workflow: " (mapcar #'car agent-team-workflows)
+                          nil 'require-match nil nil
+                          (symbol-name (agent-team--workflow)))))
+  (let* ((name (intern workflow))
+         (plist (agent-team--workflow-plist name))
+         (line (agent-team--workflow-line name))
+         (section (format "* WORKFLOW: %s — dispatch vocabulary: %s; review gate: %s"
+                          workflow
+                          (mapconcat #'identity (cdr (assq 'types plist)) " ")
+                          (cdr (assq 'review plist)))))
+    (with-current-buffer (find-file-noselect (agent-team--board))
+      (save-excursion
+        (goto-char (point-min))
+        (if (re-search-forward "^#\\+WORKFLOW: [a-z-]+" nil t)
+            (replace-match line t t)
+          (goto-char (point-min))
+          (forward-line 1)
+          (insert line "
+"))
+        (goto-char (point-min))
+        (when (re-search-forward "^\\* WORKFLOW: " nil t)
+          (delete-region (match-beginning 0)
+                         (progn (forward-line 1) (point))))
+        ;; the cheat sheet stays last (board law): the section goes above it
+        (goto-char (point-min))
+        (if (re-search-forward "^\\* Org cheat sheet" nil t)
+            (beginning-of-line)
+          (goto-char (point-max)))
+        (insert section "\n")
+        (save-buffer)))
+    (message "agent-team: workflow %s — types: %s" workflow
+             (mapconcat #'identity (agent-team--workflow-types) " "))))
+
 ;;;###autoload
-(defun agent-team-init (root)
+(defun agent-team-init (root &optional workflow)
   "Scaffold the team files under ROOT: agent-team/ board + members, STATE.org.
-Refuses to overwrite existing files — adoption of new templates is the EM's
-call, not this command's."
-  (interactive "DProject root: ")
+With prefix arg or non-nil WORKFLOW, seed a non-coding domain (writing,
+reporting, research) — the board carries its #+WORKFLOW line and the
+MEMBERS skeleton names its roles. Refuses to overwrite existing files —
+adoption of new templates is the EM's call, not this command's."
+  (interactive (list (read-directory-name "Project root: ")
+                     (when current-prefix-arg
+                       (completing-read "Workflow: "
+                                       (mapcar #'car agent-team-workflows)))))
   (let* ((dir (expand-file-name agent-team-dir root))
          (files (list (cons (expand-file-name "TODOS.org" dir)
                             agent-team--board-template)
@@ -195,7 +285,22 @@ call, not this command's."
     (make-directory dir t)
     (dolist (f files)
       (write-region (cdr f) nil (car f)))
-    (message "agent-team: scaffolded board, members, STATE in %s" root)))
+    (when workflow
+      (let ((board-file (expand-file-name "TODOS.org" dir)))
+        (with-current-buffer (find-file-noselect board-file)
+          (goto-char (point-min))
+          (forward-line 1)
+          (insert (agent-team--workflow-line (intern workflow)) "\n")
+          (goto-char (point-max))
+          (insert "\n* WORKFLOW: " workflow
+                  " — roles: "
+                  (mapconcat #'identity
+                             (cdr (assq 'roles (agent-team--workflow-plist (intern workflow))))
+                             ", ")
+                  "\n")
+          (save-buffer))))
+    (message "agent-team: scaffolded board, members, STATE in %s%s"
+             root (if workflow (format " (workflow: %s)" workflow) ""))))
 
 
 ;;; Dispatch composer
@@ -247,7 +352,11 @@ kill-ring for pasting into the member's chat.  Increments the dispatch counter."
          (task-id (format "%03d" n))
          (header (agent-team--format-header
                   "DISPATCH" n "proj" task-id title agent-team-em-id to priority 1))
-         (text (concat header "\n\n" agent-team-dispatch-skeleton)))
+         (wf (agent-team--workflow))
+         (gate (cdr (assq 'review (agent-team--workflow-plist wf))))
+         (text (concat header "\n\n" agent-team-dispatch-skeleton
+                       (unless (eq wf 'coding)
+                         (format "WORKFLOW: %s — review gate: %s\n" wf gate)))))
     (if (file-exists-p board)
         (with-current-buffer (find-file-noselect board)
           (goto-char (point-min))

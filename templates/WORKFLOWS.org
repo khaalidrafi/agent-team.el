@@ -1,0 +1,47 @@
+#+TITLE: WORKFLOWS.org — team workflow domains (coding is one of several)
+#+OWNER_ORDER: 2026-11-17 — "I want agent-team to support non-coding
+#+ workflows like writing team for blogs, reporting team for news
+#+ media etc."
+#+STARTUP: overview
+
+* What a workflow is
+
+A team's workflow is its dispatch vocabulary, its role skeleton, and
+its review gate. The board carries it as a =#+WORKFLOW:= line
+(=agent-team-set-workflow=; =agent-team-init= with a prefix seeds it).
+Coding is the default and stays exactly as it was — a workflow line is
+optional and nothing existing reads differently without one.
+
+| workflow   | dispatch types                 | role skeleton                                      | review gate                                              |
+|------------+--------------------------------+----------------------------------------------------+----------------------------------------------------------|
+| coding     | fix, feature, refactor, test, release | Software Engineer, QA Engineer, Release Engineer, Platform Engineer | a second seat code-reviews before REVIEW flips     |
+| writing    | draft, edit, fact-check, publish | Researcher, Drafter, Editor, Fact-Checker          | an adversarial read by a second seat; every claim carries its source |
+| reporting  | spike, draft, verify, file     | Researcher, Drafter, Verifier, Editor              | every non-witnessed claim attributed; anything unverified reads OPEN |
+| research   | investigate, synthesize, review | Investigigator, Synthesizer, Skeptic               | the Skeptic argues the opposite before the report lands |
+
+* Laws that hold in every workflow
+
+- The board stays the single source of truth; a workflow changes what
+  lands on it, never where truth lives.
+- The keyword cycle, TIME DISCIPLINE LAW, and CONSULT LAW are
+  workflow-independent.
+- Seats are still model@platform pairs from the umbrella CANDIDATES
+  (MEMBERS.org); the workflow names the ROLES a seat dresses in, not a
+  second hiring pipeline.
+- The dispatch composer appends a =WORKFLOW:= line naming the gate on
+  every non-coding dispatch, so the receiving seat sees the vocabulary
+  without reading this file.
+
+* Why these four
+
+- coding: the original team shape; unchanged.
+- writing: blogs and long-form — multi-pass structure (research,
+  draft, edit, verify) is what makes prose trustworthy.
+- reporting: news media — the verifier role and the OPEN marker keep
+  attribution honest under deadline.
+- research: investigations — the skeptic role is the adversarial pass
+  the interrogate playbook pays for, run as a seat.
+
+A new workflow is a defvar entry in =agent-team.el= plus a row here;
+roles without a seat stay unfilled until the umbrella staffing cycle
+fills them (ADD-FREEZE law holds).

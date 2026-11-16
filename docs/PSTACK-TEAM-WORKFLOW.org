@@ -1,0 +1,47 @@
+#+TITLE: PSTACK-TEAM-WORKFLOW.org — the standing order: every team runs pstack
+#+ORDER: Owner 2026-11-16 — from now on, all teams use the pstack
+#+ agent-team workflow.
+#+STARTUP: overview
+
+* The law
+
+Every teamified repo's seats run the pstack skill stack (Lauren Tan /
+poteto, vendored verbatim into the agent-team-ci kit at
+=skills/pstack/=, baked into every CI seat at
+=/opt/agent-team-ci-skills/pstack=; pin and provenance in the kit's
+Dockerfile). Concretely:
+
+1. *Routing.* A rigorous engineering task (a refactor, a migration, a
+   review with stakes) starts in poteto-mode: the seat matches the
+   task to a playbook before touching anything, names the principles
+   it applied, and reads a principle's full leaf SKILL.md before
+   citing it. Trivial edits skip the ceremony — poteto-mode is a
+   router, not a tax.
+2. *Prose.* Every prose surface a seat produces — reports, dispatch
+   text, docs, commit messages, HANDOFF entries — gets an unslop
+   pass: short declarative sentences, no AI vocabulary, no em dashes,
+   every claim carrying its evidence or its label. A dispatch that
+   reads like slop is returned by the receiving seat, not graded.
+3. *Code.* tdd for behavior-bearing changes; prove-it-works before
+   REVIEW flips (verify against the real artifact — the test run, the
+   built thing — never "it compiles"); encode-lessons-in-structure
+   when the same instruction lands twice (a lane, a lint, a test).
+4. *Citation discipline.* A seat cites only principles whose leaf
+   SKILL.md it actually read that session, and names in its reply the
+   ones that changed a decision. Inherited claims about skill contents
+   are verified against the real files before use.
+
+* Why as structure, not as advice
+
+The kit bakes the stack into every seat's environment (Dockerfile
+FATAL checks on poteto-mode, unslop, plugin.json, LICENSE — the seat
+that lacks them does not boot). This file is the operating law the
+seats read; the Dockerfile is the enforcement.
+
+* Scope note
+
+pstack's playbooks are written for code-shaped work. On non-coding
+workflows (templates/WORKFLOWS.org), the applicable halves are routing
+(what the task actually is), unslop (all prose), and the review gates;
+tdd applies where a deliverable has a checkable surface (a link
+checker for a blog, a source audit for a report).

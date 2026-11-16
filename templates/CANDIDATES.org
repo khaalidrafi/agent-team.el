@@ -55,7 +55,7 @@
   - OPENCODE_API_KEY → opencode — 8 Zen -free ids (client_only: answer only
     inside OpenCode's own client)
   - TOKENHARBOR_API_KEY → tokenharbor — free :free rows
-  - TYPESAFE_API_KEY → jev — 2 (jev-1.13.0, jev-latest; decision layer)
+  - TYPESAFE_API_KEY → jev — 2 (jev-1.14.0, jev-latest; decision layer)
   - XPLABS_API_KEY → xplabs — 3 (clef-flash, qwen3.8-27b, gpt-6-luna;
     card_required block still stands)
   - GMI_API_KEY → gmi — 2 (Nemotron-3.5-Super-VL, MiniMax-M3.1-Flash — M3.1
@@ -423,7 +423,7 @@
     2026-10-24; reasoning ids burn max_tokens — caps carry headroom]
 
 * Decision layer (not an LLM, not chat-compatible)
-  - jev-1.13.0 @ api.typesafe.ai (or /v1/systemone via the gateway)
+  - jev-1.14.0 @ api.typesafe.ai (or /v1/systemone via the gateway)
 
 * Character notes (measured this project)
   - rotating/unstable: opencode roster · ollama-cloud · openrouter :free tail

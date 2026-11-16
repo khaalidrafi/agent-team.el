@@ -291,7 +291,7 @@ roster diff vs live GET /v1/models)
   version, never jev-latest)
 - access (LIVE, verified): the Owner's gateway serves Jev natively — POST
   /v1/systemone (state + typed questions → calibrated answers; chat endpoints
-  REJECT jev ids). Pin jev-1.13.0. SDKs: TYPESAFE_BASE_URL =
+  REJECT jev ids). Pin jev-1.14.0. SDKs: TYPESAFE_BASE_URL =
   https://ai.khalidrafi.tech + gateway key. Fallback: direct api.typesafe.ai with
   TYPESAFE_API_KEY. Jev ids are NEVER chat models — dispatch prose to an LLM,
   then judge with Jev. Timeout calls at 90s (slow failover legs)

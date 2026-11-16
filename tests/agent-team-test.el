@@ -842,6 +842,44 @@ section is the un-escape law the teamify applies when writing the file."
                  "#+TITLE: empty\n" nil nil
                  "[2026-10-26 Mon 10:42 UTC]"))))
 
+(ert-deftest agent-team-jev-model-pinned-current ()
+  "Jev carries ONE dated pin, and the law files cannot drift from it.
+`agent-team--jev-model' must be a dated id (never `jev-latest'), and
+every dated id in the scanned files must equal it.  This is the drift
+guard for the 2026-11-15 bump (jev-1.13.0 -> jev-1.14.0): nine sites
+across eight files, and a bump that misses one is silent rot.
+
+Two files are deliberately NOT scanned:
+  - `.github/workflows/ci.yml' is Lead-owned (SEAT BOUNDARIES law):
+    its Jev line is bumped by the Lead, not by a seat patch.
+  - `agent-team/TODOS.org' is the board: old dispatch text is history
+    and is never rewritten."
+  (should (string-match-p "\\`jev-[0-9]+\\.[0-9]+\\.[0-9]+\\'" agent-team--jev-model))
+  (should-not (string-match-p "latest" agent-team--jev-model))
+  (let* ((root (or (and load-file-name
+                        (locate-dominating-file load-file-name ".git"))
+                   default-directory))
+         (files '("agent-team.el"
+                  "agent-team/CHARTER.md"
+                  "agent-team/ROSTER.org"
+                  "agent-team/CANDIDATES.org"
+                  "templates/COMMON.org"
+                  "templates/agent-team.yml"))
+         (ids nil))
+    (dolist (rel files)
+      (let ((file (expand-file-name rel root)))
+        (when (file-exists-p file)
+          (with-temp-buffer
+            (insert-file-contents file)
+            (goto-char (point-min))
+            (while (re-search-forward
+                    "jev-[0-9]+\\.[0-9]+\\.[0-9]+" nil t)
+              (let ((id (match-string-no-properties 0)))
+                (push id ids)
+                (should (equal agent-team--jev-model id))))))))
+    ;; the sweep must actually have seen the pin, not silently no-op'd
+    (should (member agent-team--jev-model ids))))
+
 (provide 'agent-team-test)
 
 ;;; agent-team-test.el ends here

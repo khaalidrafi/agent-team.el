@@ -133,3 +133,21 @@ objective, or tests red; a no-progress streak shifts to backoff, never
 to failure. No chat mirror anywhere (Telegram retired 2026-10-25; Discord
 retired 2026-10-26) — the team chat lives in agent-team/CHAT.org and
 the Lead couriers Owner-bound entries to #hq.
+
+## pstack law (Owner standing order 2026-11-16)
+
+All teams run the pstack agent-team workflow. The operating law is
+docs/PSTACK-TEAM-WORKFLOW.org; the enforcement is the kit (pstack
+baked into every CI seat with FATAL checks). Routing through
+poteto-mode for rigorous tasks, unslop on every prose surface, tdd and
+prove-it-works on code, encode-lessons-in-structure when an
+instruction lands twice, and citation discipline: only principles
+whose leaf SKILL.md the seat read that session, named in the reply
+when they changed a decision.
+
+## non-coding workflows (Owner order 2026-11-17)
+
+agent-team supports writing, reporting, and research teams alongside
+coding: templates/WORKFLOWS.org is the contract, the #+WORKFLOW: board
+line is the switch (agent-team-set-workflow; agent-team-init with a
+prefix seeds it). Coding is the default and is unchanged.

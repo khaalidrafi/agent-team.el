@@ -685,8 +685,11 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
   - Provenance: every artifact logs model@platform, dispatch #, branch,
     and date — auditability is the only reviewer available.
   - Commit authorship (Owner 2026-10-29 #hq): commits are authored by
-    the agent whose work they carry — never by the CI model. Commit
-    under your own agent id when you have git write; the harness
+    the agent whose work they carry — never by the CI model. MEMBER
+    work is committed under the committing member seat's own
+    name+email — the Lead's identity never appears on member commits
+    (the Lead itself, GLM brain, commits as "GLM 5.3 <glm-5.3@z.ai>").
+    Commit under your own agent id when you have git write; the harness
     host-commit of your workspace diff sets YOUR agent id as git
     author. A `turn(<seat>):` commit authored by the CI bot fails the
     guard.
@@ -899,6 +902,37 @@ Owner-bound entry to him verbatim on #hq (no chat mirror since
 - Reviews catch laziness first: every REVIEW pass checks the catalog
   above before anything else. A fast PASS on a catalog-violating report
   fails the REVIEWER, not just the author.
+
+** PSTACK (rigorous-engineering stack — Owner order 2026-11-16 #hq:
+   "use that from now on in your teams")
+
+- The pstack pack (Lauren Tan / poteto, vendored verbatim at a pinned
+  SHA) is baked read-only at /opt/agent-team-ci-skills/pstack/ for
+  every body; the Lead desk carries the same pin. The full team
+  mapping lives in docs/PSTACK-TEAM.org. This section is the binding
+  core.
+- ROUTING: any rigorous engineering item routes through
+  skills/poteto-mode/SKILL.md before work starts. The EM names the
+  matching playbook in the dispatch header (investigation, bug fix,
+  feature, refactoring, prototype, session-pickup...); the member
+  opens that playbook and copies its steps verbatim into the segment
+  todos. A skipped step stays in the list with "skip: <reason>".
+- CITATION DISCIPLINE: cite only principles whose
+  skills/principle-*/SKILL.md you actually read this session. A
+  segment report names each principle that shaped a decision and the
+  choice it changed. A principle cited unread is a false report.
+- PROSE: every team-emitted surface gets the unslop pass
+  (skills/unslop/SKILL.md). Dispatches, segment reports, CHAT.org
+  messages, commit messages, docs included. Short declarative
+  sentences, no AI vocabulary, no em dashes, and every claim carries
+  its evidence or its label in the same sentence.
+- VERIFICATION: prove it works against the real artifact before
+  flipping to REVIEW. Run the feature, read the actual value, inspect
+  the diff. "It compiles" and a green self-report are not proof.
+  Report a measured number only after the benchmark-checklist pass.
+- CONTEXT: guard the context window. Route bulk reads to a focused
+  pass, keep summaries in reports, and never paste a whole skill tree
+  into chat. Read leaf files on demand, not in bulk.
 
 ** OUTPUT RULE
 

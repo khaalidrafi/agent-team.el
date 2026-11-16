@@ -36,6 +36,14 @@ manager):
 
 Keybinding suggestions only — bind what fits your Meow setup.
 
+* Team skills
+
+Teams running this system use the pstack skill pack (Lauren Tan /
+poteto, MIT) baked into the agent-team-ci harness at
+=/opt/agent-team-ci-skills/pstack/=. =docs/PSTACK-TEAM.org= is the
+usage law for EM and member seats: playbook routing on dispatch,
+unslop on all prose, principles cited only when read.
+
 * Requirements
 
 - Emacs 28.1+

@@ -1,0 +1,123 @@
+#+TITLE: PSTACK.org — using Lauren Tan's skill stack in agent teams
+#+ROLE: how a team running agent-team.el (board, dispatches, chain) uses
+        the pstack skill pack baked into the harness. Read before your
+        first dispatch references a playbook, principle, or skill.
+#+LAW: pstack is vendored VERBATIM from github.com/cursor/plugins
+        (Lauren Tan / poteto, MIT) at a pinned SHA in the
+        khaalidrafi/agent-team-ci submodule; the harness bakes it at
+        =/opt/agent-team-ci-skills/pstack/= for every member body. The
+        pin, not upstream main, is the version in force.
+
+* What pstack is
+
+pstack is poteto's rigorous-engineering skill stack. It is not one
+skill; it is a router (=poteto-mode=) over 23 playbooks, 24 named
+principles, and leaf skills for specific jobs (=unslop=, =tdd=,
+=technical-writing=, =statechart=, =swarm=, =arena=, =interrogate=,
+=benchmark-checklist=...). Its core claim fits this team's law
+exactly: write less, higher quality code; verify before declaring
+done; parallelize only what you can verify.
+
+In the harness the tree lives read-only at
+=/opt/agent-team-ci-skills/pstack/=. On the Lead desk it is the
+local skills install. Both carry the same pin.
+
+* Why a team wants it
+
+- Playbooks standardize the shape of a work segment: an investigation
+  segment ends with cited evidence, a bug-fix segment ends with a
+  reproduction and a runtime-verified fix, a feature segment names
+  its data shape first. The landing gate then checks real artifacts,
+  not vibes.
+- Named principles give the EM and members a shared vocabulary for
+  course corrections. "Guard the context window" or "fix root causes"
+  redirects a seat mid-task in two words, and the leaf file carries
+  the full pattern.
+- =unslop= enforces the house prose style on every surface the team
+  emits: dispatches, segment reports, CHAT.org messages, commit
+  messages, docs.
+
+* The mapping to team law
+
+| pstack concept | agent-team.el equivalent |
+|----------------+--------------------------|
+| Playbook steps | The DOD (definition-of-done) checkboxes of a board item |
+| =show-me-your-work= decision trail | :LOGBOOK: notes + HANDOFF drawers |
+| Fresh subagent, consolidated scope | A dispatch carries brief + directives + prior segment evidence |
+| Verify against the real artifact | Landing gate: tests + checks in every session and at merge |
+| Review by a non-author | Segregation law: author, verifier, merger are different models |
+| /babysit, /shipping playbooks | The finalize job + the Lead's merge pass |
+
+The two systems do not conflict: pstack disciplines the INSIDE of a
+segment; the board disciplines the sequence of segments. A segment
+report cites the principles it applied; the board cites the evidence
+the segment produced.
+
+* For the EM / Lead desk
+
+- Route before you dispatch. When composing a DISPATCH, name the
+  matching playbook from =skills/poteto-mode/SKILL.md= in the header
+  (investigation, bug fix, feature, refactoring, prototype,
+  session-pickup...). The member opens that playbook and copies its
+  steps as their segment todos.
+- Read the leaf before citing it. The law is absolute: cite only
+  principles whose =skills/principle-*/SKILL.md= you actually read,
+  and require the same of members. A principle cited unread is a
+  false report.
+- Use =session-pickup= on every Lead resume: read the prior trail
+  (board, CHAT.org, STATE.org), reconstruct operational state, diff
+  done vs pending, and do not re-derive what the trail already
+  answers. The vault convo archive is the reduced timeline.
+- Ask a subagent, not the Owner, when a fork is observable. If the
+  answer is a fact you could learn by running something (behavior,
+  timing, output), it is not the Owner's to answer. Sketch it with a
+  throwaway prototype and let the result decide. Reserve :OWN:
+  blockers for genuine preference or product calls.
+- Own every delegated segment's result. Review the diff, write your
+  own summary; never pass a member's self-report through as evidence.
+
+* For member seats
+
+- Open the named playbook first and copy its steps verbatim into your
+  segment todos before any task-specific work. A skipped step stays
+  in the list with =skip: <reason>=.
+- Apply =unslop= to every prose surface you emit, reports and CHAT.org
+  included. Short declarative sentences. No AI vocabulary, no em
+  dashes, no colons as mid-sentence connectors. Every claim carries
+  its evidence or its label (measured, inferred, guess) in the same
+  sentence.
+- Name the data shape first on any code task, per
+  =principle-model-the-domain=. Choose the organizing structure
+  before writing logic.
+- Before reporting any measured number (speedup, token cost, file
+  count), run the =benchmark-checklist= skill. Numbers without their
+  limiting factor named are not evidence.
+- Prove it works against the real artifact before flipping to REVIEW:
+  run the feature, read the actual value, inspect the diff. "It
+  compiles" and a green self-report are not proof.
+
+* Standing integration notes
+
+- The kit's global law (ci/AGENTS.md) carries the pstack routing law;
+  every body reads it at bake time. No per-repo setup is needed
+  beyond the submodule pin.
+- Bumping the pin is a kit change, never a per-repo change: re-vendor
+  from cursor/plugins, update the SHA comment and the counts in
+  ci/AGENTS.md, land it in khaalidrafi/agent-team-ci, then bump the
+  submodule pointer in consuming repos.
+- The harness copy is read-only. A member that wants a variant
+  playbook proposes it to the Lead; local forks of the pack inside
+  work repos are compliance violations (INTEGRATION.md: port changes
+  upstream first).
+
+* Quick reference (paths inside the baked pack)
+
+- Router and playbooks:
+  =skills/poteto-mode/SKILL.md=, =skills/poteto-mode/playbooks/=
+- Principles (24 leaves): =skills/principle-*/SKILL.md=
+- Prose style: =skills/unslop/SKILL.md=
+- Docs and commits: =skills/technical-writing/SKILL.md=
+- Measured numbers: =skills/benchmark-checklist/SKILL.md=
+- Parallel exploration: =skills/swarm/SKILL.md=, =skills/arena/SKILL.md=
+- Contested designs: =skills/interrogate/SKILL.md=
+- Full manuals: =docs/guide/= (10 chapters + README)

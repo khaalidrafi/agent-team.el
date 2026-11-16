@@ -1132,7 +1132,7 @@ jobs:
         run: |
           SUMMARY="$GITHUB_STEP_SUMMARY"
           # Owner order (re-issued 2026-10-21 08:25Z): use gomodel via
-          # khaalidrafi/llmfisher on CI. Jev (model jev-1.13.0, POST
+          # khaalidrafi/llmfisher on CI. Jev (model jev-1.14.0, POST
           # /v1/systemone) is the chain's calibrated judgment layer — it
           # weighs the stall state for the dispatch decision. Payload
           # mirrors agent-team.el agent-team--jev-payload byte-for-byte.
@@ -1148,7 +1148,7 @@ jobs:
           STATE="stall state: segment result ${RESULT:-none}, merge outcome ${OUTCOME:-none}, CI chain deciding whether to dispatch the next turn now or back off."
           BODY=$(jq -nc --arg s "$STATE" \
             --arg q "Dispatch the next agent-team CI turn immediately (yes) or back off (no)?" \
-            '{state: $s, model: "jev-1.13.0", questions: {q: {type: "noul", instructions: $q}}}')
+            '{state: $s, model: "jev-1.14.0", questions: {q: {type: "noul", instructions: $q}}}')
           RESP=$(curl -s -m 90 -X POST \
                   -H "Authorization: Bearer ${GOMODEL_MASTER_KEY}" \
                   -H "Content-Type: application/json" \

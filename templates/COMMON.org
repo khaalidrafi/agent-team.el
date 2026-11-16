@@ -372,7 +372,7 @@ it's on TODOS.org to share"):
   source of truth; pin a dated Jev version, never jev-latest.
 - Access (LIVE, verified): the Owner's gateway serves Jev natively —
   POST /v1/systemone (state plus typed questions returns calibrated
-  answers; the chat endpoints REJECT jev ids). Pin jev-1.13.0. The SDK
+  answers; the chat endpoints REJECT jev ids). Pin jev-1.14.0. The SDK
   base URL TYPESAFE_BASE_URL is the RESOLVED gateway URL — the
   GATEWAY AUTH resolution order above, probe never assume; the
   judgment lane is BINARY (GATEWAY AUTH). Standalone fallback:

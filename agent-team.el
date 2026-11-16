@@ -598,11 +598,20 @@ keeps the final authority — this is the Lead's hand on the same lever)."
     (when (equal 0 (apply #'call-process "curl" nil t nil args))
       (string-trim (buffer-string)))))
 
+(defconst agent-team--jev-model "jev-1.14.0"
+  "The DATED Jev model id, pinned in exactly one place.
+Jev is a judgment layer, not a chat model: questions are batched per
+state.  Never use `jev-latest' (the law forbids a floating pin), and
+never hard-code a second copy of this id in a template or doc — the
+ERT invariant `agent-team-jev-model-pinned-current' fails if any
+scanned file carries a different dated id.  Bump this const and the
+law files together, then re-run the suite.")
+
 (defun agent-team--jev-payload (state question)
   "Build a Jev request body: one batched noul question over STATE."
   (json-encode
    (list :state state
-         :model "jev-1.13.0"
+         :model agent-team--jev-model
          :questions (list :q (list :type "noul" :instructions question)))))
 
 ;;;###autoload
